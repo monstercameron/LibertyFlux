@@ -1968,6 +1968,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00A76700",
+  "name": "vehicle_function_00a76700",
+  "file": "fn_00a76700.rs",
+  "lane": "r-s715",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A7E990",
   "name": "CComplexGangDrivebyTaskInfo::vf6",
   "file": "fn_00a7e990.rs",
@@ -2115,14 +2123,6 @@
   "address": "0x00A84050",
   "name": "CSimpleClimbTaskInfo::append_climb_state",
   "file": "fn_00a84050.rs",
-  "lane": "r-s723",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A841A0",
-  "name": "CSimpleNMBalanceTaskInfo::append_balance_failed_flag",
-  "file": "fn_00a841a0.rs",
   "lane": "r-s723",
   "outcome": "not_reached",
   "reason": null
@@ -2798,30 +2798,6 @@
   "lane": "r-s718",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00B45640",
-  "name": "CEventPedToChase::CEventPedToChase",
-  "file": "fn_00b45640.rs",
-  "lane": "r-s718",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B45670",
-  "name": "CEventPedToFlee::CEventPedToFlee",
-  "file": "fn_00b45670.rs",
-  "lane": "r-s718",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B456A0",
-  "name": "CEventPlayerLockOnTarget::CEventPlayerLockOnTarget",
-  "file": "fn_00b456a0.rs",
-  "lane": "r-s718",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00B456F0",
@@ -4352,14 +4328,6 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00CEAE70",
-  "name": "CBike::vf47",
-  "file": "fn_00ceae70.rs",
-  "lane": "r-s712",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00CF8050",
   "name": "CTaskComplexClimbLadder::vf20",
   "file": "fn_00cf8050.rs",
@@ -4948,14 +4916,6 @@
   "name": null,
   "file": "fn_00d44890.rs",
   "lane": "r-b673",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D56F80",
-  "name": "CCamAimWeaponVeh::constructor",
-  "file": "fn_00d56f80.rs",
-  "lane": "r-s725",
   "outcome": "not_reached",
   "reason": null
  },

@@ -129,9 +129,9 @@ lf_checker_rt::export!(cdecl, rw_00b0c150(
 
         let original_mode = requested_mode as u8;
         if original_mode != SPECIAL_MODE {
-            let initial_gate: u8 = lf_checker_rt::callee_cdecl!(CALL_GATE, u8);
+            let initial_gate: u8 = lf_checker_rt::callee_cdecl!(CALL_GATE, u8,);
             if initial_gate != 0 {
-                let mode_gate: u8 = lf_checker_rt::callee_cdecl!(CALL_MODE_GATE, u8);
+                let mode_gate: u8 = lf_checker_rt::callee_cdecl!(CALL_MODE_GATE, u8,);
                 if mode_gate == 0 {
                     let callback_context = lf_checker_rt::relocated(CALLBACK_CONTEXT);
                     let _ = lf_checker_rt::callee_thiscall!(
@@ -169,10 +169,10 @@ lf_checker_rt::export!(cdecl, rw_00b0c150(
                 start_cursor = 0;
             }
         } else {
-            let gate = lf_checker_rt::callee_cdecl!(CALL_GATE, u8);
+            let gate = lf_checker_rt::callee_cdecl!(CALL_GATE, u8,);
             let mut use_secondary = gate != 0;
             if !use_secondary {
-                use_secondary = lf_checker_rt::callee_cdecl!(CALL_REFRESH_GATE, u8) != 0;
+                use_secondary = lf_checker_rt::callee_cdecl!(CALL_REFRESH_GATE, u8,) != 0;
             }
             if use_secondary {
                 start_cursor = global_u32(FLAG_SECONDARY);
@@ -209,10 +209,10 @@ lf_checker_rt::export!(cdecl, rw_00b0c150(
             }
         }
 
-        let gate = lf_checker_rt::callee_cdecl!(CALL_GATE, u8);
+        let gate = lf_checker_rt::callee_cdecl!(CALL_GATE, u8,);
         let mut cursor_blocked = gate != 0;
         if !cursor_blocked {
-            cursor_blocked = lf_checker_rt::callee_cdecl!(CALL_REFRESH_GATE, u8) != 0;
+            cursor_blocked = lf_checker_rt::callee_cdecl!(CALL_REFRESH_GATE, u8,) != 0;
         }
         let next_cursor = scan_index.wrapping_add(1);
         if !cursor_blocked {
@@ -327,10 +327,10 @@ lf_checker_rt::export!(cdecl, rw_00b0c150(
         let sequence: u32 = lf_checker_rt::callee_cdecl!(CALL_SLOT_SEQUENCE, u32, row_index);
 
         if mode != SPECIAL_MODE {
-            let refresh: u8 = lf_checker_rt::callee_cdecl!(CALL_REFRESH_GATE, u8);
+            let refresh: u8 = lf_checker_rt::callee_cdecl!(CALL_REFRESH_GATE, u8,);
             let mut notify = refresh != 0;
             if !notify {
-                notify = lf_checker_rt::callee_cdecl!(CALL_GATE, u8) != 0;
+                notify = lf_checker_rt::callee_cdecl!(CALL_GATE, u8,) != 0;
             }
             if notify {
                 let context = global_u32(EXTERNAL_CONTEXT);
