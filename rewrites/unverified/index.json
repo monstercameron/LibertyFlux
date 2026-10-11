@@ -624,6 +624,14 @@
   "reason": null
  },
  {
+  "address": "0x005E0AE0",
+  "name": "CTaskComplexUseWaterCannon::control_sub_task",
+  "file": "fn_005e0ae0.rs",
+  "lane": "r-s726",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x005E1610",
   "name": "CRenderPhasePhoneModel::vf8",
   "file": "fn_005e1610.rs",
@@ -1384,6 +1392,78 @@
   "reason": null
  },
  {
+  "address": "0x0098C170",
+  "name": null,
+  "file": "fn_0098c170.rs",
+  "lane": "r-s735",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x0098C1D0",
+  "name": null,
+  "file": "fn_0098c1d0.rs",
+  "lane": "r-s735",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x0098C410",
+  "name": null,
+  "file": "fn_0098c410.rs",
+  "lane": "r-s735",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x0098D6D0",
+  "name": null,
+  "file": "fn_0098d6d0.rs",
+  "lane": "r-s735",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x0098EE70",
+  "name": null,
+  "file": "fn_0098ee70.rs",
+  "lane": "r-s735",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x0098EE80",
+  "name": null,
+  "file": "fn_0098ee80.rs",
+  "lane": "r-s735",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x0098EEA0",
+  "name": null,
+  "file": "fn_0098eea0.rs",
+  "lane": "r-s735",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x0098EEC0",
+  "name": null,
+  "file": "fn_0098eec0.rs",
+  "lane": "r-s735",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x009918C0",
+  "name": null,
+  "file": "fn_009918c0.rs",
+  "lane": "r-s735",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x009AA110",
   "name": "conv_first_or_null",
   "file": "fn_009aa110.rs",
@@ -1395,6 +1475,22 @@
   "address": "0x009B08E0",
   "name": "fn_009b08e0",
   "file": "fn_009b08e0.rs",
+  "lane": "r-s734",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B0910",
+  "name": "audPoliceScanner::vf0",
+  "file": "fn_009b0910.rs",
+  "lane": "r-s734",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B0930",
+  "name": "fn_009b0930",
+  "file": "fn_009b0930.rs",
   "lane": "r-s734",
   "outcome": "not_reached",
   "reason": null
@@ -2392,11 +2488,99 @@
   "reason": null
  },
  {
+  "address": "0x00B4BAA0",
+  "name": "event_type_pair_in_table",
+  "file": "fn_00b4baa0.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B4BAD0",
-  "name": null,
+  "name": "object_field_10_not_200",
   "file": "fn_00b4bad0.rs",
   "lane": "r-s730",
-  "outcome": "not yet run",
+  "outcome": "deferred",
+  "reason": "partly_proven"
+ },
+ {
+  "address": "0x00B4BB30",
+  "name": "group_init_member_slots",
+  "file": "fn_00b4bb30.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4BF20",
+  "name": "group_count_members",
+  "file": "fn_00b4bf20.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4BF90",
+  "name": "NativeImpl_GET_GROUP_SIZE_2",
+  "file": "fn_00b4bf90.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4C1A0",
+  "name": "group_find_member_index",
+  "file": "fn_00b4c1a0.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4C200",
+  "name": "group_member_dense_index",
+  "file": "fn_00b4c200.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4C290",
+  "name": "group_entry_from_ped",
+  "file": "fn_00b4c290.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4C2B0",
+  "name": "nested_signed_byte_at_4e6",
+  "file": "fn_00b4c2b0.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4C330",
+  "name": "group_has_leader",
+  "file": "fn_00b4c330.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4C420",
+  "name": "group_contains_member",
+  "file": "fn_00b4c420.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4C460",
+  "name": "NativeImpl_IS_GROUP_LEADER",
+  "file": "fn_00b4c460.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -3019,6 +3203,22 @@
   "address": "0x00C2F1C0",
   "name": "vehicle_dynamics_parameters_set_scalar",
   "file": "fn_00c2f1c0.rs",
+  "lane": "r-s733",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C2F620",
+  "name": "aud_placeable_tracker_state_init",
+  "file": "fn_00c2f620.rs",
+  "lane": "r-s733",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C30C40",
+  "name": "vehicle_heading_clear_state",
+  "file": "fn_00c30c40.rs",
   "lane": "r-s733",
   "outcome": "not_reached",
   "reason": null
@@ -4068,8 +4268,8 @@
   "name": "expand_bound_ranges",
   "file": "fn_00d24970.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00D24A70",
@@ -4084,8 +4284,8 @@
   "name": "CCustomShaderEffectVehicleFX::vf0",
   "file": "fn_00d24ad0.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00D24AF0",
@@ -4100,8 +4300,8 @@
   "name": "copy_vehicle_paint_state",
   "file": "fn_00d24b60.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00D254D0",
@@ -4300,14 +4500,6 @@
   "name": null,
   "file": "fn_00d44890.rs",
   "lane": "r-b673",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D583E0",
-  "name": "CCamCinematography::vf0",
-  "file": "fn_00d583e0.rs",
-  "lane": "r-s725",
   "outcome": "not_reached",
   "reason": null
  },

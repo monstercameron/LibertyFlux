@@ -213,7 +213,6 @@ lf_checker_rt::export!(thiscall, rw_00ccfab0(task: u32, owner: u32, out_candidat
             true,
         );
         if !(nearest_distance > late_distance) {
-            clear_ready(task);
             write_u32(out_candidate, nearest_candidate);
             return out_candidate;
         }
