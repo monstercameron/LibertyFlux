@@ -74853,6 +74853,15 @@
   "lane": "a-G38"
  },
  {
+  "address": "0x009EEFD0",
+  "name": "ped_task_iteration",
+  "kind": "function",
+  "file": "functions/fn_009eefd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U95"
+ },
+ {
   "address": "0x009F0890",
   "name": "playerped_timed_trigger",
   "kind": "function",
@@ -148579,6 +148588,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b333"
+ },
+ {
+  "address": "0x00DCD3F0",
+  "name": "CTaskSimpleReloadGun::process_ped",
+  "kind": "function",
+  "file": "functions/fn_00dcd3f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U95"
  },
  {
   "address": "0x00DCD5F0",
