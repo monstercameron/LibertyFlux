@@ -61200,6 +61200,51 @@
   "lane": "r-b637"
  },
  {
+  "address": "0x0095C7B0",
+  "name": "append_task_record_header",
+  "kind": "function",
+  "file": "functions/fn_0095c7b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x0095C7D0",
+  "name": "append_task_value",
+  "kind": "function",
+  "file": "functions/fn_0095c7d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x0095C920",
+  "name": "append_task_entries",
+  "kind": "function",
+  "file": "functions/fn_0095c920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x0095CE30",
+  "name": "append_task_object_record",
+  "kind": "function",
+  "file": "functions/fn_0095ce30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x0095CED0",
+  "name": "append_task_pointer_record",
+  "kind": "function",
+  "file": "functions/fn_0095ced0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
   "address": "0x00962060",
   "name": "teardown_ref_owner",
   "kind": "function",
@@ -68580,6 +68625,24 @@
   "lane": "a-U34"
  },
  {
+  "address": "0x009CDA40",
+  "name": "NativeImpl_SET_SCRIPT_MIC_POSITION",
+  "kind": "function",
+  "file": "functions/fn_009cda40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x009CDED0",
+  "name": "NativeImpl_TRIGGER_VIGILANTE_CRIME",
+  "kind": "function",
+  "file": "functions/fn_009cded0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
   "address": "0x009CEA80",
   "name": "input_hook_refresh_dispatch",
   "kind": "function",
@@ -68643,6 +68706,24 @@
   "lane": "r-s191"
  },
  {
+  "address": "0x009D07A0",
+  "name": "get_timing_word_170",
+  "kind": "function",
+  "file": "functions/fn_009d07a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x009D07E0",
+  "name": "get_timing_word_004",
+  "kind": "function",
+  "file": "functions/fn_009d07e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
   "address": "0x009D0820",
   "name": "ensure_and_read_slot",
   "kind": "function",
@@ -68652,6 +68733,15 @@
   "lane": "r-s191"
  },
  {
+  "address": "0x009D0860",
+  "name": "get_timing_word_178",
+  "kind": "function",
+  "file": "functions/fn_009d0860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
   "address": "0x009D08A0",
   "name": "select_locked_field",
   "kind": "function",
@@ -68659,6 +68749,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s191"
+ },
+ {
+  "address": "0x009D0910",
+  "name": "timing_object_flag_is_one",
+  "kind": "function",
+  "file": "functions/fn_009d0910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x009D0950",
+  "name": "get_timing_storage_address",
+  "kind": "function",
+  "file": "functions/fn_009d0950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
  },
  {
   "address": "0x009D0990",
@@ -68686,6 +68794,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s191"
+ },
+ {
+  "address": "0x009D0C20",
+  "name": "get_object_byte_2c2",
+  "kind": "function",
+  "file": "functions/fn_009d0c20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x009D0C60",
+  "name": "get_object_word_3a0",
+  "kind": "function",
+  "file": "functions/fn_009d0c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
  },
  {
   "address": "0x009D0CA0",
@@ -68785,6 +68911,42 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s191"
+ },
+ {
+  "address": "0x009D0F60",
+  "name": "get_or_initialize_timing_singleton",
+  "kind": "function",
+  "file": "functions/fn_009d0f60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x009D0F90",
+  "name": "get_object_word_2bc",
+  "kind": "function",
+  "file": "functions/fn_009d0f90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x009D0FD0",
+  "name": "copy_timing_triplets",
+  "kind": "function",
+  "file": "functions/fn_009d0fd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x009D1030",
+  "name": "set_object_word_2bc",
+  "kind": "function",
+  "file": "functions/fn_009d1030.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
  },
  {
   "address": "0x009D1070",
@@ -84708,6 +84870,87 @@
   "lane": "r-s440"
  },
  {
+  "address": "0x00AF5EA0",
+  "name": "resolve_task_property_or_default",
+  "kind": "function",
+  "file": "functions/fn_00af5ea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x00AF5EC0",
+  "name": "read_three_float_properties",
+  "kind": "function",
+  "file": "functions/fn_00af5ec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x00AF6110",
+  "name": "lookup_damage_kind_name",
+  "kind": "function",
+  "file": "functions/fn_00af6110.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x00AF6170",
+  "name": "lookup_projectile_kind_name",
+  "kind": "function",
+  "file": "functions/fn_00af6170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x00AF61D0",
+  "name": "lookup_hit_mode_name",
+  "kind": "function",
+  "file": "functions/fn_00af61d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x00AF6230",
+  "name": "lookup_fuse_mode_name",
+  "kind": "function",
+  "file": "functions/fn_00af6230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x00AF6290",
+  "name": "lookup_weapon_flag_name",
+  "kind": "function",
+  "file": "functions/fn_00af6290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x00AF62F0",
+  "name": "lookup_weapon_category_name",
+  "kind": "function",
+  "file": "functions/fn_00af62f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
+  "address": "0x00AF6340",
+  "name": "lookup_weapon_group_name",
+  "kind": "function",
+  "file": "functions/fn_00af6340.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
+ },
+ {
   "address": "0x00AF6390",
   "name": "lookup_value_in_60_word_table_or_fallback",
   "kind": "function",
@@ -84715,6 +84958,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s609"
+ },
+ {
+  "address": "0x00AF64B0",
+  "name": "scale_object_value_by_flag",
+  "kind": "function",
+  "file": "functions/fn_00af64b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U35"
  },
  {
   "address": "0x00AF7000",
