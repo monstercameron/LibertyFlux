@@ -8,7 +8,6 @@
 /// offset 0x1e is returned as the low-byte boolean.
 lf_checker_rt::export!(thiscall, rw_00DC4C50(key_address: u32) -> u8 {
     unsafe {
-        const KEY_VALUE: u32 = 0x00;
         const METADATA_POINTERS: u32 = 0x0117_8284;
         const METADATA_RECORD_BYTES: u32 = 0x20;
         const STATE_FLAGS: u32 = 0x1e;

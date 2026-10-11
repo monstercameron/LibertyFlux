@@ -11,9 +11,9 @@
 /// from the task builder.
 ///
 /// The special cases either call virtual slots `+0x4c` or `+0x58`, request a
-/// child from the builder, or replace the child pointer at `this + 0x40`.
-/// Replacing a non-null child calls the release helper first, stores the new
-/// pointer, then calls the retain helper with the address of that slot. The
+/// child from the builder, or store the child pointer at `this + 0x40`. The
+/// `0x2cd` case releases a non-null old child before storing and retaining the
+/// new one; the `0x340` case stores and retains without releasing. The
 /// fallback comparison at `this + 0x44` is signed. This is a 32-bit thiscall
 /// method with one pointer argument and a 32-bit result.
 lf_checker_rt::export!(thiscall, rw_00b7d080(this: u32, ped: u32) -> u32 {
@@ -105,15 +105,6 @@ lf_checker_rt::export!(thiscall, rw_00b7d080(this: u32, ped: u32) -> u32 {
                 let next_child = read_u32(ped + PED_CHILD);
                 if flags & 4 != 0 && next_child != 0 {
                     let slot = this + CURRENT_CHILD;
-                    let old_child = read_u32(slot);
-                    if old_child != 0 {
-                        let _: u32 = lf_checker_rt::callee_thiscall!(
-                            RELEASE_CHILD,
-                            u32,
-                            old_child,
-                            slot
-                        );
-                    }
                     write_u32(slot, next_child);
                     let _: u32 = lf_checker_rt::callee_thiscall!(
                         RETAIN_CHILD,

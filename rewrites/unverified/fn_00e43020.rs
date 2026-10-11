@@ -14,8 +14,6 @@ const FRAME_ANGLE: usize = 0x30;
 const FRAME_UNINIT_Y: usize = 0x34;
 const FRAME_UNINIT_TAIL: usize = 0x4c;
 const FRAME_VERTEX_X: usize = 0x100;
-const FRAME_VERTEX_Y: usize = 0x104;
-const FRAME_VERTEX_Z: usize = 0x108;
 
 const CONFIG_WORDS: u32 = 0x008fc260;
 const INITIALIZE_DRAW_STATE: u32 = 0x00923950;
@@ -203,10 +201,6 @@ pub(crate) fn aligned_frame_draw_c_impl(
     let out_words = unsafe { frame.as_mut_ptr().add(FRAME_OUT0 / 4) as u32 };
     callee_cdecl!(INITIALIZE_DRAW_STATE, u32,);
     callee_cdecl!(CONFIG_WORDS, u32, 7u32, 0u32, out_words, 0u32);
-    callee_cdecl!(PREPARE_DRAW, u32,);
-    callee_cdecl!(SET_DRAW_MODE, u32, 7u32, 1u32);
-    callee_cdecl!(SET_DRAW_MODE, u32, 2u32, 0u32);
-    callee_cdecl!(SET_DRAW_MODE, u32, 15u32, 15u32);
 
     let out0 = float(&frame, FRAME_OUT0);
     let out1 = float(&frame, FRAME_OUT1);
@@ -218,6 +212,11 @@ pub(crate) fn aligned_frame_draw_c_impl(
     let shifted3 = add_f32(out1, arg1);
     let anchor_x = add_f32(out0, arg0);
     put_float(&mut frame, FRAME_X_ANCHOR, anchor_x);
+
+    callee_cdecl!(PREPARE_DRAW, u32,);
+    callee_cdecl!(SET_DRAW_MODE, u32, 7u32, 1u32);
+    callee_cdecl!(SET_DRAW_MODE, u32, 2u32, 0u32);
+    callee_cdecl!(SET_DRAW_MODE, u32, 15u32, 15u32);
 
     let scale = global_f32(SCALE_FACTOR_VA);
     let step = global_f32(ANGLE_STEP_VA);
@@ -232,6 +231,7 @@ pub(crate) fn aligned_frame_draw_c_impl(
     let y_comp = sub_f32(add_f32(scaled3, float(&frame, FRAME_UNINIT_Y)), out1_scaled);
     let x_scaled_comp = sub_f32(sub_f32(scaled2, out0), out0_scaled);
     let y_scaled_comp = sub_f32(sub_f32(scaled3, out1), out1_scaled);
+    let uninitialized_y = float(&frame, FRAME_UNINIT_Y);
 
     put_float(&mut frame, 0xf8, x_base);
     let uninitialized_tail = float(&frame, FRAME_UNINIT_TAIL);
@@ -239,10 +239,10 @@ pub(crate) fn aligned_frame_draw_c_impl(
     put_float(&mut frame, 0x100, x_base);
     put_float(&mut frame, 0x104, y_base);
     put_float(&mut frame, 0x108, clamped2);
-    put_float(&mut frame, 0x10c, float(&frame, FRAME_UNINIT_Y));
+    put_float(&mut frame, 0x10c, uninitialized_y);
 
     put_float(&mut frame, 0x90, x_comp);
-    put_float(&mut frame, 0x94, float(&frame, FRAME_UNINIT_Y));
+    put_float(&mut frame, 0x94, uninitialized_y);
     put_float(&mut frame, 0x98, x_base);
     put_float(&mut frame, 0x9c, y_comp);
     put_float(&mut frame, 0xa0, x_comp);
