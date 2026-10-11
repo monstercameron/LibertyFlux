@@ -1176,6 +1176,14 @@
   "reason": "other"
  },
  {
+  "address": "0x00920B00",
+  "name": "streaming_fn_00920b00",
+  "file": "fn_00920b00.rs",
+  "lane": "r-s676",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x0092AE00",
   "name": "cam_pose_update",
   "file": "fn_0092ae00.rs",
@@ -1320,50 +1328,10 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009B5CE0",
-  "name": "pending_009b5ce0",
-  "file": "fn_009b5ce0.rs",
+  "address": "0x009B6280",
+  "name": "pending_009b6280",
+  "file": "fn_009b6280.rs",
   "lane": "r-s668",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB320",
-  "name": "CCamScriptInstruction_UnInheritRollCam::vf2",
-  "file": "fn_009bb320.rs",
-  "lane": "r-s667",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB350",
-  "name": "CCamScriptInstruction_UnPointCam::vf2",
-  "file": "fn_009bb350.rs",
-  "lane": "r-s667",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB3A0",
-  "name": "script_camera_handler_009bb3a0",
-  "file": "fn_009bb3a0.rs",
-  "lane": "r-s667",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB3F0",
-  "name": "script_camera_handler_009bb3f0",
-  "file": "fn_009bb3f0.rs",
-  "lane": "r-s667",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB410",
-  "name": "script_camera_handler_009bb410",
-  "file": "fn_009bb410.rs",
-  "lane": "r-s667",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1493,14 +1461,6 @@
   "file": "fn_00a0b4b0.rs",
   "lane": "r-s465",
   "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A21440",
-  "name": "ped_task_move_blend",
-  "file": "fn_00a21440.rs",
-  "lane": "a-U57",
-  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -1784,6 +1744,14 @@
   "reason": "out_of_time"
  },
  {
+  "address": "0x00AFF120",
+  "name": null,
+  "file": "fn_00aff120.rs",
+  "lane": "a-U56",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00AFF630",
   "name": null,
   "file": "fn_00aff630.rs",
@@ -1992,17 +1960,9 @@
   "reason": null
  },
  {
-  "address": "0x00B23660",
-  "name": "physics_dispatch_offset_slot_8c",
-  "file": "fn_00b23660.rs",
-  "lane": "r-s665",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B25190",
-  "name": "CPhysical::vf59",
-  "file": "fn_00b25190.rs",
+  "address": "0x00B25790",
+  "name": "CPhysical::vf64",
+  "file": "fn_00b25790.rs",
   "lane": "r-s665",
   "outcome": "not_reached",
   "reason": null
@@ -2576,78 +2536,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00C56330",
-  "name": "CEventLeaderEnteredCover::~CEventLeaderEnteredCover",
-  "file": "fn_00c56330.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C56360",
-  "name": "CEventLeaderExitedCarAsDriver::~CEventLeaderExitedCarAsDriver",
-  "file": "fn_00c56360.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C56390",
-  "name": "CEventLeaderHolsteredWeapon::~CEventLeaderHolsteredWeapon",
-  "file": "fn_00c56390.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C563C0",
-  "name": "CEventLeaderLeftCover::~CEventLeaderLeftCover",
-  "file": "fn_00c563c0.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C563F0",
-  "name": "CEventLeaderUnholsteredWeapon::~CEventLeaderUnholsteredWeapon",
-  "file": "fn_00c563f0.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C56420",
-  "name": "CEventPedCollisionWithPlayer::~CEventPedCollisionWithPlayer",
-  "file": "fn_00c56420.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C56480",
-  "name": "CEventPlayerCollisionWithPed::~CEventPlayerCollisionWithPed",
-  "file": "fn_00c56480.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C564E0",
-  "name": "CEventAcquaintancePedHateBadlyLit::~CEventAcquaintancePedHateBadlyLit",
-  "file": "fn_00c564e0.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C56560",
-  "name": "CEventAcquaintancePedLike::~CEventAcquaintancePedLike",
-  "file": "fn_00c56560.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C56590",
   "name": "CEventAcquaintancePedRespect::~CEventAcquaintancePedRespect",
   "file": "fn_00c56590.rs",
@@ -2704,17 +2592,9 @@
   "reason": null
  },
  {
-  "address": "0x00C78100",
-  "name": "phbound_register_entry",
-  "file": "fn_00c78100.rs",
-  "lane": "r-s663",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C781F0",
-  "name": "phbound_register_static_hooks",
-  "file": "fn_00c781f0.rs",
+  "address": "0x00C78530",
+  "name": "phbound_registry_configure",
+  "file": "fn_00c78530.rs",
   "lane": "r-s663",
   "outcome": "not_reached",
   "reason": null
@@ -2726,14 +2606,6 @@
   "lane": "r-s663",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00C78650",
-  "name": "phbound_register_defaults",
-  "file": "fn_00c78650.rs",
-  "lane": "r-s663",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00C7E200",
@@ -3080,27 +2952,147 @@
   "reason": "out_of_time"
  },
  {
+  "address": "0x00CC76D0",
+  "name": null,
+  "file": "fn_00cc76d0.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC7720",
+  "name": null,
+  "file": "fn_00cc7720.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC7890",
+  "name": null,
+  "file": "fn_00cc7890.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC78C0",
+  "name": null,
+  "file": "fn_00cc78c0.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC7D40",
+  "name": null,
+  "file": "fn_00cc7d40.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC7E40",
+  "name": null,
+  "file": "fn_00cc7e40.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC7F20",
+  "name": null,
+  "file": "fn_00cc7f20.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC7FA0",
+  "name": null,
+  "file": "fn_00cc7fa0.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC80A0",
+  "name": null,
+  "file": "fn_00cc80a0.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC8230",
+  "name": null,
+  "file": "fn_00cc8230.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC8270",
+  "name": null,
+  "file": "fn_00cc8270.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC82B0",
+  "name": null,
+  "file": "fn_00cc82b0.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC82F0",
+  "name": null,
+  "file": "fn_00cc82f0.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00CC8720",
-  "name": "fragInstGta::vf64",
+  "name": null,
   "file": "fn_00cc8720.rs",
   "lane": "r-s664",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC9110",
+  "name": null,
+  "file": "fn_00cc9110.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
   "reason": null
  },
  {
   "address": "0x00CC94A0",
-  "name": "fn_00CC94A0",
+  "name": null,
   "file": "fn_00cc94a0.rs",
   "lane": "r-s664",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
   "reason": null
  },
  {
   "address": "0x00CC9550",
-  "name": "fn_00CC9550",
+  "name": null,
   "file": "fn_00cc9550.rs",
   "lane": "r-s664",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CC9780",
+  "name": null,
+  "file": "fn_00cc9780.rs",
+  "lane": "r-s664",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -3720,56 +3712,24 @@
   "reason": null
  },
  {
-  "address": "0x00D9EC30",
-  "name": "streaming_00d9ec30",
-  "file": "fn_00d9ec30.rs",
+  "address": "0x00D9EEC0",
+  "name": "streaming_00d9eec0",
+  "file": "fn_00d9eec0.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00D9EC40",
-  "name": "streaming_00d9ec40",
-  "file": "fn_00d9ec40.rs",
-  "lane": "r-s675",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D9EC50",
-  "name": "streaming_00d9ec50",
-  "file": "fn_00d9ec50.rs",
-  "lane": "r-s675",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D9F020",
-  "name": "streaming_00d9f020",
-  "file": "fn_00d9f020.rs",
-  "lane": "r-s675",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D9F040",
-  "name": "streaming_00d9f040",
-  "file": "fn_00d9f040.rs",
-  "lane": "r-s675",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D9F060",
-  "name": "streaming_00d9f060",
-  "file": "fn_00d9f060.rs",
+  "address": "0x00D9F910",
+  "name": "streaming_00d9f910",
+  "file": "fn_00d9f910.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00D9F9B0",
-  "name": "streaming_00d9f9b0",
+  "name": "stream_value_in_range",
   "file": "fn_00d9f9b0.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
@@ -3777,7 +3737,7 @@
  },
  {
   "address": "0x00D9F9D0",
-  "name": "streaming_00d9f9d0",
+  "name": "stream_sample_in_range",
   "file": "fn_00d9f9d0.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
@@ -3785,7 +3745,7 @@
  },
  {
   "address": "0x00DA1E00",
-  "name": "streaming_00da1e00",
+  "name": "stream_state_gate",
   "file": "fn_00da1e00.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
@@ -3793,7 +3753,7 @@
  },
  {
   "address": "0x00DA22A0",
-  "name": "streaming_00da22a0",
+  "name": "set_stream_entry",
   "file": "fn_00da22a0.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
@@ -3801,8 +3761,40 @@
  },
  {
   "address": "0x00DA22F0",
-  "name": "streaming_00da22f0",
+  "name": "set_stream_sample",
   "file": "fn_00da22f0.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DA2330",
+  "name": "write_stream_detail",
+  "file": "fn_00da2330.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DA2370",
+  "name": "copy_stream_payload",
+  "file": "fn_00da2370.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DA23B0",
+  "name": "set_stream_record_fields",
+  "file": "fn_00da23b0.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DA23F0",
+  "name": "set_stream_record_metadata",
+  "file": "fn_00da23f0.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
   "reason": null
@@ -3816,9 +3808,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00DADD80",
-  "name": "pending_00dadd80",
-  "file": "fn_00dadd80.rs",
+  "address": "0x00DADEA0",
+  "name": "CTaskComplexAvoidPlayerTargetting::vf20",
+  "file": "fn_00dadea0.rs",
   "lane": "r-b680",
   "outcome": "not_reached",
   "reason": null
@@ -3886,22 +3878,6 @@
   "lane": "r-s590",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00DE6A50",
-  "name": "scrolling_menu_adjust_selection",
-  "file": "fn_00de6a50.rs",
-  "lane": "r-s666",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00DE6AE0",
-  "name": "UIGTAScrollingRow::vf82",
-  "file": "fn_00de6ae0.rs",
-  "lane": "r-s666",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E4B5D0",
