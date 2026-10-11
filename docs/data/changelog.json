@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Devlog: the findings of 10 and 11 October written up, with fourteen lane entries",
+    "commit": null,
+    "summary": "The night's findings were in the hourly review rows and the changelog only. They are now devlog entries of their own, and the entries that lanes wrote are integrated.",
+    "changes": [
+      "Five entries by the coordinator: what closing eight large functions taught about proofs (a wrong version that passes is a contract fault; unwritten branches against paths the original faults on; untested inputs against unwritten code; no wrong versions in a published rewrite); the regression runner, the three faults found in it and the list maker that had hidden 5,000 proofs; six operating faults of the night, among them the machine's standby and the rule that stalled naming; three questions about the checker, two settled and the audit of float-to-integer casts still open; and the evaluation of an outside reverse-engineering toolkit, not adopted, with the one idea taken from it.",
+      "Fourteen entries written by lanes on 10 and 11 October are integrated through the publication checks: checker traps (a global written on every pass is compared only at its final value; cycles of different lengths hide routes; a copied source keeps its old timestamp and the build is skipped; a contract that passed with the wrong count of stack words), earlier stages that were wrong and still passed, and the three lift lanes' accounts of what a group of functions sharing a name turned out to be.",
+      "One lane entry concluded that a callee's write into the caller's frame cannot be proven on the stock checker. That was overturned the same night (the contract asked for eight words where two fit); the entry is published with the correction and a title that says so.",
+      "Lane fragments are now put into the integrator's form by a script before the checks run; Haiku lanes write the title and the date in forms of their own, and all fourteen had been refused for that alone."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 9 files from lanes (506 unverified rewrites, 0 in review)",
     "commit": null,
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
