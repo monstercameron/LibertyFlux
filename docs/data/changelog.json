@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 2 withdrawn because their float-to-integer conversion differs from the original out of range",
+    "commit": null,
+    "summary": "The verified count goes down by two. An audit of how verified rewrites convert floats to integers found two whose conversion gives a different result from the original's instruction when the value does not fit, and showed it on the stock checker.",
+    "changes": [
+      "Both rewrites convert with Rust's cast, which gives the nearest end of the range when a value does not fit. The original's instruction gives a fixed result instead. One function converts six values with a 32-bit truncating conversion and keeps 16 bits: for a positive value too large for 32 bits the original stores zero and the rewrite stored the largest 16-bit value. The other converts through a 64-bit integer store and keeps the low half: they differ for positive infinity and for values too large for 64 bits.",
+      "Their proofs of record passed because the floats those contracts draw are small and never reach such values. With a copy of each contract changed only to steer the converted value out of range, the stock checker fails the tracked rewrite in 439 and in 67 of 1,000 trials. A corrected conversion passes 1,000 of 1,000 on the same widened contract, with the tracked code as the wrong version failing.",
+      "Whether the game can produce such values at those two points is not known. A rewrite known to differ from the original is not verified, so both are withdrawn until a lane proves the corrected copies with the widened contracts.",
+      "A third function flagged by the same audit is not affected: its five conversions take operands the code itself bounds, and an instrumented run saw 24,984 operands, all in range.",
+      "The audit found 326 conversions of this form in 291 verified rewrites. In a sample of 40, 28 are guarded so that the rewrite gives the processor's value, 5 agree on the bits that are used, and 7 had no guard: these two functions and the unaffected third. The other 284 files are to be tested with a scripted version of the widened-contract test; the count may go down again when they are."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 14 files from lanes (516 unverified rewrites, 8 in review)",
     "commit": "e423830084239f24ef341a2489f6038e120dc173",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
