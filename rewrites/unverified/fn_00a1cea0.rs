@@ -11,8 +11,8 @@
 /// triplet directly. Every enabled record increments one shared signed count.
 /// If at least one record was enabled, each accumulated component is divided
 /// by that count; otherwise the three outputs remain zero. EAX returns the
-/// end cursor for the fourth group: its base plus one stride per positive
-/// count, or its base when that count is nonpositive. The object uses a
+/// third group's final loop index unless the fourth group's count is
+/// positive, in which case it returns that group's end cursor. The object uses a
 /// 32-bit game layout;
 /// its offsets are named here because the merged layout does not identify
 /// this larger task record.
@@ -72,7 +72,7 @@ lf_checker_rt::export!(thiscall, rw_00A1CEA0(this: u32) -> u32 {
         }
 
         let mut enabled_count = 0i32;
-        let mut group_four_end = object + GROUP_BASES[3];
+        let mut return_eax = 0u32;
         let mut group = 0usize;
         while group < GROUP_COUNTS.len() {
             let count = read_i32(object + GROUP_COUNTS[group]);
@@ -103,8 +103,10 @@ lf_checker_rt::export!(thiscall, rw_00A1CEA0(this: u32) -> u32 {
                     index = index.wrapping_add(1);
                 }
             }
-            if group == 3 {
-                group_four_end = object
+            if group == 2 {
+                return_eax = index as u32;
+            } else if group == 3 && count > 0 {
+                return_eax = object
                     .wrapping_add(GROUP_BASES[group])
                     .wrapping_add((index as u32).wrapping_mul(GROUP_STRIDES[group]));
             }
@@ -123,6 +125,6 @@ lf_checker_rt::export!(thiscall, rw_00A1CEA0(this: u32) -> u32 {
             write_f32(output, mul_ss(total, reciprocal));
             component += 1;
         }
-        group_four_end
+        return_eax
     }
 });
