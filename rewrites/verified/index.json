@@ -43803,6 +43803,96 @@
   "lane": "a-Q22"
  },
  {
+  "address": "0x008602C0",
+  "name": "physics_reset_child_responses",
+  "kind": "function",
+  "file": "functions/fn_008602c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s654"
+ },
+ {
+  "address": "0x008606D0",
+  "name": "physics_set_scaled_response",
+  "kind": "function",
+  "file": "functions/fn_008606d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s654"
+ },
+ {
+  "address": "0x00860CC0",
+  "name": "physics_dispatch_child_callbacks",
+  "kind": "function",
+  "file": "functions/fn_00860cc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s654"
+ },
+ {
+  "address": "0x008619C0",
+  "name": "physics_clear_elapsed_time",
+  "kind": "function",
+  "file": "functions/fn_008619c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s654"
+ },
+ {
+  "address": "0x00861A50",
+  "name": "physics_copy_position_state",
+  "kind": "function",
+  "file": "functions/fn_00861a50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s654"
+ },
+ {
+  "address": "0x00862310",
+  "name": "physics_is_motion_candidate",
+  "kind": "function",
+  "file": "functions/fn_00862310.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s654"
+ },
+ {
+  "address": "0x00862370",
+  "name": "physics_copy_surface_state",
+  "kind": "function",
+  "file": "functions/fn_00862370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s654"
+ },
+ {
+  "address": "0x00863A20",
+  "name": "physics_set_surface_response",
+  "kind": "function",
+  "file": "functions/fn_00863a20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s654"
+ },
+ {
+  "address": "0x008640B0",
+  "name": "physics_scale_vector_above_threshold",
+  "kind": "function",
+  "file": "functions/fn_008640b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s654"
+ },
+ {
+  "address": "0x0086C7F0",
+  "name": "Script_CallEncrypted0",
+  "kind": "function",
+  "file": "functions/fn_0086c7f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s654"
+ },
+ {
   "address": "0x0086E870",
   "name": "TIMERB",
   "kind": "native",
