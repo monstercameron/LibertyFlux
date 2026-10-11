@@ -38817,6 +38817,24 @@
   "lane": "r-b295"
  },
  {
+  "address": "0x00684270",
+  "name": "rage::crFrameDofFloat::vf1",
+  "kind": "function",
+  "file": "functions/fn_00684270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s594"
+ },
+ {
+  "address": "0x006842E0",
+  "name": "rage::crFrameDofFloat::vf3",
+  "kind": "function",
+  "file": "functions/fn_006842e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s594"
+ },
+ {
   "address": "0x00684480",
   "name": "rage::crFrameDofFloat::vf6",
   "kind": "function",
@@ -38869,6 +38887,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G01"
+ },
+ {
+  "address": "0x00684570",
+  "name": "rage::crFrameDofInt::vf1",
+  "kind": "function",
+  "file": "functions/fn_00684570.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s594"
+ },
+ {
+  "address": "0x006845E0",
+  "name": "rage::crFrameDofInt::vf3",
+  "kind": "function",
+  "file": "functions/fn_006845e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s594"
  },
  {
   "address": "0x006846F0",
@@ -39022,6 +39058,33 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-Q76"
+ },
+ {
+  "address": "0x00685BA0",
+  "name": "find_frame_record_by_key",
+  "kind": "function",
+  "file": "functions/fn_00685ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s594"
+ },
+ {
+  "address": "0x00685C10",
+  "name": "find_frame_record_and_insertion_index",
+  "kind": "function",
+  "file": "functions/fn_00685c10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s594"
+ },
+ {
+  "address": "0x00685CC0",
+  "name": "mark_record_dirty_if_key_present",
+  "kind": "function",
+  "file": "functions/fn_00685cc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s594"
  },
  {
   "address": "0x00685CE0",
