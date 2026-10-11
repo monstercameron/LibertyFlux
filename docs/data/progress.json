@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 36060,
-    "rewritten": 18175,
-    "verified": 17905
+    "named": 36062,
+    "rewritten": 18194,
+    "verified": 17923
   },
   "structures": 340,
-  "symbols": 18005,
+  "symbols": 18023,
   "measured": [
     {
       "label": "Code section",
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 36060,
+      "value": 36062,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27056); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27058); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites of game functions that passed the checker in a lane",
@@ -117,15 +117,15 @@
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 36.0,
+      "value": 36.1,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2638607 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2641469 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
       "value": 27.7,
       "unit": "percent",
-      "source": "394 of 1347 such functions; they hold 38% of the game's code"
+      "source": "395 of 1347 such functions; they hold 38% of the game's code"
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
@@ -135,13 +135,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 18175,
+      "value": 18194,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 17905,
+      "value": 17923,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
@@ -961,16 +961,16 @@
       "count": 63,
       "named": 40,
       "rewritten": 4,
-      "verified": 0
+      "verified": 4
     },
     {
-      "stage": "rewritten",
+      "stage": "verified",
       "from": "0x005F65CF",
       "to": "0x005FBEEF",
       "count": 34,
       "named": 28,
       "rewritten": 20,
-      "verified": 7
+      "verified": 20
     },
     {
       "stage": "named",
@@ -2355,8 +2355,8 @@
       "to": "0x00955D24",
       "count": 116,
       "named": 112,
-      "rewritten": 91,
-      "verified": 91
+      "rewritten": 92,
+      "verified": 92
     },
     {
       "stage": "named",
@@ -2715,7 +2715,7 @@
       "to": "0x00A34A64",
       "count": 121,
       "named": 118,
-      "rewritten": 32,
+      "rewritten": 34,
       "verified": 22
     },
     {
@@ -3075,7 +3075,7 @@
       "to": "0x00B137A3",
       "count": 90,
       "named": 90,
-      "rewritten": 19,
+      "rewritten": 23,
       "verified": 2
     },
     {
@@ -3372,7 +3372,7 @@
       "to": "0x00BCB4F8",
       "count": 371,
       "named": 371,
-      "rewritten": 255,
+      "rewritten": 256,
       "verified": 251
     },
     {
@@ -3390,7 +3390,7 @@
       "to": "0x00BD673B",
       "count": 289,
       "named": 289,
-      "rewritten": 149,
+      "rewritten": 151,
       "verified": 135
     },
     {
@@ -3417,7 +3417,7 @@
       "to": "0x00BE72A0",
       "count": 100,
       "named": 99,
-      "rewritten": 63,
+      "rewritten": 64,
       "verified": 51
     },
     {
@@ -3453,7 +3453,7 @@
       "to": "0x00BFD726",
       "count": 95,
       "named": 93,
-      "rewritten": 69,
+      "rewritten": 70,
       "verified": 58
     },
     {
@@ -3651,7 +3651,7 @@
       "to": "0x00C78009",
       "count": 87,
       "named": 87,
-      "rewritten": 27,
+      "rewritten": 28,
       "verified": 7
     },
     {
@@ -3660,7 +3660,7 @@
       "to": "0x00C7D92A",
       "count": 149,
       "named": 149,
-      "rewritten": 49,
+      "rewritten": 51,
       "verified": 44
     },
     {
@@ -3786,7 +3786,7 @@
       "to": "0x00CCB901",
       "count": 129,
       "named": 118,
-      "rewritten": 69,
+      "rewritten": 70,
       "verified": 64
     },
     {
@@ -4244,8 +4244,8 @@
       "from": "0x00DE2191",
       "to": "0x00DE7AB2",
       "count": 88,
-      "named": 78,
-      "rewritten": 18,
+      "named": 79,
+      "rewritten": 21,
       "verified": 18
     },
     {
@@ -4477,9 +4477,9 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2638607,
+    "verified": 2641469,
     "large_functions": 2801402,
-    "large_functions_verified": 775903
+    "large_functions_verified": 777093
   },
   "lifted": {
     "methods": 497,

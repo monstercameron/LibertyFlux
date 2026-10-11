@@ -118773,6 +118773,15 @@
   "lane": "r-b528"
  },
  {
+  "address": "0x00BE33D0",
+  "name": "CTaskComplexSitIdle::CTaskComplexSitIdle_2",
+  "kind": "function",
+  "file": "functions/fn_00be33d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
   "address": "0x00BE3680",
   "name": "CTaskComplexUseEffect::vf19",
   "kind": "function",
@@ -119061,6 +119070,33 @@
   "lane": "r-s341"
  },
  {
+  "address": "0x00BE4E40",
+  "name": "task_type_dd_transition",
+  "kind": "function",
+  "file": "functions/fn_00be4e40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
+  "address": "0x00BE4EA0",
+  "name": "map_task_slots_16",
+  "kind": "function",
+  "file": "functions/fn_00be4ea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
+  "address": "0x00BE4EE0",
+  "name": "CTaskComplexControlMovement::vf21",
+  "kind": "function",
+  "file": "functions/fn_00be4ee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
   "address": "0x00BE4F60",
   "name": "peds_task_react_code",
   "kind": "function",
@@ -119077,6 +119113,87 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b498"
+ },
+ {
+  "address": "0x00BE51F0",
+  "name": "task_forward_virtual_float_to_helper",
+  "kind": "function",
+  "file": "functions/fn_00be51f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
+  "address": "0x00BE5210",
+  "name": "task_control_check_result",
+  "kind": "function",
+  "file": "functions/fn_00be5210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
+  "address": "0x00BE5240",
+  "name": "task_equal_child_type_tail_lookup",
+  "kind": "function",
+  "file": "functions/fn_00be5240.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
+  "address": "0x00BE56F0",
+  "name": "task_type_from_manager",
+  "kind": "function",
+  "file": "functions/fn_00be56f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
+  "address": "0x00BE5720",
+  "name": "task_type_tag_or_invalid",
+  "kind": "function",
+  "file": "functions/fn_00be5720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
+  "address": "0x00BE5760",
+  "name": "task_type_tag_after_lazy_init",
+  "kind": "function",
+  "file": "functions/fn_00be5760.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
+  "address": "0x00BE57E0",
+  "name": "task_child_value_when_type_111",
+  "kind": "function",
+  "file": "functions/fn_00be57e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
+  "address": "0x00BE5810",
+  "name": "task_return_after_virtual_checks",
+  "kind": "function",
+  "file": "functions/fn_00be5810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
+ },
+ {
+  "address": "0x00BE5830",
+  "name": "copy_three_task_words",
+  "kind": "function",
+  "file": "functions/fn_00be5830.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s648"
  },
  {
   "address": "0x00BE58A0",
