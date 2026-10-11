@@ -109773,6 +109773,15 @@
   "lane": "r-s355"
  },
  {
+  "address": "0x00BC01E0",
+  "name": "GIVING_PED_SEQUENCE",
+  "kind": "function",
+  "file": "functions/fn_00bc01e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s644"
+ },
+ {
   "address": "0x00BC02D0",
   "name": "alloc_task_3e_bounded (proposed)",
   "kind": "function",
@@ -109789,6 +109798,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "a-S05"
+ },
+ {
+  "address": "0x00BC03B0",
+  "name": "assign_coordinate_task_to_ped",
+  "kind": "function",
+  "file": "functions/fn_00bc03b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s644"
  },
  {
   "address": "0x00BC0460",
@@ -109816,6 +109834,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s355"
+ },
+ {
+  "address": "0x00BC0580",
+  "name": "build_and_attach_condition_task",
+  "kind": "function",
+  "file": "functions/fn_00bc0580.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s644"
  },
  {
   "address": "0x00BC0640",
@@ -109899,6 +109926,24 @@
   "lane": "r-s355"
  },
  {
+  "address": "0x00BC0A10",
+  "name": "build_and_attach_scaled_position_task",
+  "kind": "function",
+  "file": "functions/fn_00bc0a10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s644"
+ },
+ {
+  "address": "0x00BC0C30",
+  "name": "build_and_attach_two_position_tasks",
+  "kind": "function",
+  "file": "functions/fn_00bc0c30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s644"
+ },
+ {
   "address": "0x00BC1030",
   "name": "ped_indexed_setter_d0",
   "kind": "function",
@@ -109951,6 +109996,51 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s355"
+ },
+ {
+  "address": "0x00BC2CB0",
+  "name": "task_table_method_forwarder",
+  "kind": "function",
+  "file": "functions/fn_00bc2cb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s644"
+ },
+ {
+  "address": "0x00BC3070",
+  "name": "task_flags_to_mask",
+  "kind": "function",
+  "file": "functions/fn_00bc3070.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s644"
+ },
+ {
+  "address": "0x00BC3890",
+  "name": "try_update_nearest_ped_candidate",
+  "kind": "function",
+  "file": "functions/fn_00bc3890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s644"
+ },
+ {
+  "address": "0x00BC3980",
+  "name": "CTaskSimpleSetCharIgnoreWeaponRangeFlag::vf5",
+  "kind": "function",
+  "file": "functions/fn_00bc3980.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s644"
+ },
+ {
+  "address": "0x00BC3CB0",
+  "name": "CTaskSimpleSay::vf17",
+  "kind": "function",
+  "file": "functions/fn_00bc3cb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s644"
  },
  {
   "address": "0x00BC4F90",
