@@ -5,8 +5,8 @@
 /// field at `+0x18` must be nonzero before the third query. The third result's
 /// field at `+0x18` points to a nested field at `+0x18`; a final value of zero
 /// or two makes the byte true. It updates entity flags at `+0x118` with the original wrapping
-/// expression, then clears bit zero when the optional object at `+0x6c` has
-/// a zero byte at `+0x0e`. The notification helper receives only the low
+/// expression, then clears bit zero when the optional object at `+0x6c` is
+/// null or has a zero byte at `+0x0e`. The notification helper receives only the low
 /// byte of the local boolean; the source's upper call-word bytes are stale
 /// saved-register data. Finally it dispatches through vtable slot `+0x11c`.
 lf_checker_rt::export!(thiscall, rw_b25790(this: u32) -> () {
@@ -57,7 +57,7 @@ lf_checker_rt::export!(thiscall, rw_b25790(this: u32) -> () {
         let mut new_flags = (doubled_difference & 2) ^ old_flags;
 
         let optional = read_u32(this.wrapping_add(OPTIONAL_OBJECT));
-        if optional != 0 && read_u8(optional.wrapping_add(OPTIONAL_BYTE)) == 0 {
+        if optional == 0 || read_u8(optional.wrapping_add(OPTIONAL_BYTE)) == 0 {
             new_flags &= !1;
         }
         write_u32(flags_address, new_flags);

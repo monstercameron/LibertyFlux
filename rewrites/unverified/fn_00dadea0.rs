@@ -120,6 +120,7 @@ lf_checker_rt::export!(thiscall, rw_00DADEA0(this: u32, context: u32) -> u32 {
     unsafe {
         let mut preparation_output = [0u32; 8];
         let mut direction_output = [0u32; 8];
+        direction_output[0] = 1;
         let mut prepared = false;
         let first_reference = read_word(this.wrapping_add(FIRST_REFERENCE));
         if first_reference != 0
@@ -141,9 +142,10 @@ lf_checker_rt::export!(thiscall, rw_00DADEA0(this: u32, context: u32) -> u32 {
                 if read_byte(ready_at) & 8 != 0 {
                     let first_out = preparation_output.as_mut_ptr() as u32;
                     let second_out = first_out.wrapping_add(16);
-                    let _ = lf_checker_rt::callee_thiscall!(
+                    let _ = lf_checker_rt::callee_fastcall!(
                         PREPARE_OUTPUT_HELPER,
                         u32,
+                        manager,
                         manager,
                         context,
                         read_word(auxiliary.wrapping_add(0x20)),

@@ -139,7 +139,7 @@ unsafe fn input_master_pass(mutant: bool) -> u32 {
             u32,
             entity_values.as_mut_ptr().add(2) as u32,
             auxiliary_values.as_mut_ptr() as u32,
-            position[0].to_bits(),
+            range.to_bits(),
         )
     };
 
