@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Assembler: blame a compile error only on the shard's own files",
+    "commit": null,
+    "summary": "The pipeline's assembled-library job failed because the assembler dropped rewrites that compile and kept the ones that do not. It now matches an error only to the shard's own files.",
+    "changes": [
+      "When a shard of the assembled library fails to build, the assembler reads the compiler's messages, drops the rewrites the errors point at and builds again. It took any error position in a file named lib.rs to be in the shard's own root file and looked the line number up in the shard's table of which rewrite owns which line. The checker runtime's export macro also lives in a file named lib.rs, so an error reached through that macro was blamed on whichever rewrite happened to own the same line number in the shard, a file that compiled. That file was dropped, the line numbers shifted, a different innocent file was dropped on the next round, and after 30 rounds the job gave up: 35 files dropped on the failing commit, 5 of them at fault.",
+      "The assembler now counts a position only when it is in the shard's own root file or in the shard's own copy of a rewrite. On the failing commit's shard it drops exactly the seven rewrites that do not compile and builds in two rounds. Three tests cover it: an error reached through the runtime's macro, the shard's own root file still counted with another shard's files ignored, and paths written with forward slashes.",
+      "Found by a repair lane, which reproduced the failure for the one shard locally; the coordinator reviewed and applied its change. The seven rewrites that do not compile in the assembled library are a separate matter and are being examined: four call a float helper they do not define, one defines a panic handler, and two call a routine that is not in their published file."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 49 files from lanes (593 unverified rewrites, 55 in review)",
     "commit": "31785ad0485c5ef65bb753cf9ffc1a9d7b6f279d",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

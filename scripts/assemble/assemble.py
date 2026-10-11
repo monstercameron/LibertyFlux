@@ -433,18 +433,32 @@ def run_measured(cmd, cwd, env):
         return proc.returncode, seconds, peak, out.read(), err.read()
 
 
-def attribute(stdout, owner):
+def attribute(stdout, owner, shard=None):
     """{key: first error} from cargo's JSON messages, plus unattributed error texts. A span counts when it, or any
-    macro expansion it came through, lies in a rewrite copy (rw/<key>.rs) or on a lib.rs line owned by a rewrite."""
+    macro expansion it came through, lies in a rewrite copy (rw/<key>.rs) or on a lib.rs line owned by a rewrite.
+
+    `shard` is the shard crate's folder as cargo prints it (for example "shards/s046"). With it, only that crate's own
+    rw copies and its own lib.rs count. Without it (tests) any src/lib.rs and any rw copy count. A span in another
+    crate's lib.rs (lf-checker-rt's export! macro, for one) carries that file's line numbers, not the shard's, so it must
+    never be looked up in `owner`. Before this check, an error whose first span was at line 284 of lf-checker-rt's
+    lib.rs was blamed on whichever rewrite owned line 284 of the shard's own lib.rs (a file that compiled), and the
+    rewrite that really failed was never dropped."""
+    if shard:
+        part = r"[\\/]".join(re.escape(p) for p in shard.split("/"))
+        own_lib = re.compile(rf"(?:^|[\\/]){part}[\\/]src[\\/]lib\.rs$")
+        own_rw = re.compile(rf"(?:^|[\\/]){part}[\\/]src[\\/]rw[\\/]([0-9a-f]{{8}})\.rs$")
+    else:
+        own_lib = re.compile(r"(?:^|[\\/])src[\\/]lib\.rs$")
+        own_rw = RW_FILE
     found, loose = {}, []
 
     def keys_of(span):
         while span:
             name = span.get("file_name", "")
-            match = RW_FILE.search(name)
+            match = own_rw.search(name)
             if match:
                 yield match.group(1)
-            elif re.search(r"(?:^|[\\/])lib\.rs$", name) and span.get("line_start") in owner:
+            elif own_lib.search(name) and span.get("line_start") in owner:
                 yield owner[span["line_start"]]
             span = (span.get("expansion") or {}).get("span")
 
@@ -488,7 +502,7 @@ def check_shard(out, index, rows, sources, callee_maps, log, aliases=DEFAULT_ALI
             stats["check_peak_rss_mb"] = max(stats["check_peak_rss_mb"] or 0, peak)
         if code == 0:
             return kept, failed, stats
-        new, loose = attribute(stdout, owner)
+        new, loose = attribute(stdout, owner, f"shards/{shard_name(index)}")
         new = {k: v for k, v in new.items() if k not in failed}
         if not new:
             raise RuntimeError(f"shard {shard_name(index)} fails without a per-file error:\n"

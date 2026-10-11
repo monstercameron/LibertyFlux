@@ -393,5 +393,39 @@ class TestWithCargo(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr[-3000:])
 
 
+class TestAttributeOwnCrateOnly(unittest.TestCase):
+    """A span in another crate's lib.rs must not be mapped through the shard's owner table (its line numbers differ)."""
+
+    def message(self, spans, text="cannot find function `run_x` in this scope"):
+        return json.dumps({"reason": "compiler-message", "message": {
+            "level": "error", "message": text, "rendered": text, "spans": spans, "children": []}})
+
+    def test_runtime_lib_rs_line_is_not_the_shards_line(self):
+        # The export! macro is defined in lf-checker-rt's lib.rs at line 40; the error is in rewrite key(1), reached
+        # through the expansion. Line 40 of the shard's own lib.rs belongs to key(3), which must not be blamed.
+        runtime = "C:\\repo\\crates\\tools\\lf-checker-rt\\src\\lib.rs"
+        rewrite = f"shards\\s046\\src\\rw/{key(1)}.rs"
+        via_runtime = self.message([
+            {"file_name": runtime, "line_start": 40, "is_primary": False,
+             "expansion": {"span": {"file_name": rewrite, "line_start": 8}}},
+            {"file_name": rewrite, "line_start": 9, "is_primary": True}])
+        found, loose = assemble.attribute(via_runtime, {40: key(3)}, "shards/s046")
+        self.assertEqual(found, {key(1): "cannot find function `run_x` in this scope"})
+        self.assertEqual(loose, [])
+
+    def test_own_lib_rs_still_owned_and_other_shards_ignored(self):
+        own = self.message([{"file_name": "shards\\s046\\src\\lib.rs", "line_start": 40}], text="no function rw_x")
+        other_shard = self.message([{"file_name": f"shards\\s045\\src\\rw/{key(2)}.rs", "line_start": 3}],
+                                   text="mismatched types")
+        found, loose = assemble.attribute("\n".join([own, other_shard]), {40: key(3)}, "shards/s046")
+        self.assertEqual(found, {key(3): "no function rw_x"})
+        self.assertEqual(loose, ["mismatched types"])
+
+    def test_forward_slash_paths_match_too(self):
+        msg = self.message([{"file_name": f"shards/s046/src/rw/{key(1)}.rs", "line_start": 2}], text="bad")
+        found, _ = assemble.attribute(msg, {}, "shards/s046")
+        self.assertEqual(found, {key(1): "bad"})
+
+
 if __name__ == "__main__":
     unittest.main()
