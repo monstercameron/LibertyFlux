@@ -79614,6 +79614,15 @@
   "lane": "r-s451"
  },
  {
+  "address": "0x00A3AA50",
+  "name": "vehicle_allocate_registry_slot",
+  "kind": "function",
+  "file": "functions/fn_00a3aa50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s709"
+ },
+ {
   "address": "0x00A3AB50",
   "name": "vehicle_indexed_release",
   "kind": "function",
@@ -79729,6 +79738,87 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3C8E0",
+  "name": "vehicle_replace_timer_reference",
+  "kind": "function",
+  "file": "functions/fn_00a3c8e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s709"
+ },
+ {
+  "address": "0x00A3C920",
+  "name": "vehicle_reset_motion_fields",
+  "kind": "function",
+  "file": "functions/fn_00a3c920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s709"
+ },
+ {
+  "address": "0x00A3CBA0",
+  "name": "vehicle_accumulate_directional_samples",
+  "kind": "function",
+  "file": "functions/fn_00a3cba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s709"
+ },
+ {
+  "address": "0x00A3CE30",
+  "name": "vehicle_initialize_attachment_record",
+  "kind": "function",
+  "file": "functions/fn_00a3ce30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s709"
+ },
+ {
+  "address": "0x00A3D2C0",
+  "name": "vehicle_release_owned_references",
+  "kind": "function",
+  "file": "functions/fn_00a3d2c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s709"
+ },
+ {
+  "address": "0x00A3D4D0",
+  "name": "CVehicle::vf0",
+  "kind": "function",
+  "file": "functions/fn_00a3d4d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s709"
+ },
+ {
+  "address": "0x00A3D500",
+  "name": "vehicle_store_and_advance_slot",
+  "kind": "function",
+  "file": "functions/fn_00a3d500.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s709"
+ },
+ {
+  "address": "0x00A3E3F0",
+  "name": "vehicle_accumulate_cross_product",
+  "kind": "function",
+  "file": "functions/fn_00a3e3f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s709"
+ },
+ {
+  "address": "0x00A3E480",
+  "name": "vehicle_add_angular_delta",
+  "kind": "function",
+  "file": "functions/fn_00a3e480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s709"
  },
  {
   "address": "0x00A452A0",
