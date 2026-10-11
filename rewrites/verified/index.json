@@ -133434,6 +133434,15 @@
   "lane": "r-s337"
  },
  {
+  "address": "0x00C9D800",
+  "name": "task_event_gate_flags",
+  "kind": "function",
+  "file": "functions/fn_00c9d800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b688"
+ },
+ {
   "address": "0x00C9D9A0",
   "name": "wrap_bool_not",
   "kind": "function",
@@ -133909,6 +133918,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s615"
+ },
+ {
+  "address": "0x00CA2D40",
+  "name": "task_context_weight_adjustment",
+  "kind": "function",
+  "file": "functions/fn_00ca2d40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b688"
+ },
+ {
+  "address": "0x00CA2F20",
+  "name": "task_update_threat_weight",
+  "kind": "function",
+  "file": "functions/fn_00ca2f20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b688"
  },
  {
   "address": "0x00CA3EF0",
