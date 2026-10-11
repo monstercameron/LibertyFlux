@@ -22,12 +22,12 @@ use lf_peds_tasks::ped_task::{
 };
 
 #[test]
-fn registry_counts_seven_proven() {
+fn registry_counts_thirteen_proven() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 7);
+    assert_eq!(proven, 13);
     assert_eq!(lifted, 0);
     assert_eq!(missing, 0);
-    assert_eq!(registry::ROWS.len(), 7);
+    assert_eq!(registry::ROWS.len(), 13);
     for row in registry::ROWS {
         assert_eq!(row.state, State::Proven);
         assert!(
@@ -48,6 +48,12 @@ fn registry_counts_seven_proven() {
             ("BuildManagers", "build5"),
             ("ChainCloner", "clone_chain_a"),
             ("ChainCloner", "clone_chain_b"),
+            ("MoverPose", "lerp_position_heading"),
+            ("MoverPose", "drive_blend"),
+            ("TaskKey", "id_or_default"),
+            ("(free function)", "admits"),
+            ("SeekRecord", "seek_target_setup"),
+            ("MoverPose", "commit_blend"),
         ]
     );
 }

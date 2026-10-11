@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Lift: six pedestrian-task routines (mover pose, seek record, task id lookup, request gate)",
+    "commit": null,
+    "summary": "The first portable lift since 6 October: six verified routines of the pedestrian-task code now have a portable Rust counterpart, each proven against its verified original.",
+    "changes": [
+      "Lifted into lf-peds-tasks: three methods of the mover pose (interpolate position and heading, drive a blend, commit a blend), the set-up of a seek record, the task id lookup with its default, and the gate that decides whether a task request is admitted. The lifted code has no unsafe and no addresses; callees that are not lifted yet sit behind a trait.",
+      "A new differential test crate, lf-pedmoverdiff, runs each verified rewrite and its lifted counterpart on the same memory and compares the memory images, the order and arguments of every call, and the return value, floats bit for bit: 15 tests pass on the 32-bit target, and nine deliberately wrong versions are caught. It is added to the workspace and to the pipeline's 32-bit lift job.",
+      "The crate's registry of proven methods grows from 7 to 13, and the host test that lists them was updated to match. The crate's host tests all pass.",
+      "The lane found that the group it was given, 109 functions sharing a name prefix, is about nine different data shapes; the other 103 are not lifted. It also found a comment in one verified rewrite that disagrees with the constant beside it (the lift follows the constant), and one verified function whose contract and rewrite disagree about the register a callee's result is read from; that one was left alone and is to be checked.",
+      "Written by a lift lane; integrated, tested and committed by the coordinator."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 2 files from lanes (421 unverified rewrites, 0 in review)",
     "commit": null,
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

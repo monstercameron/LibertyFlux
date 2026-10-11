@@ -108,6 +108,78 @@ pub const ROWS: &[Row] = &[
             "as clone_chain_a, with no done-flag write: the proof asserts mark_done is never called and the flag image word keeps its planted value",
         ],
     },
+    // MoverPose: the mover trio. The pose and the blend state block are
+    // the owned data; the family's callees and virtual methods travel as
+    // MoverCallees.
+    Row {
+        class: "MoverPose",
+        method: "lerp_position_heading",
+        state: State::Proven,
+        narrows: &[
+            "the height setter (the state block's virtual slot) travels as MoverCallees::set_height; the proof checks that the rewrite passes its trailing padding word as zero, which the lift does not model",
+            "the target pose and the state block are planted as images; the callees are assumed not to write the pose or the block, which the lift cannot observe through a shared reference",
+            "the height passes through the slot as bits: a signalling NaN height would be quieted by the x87 return convention of a getter, so the proof's heights are quiet",
+        ],
+    },
+    Row {
+        class: "MoverPose",
+        method: "drive_blend",
+        state: State::Proven,
+        narrows: &[
+            "the blend into the state block (callee id 4 of the rewrite, same argument shape as the lerp routine) is an opaque MoverCallees::blend_into: the proof compares its call, arguments and count, not its effect; that it is the lerp routine is inferred from the shape and not established by a callee map",
+            "the setup, readiness, encode callees and the height setter travel as MoverCallees methods; the proof compares every call in order with its arguments",
+            "the target is a handle, compared as a raw word (null is None)",
+            "the callees are assumed not to write the pose or the state block",
+        ],
+    },
+    // TaskKey: the id lookup. Its two lookups and the record's id word
+    // travel as TaskIdTable methods.
+    Row {
+        class: "TaskKey",
+        method: "id_or_default",
+        state: State::Proven,
+        narrows: &[
+            "the key is read from the owner's key word by the caller; the proof plants it in the owner image and compares the owner image afterwards",
+            "the two lookups travel as TaskIdTable::primary and fallback: the proof compares each call in order with its key argument and answer; the fallback is asked only when the primary answers zero",
+            "the id word of the final record is a plain read through TaskIdTable::record_id; the proof plants the records and compares the id returned",
+            "a null final record (both lookups answer zero) faults in the original on the id word; the proof never plants that case, and the lift does not model the fault",
+        ],
+    },
+    // The task request gate. Its status probe travels as GateStatus; the
+    // globals and the task's vtable word are read by the caller.
+    Row {
+        class: "(free function)",
+        method: "admits",
+        state: State::Proven,
+        narrows: &[
+            "the task's vtable flag word and the two global words are read by the caller and passed as GateWords; the proof plants them through the relocated table and the vtable image",
+            "the candidate's state and sub-flag words are read by the caller and passed as GateCandidate; the proof compares the values read",
+            "the status probe is the task's callee, travelling as GateStatus::status; the proof compares the task argument and the answer",
+            "the gate writes nothing; the proof checks that the rewrite writes none of its images",
+        ],
+    },
+    // SeekRecord: the seek record builder. No callees.
+    Row {
+        class: "SeekRecord",
+        method: "seek_target_setup",
+        state: State::Proven,
+        narrows: &[
+            "the mover's position block is reached through the owner's sub-object pointer; the caller resolves that chain and passes the block's values, and a null sub-object (which faults in the rewrite) is not modelled",
+            "the goal is the target's position block, of which only the x and y words are read: the proof plants the rest of the block and checks it is not written",
+            "the word the original copies from an uninitialised frame slot is pinned to zero by the rewrite's contract; the lift writes zero",
+            "the mode word the routine stores beside the record (two) is returned as SEEK_MODE for the caller to store",
+        ],
+    },
+    Row {
+        class: "MoverPose",
+        method: "commit_blend",
+        state: State::Proven,
+        narrows: &[
+            "the flag and state notifications, the three decoders and the height getter travel as MoverCallees methods; the proof compares every call in order with its arguments and answers",
+            "the state block's height getter is read after the state notification, as in the original; the callees are assumed not to write the pose or the block",
+            "the flag byte keeps its other bits, as the rewrite does; only bit 0 is written by the family",
+        ],
+    },
 ];
 
 /// Counts of (proven, lifted-but-unproven, missing) rows.
