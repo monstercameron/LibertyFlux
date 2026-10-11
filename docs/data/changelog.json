@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 56 proofs re-run on the current checker and recorded on it",
+    "commit": "a516045873413c26850624c04c37bb5dd760f3ff",
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "56 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rewrites: 18 proofs re-run on the current checker and recorded on it",
     "commit": "ae79cb082bb26f5ad97f699cfadc18d1ef2428fa",
     "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
