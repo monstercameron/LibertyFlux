@@ -100692,6 +100692,15 @@
   "lane": "a-Q05"
  },
  {
+  "address": "0x00B8FDA0",
+  "name": "NativeImpl_GET_STRING_FROM_HASH_KEY",
+  "kind": "function",
+  "file": "functions/fn_00b8fda0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s673"
+ },
+ {
   "address": "0x00B91170",
   "name": "script_vm_pack_color_verts",
   "kind": "function",
@@ -107656,6 +107665,33 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-06"
+ },
+ {
+  "address": "0x00BA3A30",
+  "name": "DecisionMaker_AddEventResponse",
+  "kind": "function",
+  "file": "functions/fn_00ba3a30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s673"
+ },
+ {
+  "address": "0x00BA3B30",
+  "name": "NativeImpl_ADD_SCENARIO_BLOCKING_AREA",
+  "kind": "function",
+  "file": "functions/fn_00ba3b30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s673"
+ },
+ {
+  "address": "0x00BA61D0",
+  "name": "NativeImpl_FORCE_SPAWN_SCENARIO_PEDS_IN_AREA_2",
+  "kind": "function",
+  "file": "functions/fn_00ba61d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s673"
  },
  {
   "address": "0x00BB1A70",
