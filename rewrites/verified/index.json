@@ -95004,6 +95004,15 @@
   "lane": "r-b566"
  },
  {
+  "address": "0x00B62600",
+  "name": "resolve_weapon_part_entry",
+  "kind": "function",
+  "file": "functions/fn_00b62600.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
+ },
+ {
   "address": "0x00B62A00",
   "name": "veh_copy12_dispatch",
   "kind": "function",
@@ -95533,6 +95542,96 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s450"
+ },
+ {
+  "address": "0x00B685E0",
+  "name": "heli_tail_break_effects",
+  "kind": "function",
+  "file": "functions/fn_00b685e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
+ },
+ {
+  "address": "0x00B696E0",
+  "name": "heli_get_linked_field_1434",
+  "kind": "function",
+  "file": "functions/fn_00b696e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
+ },
+ {
+  "address": "0x00B698A0",
+  "name": "heli_strafe_speed_scale",
+  "kind": "function",
+  "file": "functions/fn_00b698a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
+ },
+ {
+  "address": "0x00B699E0",
+  "name": "heli_part_slot_0_broken",
+  "kind": "function",
+  "file": "functions/fn_00b699e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
+ },
+ {
+  "address": "0x00B69A10",
+  "name": "heli_part_slot_1_broken",
+  "kind": "function",
+  "file": "functions/fn_00b69a10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
+ },
+ {
+  "address": "0x00B69A40",
+  "name": "heli_part_slot_2_broken",
+  "kind": "function",
+  "file": "functions/fn_00b69a40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
+ },
+ {
+  "address": "0x00B69D50",
+  "name": "reset_emitter_slots",
+  "kind": "function",
+  "file": "functions/fn_00b69d50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
+ },
+ {
+  "address": "0x00B6CCE0",
+  "name": "heli_notify_field_e48",
+  "kind": "function",
+  "file": "functions/fn_00b6cce0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
+ },
+ {
+  "address": "0x00B6CD00",
+  "name": "heli_rebind_slot_node",
+  "kind": "function",
+  "file": "functions/fn_00b6cd00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
+ },
+ {
+  "address": "0x00B6CF30",
+  "name": "heli_motion_fields_are_zero",
+  "kind": "function",
+  "file": "functions/fn_00b6cf30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s716"
  },
  {
   "address": "0x00B6D080",
