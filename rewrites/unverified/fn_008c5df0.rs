@@ -4,7 +4,7 @@
 /// modes five and six also update the object's marker byte.
 lf_checker_rt::export!(thiscall, rw_008c5df0(this: u32, use_helper: u32) -> u32 {
     const MODE_HELPER: u32 = 1;
-    const MODE_FILE_VA: u32 = 0x1160_0CC8;
+    const MODE_FILE_VA: u32 = 0x0116_0CC8;
     unsafe {
         let mode = if use_helper != 0 {
             lf_checker_rt::callee_thiscall!(MODE_HELPER, u32, this)
