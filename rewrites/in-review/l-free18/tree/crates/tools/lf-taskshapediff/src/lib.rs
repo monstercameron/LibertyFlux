@@ -1,4 +1,4 @@
-﻿//! `lf-taskshapediff`: differential tests of two task shapes of the ped
+//! `lf-taskshapediff`: differential tests of two task shapes of the ped
 //! task family against their verified 32-bit rewrites.
 //!
 //! The verified rewrite files are included unchanged; on the 32-bit target

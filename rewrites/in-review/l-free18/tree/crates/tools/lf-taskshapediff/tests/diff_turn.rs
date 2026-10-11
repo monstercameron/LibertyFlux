@@ -1,4 +1,4 @@
-﻿//! Differential cases of the turn tracker against its verified 32-bit
+//! Differential cases of the turn tracker against its verified 32-bit
 //! rewrite.
 //!
 //! The lifted advance and the rewrite run on the same generated task

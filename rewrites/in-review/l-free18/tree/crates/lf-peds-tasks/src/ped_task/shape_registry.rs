@@ -1,4 +1,4 @@
-﻿//! What is lifted from the two task shapes of this section, and what each
+//! What is lifted from the two task shapes of this section, and what each
 //! proof leaves out.
 //!
 //! One row per verified 32-bit routine lifted here. `Proven` means the
@@ -72,6 +72,21 @@ pub const ROWS: &[Row] = &[
             "the two scale factors are the image words the rewrite reads; the proof plants generated bit patterns for them, including not-a-number and out-of-range products, and the lift matches the verified rewrite's conversion on all of them; the processor's own conversion differs there (see the lane report), but the image's factors keep the product between minus 500 and zero",
             "the routine returns the block handle in the original; the lift returns the owned words and the caller keeps the handle, so the return value is compared with the handle only in the proof",
             "owned words are the fields of TaskBlock; the bytes at 0x156 to 0x157, 0x15c to 0x16f and 0x17d to 0x17f are not owned and are checked unchanged",
+        ],
+    },
+    // TurnTask: the turn tracker's advance. It owns the rate and the flag
+    // byte of the task and pulls the target point back along the direction.
+    Row {
+        class: "TurnTask",
+        method: "advance",
+        state: State::Proven,
+        narrows: &[
+            "the trigonometric callees travel as TurnTrig; the proof's collaborator records the sine and then the cosine, in order, with the argument bits the rewrite's stubs record, and only when the inner direction is absent",
+            "the inner direction is read through the parameter block's pointer in the rewrite; the lift takes it as an owned value, which the test decodes from the planted block, so the pointer hop is outside the lift",
+            "the target point, the task and the parameter block are distinct objects in the proof; the lift's exclusive borrows state that they do not alias, and the rewrite is not run on aliased words",
+            "the gate is compared as a single-precision value with the threshold; the proof plants the threshold and one step either side of it, so the strict comparison is exercised at its boundary",
+            "the rewrite's return value (the target handle) is compared in the proof only; the lift returns nothing",
+            "the task words outside the rate and flag are not modelled; the proof checks that the rewrite leaves them unchanged",
         ],
     },
 ];

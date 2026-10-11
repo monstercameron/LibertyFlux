@@ -1,4 +1,4 @@
-﻿//! The ped task block initialiser: the constructor that sets up a task's
+//! The ped task block initialiser: the constructor that sets up a task's
 //! parameter area, its countdown and its control words, and runs the
 //! block's construction and setup calls in order.
 //!

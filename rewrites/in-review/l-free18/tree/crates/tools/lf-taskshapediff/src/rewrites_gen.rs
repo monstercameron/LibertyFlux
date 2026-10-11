@@ -1,4 +1,4 @@
-﻿// One module per verified rewrite: each file declares one exported routine,
+// One module per verified rewrite: each file declares one exported routine,
 // so the modules keep their names apart. Paths climb seven levels from this
 // crate's manifest directory to the repository root in the scratch tree; the
 // lane's brought-in copy climbs three levels up to the repository root.

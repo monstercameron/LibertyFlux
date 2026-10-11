@@ -1,4 +1,4 @@
-﻿//! Lifted free functions of the ped task system: pose volumes and task creation.
+//! Lifted free functions of the ped task system: pose volumes and task creation.
 //!
 //! The original drives each pedestrian through task objects. Most of the
 //! task code belongs to no named class: these are the free functions the

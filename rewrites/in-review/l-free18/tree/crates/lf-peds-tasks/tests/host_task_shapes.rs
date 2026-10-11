@@ -1,9 +1,9 @@
-﻿//! Host tests of the task predicates and the task state block: the edge
+//! Host tests of the task predicates and the task state block: the edge
 //! cases a reader would ask about, on the 64-bit host. The 32-bit
 //! differential cases live in the `lf-taskshapediff` test crate.
 
 use lf_peds_tasks::ped_task::registry::State;
-use lf_peds_tasks::ped_task::{BlockCallees, ScaleFactors, TaskBlock};
+use lf_peds_tasks::ped_task::{BlockCallees, ScaleFactors, TaskBlock, TurnParams, TurnTask, TurnTrig, Vec3};
 use lf_peds_tasks::ped_task::shape_registry;
 use lf_peds_tasks::ped_task::{
     BLOCK_WORDS, INVALID_HANDLE, PredicateTask, ResourceTag, STATE_RECORD_COUNT,
@@ -152,7 +152,7 @@ fn reset_clears_everything_it_was_given() {
 #[test]
 fn registry_section_counts_match_the_lifted_routines() {
     let (proven, lifted, missing) = shape_registry::counts();
-    assert_eq!(proven, 4);
+    assert_eq!(proven, 5);
     assert_eq!(lifted, 0);
     assert_eq!(missing, 0);
     for row in shape_registry::ROWS {
@@ -315,4 +315,94 @@ fn block_init_not_a_number_and_overflow_follow_the_verified_rewrite() {
         TaskBlock::initialise(0x1000, &mut calls, overflow).countdown,
         500u32.wrapping_sub(i32::MAX as u32)
     );
+}
+/// A trigonometric stand-in that counts its calls.
+#[derive(Default)]
+struct Trig {
+    calls: Vec<&'static str>,
+}
+
+impl TurnTrig for Trig {
+    fn sine(&mut self, _angle: f32) -> f32 {
+        self.calls.push("sine");
+        0.5
+    }
+    fn cosine(&mut self, _angle: f32) -> f32 {
+        self.calls.push("cosine");
+        2.0
+    }
+}
+
+const NO_INNER: TurnParams = TurnParams {
+    angle: 0.0,
+    inner: None,
+};
+
+#[test]
+fn turn_gate_is_strict_at_the_threshold() {
+    let mut task = TurnTask { rate: 0.5, flag: 0 };
+    let mut target = Vec3 { x: 0.0, y: 0.0, z: 0.0 };
+    let mut trig = Trig::default();
+    task.advance(&mut target, &NO_INNER, lf_peds_tasks::ped_task::RATE_GATE, &mut trig);
+    assert_eq!(task.rate, 0.5, "a gate equal to the threshold does not raise the rate");
+    task.advance(
+        &mut target,
+        &NO_INNER,
+        f32::from_bits(lf_peds_tasks::ped_task::RATE_GATE.to_bits() + 1),
+        &mut trig,
+    );
+    assert!(task.rate > 0.5, "one step above the threshold raises it");
+}
+
+#[test]
+fn turn_reset_flag_sets_the_rate_to_one_before_the_gate() {
+    let mut task = TurnTask { rate: 0.25, flag: 0x80 };
+    let mut target = Vec3 { x: 0.0, y: 0.0, z: 0.0 };
+    let mut trig = Trig::default();
+    task.advance(&mut target, &NO_INNER, 0.0, &mut trig);
+    assert_eq!(task.rate, 1.0);
+    assert_eq!(task.flag, 0x80, "the flag byte is not cleared");
+}
+
+#[test]
+fn turn_rate_is_capped_at_one_and_not_a_number_becomes_one() {
+    let mut task = TurnTask { rate: 0.995, flag: 0 };
+    let mut target = Vec3 { x: 0.0, y: 0.0, z: 0.0 };
+    let mut trig = Trig::default();
+    task.advance(&mut target, &NO_INNER, 1.0, &mut trig);
+    assert_eq!(task.rate, 1.0, "a sum above one is capped");
+    let mut task = TurnTask { rate: f32::NAN, flag: 0 };
+    task.advance(&mut target, &NO_INNER, 1.0, &mut trig);
+    assert_eq!(task.rate, 1.0, "a not-a-number rate becomes one");
+}
+
+#[test]
+fn turn_inner_direction_skips_the_trigonometry() {
+    let mut task = TurnTask { rate: 1.0, flag: 0 };
+    let mut target = Vec3 { x: 0.0, y: 0.0, z: 0.0 };
+    let mut trig = Trig::default();
+    let params = TurnParams {
+        angle: 1.0,
+        inner: Some(Vec3 { x: 10.0, y: 20.0, z: 30.0 }),
+    };
+    task.advance(&mut target, &params, 0.0, &mut trig);
+    assert!(trig.calls.is_empty(), "no sine or cosine when the inner direction is present");
+    // Each component is scaled by a tenth and by the rate, then subtracted.
+    assert!((target.x + 1.0).abs() < 1e-6);
+    assert!((target.y + 2.0).abs() < 1e-6);
+    assert!((target.z + 3.0).abs() < 1e-6);
+}
+
+#[test]
+fn turn_without_inner_uses_negated_sine_cosine_and_zero() {
+    let mut task = TurnTask { rate: 1.0, flag: 0 };
+    let mut target = Vec3 { x: 0.0, y: 0.0, z: 0.0 };
+    let mut trig = Trig::default();
+    task.advance(&mut target, &NO_INNER, 0.0, &mut trig);
+    assert_eq!(trig.calls, vec!["sine", "cosine"], "sine first, then cosine");
+    // The x component is minus the sine (0.5) scaled, the y is the cosine (2.0),
+    // and the z component is zero.
+    assert!((target.x - 0.05).abs() < 1e-6);
+    assert!((target.y + 0.2).abs() < 1e-6);
+    assert_eq!(target.z, 0.0);
 }

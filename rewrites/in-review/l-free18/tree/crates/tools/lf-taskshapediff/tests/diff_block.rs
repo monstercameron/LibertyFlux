@@ -1,4 +1,4 @@
-﻿//! Differential cases of the task block initialiser against its verified
+//! Differential cases of the task block initialiser against its verified
 //! 32-bit rewrite.
 //!
 //! The lifted initialiser and the rewrite run on the same generated blocks,

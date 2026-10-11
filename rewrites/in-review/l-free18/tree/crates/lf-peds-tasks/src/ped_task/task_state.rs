@@ -1,4 +1,4 @@
-﻿//! The task state block: one header word and nine records of eight words,
+//! The task state block: one header word and nine records of eight words,
 //! seventy-three words in all, with the reset that marks every record's
 //! two handle fields invalid.
 //!
@@ -22,7 +22,8 @@ pub const INVALID_HANDLE: u32 = 0xFFFF_FFFF;
 /// One record of the block: the two handle words, then six further words.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct StateRecord {
-    /// The first handle word (word 1 of the record, 4 bytes into it).
+    /// The record's first handle word: the first word after the record's
+    /// start in the block.
     pub handle_a: u32,
     /// The second handle word (word 2 of the record).
     pub handle_b: u32,
