@@ -146097,6 +146097,150 @@
   "lane": "a-G23"
  },
  {
+  "address": "0x00D98F80",
+  "name": "vehicle_clear_state_and_vector_fields",
+  "kind": "function",
+  "file": "functions/fn_00d98f80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D99300",
+  "name": "CBoat::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d99300.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D99330",
+  "name": "CBoat::vf43",
+  "kind": "function",
+  "file": "functions/fn_00d99330.rs",
+  "trials": 2000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D99B00",
+  "name": "CBoat::vf101",
+  "kind": "function",
+  "file": "functions/fn_00d99b00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9B400",
+  "name": "CBoat::vf85",
+  "kind": "function",
+  "file": "functions/fn_00d9b400.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9C4C0",
+  "name": "initialize_vehicle_vector_record",
+  "kind": "function",
+  "file": "functions/fn_00d9c4c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9C550",
+  "name": "initialize_vehicle_physics_record",
+  "kind": "function",
+  "file": "functions/fn_00d9c550.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9C580",
+  "name": "copy_vehicle_physics_record",
+  "kind": "function",
+  "file": "functions/fn_00d9c580.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9C5F0",
+  "name": "initialize_vehicle_handling_record",
+  "kind": "function",
+  "file": "functions/fn_00d9c5f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9C980",
+  "name": "initialize_vehicle_component_slot",
+  "kind": "function",
+  "file": "functions/fn_00d9c980.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9C9D0",
+  "name": "copy_vehicle_transform_record",
+  "kind": "function",
+  "file": "functions/fn_00d9c9d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9CA00",
+  "name": "store_vehicle_transform_record",
+  "kind": "function",
+  "file": "functions/fn_00d9ca00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9CA40",
+  "name": "copy_vehicle_transform_vectors",
+  "kind": "function",
+  "file": "functions/fn_00d9ca40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9D610",
+  "name": "allocate_zeroed_pair_array",
+  "kind": "function",
+  "file": "functions/fn_00d9d610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9D650",
+  "name": "degrees_to_radians_with_boundary_values",
+  "kind": "function",
+  "file": "functions/fn_00d9d650.rs",
+  "trials": 2000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
+  "address": "0x00D9DD30",
+  "name": "vehicle_target_within_heading_gate",
+  "kind": "function",
+  "file": "functions/fn_00d9dd30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s721"
+ },
+ {
   "address": "0x00D9E8B0",
   "name": "find_stream_object",
   "kind": "function",
