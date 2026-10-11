@@ -133695,6 +133695,15 @@
   "lane": "r-s333"
  },
  {
+  "address": "0x00D4DE50",
+  "name": "CTaskSimpleAffectSecondaryBehaviour::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d4de50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
   "address": "0x00D4DE90",
   "name": "CTaskSimpleDuck::vf1",
   "kind": "function",
@@ -133992,6 +134001,24 @@
   "lane": "r-s333"
  },
  {
+  "address": "0x00D4F600",
+  "name": "CTaskComplexPickUpAndCarryObject::vf18",
+  "kind": "function",
+  "file": "functions/fn_00d4f600.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
+  "address": "0x00D4F680",
+  "name": "CTaskComplexPickUpObject::vf18",
+  "kind": "function",
+  "file": "functions/fn_00d4f680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
   "address": "0x00D4F790",
   "name": "task_clear_flag_slot",
   "kind": "function",
@@ -133999,6 +134026,87 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4F7A0",
+  "name": "clear_task_link_and_set_flag",
+  "kind": "function",
+  "file": "functions/fn_00d4f7a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
+  "address": "0x00D4F7B0",
+  "name": "check_target_against_global_matcher",
+  "kind": "function",
+  "file": "functions/fn_00d4f7b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
+  "address": "0x00D4F7E0",
+  "name": "check_global_and_object_predicates",
+  "kind": "function",
+  "file": "functions/fn_00d4f7e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
+  "address": "0x00D4F810",
+  "name": "CTaskSimplePickUpObject::vf5",
+  "kind": "function",
+  "file": "functions/fn_00d4f810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
+  "address": "0x00D4F8A0",
+  "name": "CTaskSimplePutDownObject::vf5",
+  "kind": "function",
+  "file": "functions/fn_00d4f8a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
+  "address": "0x00D4F930",
+  "name": "should_ignore_related_object_for_task",
+  "kind": "function",
+  "file": "functions/fn_00d4f930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
+  "address": "0x00D4FB70",
+  "name": "CTaskSimplePutDownObject::vf17",
+  "kind": "function",
+  "file": "functions/fn_00d4fb70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
+  "address": "0x00D4FC40",
+  "name": "check_entity_task_distance_and_state",
+  "kind": "function",
+  "file": "functions/fn_00d4fc40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
+ },
+ {
+  "address": "0x00D4FFE0",
+  "name": "initialize_swap_weapon_task",
+  "kind": "function",
+  "file": "functions/fn_00d4ffe0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s633"
  },
  {
   "address": "0x00D50F80",
