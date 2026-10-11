@@ -80649,6 +80649,150 @@
   "lane": "r-s611"
  },
  {
+  "address": "0x00A82D00",
+  "name": "task_info_get_progress_entry_and_value",
+  "kind": "function",
+  "file": "functions/fn_00a82d00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A82D30",
+  "name": "task_info_progress_field_by_index",
+  "kind": "function",
+  "file": "functions/fn_00a82d30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A82E10",
+  "name": "TaskList_FindBySeqAndStage",
+  "kind": "function",
+  "file": "functions/fn_00a82e10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A82EC0",
+  "name": "task_registry_initialize",
+  "kind": "function",
+  "file": "functions/fn_00a82ec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A82FB0",
+  "name": "task_status_low_byte_predicate",
+  "kind": "function",
+  "file": "functions/fn_00a82fb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A82FD0",
+  "name": "Sequence_FindById",
+  "kind": "function",
+  "file": "functions/fn_00a82fd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A835B0",
+  "name": "CAnimTaskInfo::vf7",
+  "kind": "function",
+  "file": "functions/fn_00a835b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A83650",
+  "name": "CComplexClimbLadderTaskInfo::vf7",
+  "kind": "function",
+  "file": "functions/fn_00a83650.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A836D0",
+  "name": "CComplexCombatRetreatInfo::vf7",
+  "kind": "function",
+  "file": "functions/fn_00a836d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A83710",
+  "name": "CComplexFallAndGetUpTaskInfo::vf7",
+  "kind": "function",
+  "file": "functions/fn_00a83710.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A83740",
+  "name": "CComplexGangDrivebyTaskInfo::vf7",
+  "kind": "function",
+  "file": "functions/fn_00a83740.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A83830",
+  "name": "CComplexGunTaskInfo::vf7",
+  "kind": "function",
+  "file": "functions/fn_00a83830.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A838D0",
+  "name": "CComplexJumpTaskInfo::vf7",
+  "kind": "function",
+  "file": "functions/fn_00a838d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A83950",
+  "name": "CComplexNewExitVehicleTaskInfo::vf7",
+  "kind": "function",
+  "file": "functions/fn_00a83950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A839E0",
+  "name": "CComplexNewGetInVehicleTaskInfo::vf7",
+  "kind": "function",
+  "file": "functions/fn_00a839e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00A83A20",
+  "name": "CComplexNewUseCoverInfo::vf7",
+  "kind": "function",
+  "file": "functions/fn_00a83a20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
   "address": "0x00A872D0",
   "name": "notify_table_walk",
   "kind": "function",
@@ -109944,6 +110088,33 @@
   "lane": "r-s623"
  },
  {
+  "address": "0x00BBAF80",
+  "name": "CTaskComplexUseMobilePhoneAndMovement::vf1",
+  "kind": "function",
+  "file": "functions/fn_00bbaf80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00BBAFC0",
+  "name": "CTaskSimpleCombatRoll::vf1",
+  "kind": "function",
+  "file": "functions/fn_00bbafc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00BBB000",
+  "name": "CTaskSimpleLeaveGroup::vf1",
+  "kind": "function",
+  "file": "functions/fn_00bbb000.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
   "address": "0x00BBB2A0",
   "name": "NativeImpl_ADD_FOLLOW_NAVMESH_TO_PHONE_TASK",
   "kind": "function",
@@ -126018,6 +126189,15 @@
   "lane": "a-R03"
  },
  {
+  "address": "0x00C86160",
+  "name": "fn_00c86160_task_record_available",
+  "kind": "function",
+  "file": "functions/fn_00c86160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
   "address": "0x00C864B0",
   "name": "fn_00c864b0_state_reset",
   "kind": "function",
@@ -126025,6 +126205,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s621"
+ },
+ {
+  "address": "0x00C86CF0",
+  "name": "fn_00c86cf0_vector_records_equal",
+  "kind": "function",
+  "file": "functions/fn_00c86cf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00C86F60",
+  "name": "fn_00c86f60_forward_task_update",
+  "kind": "function",
+  "file": "functions/fn_00c86f60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
  },
  {
   "address": "0x00C874F0",
@@ -126297,6 +126495,15 @@
   "lane": "a-U02"
  },
  {
+  "address": "0x00C8D160",
+  "name": "fn_00c8d160_copy_startup_motion_table",
+  "kind": "function",
+  "file": "functions/fn_00c8d160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
   "address": "0x00C8D240",
   "name": "facing_check_by_type",
   "kind": "function",
@@ -126304,6 +126511,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b497"
+ },
+ {
+  "address": "0x00C8D770",
+  "name": "fn_00c8d770_point_within_distance_limit",
+  "kind": "function",
+  "file": "functions/fn_00c8d770.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
  },
  {
   "address": "0x00C8D7F0",
@@ -126351,6 +126567,15 @@
   "lane": "r-b338"
  },
  {
+  "address": "0x00C8E4E0",
+  "name": "fn_00c8e4e0_classify_motion_speed",
+  "kind": "function",
+  "file": "functions/fn_00c8e4e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
   "address": "0x00C8E510",
   "name": "ped_task_collect_scored",
   "kind": "function",
@@ -126367,6 +126592,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b338"
+ },
+ {
+  "address": "0x00C8EC00",
+  "name": "fn_00c8ec00_copy_motion_slots",
+  "kind": "function",
+  "file": "functions/fn_00c8ec00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
  },
  {
   "address": "0x00C8ED10",
@@ -126387,6 +126621,15 @@
   "lane": "r-b391"
  },
  {
+  "address": "0x00C8F340",
+  "name": "fn_00c8f340_compare_against_two",
+  "kind": "function",
+  "file": "functions/fn_00c8f340.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
   "address": "0x00C8F4B0",
   "name": "task_blend_query",
   "kind": "function",
@@ -126405,6 +126648,15 @@
   "lane": "r-b391"
  },
  {
+  "address": "0x00C90150",
+  "name": "fn_00c90150_supported_task_category",
+  "kind": "function",
+  "file": "functions/fn_00c90150.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
   "address": "0x00C90180",
   "name": "task_pool_free",
   "kind": "function",
@@ -126412,6 +126664,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "a-R01"
+ },
+ {
+  "address": "0x00C91560",
+  "name": "fn_00c91560_copy_two_vectors",
+  "kind": "function",
+  "file": "functions/fn_00c91560.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
+ },
+ {
+  "address": "0x00C91850",
+  "name": "fn_00c91850_construct_unit_transform",
+  "kind": "function",
+  "file": "functions/fn_00c91850.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U45"
  },
  {
   "address": "0x00C91A10",
