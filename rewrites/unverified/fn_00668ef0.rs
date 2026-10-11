@@ -1,6 +1,6 @@
 // original: 0x00668EF0 rage::ptxEventEmitter::vf6
 
-/// The function makes no call when the inner object pointer at `this + 0x48` is null or either required stack argument is zero. Otherwise it loads vtable slot 0x3c from that object and invokes it with stack argument `arg_0`, stack argument `arg_1`, the word at `this + 0x4c`, the word at `this + 0x0c`, stack argument `arg_2`. The final stack word is forwarded as raw single-precision bits without arithmetic.
+/// The function makes no call when the inner object pointer at `this + 0x48` is null or either required stack argument is zero. Otherwise it loads vtable slot 0x3c from that object and invokes it with stack argument `arg_2`, stack argument `arg_0`, stack argument `arg_1`, the word at `this + 0x4c`, the word at `this + 0x0c`. The third incoming word is forwarded as raw single-precision bits, first among the callee's stack arguments, without arithmetic.
 /// The method is thiscall with 3 stack arguments and callee cleanup. The original leaves EAX unspecified when it takes the no-call path, so the contract does not compare the return channel; it compares the heap, stack, call log, and faults.
 lf_checker_rt::export!(thiscall, rw_00668EF0(this: u32, arg_0: u32, arg_1: u32, arg_2: u32) -> u32 {
     const INNER_OBJECT: u32 = 0x48;
@@ -20,6 +20,6 @@ lf_checker_rt::export!(thiscall, rw_00668EF0(this: u32, arg_0: u32, arg_1: u32, 
     let vtable = unsafe { read_u32(inner_object) };
     let target = unsafe { read_u32(vtable.wrapping_add(VTABLE_SLOT)) };
     let method: extern "thiscall" fn(u32, u32, u32, u32, u32, u32) -> u32 = unsafe { core::mem::transmute(target as usize) };
-    let _ignored_result = method(inner_object, arg_0, arg_1, member_value, event_pointer, arg_2);
+    let _ignored_result = method(inner_object, arg_2, arg_0, arg_1, member_value, event_pointer);
     0
 });
