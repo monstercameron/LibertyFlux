@@ -18,15 +18,16 @@ lf_checker_rt::export!(thiscall, rw_005e8d60(this: u32, event: u32) -> u32 {
     const TIMER_DURATION: u32 = 0x32;
     const MILLISECOND_CLOCK_VA: u32 = 0x011735B4;
 
-    let now = unsafe {
-        lf_checker_rt::global::<u32>(MILLISECOND_CLOCK_VA).read_unaligned()
-    };
     let active = unsafe {
         (this.wrapping_add(TIMER_ACTIVE_OFFSET) as *const u8).read()
     };
     if active == 0 {
+        let initialization_time = unsafe {
+            lf_checker_rt::global::<u32>(MILLISECOND_CLOCK_VA).read_unaligned()
+        };
         unsafe {
-            (this.wrapping_add(TIMER_START_OFFSET) as *mut u32).write_unaligned(now);
+            (this.wrapping_add(TIMER_START_OFFSET) as *mut u32)
+                .write_unaligned(initialization_time);
             (this.wrapping_add(TIMER_DURATION_OFFSET) as *mut u32)
                 .write_unaligned(TIMER_DURATION);
             (this.wrapping_add(TIMER_ACTIVE_OFFSET) as *mut u8).write(1);
@@ -43,8 +44,11 @@ lf_checker_rt::export!(thiscall, rw_005e8d60(this: u32, event: u32) -> u32 {
         (this.wrapping_add(TIMER_RESET_OFFSET) as *const u8).read()
     };
     if reset != 0 {
+        let reset_time = unsafe {
+            lf_checker_rt::global::<u32>(MILLISECOND_CLOCK_VA).read_unaligned()
+        };
         unsafe {
-            (this.wrapping_add(TIMER_START_OFFSET) as *mut u32).write_unaligned(now);
+            (this.wrapping_add(TIMER_START_OFFSET) as *mut u32).write_unaligned(reset_time);
             (this.wrapping_add(TIMER_RESET_OFFSET) as *mut u8).write(0);
         }
     }
@@ -56,11 +60,15 @@ lf_checker_rt::export!(thiscall, rw_005e8d60(this: u32, event: u32) -> u32 {
         (this.wrapping_add(TIMER_DURATION_OFFSET) as *const u32).read_unaligned()
     };
     let deadline = timer_start.wrapping_add(timer_duration);
-    if (deadline as i32) > (now as i32) {
+    let deadline_check_time = unsafe {
+        lf_checker_rt::global::<u32>(MILLISECOND_CLOCK_VA).read_unaligned()
+    };
+    if (deadline as i32) > (deadline_check_time as i32) {
         return 0;
     }
     unsafe {
-        (this.wrapping_add(TIMER_START_OFFSET) as *mut u32).write_unaligned(now);
+        (this.wrapping_add(TIMER_START_OFFSET) as *mut u32)
+            .write_unaligned(deadline_check_time);
         (this.wrapping_add(TIMER_DURATION_OFFSET) as *mut u32)
             .write_unaligned(TIMER_DURATION);
         (this.wrapping_add(TIMER_ACTIVE_OFFSET) as *mut u8).write(1);
@@ -69,7 +77,10 @@ lf_checker_rt::export!(thiscall, rw_005e8d60(this: u32, event: u32) -> u32 {
     let expiry = unsafe {
         (this.wrapping_add(EXPIRY_TIME_OFFSET) as *const u32).read_unaligned()
     };
-    if now >= expiry {
+    let expiry_check_time = unsafe {
+        lf_checker_rt::global::<u32>(MILLISECOND_CLOCK_VA).read_unaligned()
+    };
+    if expiry_check_time >= expiry {
         let _: u32 = lf_checker_rt::callee_thiscall!(1, u32, this, event);
     }
     0
