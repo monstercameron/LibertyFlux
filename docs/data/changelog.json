@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Devlog: the float-to-integer audit settled for its first three functions, and what lanes are now told",
+    "commit": null,
+    "summary": "The devlog entry on the day's checker questions is brought up to date: the audit it had recorded as open found two verified rewrites wrong out of range, and both were withdrawn.",
+    "changes": [
+      "The entry now has the result for each of the three functions the audit could not settle at first: two differ from the original when the converted value does not fit, shown on the stock checker with widened contracts, and one is safe because the code bounds its operands.",
+      "It records why the proofs of record had passed (their floats were small and never reached the difference) and what changed: the rule for conversions in the briefs for production, queue and large-function lanes, a strengthening lane for the corrected copies, and a scripted audit of the 288 other functions with such a cast.",
+      "Lanes are also now pointed at a shared evidence database built today for all game functions (callers, callees, strings, data references, virtual table slots, neighbours), with a script that prints a dossier per function, so that no lane writes its own collector; the production brief is at version b26 with both additions."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rewrites: 2 withdrawn because their float-to-integer conversion differs from the original out of range",
     "commit": "673ef3253a007e3403596abf2023d1f952cb4df9",
     "summary": "The verified count goes down by two. An audit of how verified rewrites convert floats to integers found two whose conversion gives a different result from the original's instruction when the value does not fit, and showed it on the stock checker.",
