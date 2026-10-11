@@ -131364,6 +131364,24 @@
   "lane": "r-s352"
  },
  {
+  "address": "0x00D27FF0",
+  "name": "task_manager_find_free_task_slot",
+  "kind": "function",
+  "file": "functions/fn_00d27ff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s627"
+ },
+ {
+  "address": "0x00D28040",
+  "name": "task_manager_add_priority_tasks",
+  "kind": "function",
+  "file": "functions/fn_00d28040.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s627"
+ },
+ {
   "address": "0x00D282B0",
   "name": "target_score_by_distance",
   "kind": "function",
@@ -131524,6 +131542,24 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s352"
+ },
+ {
+  "address": "0x00D295B0",
+  "name": "task_manager_clear_task_state",
+  "kind": "function",
+  "file": "functions/fn_00d295b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s627"
+ },
+ {
+  "address": "0x00D29600",
+  "name": "task_manager_update_task_progress",
+  "kind": "function",
+  "file": "functions/fn_00d29600.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s627"
  },
  {
   "address": "0x00D29770",
@@ -131913,6 +131949,33 @@
   "lane": "r-b489"
  },
  {
+  "address": "0x00D2F8C0",
+  "name": "path_copy_future_nodes",
+  "kind": "function",
+  "file": "functions/fn_00d2f8c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s627"
+ },
+ {
+  "address": "0x00D2F960",
+  "name": "path_node_count",
+  "kind": "function",
+  "file": "functions/fn_00d2f960.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s627"
+ },
+ {
+  "address": "0x00D2F970",
+  "name": "path_choose_next_event",
+  "kind": "function",
+  "file": "functions/fn_00d2f970.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s627"
+ },
+ {
   "address": "0x00D2FA80",
   "name": "task_route_entry_pair_fetch",
   "kind": "function",
@@ -131940,6 +132003,15 @@
   "lane": "r-b489"
  },
  {
+  "address": "0x00D30110",
+  "name": "CTaskSimpleMovePathfindProblem::vf5",
+  "kind": "function",
+  "file": "functions/fn_00d30110.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s627"
+ },
+ {
   "address": "0x00D30130",
   "name": "task_navmesh_route_request",
   "kind": "function",
@@ -131947,6 +132019,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b489"
+ },
+ {
+  "address": "0x00D30C10",
+  "name": "CTaskComplexMoveFollowNavMeshRoute::vf11",
+  "kind": "function",
+  "file": "functions/fn_00d30c10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s627"
+ },
+ {
+  "address": "0x00D30DB0",
+  "name": "CTaskComplexMoveCrowdAroundLocation::vf10",
+  "kind": "function",
+  "file": "functions/fn_00d30db0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s627"
  },
  {
   "address": "0x00D38B10",
