@@ -42102,6 +42102,33 @@
   "lane": "a-18"
  },
  {
+  "address": "0x006F71B0",
+  "name": "mainloop_timer_iterator_advance",
+  "kind": "function",
+  "file": "functions/fn_006f71b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
+  "address": "0x006F7260",
+  "name": "mainloop_timer_tree_insert",
+  "kind": "function",
+  "file": "functions/fn_006f7260.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
+  "address": "0x006F7320",
+  "name": "mainloop_timer_tree_lower_bound",
+  "kind": "function",
+  "file": "functions/fn_006f7320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
   "address": "0x006F7380",
   "name": "rbtree_erase_rebalance",
   "kind": "function",
@@ -42109,6 +42136,15 @@
   "trials": 1600,
   "checker": "version 5",
   "lane": "r-b381"
+ },
+ {
+  "address": "0x006F7540",
+  "name": "mainloop_timer_secondary_tree_insert",
+  "kind": "function",
+  "file": "functions/fn_006f7540.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
  },
  {
   "address": "0x006F7600",
@@ -42129,6 +42165,24 @@
   "lane": "r-b381"
  },
  {
+  "address": "0x006F7920",
+  "name": "mainloop_timer_tree_rotate_right",
+  "kind": "function",
+  "file": "functions/fn_006f7920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
+  "address": "0x006F7980",
+  "name": "mainloop_timer_tree_rotate_left",
+  "kind": "function",
+  "file": "functions/fn_006f7980.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
   "address": "0x006F7A00",
   "name": "rbtree_insert_rebalance_alt",
   "kind": "function",
@@ -42136,6 +42190,78 @@
   "trials": 1400,
   "checker": "version 5",
   "lane": "r-b381"
+ },
+ {
+  "address": "0x006F7B60",
+  "name": "mainloop_timer_secondary_tree_rotate_right",
+  "kind": "function",
+  "file": "functions/fn_006f7b60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
+  "address": "0x006F7BC0",
+  "name": "mainloop_timer_secondary_tree_rotate_left",
+  "kind": "function",
+  "file": "functions/fn_006f7bc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
+  "address": "0x006F7D90",
+  "name": "mainloop_timer_parse_descriptor",
+  "kind": "function",
+  "file": "functions/fn_006f7d90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
+  "address": "0x006F7E60",
+  "name": "mainloop_timer_clear_state",
+  "kind": "function",
+  "file": "functions/fn_006f7e60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
+  "address": "0x006F7EB0",
+  "name": "mainloop_timer_format_buffer_returning_self",
+  "kind": "function",
+  "file": "functions/fn_006f7eb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
+  "address": "0x006F7EE0",
+  "name": "mainloop_timer_format_buffer",
+  "kind": "function",
+  "file": "functions/fn_006f7ee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
+  "address": "0x006F7F60",
+  "name": "mainloop_timer_category_pointer",
+  "kind": "function",
+  "file": "functions/fn_006f7f60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
+ },
+ {
+  "address": "0x006F7FB0",
+  "name": "mainloop_timer_default_pointer",
+  "kind": "function",
+  "file": "functions/fn_006f7fb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s585"
  },
  {
   "address": "0x006F7FD0",
