@@ -56,13 +56,14 @@ lf_checker_rt::export!(thiscall, rw_005e8d60(this: u32, event: u32) -> u32 {
         (this.wrapping_add(TIMER_DURATION_OFFSET) as *const u32).read_unaligned()
     };
     let deadline = timer_start.wrapping_add(timer_duration);
-    if (deadline as i32) <= (now as i32) {
-        unsafe {
-            (this.wrapping_add(TIMER_START_OFFSET) as *mut u32).write_unaligned(now);
-            (this.wrapping_add(TIMER_DURATION_OFFSET) as *mut u32)
-                .write_unaligned(TIMER_DURATION);
-            (this.wrapping_add(TIMER_ACTIVE_OFFSET) as *mut u8).write(1);
-        }
+    if (deadline as i32) > (now as i32) {
+        return 0;
+    }
+    unsafe {
+        (this.wrapping_add(TIMER_START_OFFSET) as *mut u32).write_unaligned(now);
+        (this.wrapping_add(TIMER_DURATION_OFFSET) as *mut u32)
+            .write_unaligned(TIMER_DURATION);
+        (this.wrapping_add(TIMER_ACTIVE_OFFSET) as *mut u8).write(1);
     }
 
     let expiry = unsafe {

@@ -2,9 +2,10 @@
 
 /// Blend six single-precision components from `source` into this object.
 ///
-/// `this` is the destination. `alternate` selects the baseline block: when
-/// its pointer field at `+0x20` is non-null, the baseline begins at that
-/// pointer plus `0x10`; otherwise it begins at `this + 0x10`. The source
+/// `this` is the destination. The source-container argument points through
+/// its `+0x20` field to the source block; a null field returns that container
+/// in EAX without writing. Otherwise, `alternate + 0x20` selects the baseline
+/// block when non-null, with `this + 0x10` as the fallback. The source
 /// components are at offsets `0x60` through `0x74`; baseline components are
 /// at the corresponding offsets `0x50` through `0x64`. Each of the first
 /// five destination values is `(source - baseline) * factor + baseline`.
@@ -12,7 +13,7 @@
 /// comparisons leave a NaN unchanged. The selected baseline pointer is
 /// returned in EAX. This is a thiscall routine with three stack words, which
 /// the callee removes.
-lf_checker_rt::export!(thiscall, rw_c496d0(this: u32, alternate: u32, source: u32, factor_bits: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_c496d0(this: u32, alternate: u32, source_container: u32, factor_bits: u32) -> u32 {
     unsafe {
         const ALTERNATE_BASE_FIELD: u32 = 0x20;
         const BASE_ADJUSTMENT: u32 = 0x10;
@@ -55,6 +56,11 @@ lf_checker_rt::export!(thiscall, rw_c496d0(this: u32, alternate: u32, source: u3
             core::hint::black_box(lhs) + core::hint::black_box(rhs)
         }
 
+        let source_state = read_u32(source_container + ALTERNATE_BASE_FIELD);
+        if source_state == 0 {
+            return source_container;
+        }
+
         let alternate_base = read_u32(alternate + ALTERNATE_BASE_FIELD);
         let baseline = if alternate_base != 0 {
             alternate_base.wrapping_add(BASE_ADJUSTMENT)
@@ -64,7 +70,7 @@ lf_checker_rt::export!(thiscall, rw_c496d0(this: u32, alternate: u32, source: u3
         let factor = f32::from_bits(factor_bits);
 
         for index in 0..5 {
-            let source_value = read_f32(source + SOURCE_COMPONENTS[index]);
+            let source_value = read_f32(source_state + SOURCE_COMPONENTS[index]);
             let baseline_value = read_f32(baseline + BASE_COMPONENTS[index]);
             let difference = subtract(source_value, baseline_value);
             let scaled_difference = multiply(difference, factor);
@@ -72,7 +78,7 @@ lf_checker_rt::export!(thiscall, rw_c496d0(this: u32, alternate: u32, source: u3
             write_f32(this + DESTINATION_COMPONENTS[index], blended);
         }
 
-        let source_value = read_f32(source + SOURCE_COMPONENTS[5]);
+        let source_value = read_f32(source_state + SOURCE_COMPONENTS[5]);
         let baseline_value = read_f32(baseline + BASE_COMPONENTS[5]);
         let difference = subtract(source_value, baseline_value);
         let scaled_difference = multiply(difference, factor);

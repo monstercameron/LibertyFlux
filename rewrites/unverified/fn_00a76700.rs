@@ -32,8 +32,9 @@ lf_checker_rt::export!(cdecl, rw_00a76700(vehicle: u32, requested_value: u32) ->
     }
 
     unsafe {
-        let first_accessor = call_virtual(vehicle, 0xA0);
-        let first_result = if first_accessor != 0 {
+        let first_test = call_virtual(vehicle, 0xA0);
+        let first_result = if first_test != 0 {
+            let first_accessor = call_virtual(vehicle, 0xA0);
             call_virtual(first_accessor, 0xE0)
         } else {
             read_word_at(vehicle, VEHICLE_FALLBACK_OFFSET)
@@ -42,8 +43,9 @@ lf_checker_rt::export!(cdecl, rw_00a76700(vehicle: u32, requested_value: u32) ->
             return 0;
         }
 
-        let second_accessor = call_virtual(vehicle, 0xA0);
-        let data_object = if second_accessor != 0 {
+        let second_test = call_virtual(vehicle, 0xA0);
+        let data_object = if second_test != 0 {
+            let second_accessor = call_virtual(vehicle, 0xA0);
             call_virtual(second_accessor, 0xE0)
         } else {
             read_word_at(vehicle, VEHICLE_FALLBACK_OFFSET)

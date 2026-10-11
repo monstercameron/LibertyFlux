@@ -262,7 +262,7 @@ lf_checker_rt::export!(cdecl, rw_00b0c150(
         if recycled {
             let _ = lf_checker_rt::callee_thiscall!(CALL_POOL_RECLAIM, u32, row);
         }
-        let _ = lf_checker_rt::callee_thiscall!(CALL_POOL_RESET, u32, row);
+        let _ = lf_checker_rt::callee_thiscall!(CALL_POOL_RESET, u32, row, 0u32);
 
         write_u8(row.wrapping_add(MODE_FLAGS_OFFSET), read_u8(row.wrapping_add(MODE_FLAGS_OFFSET)) & 0xFE);
         write_u8(row.wrapping_add(MODE_OFFSET), mode);
