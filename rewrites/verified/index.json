@@ -66114,6 +66114,357 @@
   "lane": "a-18"
  },
  {
+  "address": "0x009B7D30",
+  "name": "create_cam_instruction_with_two_words",
+  "kind": "function",
+  "file": "functions/fn_009b7d30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7D60",
+  "name": "fn_009b7d60",
+  "kind": "function",
+  "file": "functions/fn_009b7d60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7DE0",
+  "name": "CCamScriptInstruction_SequenceWait::vf1",
+  "kind": "function",
+  "file": "functions/fn_009b7de0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7E00",
+  "name": "NativeImpl_SET_CAM_PROPAGATE",
+  "kind": "function",
+  "file": "functions/fn_009b7e00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7E30",
+  "name": "NativeImpl_RESET_CAM_SPLINE_CUSTOM_SPEED_GRAPH",
+  "kind": "function",
+  "file": "functions/fn_009b7e30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7E50",
+  "name": "NativeImpl_RESET_CAM_INTERP_CUSTOM_SPEED_GRAPH",
+  "kind": "function",
+  "file": "functions/fn_009b7e50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7E70",
+  "name": "initialize_cam_instruction_defaults",
+  "kind": "function",
+  "file": "functions/fn_009b7e70.rs",
+  "trials": 2000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7ED0",
+  "name": "create_cam_instruction_reset_variant_a",
+  "kind": "function",
+  "file": "functions/fn_009b7ed0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7EF0",
+  "name": "create_cam_instruction_reset_variant_b",
+  "kind": "function",
+  "file": "functions/fn_009b7ef0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7F30",
+  "name": "create_cam_instruction_with_word_a",
+  "kind": "function",
+  "file": "functions/fn_009b7f30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7F60",
+  "name": "CCamScriptInstruction_state_update",
+  "kind": "function",
+  "file": "functions/fn_009b7f60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7F90",
+  "name": "dispatch_cam_instruction_target",
+  "kind": "function",
+  "file": "functions/fn_009b7f90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7FC0",
+  "name": "create_cam_instruction_with_word_b",
+  "kind": "function",
+  "file": "functions/fn_009b7fc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B7FF0",
+  "name": "create_cam_instruction_with_word_c",
+  "kind": "function",
+  "file": "functions/fn_009b7ff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8020",
+  "name": "create_cam_instruction_with_two_words_and_sentinel",
+  "kind": "function",
+  "file": "functions/fn_009b8020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8060",
+  "name": "initialize_ten_camera_slots",
+  "kind": "function",
+  "file": "functions/fn_009b8060.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B80C0",
+  "name": "clear_ten_camera_slots",
+  "kind": "function",
+  "file": "functions/fn_009b80c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B80F0",
+  "name": "NativeImpl_SET_CAMERA_AUTO_SCRIPT_ACTIVATION",
+  "kind": "function",
+  "file": "functions/fn_009b80f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8100",
+  "name": "NativeImpl_SET_CAMERA_BEGIN_CAM_COMMANDS_REQUIRED",
+  "kind": "function",
+  "file": "functions/fn_009b8100.rs",
+  "trials": 2000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8120",
+  "name": "CamApplyState",
+  "kind": "function",
+  "file": "functions/fn_009b8120.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8140",
+  "name": "NativeImpl_SET_CAM_BEHIND_PED",
+  "kind": "function",
+  "file": "functions/fn_009b8140.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8170",
+  "name": "NativeImpl_SET_CAM_IN_FRONT_OF_PED",
+  "kind": "function",
+  "file": "functions/fn_009b8170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B81A0",
+  "name": "create_cam_instruction_from_vec4_and_word_a",
+  "kind": "function",
+  "file": "functions/fn_009b81a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B81F0",
+  "name": "create_cam_instruction_from_vec4",
+  "kind": "function",
+  "file": "functions/fn_009b81f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8240",
+  "name": "create_cam_instruction_from_vec4_and_word_b",
+  "kind": "function",
+  "file": "functions/fn_009b8240.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8290",
+  "name": "NativeImpl_SET_CAM_SPLINE_CUSTOM_SPEED_GRAPH",
+  "kind": "function",
+  "file": "functions/fn_009b8290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B82C0",
+  "name": "NativeImpl_SET_CAM_TARGET_PED",
+  "kind": "function",
+  "file": "functions/fn_009b82c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B82F0",
+  "name": "NativeImpl_SET_CAMERA_CONTROLS_DISABLED_WITH_PLAYER_CONTROLS",
+  "kind": "function",
+  "file": "functions/fn_009b82f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8320",
+  "name": "create_cam_instruction_with_two_words_d",
+  "kind": "function",
+  "file": "functions/fn_009b8320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8350",
+  "name": "create_cam_instruction_with_boolean_a",
+  "kind": "function",
+  "file": "functions/fn_009b8350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8380",
+  "name": "create_cam_instruction_with_byte_as_word",
+  "kind": "function",
+  "file": "functions/fn_009b8380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B83B0",
+  "name": "create_cam_instruction_with_boolean_b",
+  "kind": "function",
+  "file": "functions/fn_009b83b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B83E0",
+  "name": "create_cam_instruction_with_word_and_boolean",
+  "kind": "function",
+  "file": "functions/fn_009b83e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8410",
+  "name": "create_cam_instruction_from_float_and_words",
+  "kind": "function",
+  "file": "functions/fn_009b8410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8450",
+  "name": "NativeImpl_SET_CAM_FOV",
+  "kind": "function",
+  "file": "functions/fn_009b8450.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8490",
+  "name": "NativeImpl_SET_CAM_FAR_CLIP",
+  "kind": "function",
+  "file": "functions/fn_009b8490.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B84D0",
+  "name": "CamOpFarDof",
+  "kind": "function",
+  "file": "functions/fn_009b84d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8510",
+  "name": "create_cam_instruction_with_float_a",
+  "kind": "function",
+  "file": "functions/fn_009b8510.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
+  "address": "0x009B8540",
+  "name": "create_cam_instruction_with_float_b",
+  "kind": "function",
+  "file": "functions/fn_009b8540.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s636"
+ },
+ {
   "address": "0x009B8730",
   "name": "CamInstr_E94638_Create",
   "kind": "function",
