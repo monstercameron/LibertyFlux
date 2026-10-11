@@ -2,8 +2,9 @@
 
 /// Read the 16-bit count at 0x019d220e. When it is nonzero, call the
 /// scripted stdcall helper with the pointer-like dword at 0x019d2208 and the
-/// zero-extended count; otherwise return the count. The call site is direct, and
-/// the proof includes both zero and nonzero counts.
+/// zero-extended count; otherwise return the count. The original preserves
+/// incoming EAX when the count is zero, so the contract fixes EAX to zero
+/// because the rewrite runtime has no incoming-EAX mirror. Both branches are tested.
 
 lf_checker_rt::export!(cdecl, rw_dispatch_global_entry_if_present_00e6e980() -> u32 {
     unsafe {
