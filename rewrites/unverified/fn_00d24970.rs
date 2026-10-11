@@ -63,7 +63,7 @@ lf_checker_rt::export!(thiscall, rw_00d24970(this: u32) -> () {
             low = greater_or_right(low, read_f32(target_data, TERTIARY_LOW));
             high = greater_or_right(high, read_f32(target_data, TERTIARY_HIGH));
         }
-        if flag_3c1 != 0 || (flag_3c3 == 0 && flag_3c2 == 0) {
+        if flag_3c1 != 0 || (flag_3c3 == 0 && flag_3c2 != 0) {
             let current_low = read_f32(target_data, PRIMARY_LOW);
             let current_high = read_f32(target_data, PRIMARY_HIGH);
             write_f32(target_data, PRIMARY_LOW, greater_or_right(current_low, low));

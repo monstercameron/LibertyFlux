@@ -121,12 +121,9 @@ fn set_word(buffer: &mut [u8], offset: usize, value: u32) {
     buffer[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
 }
 
-/// Writes a scripted poke into the planted record at `record`.
-///
-/// # Safety
-///
-/// `record` is the address of a live planted record of [`RECORD_BYTES`]
-/// bytes, and the poke's offset lies inside it.
+/// Writes a scripted poke into the planted record at `record`, which is the
+/// address of a live planted record of [`RECORD_BYTES`] bytes. The poke's
+/// offset lies inside it.
 fn apply_poke(record: u32, poke: Poke) {
     match poke {
         Poke::Count { table, value } => {
@@ -826,6 +823,7 @@ fn apply_lift_matches_rewrite_on_generated_cases() {
     let _guard = TEST_LOCK.lock().unwrap_or_else(|poison| poison.into_inner());
     plant_stubs();
     let kinds = check_routine(Routine::Apply, SEED_APPLY);
+    eprintln!("transform coverage [no-answer, answer, multi-call, table-3 notify]: {kinds:?}");
     assert!(kinds[0] > 0 && kinds[1] > 0, "answers: {kinds:?}");
     assert!(kinds[2] > CASES / 2, "multi-call cases: {kinds:?}");
     assert!(kinds[3] > CASES / 10, "table-3 notify cases: {kinds:?}");
