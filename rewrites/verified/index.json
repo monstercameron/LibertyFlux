@@ -48708,6 +48708,15 @@
   "lane": "a-S06"
  },
  {
+  "address": "0x0088DAC0",
+  "name": "aud_voice_graph_update",
+  "kind": "function",
+  "file": "functions/fn_0088dac0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U107"
+ },
+ {
   "address": "0x0088E090",
   "name": "aud_voice_fill_output",
   "kind": "function",
@@ -92086,6 +92095,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b303"
+ },
+ {
+  "address": "0x00B0C150",
+  "name": "net_pool_slot_alloc",
+  "kind": "function",
+  "file": "functions/fn_00b0c150.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U107"
  },
  {
   "address": "0x00B0C5C0",
