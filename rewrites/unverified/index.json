@@ -944,6 +944,22 @@
   "reason": "other"
  },
  {
+  "address": "0x0063D270",
+  "name": "rage::ptxModel::vf24",
+  "file": "fn_0063d270.rs",
+  "lane": "r-s686",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x006595A0",
+  "name": null,
+  "file": "fn_006595a0.rs",
+  "lane": "r-s688",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x006607F0",
   "name": "rage::snAddRemoteGamerTask::vf3",
   "file": "fn_006607f0.rs",
@@ -1232,38 +1248,6 @@
   "reason": "other"
  },
  {
-  "address": "0x008C5A40",
-  "name": "Text_ResolveLabel",
-  "file": "fn_008c5a40.rs",
-  "lane": "r-s678",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x008C5BE0",
-  "name": "SharedStub_008C5BE0",
-  "file": "fn_008c5be0.rs",
-  "lane": "r-s678",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x008C5CC0",
-  "name": "n:/text",
-  "file": "fn_008c5cc0.rs",
-  "lane": "r-s678",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008C5DF0",
-  "name": "file_mode_label_pointer",
-  "file": "fn_008c5df0.rs",
-  "lane": "r-s678",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
   "address": "0x008DBF60",
   "name": "task_ctor_update_thread_range",
   "file": "fn_008dbf60.rs",
@@ -1305,11 +1289,11 @@
  },
  {
   "address": "0x00923140",
-  "name": "streaming_fn_00923140",
+  "name": "release_resource_slots",
   "file": "fn_00923140.rs",
   "lane": "r-s676",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x0092AE00",
@@ -1476,6 +1460,14 @@
   "name": null,
   "file": "fn_009cc210.rs",
   "lane": "r-n86",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x009DAED0",
+  "name": null,
+  "file": "fn_009daed0.rs",
+  "lane": "r-s690",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1873,9 +1865,9 @@
  },
  {
   "address": "0x00AFED00",
-  "name": null,
+  "name": "input_ui_object_gate",
   "file": "fn_00afed00.rs",
-  "lane": "a-U56",
+  "lane": "a-U68",
   "outcome": "not yet run",
   "reason": null
  },

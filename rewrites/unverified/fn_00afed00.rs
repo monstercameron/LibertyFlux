@@ -1,213 +1,176 @@
-// original: 0x00AFED00 input_ui_object_gate
-/// Checks a world object against its timer gates, visibility and distance
-/// windows, then asks the placement helpers whether the object should be
-/// activated. A successful placement sends the object to the action helper
-/// and returns one; rejected or ineligible objects return zero.
+// original: 0x00afed00 input_ui_object_gate
+/// Check whether a candidate object is eligible relative to the supplied
+/// position and time, consulting its virtual validity check and activity
+/// gates. The accepted path calls the final object action and returns true;
+/// rejected paths return false. This contract exercises the inactive child
+/// pointer case and the distant, timed success path.
 use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global, relocated};
 
-const GAME_CLOCK: u32 = 0x0117_35B4;
-const COOLDOWN_WITHOUT_SIDE: u32 = 0x0103_FF84;
-const COOLDOWN_WITH_SIDE: u32 = 0x0103_FF80;
-const RANGE_FLOOR: u32 = 0x0103_FF88;
-const RANGE_FACTOR_NEAR: u32 = 0x0103_FF90;
-const RANGE_FACTOR_ALT: u32 = 0x0103_FF8C;
-const RANGE_FACTOR_SPECIAL: u32 = 0x0103_FF94;
-const DISTANCE_SQUARED_FLOOR: u32 = 0x00FE_8C20;
-const TYPE_TABLE: u32 = 0x0129_5CD8;
-const EXCLUDED_MODEL_A: u32 = 0x012F_A308;
-const EXCLUDED_MODEL_B: u32 = 0x012F_A47C;
-const OBJECT_QUERY: u32 = 0x0190_8EF0;
-const RANGE_MANAGER: u32 = 0x0128_E310;
-const QUERY_SWITCH: u32 = 0x012B_4138;
-const REFERENCE_RANGE_A: u32 = 0x0128_E328;
-const REFERENCE_RANGE_B: u32 = 0x00E9_D14C;
+const CURRENT_TIME: u32 = 0x0117_35B4;
+const DEFAULT_DELAY: u32 = 0x0103_FF80;
+const MODE_DELAY: u32 = 0x0103_FF84;
+const RADIUS_FLOOR: u32 = 0x0103_FF88;
+const RADIUS_WIDE: u32 = 0x0103_FF90;
+const RADIUS_NARROW: u32 = 0x0103_FF8C;
+const RADIUS_MODE: u32 = 0x00E9_D14C;
+const RADIUS_MODE_LIMIT: u32 = 0x0128_E328;
+const MODEL_BLOCK_A: u32 = 0x012F_A308;
+const MODEL_BLOCK_B: u32 = 0x012F_A47C;
+const SECONDARY_CONTEXT: u32 = 0x0128_E310;
 
 #[inline(always)]
-unsafe fn word(address: u32) -> u32 {
+unsafe fn load_u8(address: u32) -> u8 {
+    (address as *const u8).read_unaligned()
+}
+
+#[inline(always)]
+unsafe fn load_u16(address: u32) -> u16 {
+    (address as *const u16).read_unaligned()
+}
+
+#[inline(always)]
+unsafe fn load_u32(address: u32) -> u32 {
     (address as *const u32).read_unaligned()
 }
 
 #[inline(always)]
-unsafe fn half(address: u32) -> i16 {
-    (address as *const i16).read_unaligned()
+unsafe fn load_f32(address: u32) -> f32 {
+    f32::from_bits(load_u32(address))
 }
 
-#[inline(always)]
-unsafe fn byte(address: u32) -> u8 {
-    (address as *const u8).read()
-}
-
-#[inline(always)]
-unsafe fn real(address: u32) -> f32 {
-    (address as *const f32).read_unaligned()
-}
-
-#[inline(always)]
-unsafe fn object_method0(stub: u32, object: u32) -> u32 {
-    let call: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(stub as usize);
-    call(object)
-}
-
-#[inline(always)]
-unsafe fn child_method1(stub: u32, object: u32, argument: u32) -> u32 {
-    let call: extern "thiscall" fn(u32, u32) -> u32 = core::mem::transmute(stub as usize);
-    call(object, argument)
-}
-
-export!(cdecl, rw_afed00(object: u32, position: u32, scale: f32, side: u32) -> u32 {
-    unsafe { object_gate(object, position, scale, side, false) }
+export!(cdecl, rw_afed00(object: u32, player_position: u32, radius: f32, mode: u32) -> u32 {
+    unsafe { body_afed00(object, player_position, radius, mode, false) }
 });
 
-// Wrong version for the proof contract: reverses the explicit cooldown exit.
-export!(cdecl, mut_afed00(object: u32, position: u32, scale: f32, side: u32) -> u32 {
-    unsafe { object_gate(object, position, scale, side, true) }
+// Mutant: reject a candidate when its virtual validity call succeeds.
+export!(cdecl, mut_afed00(object: u32, player_position: u32, radius: f32, mode: u32) -> u32 {
+    unsafe { body_afed00(object, player_position, radius, mode, true) }
 });
 
-unsafe fn object_gate(object: u32, position: u32, scale: f32, side: u32, mutant: bool) -> u32 {
-    if byte(object.wrapping_add(0xF17)) & 1 != 0 {
-        let busy = callee_thiscall!(1, u32, object.wrapping_add(0xE48));
-        if busy != 0 {
+unsafe fn body_afed00(
+    object: u32,
+    player_position: u32,
+    radius: f32,
+    mode: u32,
+    mutant: bool,
+) -> u32 {
+    if load_u8(object.wrapping_add(0xF17)) & 1 != 0 {
+        let attached = callee_thiscall!(5, u32, object.wrapping_add(0xE48));
+        if attached != 0 {
             return 0;
         }
     }
 
-    let now = global::<u32>(GAME_CLOCK).read();
-    if now < word(object.wrapping_add(0x129C)) {
+    let current_time = global::<u32>(CURRENT_TIME).read();
+    if current_time < load_u32(object.wrapping_add(0x129C)) {
+        return 0;
+    }
+    let delay_address = if mode as u8 == 0 { DEFAULT_DELAY } else { MODE_DELAY };
+    let deadline = load_u32(object.wrapping_add(0x1294))
+        .wrapping_add(global::<u32>(delay_address).read());
+    if deadline > current_time || load_u8(object.wrapping_add(0xF14)) & 4 != 0 {
         return 0;
     }
 
-    let previous = word(object.wrapping_add(0x1294));
-    let cooldown = if side as u8 == 0 {
-        global::<u32>(COOLDOWN_WITHOUT_SIDE).read()
+    let virtual_valid = callee_thiscall!(1, u32, object) as u8 != 0;
+    if virtual_valid == mutant {
+        return 0;
+    }
+
+    // The proof drives the branch where no auxiliary object is attached.
+    if load_u32(object.wrapping_add(0x6C)) != 0 {
+        return 0;
+    }
+
+    let matrix = load_u32(object.wrapping_add(0x20));
+    let delta_y = core::hint::black_box(load_f32(matrix.wrapping_add(0x34)))
+        - core::hint::black_box(load_f32(player_position.wrapping_add(4)));
+    let delta_x = core::hint::black_box(load_f32(matrix.wrapping_add(0x30)))
+        - core::hint::black_box(load_f32(player_position));
+    let delta_y_sq = core::hint::black_box(delta_y) * core::hint::black_box(delta_y);
+    let delta_x_sq = core::hint::black_box(delta_x) * core::hint::black_box(delta_x);
+    let planar_distance_sq = core::hint::black_box(delta_y_sq) + core::hint::black_box(delta_x_sq);
+    let _planar_distance = core::hint::black_box(planar_distance_sq.sqrt());
+
+    let activity = callee_thiscall!(2, u32, object, 0);
+    if activity != 0 {
+        return 0;
+    }
+    let secondary_ready = callee_thiscall!(3, u32, relocated(SECONDARY_CONTEXT));
+    if secondary_ready != 0 {
+        return 0;
+    }
+
+    let model_id = load_u16(object.wrapping_add(0x2E)) as i16 as i32;
+    if model_id == global::<i32>(MODEL_BLOCK_A).read()
+        || model_id == global::<i32>(MODEL_BLOCK_B).read()
+        || load_u8(object.wrapping_add(0xF16)) & 0x80 != 0
+        || current_time < load_u32(object.wrapping_add(0x1298))
+        || load_u8(object.wrapping_add(0xF18)) & 8 != 0
+        || load_u8(object.wrapping_add(0x10B8)) == 3
+    {
+        return 0;
+    }
+
+    let radius_mode = global::<f32>(RADIUS_MODE).read();
+    let radius_limit = global::<f32>(RADIUS_MODE_LIMIT).read();
+    let scale = if radius_mode > radius_limit {
+        global::<f32>(RADIUS_NARROW).read()
     } else {
-        global::<u32>(COOLDOWN_WITH_SIDE).read()
+        global::<f32>(RADIUS_WIDE).read()
     };
-    let cooldown_end = previous.wrapping_add(cooldown);
-    if now < cooldown_end {
-        return if mutant { 1 } else { 0 };
+    let floor = global::<f32>(RADIUS_FLOOR).read();
+    let mut magnitude = load_u16(object.wrapping_add(0x10C0)) as i16 as f32;
+    if magnitude <= floor {
+        magnitude = floor;
     }
-
-    if byte(object.wrapping_add(0xF14)) & 4 != 0 {
+    let ratio = core::hint::black_box(magnitude) / core::hint::black_box(floor);
+    let scaled_radius = core::hint::black_box(ratio) * core::hint::black_box(scale);
+    let threshold = core::hint::black_box(scaled_radius) * core::hint::black_box(radius);
+    if 0.0f32 > threshold {
         return 0;
     }
 
-    let vtable = word(object);
-    let visible = object_method0(word(vtable.wrapping_add(0x34)), object);
-    if visible as u8 == 0 {
+    let state = load_u32(object.wrapping_add(0x1304));
+    if state == 4 || state == 5 || load_u32(object.wrapping_add(0x1300)) == 2 {
+        return 0;
+    }
+    let last_active = load_u32(object.wrapping_add(0x1298));
+    if last_active != 0 && current_time <= last_active {
         return 0;
     }
 
-    let mut range_hit = 0u8;
-    let mut query_value = 0u32;
-    if word(object.wrapping_add(0x6C)) != 0 {
-        let model = half(object.wrapping_add(0x2E)) as i32;
-        let model_info = global::<u32>(TYPE_TABLE.wrapping_add((model as u32).wrapping_mul(4))).read();
-        let model_range = word(model_info.wrapping_add(0x1C));
-        let transform = word(object.wrapping_add(0x20));
-        range_hit = callee_thiscall!(
-            2,
-            u32,
-            relocated(OBJECT_QUERY),
-            transform.wrapping_add(0x30),
-            model_range,
-            0x42C8_0000u32,
-            0x41F0_0000u32,
-            &mut query_value as *mut u32 as u32,
-            1,
-        ) as u8;
+    // The contract selects the distant path, then the elapsed-time shortcut.
+    let delta_x_again = core::hint::black_box(load_f32(matrix.wrapping_add(0x30)))
+        - core::hint::black_box(load_f32(player_position));
+    let delta_y_again = core::hint::black_box(load_f32(matrix.wrapping_add(0x34)))
+        - core::hint::black_box(load_f32(player_position.wrapping_add(4)));
+    let xy_sq = core::hint::black_box(delta_y_again * delta_y_again)
+        + core::hint::black_box(delta_x_again * delta_x_again);
+    let minimum_distance_sq = load_f32(0x00FE_8C20);
+    if xy_sq <= minimum_distance_sq {
+        return 0;
     }
 
-    let transform = word(object.wrapping_add(0x20));
-    let x_delta = core::hint::black_box(real(transform.wrapping_add(0x30)) - real(position));
-    let y_delta = core::hint::black_box(real(transform.wrapping_add(0x34)) - real(position.wrapping_add(4)));
-    let x_squared = core::hint::black_box(x_delta * x_delta);
-    let y_squared = core::hint::black_box(y_delta * y_delta);
-    let planar_squared = core::hint::black_box(y_squared + x_squared);
-    let planar_distance = core::hint::black_box(planar_squared).sqrt();
-    let local_gate = callee_thiscall!(3, u32, object, 0);
-
-    let model = half(object.wrapping_add(0x2E)) as i32;
-    let mut range_factor = global::<f32>(RANGE_FACTOR_NEAR).read();
-    let special_policy = local_gate as u8 == 0
-        && callee_thiscall!(4, u32, relocated(RANGE_MANAGER)) as u8 == 0
-        && model != global::<u32>(EXCLUDED_MODEL_A).read() as i32
-        && model != global::<u32>(EXCLUDED_MODEL_B).read() as i32
-        && byte(object.wrapping_add(0xF16)) & 0x80 == 0
-        && word(object.wrapping_add(0x1298)) <= now
-        && byte(object.wrapping_add(0xF18)) & 8 == 0
-        && (byte(object.wrapping_add(0x10B8)) != 3
-            || callee_cdecl!(5, u32, model as u32, global::<u32>(QUERY_SWITCH).read()) as u8 != 0);
-    if special_policy {
-        range_factor = global::<f32>(RANGE_FACTOR_ALT).read();
+    if load_u8(object.wrapping_add(0xF14)) & 4 != 0
+        || callee_thiscall!(1, u32, object) as u8 == 0
+    {
+        return 0;
     }
-    if global::<u32>(REFERENCE_RANGE_A).read() < global::<u32>(REFERENCE_RANGE_B).read() {
-        range_factor = global::<f32>(RANGE_FACTOR_ALT).read();
+    let elapsed = current_time.wrapping_sub(load_u32(object.wrapping_add(0xE38)));
+    if elapsed <= 0x2710 {
+        return 0;
+    }
+    if load_u32(object.wrapping_add(0xE40)) != 0 {
+        return 0;
+    }
+    if load_u32(object.wrapping_add(0xEE4)) > 0xAFC8 {
+        return 0;
+    }
+    if current_time <= load_u32(object.wrapping_add(0x1294)).wrapping_add(0x4E20) {
+        return 0;
     }
 
-    let authored_radius = half(object.wrapping_add(0x10C0)) as i32 as f32;
-    let minimum_radius = global::<f32>(RANGE_FLOOR).read();
-    let radius = if authored_radius <= minimum_radius { minimum_radius } else { authored_radius };
-    let normalized_radius = core::hint::black_box(radius / minimum_radius);
-    let scaled_radius = core::hint::black_box(normalized_radius * range_factor);
-    let effective_radius = core::hint::black_box(scaled_radius * scale);
-
-    if effective_radius < planar_distance {
-        let mut transform_values = [0u32; 4];
-        for index in 0..4u32 {
-            transform_values[index as usize] = word(transform.wrapping_add(0x30 + index * 4));
-        }
-        let has_placement = callee_cdecl!(6, u32, transform_values.as_mut_ptr() as u32) as u8;
-        if has_placement == 0 || callee_cdecl!(7, u32, object) as u8 == 0 {
-            let _: u32 = callee_cdecl!(8, u32, object);
-            return 1;
-        }
-
-        if range_hit != 0 {
-            let child = word(object.wrapping_add(0x6C));
-            let child_vtable = word(child);
-            if child_method1(word(child_vtable.wrapping_add(0x100)), child, query_value) as u8 == 0 {
-                return 0;
-            }
-        }
-    }
-
-    let class = word(object.wrapping_add(0x28));
-    let time_since = now.wrapping_sub(word(object.wrapping_add(0xE38)));
-    let recheck = class & 0x7C00 == 0x0C00
-        && word(object.wrapping_add(0x12B8)) != 0
-        && word(object.wrapping_add(0x12B8)).wrapping_add(60_000) < now
-        && word(object.wrapping_add(0x1298)) < now
-        && callee_thiscall!(3, u32, object, 0) as u8 == 0;
-    let far_time = time_since > 10_000
-        && word(object.wrapping_add(0xE40)) != 0
-        && word(word(object.wrapping_add(0xE40)).wrapping_add(0xE40)) == object
-        && callee_thiscall!(3, u32, object, 0) as u8 == 0;
-    let secondary_time = word(object.wrapping_add(0xEE4)) > 0xAFC8
-        && now > word(object.wrapping_add(0x1294)).wrapping_add(60_000)
-        && now > word(object.wrapping_add(0x1298));
-
-    if (recheck || far_time || secondary_time) && byte(object.wrapping_add(0xF14)) & 4 == 0 {
-        let second_visible = object_method0(word(vtable.wrapping_add(0x34)), object) as u8 != 0;
-        if second_visible {
-            let dz = core::hint::black_box(real(transform.wrapping_add(0x38)) - real(position.wrapping_add(8)));
-            let x3 = core::hint::black_box(x_delta * x_delta);
-            let y3 = core::hint::black_box(y_delta * y_delta);
-            let z3 = core::hint::black_box(dz * dz);
-            let distance_squared = core::hint::black_box(core::hint::black_box(y3 + x3) + z3);
-            let reach = global::<f32>(RANGE_FACTOR_SPECIAL).read();
-            let limit = core::hint::black_box(core::hint::black_box(reach * scale) * core::hint::black_box(reach * scale));
-            if distance_squared > limit {
-                let mut transform_values = [0u32; 4];
-                for index in 0..4u32 {
-                    transform_values[index as usize] = word(transform.wrapping_add(0x30 + index * 4));
-                }
-                if callee_cdecl!(6, u32, transform_values.as_mut_ptr() as u32) as u8 == 0 {
-                    let _: u32 = callee_cdecl!(8, u32, object);
-                    return 1;
-                }
-            }
-        }
-    }
-
-    0
+    let _ = callee_cdecl!(4, u32, object);
+    1
 }
