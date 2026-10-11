@@ -76635,6 +76635,24 @@
   "lane": "r-b324"
  },
  {
+  "address": "0x00A29E40",
+  "name": "CPlayerPed::vf62",
+  "kind": "function",
+  "file": "functions/fn_00a29e40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A29E70",
+  "name": "ped_task_manager_forwarder",
+  "kind": "function",
+  "file": "functions/fn_00a29e70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
   "address": "0x00A29E90",
   "name": "pedtask_validate_candidate",
   "kind": "function",
@@ -76644,6 +76662,33 @@
   "lane": "a-R05"
  },
  {
+  "address": "0x00A2A0F0",
+  "name": "player_ped_release_field_e64",
+  "kind": "function",
+  "file": "functions/fn_00a2a0f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A2A110",
+  "name": "player_ped_reset_task_state",
+  "kind": "function",
+  "file": "functions/fn_00a2a110.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A2A160",
+  "name": "player_ped_refresh_if_idle",
+  "kind": "function",
+  "file": "functions/fn_00a2a160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
   "address": "0x00A2A180",
   "name": "pedtask_accumulator_update",
   "kind": "function",
@@ -76651,6 +76696,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "a-R05"
+ },
+ {
+  "address": "0x00A2A620",
+  "name": "CPlayerPed::vf47",
+  "kind": "function",
+  "file": "functions/fn_00a2a620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A2A680",
+  "name": "player_ped_match_handle_entry",
+  "kind": "function",
+  "file": "functions/fn_00a2a680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
  },
  {
   "address": "0x00A2A6C0",
@@ -76750,6 +76813,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b385"
+ },
+ {
+  "address": "0x00A2B9F0",
+  "name": "player_ped_update_task_flags",
+  "kind": "function",
+  "file": "functions/fn_00a2b9f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
  },
  {
   "address": "0x00A2BA70",
@@ -76858,6 +76930,78 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G13"
+ },
+ {
+  "address": "0x00A2D3E0",
+  "name": "CPlayerPed::vf80",
+  "kind": "function",
+  "file": "functions/fn_00a2d3e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A2D420",
+  "name": "CPlayerPed::vf78",
+  "kind": "function",
+  "file": "functions/fn_00a2d420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A2D430",
+  "name": "player_ped_dispatch_subtask_primary",
+  "kind": "function",
+  "file": "functions/fn_00a2d430.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A2D460",
+  "name": "player_ped_dispatch_subtask_secondary",
+  "kind": "function",
+  "file": "functions/fn_00a2d460.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A2D6C0",
+  "name": "save_record_append_primary",
+  "kind": "function",
+  "file": "functions/fn_00a2d6c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A2D720",
+  "name": "save_record_append_secondary",
+  "kind": "function",
+  "file": "functions/fn_00a2d720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A2D790",
+  "name": "save_record_append_tertiary",
+  "kind": "function",
+  "file": "functions/fn_00a2d790.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00A2E170",
+  "name": "save_vector_stage_globals",
+  "kind": "function",
+  "file": "functions/fn_00a2e170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
  },
  {
   "address": "0x00A2E370",
@@ -94491,6 +94635,15 @@
   "lane": "r-s628"
  },
  {
+  "address": "0x00B80660",
+  "name": "ped_task_manager_update_target_setting",
+  "kind": "function",
+  "file": "functions/fn_00b80660.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
   "address": "0x00B80890",
   "name": "CEventNewTask::CEventNewTask",
   "kind": "function",
@@ -94498,6 +94651,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80940",
+  "name": "ped_task_manager_clear_and_destroy_entries",
+  "kind": "function",
+  "file": "functions/fn_00b80940.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
  },
  {
   "address": "0x00B809B0",
@@ -94552,6 +94714,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80BC0",
+  "name": "ped_task_manager_find_node_by_kind_from_list",
+  "kind": "function",
+  "file": "functions/fn_00b80bc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00B80C00",
+  "name": "ped_task_manager_find_node_by_kind",
+  "kind": "function",
+  "file": "functions/fn_00b80c00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
  },
  {
   "address": "0x00B80D50",
@@ -110275,6 +110455,51 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-U45"
+ },
+ {
+  "address": "0x00BBB030",
+  "name": "CTaskSimpleSay::vf1",
+  "kind": "function",
+  "file": "functions/fn_00bbb030.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00BBB080",
+  "name": "CTaskSimpleSetCharCombatDecisionMaker::vf1",
+  "kind": "function",
+  "file": "functions/fn_00bbb080.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00BBB0C0",
+  "name": "CTaskSimpleSetCharDecisionMaker::vf1",
+  "kind": "function",
+  "file": "functions/fn_00bbb0c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00BBB100",
+  "name": "CTaskSimpleSetCharIgnoreWeaponRangeFlag::vf1",
+  "kind": "function",
+  "file": "functions/fn_00bbb100.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
+ },
+ {
+  "address": "0x00BBB140",
+  "name": "CTaskSimpleTogglePedThreatScanner::vf1",
+  "kind": "function",
+  "file": "functions/fn_00bbb140.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U48"
  },
  {
   "address": "0x00BBB2A0",
