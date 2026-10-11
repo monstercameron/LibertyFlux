@@ -104,7 +104,7 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
         read_f32(entity.wrapping_add(0x50)),
         read_f32(entity.wrapping_add(0x14)),
     );
-    let _voice_status = lf_au87_rt::callee_thiscall!(
+    let voice_status = lf_au87_rt::callee_thiscall!(
         4,
         u32,
         object,
@@ -120,7 +120,11 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
     );
 
     let voice = read_u32(object.wrapping_add(VOICE_SLOT_OFFSET));
-    let row = if voice == 0 || read_u8(voice.wrapping_add(ENTITY_TAG_OFFSET)) == EMPTY_TAG {
+    if voice == 0 {
+        return voice_status;
+    }
+
+    let row = if read_u8(voice.wrapping_add(ENTITY_TAG_OFFSET)) == EMPTY_TAG {
         0
     } else {
         let tag = u32::from(read_u8(voice.wrapping_add(ENTITY_TAG_OFFSET)));

@@ -1,3 +1,18 @@
+// original: 0x00B6EB90 CTaskComplexGoToCarDoorAndStandStill::vf20
+/// Evaluates this task's selected update paths for the supplied context.
+/// The modeled envelope includes the null-owner and interrupt exits, the gate
+/// and count checks, and selected B8 continuation and merge branches. It
+/// preserves the observed call order and state writes on those paths.
+///
+/// The contract proves only its pinned input scenarios: non-default dispatch
+/// arms, deeper tail work, and null pointers outside the explicit early-exit
+/// cases are not covered. Those paths deliberately reach a marker return and
+/// must not be treated as implemented by this narrow proof.
+///
+/// Arguments use thiscall: `this` points to the task and `arg` to its context.
+/// Returns the selected helper result or child-task value, with the same task
+/// state updates and observable calls as the original on the proved envelope.
+
 extern crate lf_checker_rt;
 
 #[inline(always)]
@@ -44,21 +59,6 @@ unsafe fn wr32(a: u32, v: u32) {
 unsafe fn wr8(a: u32, v: u8) {
     unsafe { (a as *mut u8).write(v) }
 }
-
-// original: 0x00B6EB90 CTaskComplexGoToCarDoorAndStandStill::vf20
-/// Evaluates this task's selected update paths for the supplied context.
-/// The modeled envelope includes the null-owner and interrupt exits, the gate
-/// and count checks, and selected B8 continuation and merge branches. It
-/// preserves the observed call order and state writes on those paths.
-///
-/// The contract proves only its pinned input scenarios: non-default dispatch
-/// arms, deeper tail work, and null pointers outside the explicit early-exit
-/// cases are not covered. Those paths deliberately reach a marker return and
-/// must not be treated as implemented by this narrow proof.
-///
-/// Arguments use thiscall: `this` points to the task and `arg` to its context.
-/// Returns the selected helper result or child-task value, with the same task
-/// state updates and observable calls as the original on the proved envelope.
 
 lf_checker_rt::export!(thiscall, rw_00b6eb90(this: u32, arg: u32) -> u32 {
     unsafe {

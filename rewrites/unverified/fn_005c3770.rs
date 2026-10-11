@@ -85,7 +85,7 @@ lf_checker_rt::export!(thiscall, rw_005c3770(
         let task_kind = read_u32(task_descriptor.wrapping_add(TASK_KIND));
 
         let resolved_task = if task_kind == KIND_SPECIAL {
-            lf_checker_rt::callee_thiscall!(2, u32, this, input_slot)
+            lf_checker_rt::callee_thiscall!(2, u32, this, input_slot, task_index)
         } else {
             lf_checker_rt::callee_thiscall!(1, u32, this, input_slot, task_index)
         };

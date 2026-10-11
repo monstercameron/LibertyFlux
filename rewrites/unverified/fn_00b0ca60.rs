@@ -219,15 +219,15 @@ unsafe fn pigeon_loop(this_ptr: u32, out_slot: u32, selector: u32, mutant: bool)
     let _: u32 = lf_checker_rt::callee_thiscall!(
         16,
         u32,
-        this_ptr,
+        output_object,
         0u32,
         0x4120_0000u32,
         0u32,
         0x0FA0u32,
         0x3F00_0000u32
     );
-    let _: u32 = lf_checker_rt::callee_thiscall!(17, u32, this_ptr, output_object);
-    let _: u32 = lf_checker_rt::callee_thiscall!(18, u32, this_ptr, output_word);
+    let _: u32 = lf_checker_rt::callee_thiscall!(17, u32, output_object, output_object);
+    let _: u32 = lf_checker_rt::callee_thiscall!(18, u32, output_object, output_word);
 
     0
 }
