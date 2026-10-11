@@ -76446,6 +76446,15 @@
   "lane": "r-b459"
  },
  {
+  "address": "0x00A62720",
+  "name": "adjust_pinned_down_counter",
+  "kind": "function",
+  "file": "functions/fn_00a62720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
+ },
+ {
   "address": "0x00A62A10",
   "name": "ped_task_pose_transform",
   "kind": "function",
@@ -76453,6 +76462,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b459"
+ },
+ {
+  "address": "0x00A62CD0",
+  "name": "find_first_unflagged_task_slot",
+  "kind": "function",
+  "file": "functions/fn_00a62cd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
  },
  {
   "address": "0x00A62D50",
@@ -76464,6 +76482,24 @@
   "lane": "r-b459"
  },
  {
+  "address": "0x00A62ED0",
+  "name": "forward_task_or_zero",
+  "kind": "function",
+  "file": "functions/fn_00a62ed0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
+ },
+ {
+  "address": "0x00A62F70",
+  "name": "forward_planar_task_measurement",
+  "kind": "function",
+  "file": "functions/fn_00a62f70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
+ },
+ {
   "address": "0x00A62FE0",
   "name": "ped_task_target_select",
   "kind": "function",
@@ -76471,6 +76507,33 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b459"
+ },
+ {
+  "address": "0x00A632B0",
+  "name": "NativeImpl_IS_CHAR_IN_MELEE_COMBAT",
+  "kind": "function",
+  "file": "functions/fn_00a632b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
+ },
+ {
+  "address": "0x00A63320",
+  "name": "find_task_by_native_id_0x1b1",
+  "kind": "function",
+  "file": "functions/fn_00a63320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
+ },
+ {
+  "address": "0x00A63380",
+  "name": "has_any_task_selector_value",
+  "kind": "function",
+  "file": "functions/fn_00a63380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
  },
  {
   "address": "0x00A633A0",
@@ -76482,6 +76545,15 @@
   "lane": "r-b459"
  },
  {
+  "address": "0x00A63580",
+  "name": "find_look_or_pathing_task",
+  "kind": "function",
+  "file": "functions/fn_00a63580.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
+ },
+ {
   "address": "0x00A63620",
   "name": "ped_task_range_check",
   "kind": "function",
@@ -76489,6 +76561,42 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b459"
+ },
+ {
+  "address": "0x00A63780",
+  "name": "contains_task_selector_value",
+  "kind": "function",
+  "file": "functions/fn_00a63780.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
+ },
+ {
+  "address": "0x00A638B0",
+  "name": "has_task_for_native_ids_0x3ae_0x3a9_0x3b5",
+  "kind": "function",
+  "file": "functions/fn_00a638b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
+ },
+ {
+  "address": "0x00A638F0",
+  "name": "has_task_type_0xf1",
+  "kind": "function",
+  "file": "functions/fn_00a638f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
+ },
+ {
+  "address": "0x00A63930",
+  "name": "NativeImpl_IS_CHAR_SWIMMING",
+  "kind": "function",
+  "file": "functions/fn_00a63930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s612"
  },
  {
   "address": "0x00A63990",
