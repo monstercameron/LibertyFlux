@@ -135036,6 +135036,186 @@
   "lane": "r-b44"
  },
  {
+  "address": "0x00D3DE60",
+  "name": "CAnimRequestHelper::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d3de60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3DEC0",
+  "name": "anim_request_helper_query_and_clear",
+  "kind": "function",
+  "file": "functions/fn_00d3dec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E270",
+  "name": "task_registry_increment_reference",
+  "kind": "function",
+  "file": "functions/fn_00d3e270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E2C0",
+  "name": "task_registry_decrement_reference",
+  "kind": "function",
+  "file": "functions/fn_00d3e2c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E2F0",
+  "name": "task_registry_remove_entry",
+  "kind": "function",
+  "file": "functions/fn_00d3e2f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E320",
+  "name": "task_table_insert_or_update",
+  "kind": "function",
+  "file": "functions/fn_00d3e320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E3B0",
+  "name": "task_registry_register_entry",
+  "kind": "function",
+  "file": "functions/fn_00d3e3b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E420",
+  "name": "task_registry_change_active_task",
+  "kind": "function",
+  "file": "functions/fn_00d3e420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E520",
+  "name": "task_simple_sideways_dive_request",
+  "kind": "function",
+  "file": "functions/fn_00d3e520.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E5A0",
+  "name": "task_request_create_from_parameters",
+  "kind": "function",
+  "file": "functions/fn_00d3e5a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E680",
+  "name": "CTaskComplexJump::CTaskComplexJump",
+  "kind": "function",
+  "file": "functions/fn_00d3e680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E710",
+  "name": "task_simple_jump_in_air_constructor",
+  "kind": "function",
+  "file": "functions/fn_00d3e710.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E7E0",
+  "name": "task_simple_jump_land_constructor",
+  "kind": "function",
+  "file": "functions/fn_00d3e7e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E810",
+  "name": "task_simple_jump_launch_constructor",
+  "kind": "function",
+  "file": "functions/fn_00d3e810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E930",
+  "name": "task_simple_jump_launch_destroy_tail",
+  "kind": "function",
+  "file": "functions/fn_00d3e930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E960",
+  "name": "CTaskComplexJump::~CTaskComplexJump__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d3e960.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E990",
+  "name": "CTaskSimpleJumpInAir::~CTaskSimpleJumpInAir__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d3e990.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E9C0",
+  "name": "CTaskSimpleJumpLand::~CTaskSimpleJumpLand__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d3e9c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3E9F0",
+  "name": "CTaskSimpleJumpLaunch::~CTaskSimpleJumpLaunch__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d3e9f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
+  "address": "0x00D3EA20",
+  "name": "task_simple_sideways_dive_update",
+  "kind": "function",
+  "file": "functions/fn_00d3ea20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
+ },
+ {
   "address": "0x00D3EB10",
   "name": "jump_subtask_is_plain",
   "kind": "function",
@@ -135241,6 +135421,15 @@
   "trials": 1100,
   "checker": "version 4",
   "lane": "r-s307"
+ },
+ {
+  "address": "0x00D41D10",
+  "name": "CTaskSimpleSidewaysDive::vf17",
+  "kind": "function",
+  "file": "functions/fn_00d41d10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s652"
  },
  {
   "address": "0x00D425A0",

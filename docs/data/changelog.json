@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: 23 pedestrian-task routines (event table, task slots, audio task record, owner replacement)",
+    "title": "Rewrites: 21 more functions pass the checker (18007 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "21 rewrites added under rewrites/verified: 0 script native handlers and 21 other functions.",
+      "The tree now holds 18007 rewrites, 18004 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: 23 pedestrian-task routines (event table, task slots, audio task record, owner replacement)",
+    "commit": "2a3edc635059decd873f04a178c5f54ddd99d298",
     "summary": "Twenty-three more verified routines of the pedestrian-task code now have a portable Rust counterpart, each proven against its verified original, in four groups that share a data shape.",
     "changes": [
       "Lifted into lf-peds-tasks as four owning types: the 32-record task event table (9 methods), the task manager's slot arrays with the bomb requests and the update sequence (5 methods), the audio task record (8 methods; three are instances of one release routine and two of one stamp routine, each written once as a generic method and proven once per instance), and the owner replacement (1 method). The four modules are 669 lines with no unsafe and no addresses; callees that are not lifted yet sit behind a trait, and record addresses passed as arguments become indices.",
