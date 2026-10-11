@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Devlog: hourly review, 02:05 on 11 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "17,262 verified at 02:05: 14,152 bytes in 0.7 hours. With about sixty lanes each lane finished a quarter of its batch, so new starts are paused and the count falls to thirty.",
+      "Two Luna claims failed the coordinator's re-run for real (the original faults where the rewrite does not) and stay out; lanes no longer count other lanes' checker workers against their own limit."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 264 files from lanes (561 unverified rewrites, 0 in review)",
     "commit": null,
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
