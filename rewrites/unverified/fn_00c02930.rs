@@ -65,7 +65,7 @@ lf_checker_rt::export!(thiscall, rw_00c02930(this: u32, first_word: u32, second_
             write_u8(this, 0x14, mode_byte as u8);
             let toggle = (previous_mode ^ (toggle_mask as u8)) & 1;
             write_u8(this, if false { 0x25 } else { 0x24 }, previous_mode ^ toggle);
-            let answer = lf_checker_rt::callee_thiscall!(3, u32, this, second_word);
+            let answer = lf_checker_rt::callee_thiscall!(3, u32, this, unused_word);
             write_u8(this, 2, OBJECT_KIND);
             answer
         }

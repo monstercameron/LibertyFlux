@@ -63,6 +63,7 @@ lf_checker_rt::export!(thiscall, rw_00c028e0(this: u32, first_word: u32, second_
                 let _: u32 = lf_checker_rt::callee_thiscall!(2, u32, this, HELPER_CODE, shared_word, second_word, first_word, 1);
                 let answer = lf_checker_rt::callee_thiscall!(3, u32, this, tertiary_word);
                 write_u32(this, 0x24, if false { final_value_bits.wrapping_add(1) } else { final_value_bits });
+                write_u8(this, 0x14, 26);
                 write_u8(this, 2, OBJECT_KIND);
                 answer
             }

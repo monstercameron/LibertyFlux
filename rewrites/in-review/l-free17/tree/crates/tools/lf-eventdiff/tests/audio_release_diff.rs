@@ -14,11 +14,15 @@
 
 use std::sync::Mutex;
 
-use lf_eventdiff::rewrites::{fn_0097eb70, fn_0097ee90, fn_0097eea0, fn_0097eef0, fn_0097ef80, fn_0097fc80, fn_0097fce0};
+use lf_eventdiff::rewrites::{
+    fn_0097eac0, fn_0097eb70, fn_0097ee90, fn_0097eea0, fn_0097eef0, fn_0097ef80, fn_0097fc80,
+    fn_0097fce0,
+};
 use lf_eventdiff::rt;
 use lf_peds_tasks::ped_task::{
-    AudioObjects, AudioSlot, AudioTask, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, Deadline,
-    PROGRESS_LIMIT, ReleaseGlobals, SKIP_MODE,
+    AudioObjects, AudioSlot, AudioTask, CANDIDATE_KIND_MASK, CANDIDATE_KIND_SPECIAL,
+    CANDIDATE_STATE_READY, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, Deadline, PROGRESS_LIMIT,
+    ReleaseGlobals, SKIP_MODE, SubtaskCallees,
 };
 
 /// File address of the task record, which holds the three slots.
@@ -51,6 +55,22 @@ const CASES: u32 = 3000;
 /// Helper-call tags in the call log.
 const TAG_CLEANUP: u32 = 1;
 const TAG_RELEASE: u32 = 2;
+const TAG_DESCRIBE: u32 = 3;
+const TAG_CONSTRUCT: u32 = 4;
+/// Record offsets of the subtask slot, value, state and status words.
+const SUBTASK_SLOT_OFFSET: u32 = 0xB4;
+const SUBTASK_VALUE_OFFSET: u32 = 0xB8;
+const SUBTASK_STATE_OFFSET: u32 = 0xAC;
+const SUBTASK_STATUS_OFFSET: u32 = 0xB0;
+/// Candidate object: its flags word and state word offsets, and its place.
+const CANDIDATE_VA: u32 = 0x0129_5400;
+const CANDIDATE_FLAGS_OFFSET: u32 = 0x28;
+const CANDIDATE_STATE_OFFSET: u32 = 0x1304;
+/// The default object word, and the two globals that reach values for the
+/// subtask routine.
+const DEFAULT_OBJECT_VA: u32 = 0x0129_5800;
+const DEFAULT_GLOBAL_VA: u32 = 0x0123_1290;
+const SPECIAL_GLOBAL_VA: u32 = 0x0123_1308;
 
 /// One logged call: tag, first argument, second argument.
 type Call = (u32, u32, u32);
@@ -200,7 +220,7 @@ struct Outcome {
 #[derive(Default)]
 struct Tally {
     cases: u32,
-    with_cleanup: u32,
+    with_calls: u32,
     mismatches: u32,
     first: Option<String>,
 }
@@ -240,7 +260,7 @@ fn release_tally(lift: ReleaseLift, rewrite: fn(u32)) -> Tally {
 
         tally.cases += 1;
         if !rewritten.log.is_empty() && rewritten.log.iter().any(|c| c.0 == TAG_CLEANUP) {
-            tally.with_cleanup += 1;
+            tally.with_calls += 1;
         }
         if lifted != rewritten {
             tally.mismatches += 1;
@@ -268,8 +288,8 @@ fn begin() -> std::sync::MutexGuard<'static, ()> {
 
 fn assert_clean(name: &str, tally: &Tally) {
     eprintln!(
-        "{name}: {} cases, {} with cleanup calls, {} mismatches",
-        tally.cases, tally.with_cleanup, tally.mismatches
+        "{name}: {} cases, {} with helper calls, {} mismatches",
+        tally.cases, tally.with_calls, tally.mismatches
     );
     assert_eq!(tally.cases, CASES, "{name}: case count");
     assert_eq!(
@@ -399,6 +419,10 @@ fn decode_task(bytes: &[u8]) -> AudioTask {
         first_deadline: word(bytes, RECORD_VA + FIRST_DEADLINE_OFFSET),
         second_deadline: word(bytes, RECORD_VA + SECOND_DEADLINE_OFFSET),
         window_deadline: word(bytes, RECORD_VA + WINDOW_DEADLINE_OFFSET),
+        subtask: word(bytes, RECORD_VA + SUBTASK_SLOT_OFFSET),
+        subtask_value: word(bytes, RECORD_VA + SUBTASK_VALUE_OFFSET),
+        subtask_state: word(bytes, RECORD_VA + SUBTASK_STATE_OFFSET),
+        subtask_status: word(bytes, RECORD_VA + SUBTASK_STATUS_OFFSET),
     }
 }
 
@@ -412,6 +436,10 @@ fn encode_task(bytes: &mut [u8], task: &AudioTask) {
     put_word(bytes, RECORD_VA + FIRST_DEADLINE_OFFSET, task.first_deadline);
     put_word(bytes, RECORD_VA + SECOND_DEADLINE_OFFSET, task.second_deadline);
     put_word(bytes, RECORD_VA + WINDOW_DEADLINE_OFFSET, task.window_deadline);
+    put_word(bytes, RECORD_VA + SUBTASK_SLOT_OFFSET, task.subtask);
+    put_word(bytes, RECORD_VA + SUBTASK_VALUE_OFFSET, task.subtask_value);
+    put_word(bytes, RECORD_VA + SUBTASK_STATE_OFFSET, task.subtask_state);
+    put_word(bytes, RECORD_VA + SUBTASK_STATUS_OFFSET, task.subtask_status);
 }
 
 /// Single-precision progress inputs and values: the exact steps and limits,
@@ -453,6 +481,10 @@ fn gen_task_window(rng: &mut Rng, arg: u32) -> Vec<u8> {
         first_deadline: gen_deadline(rng, arg),
         second_deadline: gen_deadline(rng, arg),
         window_deadline: gen_deadline(rng, arg),
+        subtask: 0,
+        subtask_value: 0,
+        subtask_state: 0,
+        subtask_status: 0,
     };
     encode_task(&mut bytes, &task);
     bytes
@@ -690,5 +722,273 @@ fn progress_wrong_versions_are_caught() {
             gen_progress_bits,
             false,
         ),
+    );
+}
+
+// ---------------------------------------------------------------------------
+// The subtask replacement: the record's subtask words, one candidate object,
+// the two helpers and the two globals.
+// ---------------------------------------------------------------------------
+
+/// Stubs for the describe and construct helpers (thiscall; slot 1 and 2).
+extern "thiscall" fn stub_describe(previous: u32, slot: u32) -> u32 {
+    log_call((TAG_DESCRIBE, previous, slot));
+    0
+}
+
+extern "thiscall" fn stub_construct(candidate: u32, slot: u32) -> u32 {
+    log_call((TAG_CONSTRUCT, candidate, slot));
+    0
+}
+
+/// The lifted side's subtask host: reads the candidate and the globals from
+/// the case's window bytes and logs the two helper calls.
+struct SubtaskHost {
+    bytes: Vec<u8>,
+    special: u32,
+    log: Vec<Call>,
+}
+
+impl SubtaskHost {
+    fn slot_address() -> u32 {
+        rt::relocated(RECORD_VA + SUBTASK_SLOT_OFFSET)
+    }
+
+    fn window_word(&self, address: u32, offset: u32) -> u32 {
+        let base = rt::relocated(rt::WINDOW_VA);
+        word(&self.bytes, rt::WINDOW_VA + (address - base) + offset)
+    }
+}
+
+impl SubtaskCallees for SubtaskHost {
+    fn describe(&mut self, previous: u32) {
+        self.log.push((TAG_DESCRIBE, previous, Self::slot_address()));
+    }
+
+    fn construct(&mut self, candidate: u32) {
+        self.log.push((TAG_CONSTRUCT, candidate, Self::slot_address()));
+    }
+
+    fn candidate_flags(&self, candidate: u32) -> u32 {
+        self.window_word(candidate, CANDIDATE_FLAGS_OFFSET)
+    }
+
+    fn candidate_state(&self, candidate: u32) -> u32 {
+        self.window_word(candidate, CANDIDATE_STATE_OFFSET)
+    }
+
+    fn default_object(&self) -> u32 {
+        word(&self.bytes, DEFAULT_OBJECT_VA)
+    }
+
+    fn special_value(&self) -> u32 {
+        self.special
+    }
+}
+
+/// The candidate's flags and state, drawn to hit the special-candidate test
+/// on both sides of each comparison.
+fn gen_candidate(rng: &mut Rng) -> (u32, u32) {
+    let flags = match rng.below(6) {
+        0 | 1 => CANDIDATE_KIND_SPECIAL,
+        2 => CANDIDATE_KIND_SPECIAL | 0x01,
+        3 => 0x0000_0040,
+        4 => CANDIDATE_KIND_MASK | CANDIDATE_KIND_SPECIAL,
+        _ => rng.next(),
+    };
+    let state = match rng.below(4) {
+        0 | 1 => CANDIDATE_STATE_READY,
+        2 => 0,
+        _ => rng.next(),
+    };
+    (flags, state)
+}
+
+/// One subtask case: the window with the record's subtask words, the
+/// candidate object and the default object word all generated.
+fn gen_subtask_window(rng: &mut Rng) -> (Vec<u8>, u32, u32, u32, u32) {
+    let mut bytes = gen_window(rng);
+    let (flags, state) = gen_candidate(rng);
+    put_word(&mut bytes, CANDIDATE_VA + CANDIDATE_FLAGS_OFFSET, flags);
+    put_word(&mut bytes, CANDIDATE_VA + CANDIDATE_STATE_OFFSET, state);
+    let subtask = match rng.below(3) {
+        0 => 0,
+        1 => rt::relocated(CANDIDATE_VA),
+        _ => 0xABCD_0007,
+    };
+    let initial = match rng.below(4) {
+        0 => 0,
+        _ => rng.next(),
+    };
+    let candidate = match rng.below(3) {
+        0 => 0,
+        _ => rt::relocated(CANDIDATE_VA),
+    };
+    let status = rng.next();
+    let special = rng.next();
+    put_word(&mut bytes, RECORD_VA + SUBTASK_SLOT_OFFSET, subtask);
+    put_word(&mut bytes, RECORD_VA + SUBTASK_VALUE_OFFSET, rng.next());
+    put_word(&mut bytes, RECORD_VA + SUBTASK_STATE_OFFSET, rng.next());
+    put_word(&mut bytes, RECORD_VA + SUBTASK_STATUS_OFFSET, rng.next());
+    // The records' default object word is the value a null initial stores.
+    put_word(&mut bytes, DEFAULT_OBJECT_VA, rng.next());
+    (bytes, initial, candidate, status, special)
+}
+
+/// A subtask routine: the lift and the wrong versions share this shape.
+type SubtaskLift = fn(&mut AudioTask, u32, u32, u32, &mut SubtaskHost);
+
+fn subtask_tally(lift: SubtaskLift) -> Tally {
+    let mut rng = Rng(0x5B5B_1234);
+    let mut tally = Tally::default();
+    rt::set_callee(1, stub_describe as *const () as usize as u32);
+    rt::set_callee(2, stub_construct as *const () as usize as u32);
+    // The two globals: the default global holds the address of the default
+    // object word, and the special global holds the special value.
+    let default_cell: &'static mut [u32] = Box::leak(vec![0_u32; 1].into_boxed_slice());
+    rt::set_extra(DEFAULT_GLOBAL_VA, default_cell.as_ptr() as u32);
+    let special_cell: &'static mut [u32] = Box::leak(vec![0_u32; 1].into_boxed_slice());
+    rt::set_extra(SPECIAL_GLOBAL_VA, special_cell.as_ptr() as u32);
+    rt::set_extra_word(DEFAULT_GLOBAL_VA, rt::relocated(DEFAULT_OBJECT_VA));
+    for case in 0..CASES {
+        let (init, initial, candidate, status, special) = gen_subtask_window(&mut rng);
+
+        let mut task = decode_task(&init);
+        let mut host = SubtaskHost {
+            bytes: init.clone(),
+            special,
+            log: Vec::new(),
+        };
+        lift(&mut task, initial, candidate, status, &mut host);
+        let mut expected = init.clone();
+        encode_task(&mut expected, &task);
+        let lifted = Outcome {
+            bytes: expected,
+            log: host.log,
+        };
+
+        rt::write_window(&init);
+        rt::set_extra_word(SPECIAL_GLOBAL_VA, special);
+        LOG.lock().unwrap().clear();
+        fn_0097eac0::rw_0097EAC0(rt::relocated(RECORD_VA), initial, candidate, status);
+        let rewritten = Outcome {
+            bytes: rt::read_window(),
+            log: std::mem::take(&mut *LOG.lock().unwrap()),
+        };
+
+        tally.cases += 1;
+        if rewritten.log.iter().any(|c| c.0 == TAG_CONSTRUCT) {
+            tally.with_calls += 1;
+        }
+        if lifted != rewritten {
+            tally.mismatches += 1;
+            if tally.first.is_none() {
+                tally.first = Some(format!(
+                    "case {case}: calls lift {:?} rewrite {:?}",
+                    lifted.log, rewritten.log
+                ));
+            }
+        }
+    }
+    tally
+}
+
+#[test]
+fn subtask_matches_rewrite() {
+    let _guard = begin();
+    let tally = subtask_tally(|task, initial, candidate, status, host| {
+        task.replace_subtask(initial, candidate, status, host)
+    });
+    assert_clean("replace_subtask", &tally);
+}
+
+#[test]
+fn subtask_wrong_versions_are_caught() {
+    let _guard = begin();
+    // The describe helper is skipped.
+    assert_caught(
+        "subtask, no describe",
+        &subtask_tally(|task, initial, candidate, status, host| {
+            let previous = task.subtask;
+            if previous != 0 {
+                task.subtask = 0;
+            }
+            if initial == 0 {
+                task.subtask_value = host.default_object();
+                task.subtask_state = 0;
+                task.subtask_status = 0;
+                return;
+            }
+            task.subtask_value = initial;
+            if candidate != 0 {
+                let flags = host.candidate_flags(candidate);
+                if flags & CANDIDATE_KIND_MASK == CANDIDATE_KIND_SPECIAL
+                    && host.candidate_state(candidate) == CANDIDATE_STATE_READY
+                {
+                    task.subtask_value = host.special_value();
+                }
+            }
+            task.subtask_state = 0;
+            task.subtask = candidate;
+            host.construct(candidate);
+            task.subtask_status = status;
+        }),
+    );
+    // The special value ignores the candidate's state.
+    assert_caught(
+        "subtask, special without state",
+        &subtask_tally(|task, initial, candidate, status, host| {
+            let previous = task.subtask;
+            if previous != 0 {
+                host.describe(previous);
+                task.subtask = 0;
+            }
+            if initial == 0 {
+                task.subtask_value = host.default_object();
+                task.subtask_state = 0;
+                task.subtask_status = 0;
+                return;
+            }
+            task.subtask_value = initial;
+            if candidate != 0 && host.candidate_flags(candidate) & CANDIDATE_KIND_MASK == CANDIDATE_KIND_SPECIAL {
+                task.subtask_value = host.special_value();
+            }
+            task.subtask_state = 0;
+            task.subtask = candidate;
+            host.construct(candidate);
+            task.subtask_status = status;
+        }),
+    );
+    // The candidate is constructed only when it is nonnull.
+    assert_caught(
+        "subtask, construct only when nonnull",
+        &subtask_tally(|task, initial, candidate, status, host| {
+            let previous = task.subtask;
+            if previous != 0 {
+                host.describe(previous);
+                task.subtask = 0;
+            }
+            if initial == 0 {
+                task.subtask_value = host.default_object();
+                task.subtask_state = 0;
+                task.subtask_status = 0;
+                return;
+            }
+            task.subtask_value = initial;
+            if candidate != 0 {
+                let flags = host.candidate_flags(candidate);
+                if flags & CANDIDATE_KIND_MASK == CANDIDATE_KIND_SPECIAL
+                    && host.candidate_state(candidate) == CANDIDATE_STATE_READY
+                {
+                    task.subtask_value = host.special_value();
+                }
+            }
+            task.subtask_state = 0;
+            task.subtask = candidate;
+            if candidate != 0 {
+                host.construct(candidate);
+            }
+            task.subtask_status = status;
+        }),
     );
 }

@@ -40,7 +40,8 @@ lf_checker_rt::export!(thiscall, rw_00b10f60(this: u32, output: u32) -> () {
             return;
         }
 
-        let transform = read_u32(resource.wrapping_add(4));
+        let transform_root = read_u32(resource.wrapping_add(4));
+        let transform = read_u32(transform_root.wrapping_add(0xC));
         let scale_x = read_f32(transform.wrapping_add(0x30));
         let scale_y = read_f32(transform.wrapping_add(0x34));
         let scale_z = read_f32(transform.wrapping_add(0x38));

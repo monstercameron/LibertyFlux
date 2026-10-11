@@ -22,3 +22,4 @@ pub mod fn_0097eb70 { #![allow(unused_imports)] use super::{callee_addr}; includ
 pub mod fn_0097ee90 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_0097ee90.rs")); }
 pub mod fn_0097fc80 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_0097fc80.rs")); }
 pub mod fn_0097fce0 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_0097fce0.rs")); }
+pub mod fn_0097eac0 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_0097eac0.rs")); }

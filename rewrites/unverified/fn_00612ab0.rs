@@ -23,7 +23,13 @@ lf_checker_rt::export!(thiscall, rw_00612AB0(this: u32, scalar_bits: u32, track_
         const TRACK_WEIGHT: u32 = 4;
         const STORED_SCALAR: u32 = 0x104;
         const TOTAL_HELPER: u32 = 1;
-        let total = lf_checker_rt::callee_thiscall!(TOTAL_HELPER, f32, this, track_container);
+        let total_vector = lf_checker_rt::callee_thiscall!(
+            TOTAL_HELPER,
+            core::arch::x86::__m128,
+            this,
+            track_container
+        );
+        let total = core::arch::x86::_mm_cvtss_f32(total_vector);
         let scalar = f32::from_bits(scalar_bits);
         let factor = div_ordered(scalar, total);
         let start = ((this + START_INDEX) as *const u8).read() as u32;

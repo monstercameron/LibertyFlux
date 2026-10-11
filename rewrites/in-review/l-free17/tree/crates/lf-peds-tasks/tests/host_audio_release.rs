@@ -142,3 +142,88 @@ fn progress_first_value_never_moves_down_and_second_is_capped() {
     task.add_float_progress(50.0);
     assert_eq!(task.first_progress, PROGRESS_LIMIT);
 }
+#[derive(Default)]
+struct Subtask {
+    calls: Vec<String>,
+    default: u32,
+    special: u32,
+    flags: u32,
+    state: u32,
+}
+
+impl lf_peds_tasks::ped_task::SubtaskCallees for Subtask {
+    fn describe(&mut self, previous: u32) {
+        self.calls.push(format!("describe {previous}"));
+    }
+
+    fn construct(&mut self, candidate: u32) {
+        self.calls.push(format!("construct {candidate}"));
+    }
+
+    fn candidate_flags(&self, _candidate: u32) -> u32 {
+        self.flags
+    }
+
+    fn candidate_state(&self, _candidate: u32) -> u32 {
+        self.state
+    }
+
+    fn default_object(&self) -> u32 {
+        self.default
+    }
+
+    fn special_value(&self) -> u32 {
+        self.special
+    }
+}
+
+#[test]
+fn a_null_initial_value_stores_the_default_and_stops() {
+    let mut task = AudioTask {
+        subtask: 4,
+        subtask_state: 9,
+        subtask_status: 9,
+        ..AudioTask::default()
+    };
+    let mut host = Subtask {
+        default: 55,
+        ..Subtask::default()
+    };
+    task.replace_subtask(0, 8, 3, &mut host);
+    assert_eq!(host.calls, ["describe 4"]);
+    assert_eq!((task.subtask, task.subtask_value), (0, 55));
+    assert_eq!((task.subtask_state, task.subtask_status), (0, 0));
+}
+
+#[test]
+fn a_ready_special_candidate_takes_the_special_value() {
+    let mut task = AudioTask::default();
+    let mut host = Subtask {
+        flags: 0x80,
+        state: 1,
+        special: 99,
+        ..Subtask::default()
+    };
+    task.replace_subtask(5, 8, 3, &mut host);
+    assert_eq!(task.subtask_value, 99);
+    assert_eq!(host.calls, ["construct 8"]);
+    assert_eq!((task.subtask, task.subtask_status), (8, 3));
+
+    // Not ready: the initial value stands.
+    let mut task = AudioTask::default();
+    let mut host = Subtask {
+        state: 0,
+        ..host
+    };
+    task.replace_subtask(5, 8, 3, &mut host);
+    assert_eq!(task.subtask_value, 5);
+}
+
+#[test]
+fn a_null_candidate_is_still_constructed() {
+    let mut task = AudioTask::default();
+    let mut host = Subtask::default();
+    task.replace_subtask(5, 0, 3, &mut host);
+    assert_eq!(host.calls, ["construct 0"]);
+    assert_eq!(task.subtask, 0);
+}

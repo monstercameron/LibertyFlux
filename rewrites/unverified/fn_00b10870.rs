@@ -31,7 +31,7 @@ lf_checker_rt::export!(thiscall, rw_00b10870(this: u32) -> () {
         (this.wrapping_add(RELEASE_FLAG) as *mut u32).write_unaligned(0);
         if resource != 0 {
             let _ = lf_checker_rt::callee_thiscall!(2, u32, resource);
-            let _ = lf_checker_rt::callee_stdcall!(3, u32, resource);
+            let _ = lf_checker_rt::callee_cdecl!(3, u32, resource);
         }
         (this.wrapping_add(RESOURCE) as *mut u32).write_unaligned(0);
     }

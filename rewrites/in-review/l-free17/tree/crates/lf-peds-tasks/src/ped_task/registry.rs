@@ -407,6 +407,17 @@ pub const ROWS: &[Row] = &[
             "the float operations run in the rewrite's order (scale, cap, compare with the first value, add the step, cap); the proof compares every written word bit for bit",
             "the routine has no return value; none is compared",
         ],
+    },    Row {
+        class: "AudioTask",
+        method: "replace_audio_subtask",
+        state: State::Proven,
+        narrows: &[
+            "the describe and construct helpers (thiscall) travel as SubtaskCallees; each receives the record's subtask slot address in the 32-bit form, which the implementation supplies; the proof compares every call in order with its arguments",
+            "the candidate's flags and state words are read through SubtaskCallees only when the candidate is nonnull, and the state only when the flags match the special kind, as the rewrite's short-circuit does",
+            "the default object word and the special value are read through SubtaskCallees: the proof plants the default-object global and the special global, and reads the same words",
+            "the candidate object is planted as a window image; the proof does not model the candidate's other words",
+            "the routine has no return value; none is compared",
+        ],
     },];
 
 /// Counts of (proven, lifted-but-unproven, missing) rows.

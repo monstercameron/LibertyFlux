@@ -55,7 +55,7 @@ lf_checker_rt::export!(cdecl, rw_00BC83C0(search_state: u32, selector: i32, opti
             bit1: u32,
             bit2: u32,
             bit5: u32,
-            bit6: u32,
+            bit3: u32,
             bit11: u32,
             options: u32,
         ) -> bool {
@@ -66,7 +66,7 @@ lf_checker_rt::export!(cdecl, rw_00BC83C0(search_state: u32, selector: i32, opti
                 candidate,
                 bit2,
                 bit1,
-                1u32.wrapping_sub(bit6),
+                1u32.wrapping_sub(bit3),
                 0,
                 (options & !0xff) | ((options >> 4) & 1),
                 bit5,
@@ -79,6 +79,7 @@ lf_checker_rt::export!(cdecl, rw_00BC83C0(search_state: u32, selector: i32, opti
         let bit0 = flag_bit(0);
         let bit1 = flag_bit(1);
         let bit2 = flag_bit(2);
+        let bit3 = flag_bit(3);
         let bit5 = flag_bit(5);
         let bit6 = flag_bit(6);
         let bit7 = flag_bit(7);
@@ -125,7 +126,7 @@ lf_checker_rt::export!(cdecl, rw_00BC83C0(search_state: u32, selector: i32, opti
         core::ptr::write_volatile(lf_checker_rt::global::<u8>(SEARCH_STATE_BYTE), 0);
 
         let primary = read_u32(search_state.wrapping_add(PRIMARY_CANDIDATE));
-        if primary != 0 && !test_candidate(primary, bit1, bit2, bit5, bit6, bit11, options) {
+        if primary != 0 && !test_candidate(primary, bit1, bit2, bit5, bit3, bit11, options) {
             return 0;
         }
 
@@ -136,7 +137,7 @@ lf_checker_rt::export!(cdecl, rw_00BC83C0(search_state: u32, selector: i32, opti
                     .wrapping_add(QUEUED_CANDIDATES)
                     .wrapping_add(index.wrapping_mul(4)),
             );
-            if candidate != 0 && !test_candidate(candidate, bit1, bit2, bit5, bit6, bit11, options) {
+            if candidate != 0 && !test_candidate(candidate, bit1, bit2, bit5, bit3, bit11, options) {
                 return 0;
             }
             index += 1;

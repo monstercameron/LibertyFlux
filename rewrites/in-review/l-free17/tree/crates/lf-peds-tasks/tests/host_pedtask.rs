@@ -24,10 +24,10 @@ use lf_peds_tasks::ped_task::{
 #[test]
 fn registry_counts_thirty_proven() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 34);
+    assert_eq!(proven, 35);
     assert_eq!(lifted, 0);
     assert_eq!(missing, 4);
-    assert_eq!(registry::ROWS.len(), 38);
+    assert_eq!(registry::ROWS.len(), 39);
     for row in registry::ROWS {
         if row.state == State::Proven {
             assert!(
@@ -80,6 +80,7 @@ fn registry_counts_thirty_proven() {
             ("AudioTask", "set_first_deadline_to_current_time"),
             ("AudioTask", "set_second_deadline_to_current_time"),
             ("AudioTask", "add_float_progress"),
+            ("AudioTask", "replace_audio_subtask"),
         ]
     );
 }
