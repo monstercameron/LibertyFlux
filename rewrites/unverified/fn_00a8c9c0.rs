@@ -47,7 +47,7 @@ lf_checker_rt::export!(thiscall, rw_00a8c9c0(this: u32) -> u32 {
                     let cell = lf_checker_rt::callee_thiscall!(
                         CALLEE_CELL,
                         u32,
-                        0,
+                        this,
                         0,
                         row,
                         column

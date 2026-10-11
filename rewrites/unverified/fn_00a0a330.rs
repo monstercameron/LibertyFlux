@@ -1,4 +1,4 @@
-// original: 0x00a0a330 cleanup_entry_apply_interior
+// original: 0x00a0a330 cleanup_record_resolve (proposed)
 /// Resolve a cleanup descriptor to a live handle and store it at `out`.
 ///
 /// Clears `out` first. An empty descriptor (word at +0x10 zero) and kind 3
