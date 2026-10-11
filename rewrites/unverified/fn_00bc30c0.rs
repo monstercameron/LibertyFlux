@@ -1,135 +1,160 @@
 // original: 0x00BC30C0 CTaskComplexMoveSeekEntity<CEntitySeekPosCalculatorRadiusAngleOffset>::vf19
 
-/// Update a move-seek task for one request using x86 thiscall (`this` in ECX,
-/// one request pointer on the stack, and the selected handler's EAX result).
-/// The function copies the timing-state word into task offsets `0x5c` and,
-/// when offset `0x40` is not `u32::MAX`, `0x68`; it copies the word at `0x44`
-/// to `0x60`, writes byte `1` at `0x64`, and conditionally records the prior
-/// target at `0x6c` and byte `1` at `0x70`. A null task target or a ready
-/// request (`request+0x26c` bit `0x04` and nonzero `request+0xb30`) forwards
-/// event `0x516`. Otherwise a position helper supplies four task words at
-/// `0x30..0x3c`; the function compares planar squared distance from task and
-/// request positions with the squared radius at `0x48`. When squared radius
-/// is greater than squared distance, the function sets task flag bit `0x02`,
-/// notifies the request, and forwards event `0x11e`. An unordered comparison
-/// continues into threshold handling. Inside the radius, threshold `0x50`
-/// is compared with zero: equality forwards `0x3ae`,
-/// otherwise the squared threshold selects `0x387` when distance is not
-/// greater, or `0x3ae` when it is greater. All scalar float operations keep
-/// the original SSE operand order; unordered comparisons follow the original
-/// `jbe`/`jnp` behavior.
-lf_checker_rt::export!(thiscall, rw_00bc30c0(this: u32, request: u32) -> u32 {
+/// Seek-step update for a move-to-entity task: refresh the task's timestamps,
+/// ask the seek-position calculator where to go, and pick the next sub-step
+/// from the distance to the target.
+///
+/// `this` is the task object, `entity` the target. The task keeps a ped
+/// pointer at `+0x20`, the last computed seek position (x, y, z, heading) at
+/// `+0x30`, a mode word at `+0x40` (`-1` means the second timestamp pair is
+/// unused), a previous value at `+0x44`, the arrival radius at `+0x48`, a far
+/// threshold at `+0x50`, timestamp pairs at `+0x5c`/`+0x68`, and flags at
+/// `+0x80`. Both timestamps are the game timer global. The `+0x68` store is
+/// the `f_68_int32` field the structure survey already knew.
+///
+/// Behaviour: when there is no ped, or the target is already fully handled
+/// (flag bit 2 at entity `+0x26c` with a non-null handle at `+0xb30`), the
+/// calculator is skipped and step `0x516` runs. Otherwise the calculator
+/// callee fills a 16-byte position (read through its return pointer) and the
+/// squared planar distance from the target's matrix position (entity `+0x20`,
+/// x/y at `+0x30`/`+0x34`) is compared against the squared arrival radius:
+/// inside it, flag bit 1 is set, the follow flag is stored through its
+/// callee, and step `0x11e` runs; outside it, step `0x387` runs when the
+/// distance does not exceed the squared far threshold, else step `0x3ae`.
+///
+/// The threshold comparison first tests the threshold against zero with an
+/// unordered-or-equal check whose taken branch is dead: `lahf` after `ucomiss`
+/// leaves `(ah & 0x44)` at `0` (less/greater) or `0x44` (equal/unordered),
+/// both of even parity, so the parity jump never fires for any threshold,
+/// NaN included. Execution always reaches the squared comparison. The
+/// function's return value is whatever the final step callee returns.
+///
+/// Original: thiscall, one stack word. Float order is the original's
+/// (dy^2 + dx^2, then radius^2 against it); NaN distances take the
+/// not-greater side of every `comiss`/`jbe` pair, as unordered does.
+lf_checker_rt::export!(thiscall, rw_00bc30c0(this: u32, entity: u32) -> u32 {
     unsafe {
-        const TIMER_COPY: u32 = 0x5C;
-        const TASK_TARGET: u32 = 0x20;
-        const TASK_POSITION: u32 = 0x30;
-        const TASK_RADIUS: u32 = 0x48;
-        const TASK_THRESHOLD: u32 = 0x50;
-        const TASK_FLAGS: u32 = 0x80;
-        const REQUEST_TARGET: u32 = 0x20;
-        const REQUEST_FLAGS: u32 = 0x26C;
-        const REQUEST_GATE: u32 = 0xB30;
-        const TARGET_POSITION: u32 = 0x30;
-        const FLAG_OUTSIDE_RADIUS: u8 = 0x02;
-        const REQUEST_READY: u8 = 0x04;
-        const ZERO: f32 = f32::from_bits(0x0000_0000);
-        const TIMING_STATE_VA: u32 = 0x0117_35B4;
-        const POSITION_HELPER: u32 = 3;
-        const EVENT_516_EMPTY: u32 = 1;
-        const EVENT_516_FLAGGED: u32 = 2;
-        const EVENT_11E_OUTSIDE: u32 = 5;
-        const EVENT_3AE_FAR: u32 = 6;
-        const EVENT_387_NEAR: u32 = 7;
-        const EVENT_3AE_ZERO_THRESHOLD: u32 = 8;
-        const TASK_NOTIFY: u32 = 4;
+        const TIMER_GLOBAL: u32 = 0x0117_35B4;
+        const STEP_CALLEE: u32 = 1;
+        const CALC_CALLEE: u32 = 2;
+        const FLAG_CALLEE: u32 = 3;
+        const STEP_SEEK: u32 = 0x516;
+        const STEP_ARRIVED: u32 = 0x11E;
+        const STEP_MID: u32 = 0x387;
+        const STEP_FAR: u32 = 0x3AE;
+        const T_PED: u32 = 0x20;
+        const T_POS_X: u32 = 0x30;
+        const T_POS_Y: u32 = 0x34;
+        const T_POS_Z: u32 = 0x38;
+        const T_POS_H: u32 = 0x3C;
+        const T_MODE: u32 = 0x40;
+        const T_PREV: u32 = 0x44;
+        const T_NEAR_RADIUS: u32 = 0x48;
+        const T_FAR_THRESH: u32 = 0x50;
+        const T_STAMP_A: u32 = 0x5C;
+        const T_STAMP_AUX: u32 = 0x60;
+        const T_FLAG_A: u32 = 0x64;
+        const T_STAMP_B: u32 = 0x68;
+        const T_MODE_COPY: u32 = 0x6C;
+        const T_FLAG_B: u32 = 0x70;
+        const T_FLAGS: u32 = 0x80;
+        const ENT_HANDLED_FLAG: u32 = 0x26C;
+        const ENT_HANDLE: u32 = 0xB30;
+        const ENT_MATRIX: u32 = 0x20;
+        const ARRIVED_BIT: u8 = 2;
+        const HANDLED_BIT: u8 = 4;
 
         #[inline(always)]
-        unsafe fn read_u32(base: u32, offset: u32) -> u32 {
-            unsafe { (base.wrapping_add(offset) as *const u32).read_unaligned() }
+        unsafe fn rd32(a: u32) -> u32 {
+            unsafe { (a as *const u32).read_unaligned() }
         }
         #[inline(always)]
-        unsafe fn read_u8(base: u32, offset: u32) -> u8 {
-            unsafe { (base.wrapping_add(offset) as *const u8).read() }
+        unsafe fn rd8(a: u32) -> u8 {
+            unsafe { (a as *const u8).read() }
         }
         #[inline(always)]
-        unsafe fn write_u32(base: u32, offset: u32, value: u32) {
-            unsafe { (base.wrapping_add(offset) as *mut u32).write_unaligned(value) }
+        unsafe fn wr32(a: u32, v: u32) {
+            unsafe { (a as *mut u32).write_unaligned(v) }
         }
         #[inline(always)]
-        unsafe fn write_u8(base: u32, offset: u32, value: u8) {
-            unsafe { (base.wrapping_add(offset) as *mut u8).write(value) }
+        unsafe fn wr8(a: u32, v: u8) {
+            unsafe { (a as *mut u8).write(v) }
         }
         #[inline(always)]
-        unsafe fn read_f32(base: u32, offset: u32) -> f32 {
-            f32::from_bits(unsafe { read_u32(base, offset) })
+        unsafe fn rdf(a: u32) -> f32 {
+            unsafe { f32::from_bits(rd32(a)) }
         }
         #[inline(always)]
-        fn add_f32(left: f32, right: f32) -> f32 {
-            core::hint::black_box(left) + core::hint::black_box(right)
+        unsafe fn wrf(a: u32, v: f32) {
+            unsafe { wr32(a, v.to_bits()) }
         }
         #[inline(always)]
-        fn sub_f32(left: f32, right: f32) -> f32 {
-            core::hint::black_box(left) - core::hint::black_box(right)
+        fn sub(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) - core::hint::black_box(b)
         }
         #[inline(always)]
-        fn mul_f32(left: f32, right: f32) -> f32 {
-            core::hint::black_box(left) * core::hint::black_box(right)
+        fn mul(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) * core::hint::black_box(b)
+        }
+        #[inline(always)]
+        fn add(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) + core::hint::black_box(b)
+        }
+        /// `comiss a, b; jbe taken`: taken unless a is strictly greater,
+        /// unordered included (an unordered compare sets CF, so it jumps).
+        #[inline(always)]
+        fn below_or_equal(a: f32, b: f32) -> bool {
+            !(core::hint::black_box(a) > core::hint::black_box(b))
         }
 
-        let timer = lf_checker_rt::global::<u32>(TIMING_STATE_VA).read_unaligned();
-        write_u32(this, TIMER_COPY, timer);
-        write_u32(this, 0x60, read_u32(this, 0x44));
-        write_u8(this, 0x64, 1);
-
-        let stored_target = read_u32(this, 0x40);
-        if stored_target != u32::MAX {
-            write_u32(this, 0x68, timer);
-            write_u32(this, 0x6C, stored_target);
-            write_u8(this, 0x70, 1);
+        let now = (lf_checker_rt::global::<u32>(TIMER_GLOBAL) as *const u32).read();
+        wr32(this + T_STAMP_A, now);
+        wr32(this + T_STAMP_AUX, rd32(this + T_PREV));
+        wr8(this + T_FLAG_A, 1);
+        let mode = rd32(this + T_MODE);
+        if mode != 0xFFFF_FFFF {
+            wr32(this + T_STAMP_B, now);
+            wr32(this + T_MODE_COPY, mode);
+            wr8(this + T_FLAG_B, 1);
         }
-
-        if read_u32(this, TASK_TARGET) == 0 {
-            return lf_checker_rt::callee_thiscall!(EVENT_516_EMPTY, u32, this, 0x516, request);
+        if rd32(this + T_PED) == 0 {
+            return lf_checker_rt::callee_thiscall!(STEP_CALLEE, u32, this, STEP_SEEK, entity);
         }
-        if read_u8(request, REQUEST_FLAGS) & REQUEST_READY != 0
-            && read_u32(request, REQUEST_GATE) != 0
-        {
-            return lf_checker_rt::callee_thiscall!(EVENT_516_FLAGGED, u32, this, 0x516, request);
+        if rd8(entity + ENT_HANDLED_FLAG) & HANDLED_BIT != 0 && rd32(entity + ENT_HANDLE) != 0 {
+            return lf_checker_rt::callee_thiscall!(STEP_CALLEE, u32, this, STEP_SEEK, entity);
         }
-
-        let mut ignored_out_words = [0u32; 4];
-        let position = lf_checker_rt::callee_thiscall!(
-            POSITION_HELPER, u32, this,
-            ignored_out_words.as_mut_ptr() as u32, request
+        let mut scratch = [0u32; 4];
+        let pos = lf_checker_rt::callee_thiscall!(
+            CALC_CALLEE, u32, this, scratch.as_mut_ptr() as u32, entity
         );
-        for index in 0..4u32 {
-            write_u32(this, TASK_POSITION + index * 4, read_u32(position, index * 4));
+        let px = rd32(pos);
+        let py = rdf(pos + 4);
+        let pz = rdf(pos + 8);
+        wrf(this + T_POS_Z, pz);
+        wr32(this + T_POS_X, px);
+        wrf(this + T_POS_Y, py);
+        wr32(this + T_POS_H, rd32(pos + 12));
+        let mat = rd32(entity + ENT_MATRIX);
+        let dx = sub(rdf(mat + 0x30), f32::from_bits(px));
+        let dy = sub(rdf(mat + 0x34), py);
+        let dx2 = mul(dx, dx);
+        let dy2 = mul(dy, dy);
+        let dist2 = add(dy2, dx2);
+        let rad = rdf(this + T_NEAR_RADIUS);
+        let rad2 = mul(rad, rad);
+        if below_or_equal(rad2, dist2) {
+            // Far from the target. The zero-test on the threshold jumps
+            // nowhere (see the doc comment), so the squared threshold
+            // comparison always runs.
+            let t = rdf(this + T_FAR_THRESH);
+            let t2 = mul(t, t);
+            if below_or_equal(dist2, t2) {
+                return lf_checker_rt::callee_thiscall!(STEP_CALLEE, u32, this, STEP_MID, entity);
+            }
+            return lf_checker_rt::callee_thiscall!(STEP_CALLEE, u32, this, STEP_FAR, entity);
         }
-
-        let target = read_u32(request, REQUEST_TARGET);
-        let dx = sub_f32(read_f32(target, TARGET_POSITION), read_f32(this, TASK_POSITION));
-        let dy = sub_f32(read_f32(target, TARGET_POSITION + 4), read_f32(this, TASK_POSITION + 4));
-        let dx_squared = mul_f32(dx, dx);
-        let dy_squared = mul_f32(dy, dy);
-        let distance_squared = add_f32(dy_squared, dx_squared);
-        let radius = read_f32(this, TASK_RADIUS);
-        let radius_squared = mul_f32(radius, radius);
-
-        if radius_squared > distance_squared {
-            let flags = read_u8(this, TASK_FLAGS);
-            write_u8(this, TASK_FLAGS, flags | FLAG_OUTSIDE_RADIUS);
-            let _ = lf_checker_rt::callee_thiscall!(TASK_NOTIFY, u32, request, 1);
-            return lf_checker_rt::callee_thiscall!(EVENT_11E_OUTSIDE, u32, this, 0x11E, request);
-        }
-
-        let threshold = read_f32(this, TASK_THRESHOLD);
-        if threshold == ZERO {
-            return lf_checker_rt::callee_thiscall!(EVENT_3AE_ZERO_THRESHOLD, u32, this, 0x3AE);
-        }
-        let threshold_squared = mul_f32(threshold, threshold);
-        if !(distance_squared > threshold_squared) {
-            return lf_checker_rt::callee_thiscall!(EVENT_387_NEAR, u32, this, 0x387);
-        }
-        lf_checker_rt::callee_thiscall!(EVENT_3AE_FAR, u32, this, 0x3AE)
+        wr8(this + T_FLAGS, rd8(this + T_FLAGS) | ARRIVED_BIT);
+        lf_checker_rt::callee_thiscall!(FLAG_CALLEE, u32, entity, 1);
+        lf_checker_rt::callee_thiscall!(STEP_CALLEE, u32, this, STEP_ARRIVED, entity)
     }
 });
