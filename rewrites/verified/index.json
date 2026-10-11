@@ -128493,6 +128493,24 @@
   "lane": "r-s581"
  },
  {
+  "address": "0x00CDCB60",
+  "name": "CTaskSimpleNMShot::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cdcb60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s625"
+ },
+ {
+  "address": "0x00CDCBB0",
+  "name": "CTaskSimpleNMSit::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cdcbb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s625"
+ },
+ {
   "address": "0x00CDCBF0",
   "name": "CTaskSimpleNM_generic_timer_update",
   "kind": "function",
@@ -128529,6 +128547,15 @@
   "lane": "r-b400"
  },
  {
+  "address": "0x00CDEC60",
+  "name": "CTaskSimpleNMRelax::vf27",
+  "kind": "function",
+  "file": "functions/fn_00cdec60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s625"
+ },
+ {
   "address": "0x00CDED20",
   "name": "CTaskSimpleNMShot::vf27",
   "kind": "function",
@@ -128536,6 +128563,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b400"
+ },
+ {
+  "address": "0x00CDF140",
+  "name": "CTaskSimpleNMSit::vf27",
+  "kind": "function",
+  "file": "functions/fn_00cdf140.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s625"
  },
  {
   "address": "0x00CDF940",
