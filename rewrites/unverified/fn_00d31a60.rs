@@ -21,5 +21,7 @@ lf_checker_rt::export!(thiscall, rw_00d31a60(this: u32) -> u32 {
     unsafe { (destination.wrapping_add(0x54) as *mut u32).write_unaligned(value_54); }
     let value_58 = unsafe { (this.wrapping_add(0x58) as *const u32).read_unaligned() };
     unsafe { (destination.wrapping_add(0x58) as *mut u32).write_unaligned(value_58); }
+    let value_44_extra = unsafe { (this.wrapping_add(0x44) as *const u32).read_unaligned() };
+    unsafe { (destination.wrapping_add(0x5c) as *mut u32).write_unaligned(value_44_extra); }
     destination
 });
