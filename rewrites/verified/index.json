@@ -36090,6 +36090,60 @@
   "lane": "r-s186"
  },
  {
+  "address": "0x00626D30",
+  "name": "rage::snMigrateSessionTask::vf0",
+  "kind": "function",
+  "file": "functions/fn_00626d30.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x00626D60",
+  "name": "network_task_release_owned_members",
+  "kind": "function",
+  "file": "functions/fn_00626d60.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x00626DD0",
+  "name": "rage::rlFireAndForgetTask<rage::snJoinCompleteTask>::vf0",
+  "kind": "function",
+  "file": "functions/fn_00626dd0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x00626E10",
+  "name": "network_record_passes_gate_checks",
+  "kind": "function",
+  "file": "functions/fn_00626e10.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x00627970",
+  "name": "network_record_copy_chunks_with_mode",
+  "kind": "function",
+  "file": "functions/fn_00627970.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x00627A20",
+  "name": "network_record_parse_small_envelope",
+  "kind": "function",
+  "file": "functions/fn_00627a20.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
   "address": "0x00628900",
   "name": "lazy_init_tls_object_a",
   "kind": "function",
