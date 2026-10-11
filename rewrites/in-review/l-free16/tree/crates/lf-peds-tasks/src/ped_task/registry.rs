@@ -148,8 +148,8 @@ pub const ROWS: &[Row] = &[
     // The task request gate. Its status probe travels as GateStatus; the
     // globals and the task's vtable word are read by the caller.
     Row {
-        class: "TaskGate",
-        method: "gate_task_request",
+        class: "(free function)",
+        method: "admits",
         state: State::Proven,
         narrows: &[
             "the task's vtable flag word and the two global words are read by the caller and passed as GateWords; the proof plants them through the relocated table and the vtable image",

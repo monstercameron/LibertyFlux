@@ -90,7 +90,7 @@ lf_checker_rt::export!(thiscall, rw_00b7d080(this: u32, ped: u32) -> u32 {
                 } else if (read_u32(this + SIGNED_STATE) as i32) >= 0 {
                     build_child(0x340)
                 } else {
-                    lf_checker_rt::callee_thiscall!(3, u32, this)
+                    lf_checker_rt::callee_thiscall!(3, u32, this, ped)
                 }
             }
             0x2de => {
@@ -123,7 +123,7 @@ lf_checker_rt::export!(thiscall, rw_00b7d080(this: u32, ped: u32) -> u32 {
                     );
                     build_child(0x2c5)
                 } else {
-                    lf_checker_rt::callee_thiscall!(3, u32, this)
+                    lf_checker_rt::callee_thiscall!(3, u32, this, ped)
                 }
             }
             0x396 => build_child(DEFAULT_EVENT),
