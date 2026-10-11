@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-10",
-  "updated_at": "2026-10-10 23:24",
+  "updated_at": "2026-10-10 23:26",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,7 +13,7 @@
   "stages": {
     "identified": 37413,
     "named": 32392,
-    "rewritten": 17095,
+    "rewritten": 17096,
     "verified": 17002
   },
   "structures": 340,
@@ -135,7 +135,7 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 17095,
+      "value": 17096,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
@@ -147,9 +147,9 @@
     }
   ],
   "activity": {
-    "lanes_running": 12,
-    "lanes_finished": 1948,
-    "lanes_incomplete": 287,
+    "lanes_running": 32,
+    "lanes_finished": 1949,
+    "lanes_incomplete": 308,
     "devlog_entries": 552
   },
   "map": [
@@ -1041,7 +1041,7 @@
       "to": "0x006287FC",
       "count": 109,
       "named": 82,
-      "rewritten": 30,
+      "rewritten": 31,
       "verified": 20
     },
     {
