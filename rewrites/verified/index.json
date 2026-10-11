@@ -59193,6 +59193,33 @@
   "lane": "r-b595"
  },
  {
+  "address": "0x00920B00",
+  "name": "uppercase_ascii_string",
+  "kind": "function",
+  "file": "functions/fn_00920b00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s676"
+ },
+ {
+  "address": "0x00922210",
+  "name": "submit_adjusted_float_when_target_present",
+  "kind": "function",
+  "file": "functions/fn_00922210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s676"
+ },
+ {
+  "address": "0x00922B70",
+  "name": "prepare_render_parameters_and_submit",
+  "kind": "function",
+  "file": "functions/fn_00922b70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s676"
+ },
+ {
   "address": "0x00924750",
   "name": "run_or_queue_cmd_4c",
   "kind": "function",
