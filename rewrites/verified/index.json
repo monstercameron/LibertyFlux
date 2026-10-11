@@ -143415,6 +143415,15 @@
   "lane": "r-s254"
  },
  {
+  "address": "0x00DAD640",
+  "name": "CTaskComplexTrackEntity::vf18",
+  "kind": "function",
+  "file": "functions/fn_00dad640.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b680"
+ },
+ {
   "address": "0x00DAD810",
   "name": "CTaskComplexAvoidPlayerTargetting::CTaskComplexAvoidPlayerTargetting",
   "kind": "function",
@@ -143566,6 +143575,33 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s637"
+ },
+ {
+  "address": "0x00DADC00",
+  "name": "task_planar_frame_angle",
+  "kind": "function",
+  "file": "functions/fn_00dadc00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b680"
+ },
+ {
+  "address": "0x00DADD80",
+  "name": "task_planar_reference_frame_vectors",
+  "kind": "function",
+  "file": "functions/fn_00dadd80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b680"
+ },
+ {
+  "address": "0x00DADEA0",
+  "name": "CTaskComplexAvoidPlayerTargetting::vf20",
+  "kind": "function",
+  "file": "functions/fn_00dadea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b680"
  },
  {
   "address": "0x00DAE5E0",
