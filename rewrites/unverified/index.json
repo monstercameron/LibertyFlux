@@ -984,14 +984,6 @@
   "reason": null
  },
  {
-  "address": "0x005FD170",
-  "name": "pending_005fd170",
-  "file": "fn_005fd170.rs",
-  "lane": "r-s697",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005FD620",
   "name": "pending_005fd620",
   "file": "fn_005fd620.rs",
@@ -1105,10 +1097,10 @@
  },
  {
   "address": "0x006382B0",
-  "name": "rage::ptxEffectRuleStd::vf32",
+  "name": null,
   "file": "fn_006382b0.rs",
   "lane": "r-s695",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -1853,14 +1845,6 @@
   "file": "fn_009dafd0.rs",
   "lane": "r-s690",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009EE1A0",
-  "name": "CTaskSimpleMoveDoNothing::vf17",
-  "file": "fn_009ee1a0.rs",
-  "lane": "a-S21",
-  "outcome": "deferred",
   "reason": null
  },
  {
@@ -2806,6 +2790,14 @@
   "lane": "r-s643",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00B6EB90",
+  "name": "CTaskComplexGoToCarDoorAndStandStill::vf20",
+  "file": "fn_00b6eb90.rs",
+  "lane": "a-U79",
+  "outcome": "not yet run",
+  "reason": ""
  },
  {
   "address": "0x00B77C30",
@@ -4909,14 +4901,6 @@
   "file": "fn_00d82cd0.rs",
   "lane": "r-b212",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00D8ED50",
-  "name": "audio_query_match_detail",
-  "file": "fn_00d8ed50.rs",
-  "lane": "a-S21",
-  "outcome": "deferred",
   "reason": null
  },
  {

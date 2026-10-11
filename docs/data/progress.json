@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 36931,
-    "rewritten": 18409,
-    "verified": 18359
+    "named": 37054,
+    "rewritten": 18418,
+    "verified": 18361
   },
   "structures": 340,
-  "symbols": 18459,
+  "symbols": 18461,
   "measured": [
     {
       "label": "Code section",
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 36931,
+      "value": 37054,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27927); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (28050); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites of game functions that passed the checker in a lane",
@@ -119,13 +119,13 @@
       "label": "Game code verified, measured in bytes",
       "value": 36.8,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2695982 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2698817 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
-      "value": 28.2,
+      "value": 28.3,
       "unit": "percent",
-      "source": "401 of 1347 such functions; they hold 38% of the game's code"
+      "source": "403 of 1347 such functions; they hold 38% of the game's code"
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
@@ -135,13 +135,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 18409,
+      "value": 18418,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 18359,
+      "value": 18361,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
@@ -581,7 +581,7 @@
       "from": "0x00506D2A",
       "to": "0x0050C64B",
       "count": 277,
-      "named": 275,
+      "named": 276,
       "rewritten": 102,
       "verified": 102
     },
@@ -815,7 +815,7 @@
       "from": "0x00597A94",
       "to": "0x0059D3B4",
       "count": 129,
-      "named": 125,
+      "named": 129,
       "rewritten": 44,
       "verified": 44
     },
@@ -824,7 +824,7 @@
       "from": "0x0059D3B5",
       "to": "0x005A2CD6",
       "count": 40,
-      "named": 38,
+      "named": 40,
       "rewritten": 24,
       "verified": 24
     },
@@ -833,7 +833,7 @@
       "from": "0x005A2CD7",
       "to": "0x005A85F7",
       "count": 22,
-      "named": 19,
+      "named": 20,
       "rewritten": 0,
       "verified": 0
     },
@@ -870,7 +870,7 @@
       "to": "0x005BEA7E",
       "count": 56,
       "named": 55,
-      "rewritten": 1,
+      "rewritten": 3,
       "verified": 0
     },
     {
@@ -978,7 +978,7 @@
       "to": "0x00601811",
       "count": 92,
       "named": 92,
-      "rewritten": 10,
+      "rewritten": 11,
       "verified": 9
     },
     {
@@ -1077,7 +1077,7 @@
       "to": "0x0063EC82",
       "count": 72,
       "named": 72,
-      "rewritten": 3,
+      "rewritten": 4,
       "verified": 0
     },
     {
@@ -1256,7 +1256,7 @@
       "from": "0x006A8A01",
       "to": "0x006AE322",
       "count": 10,
-      "named": 8,
+      "named": 10,
       "rewritten": 0,
       "verified": 0
     },
@@ -1373,7 +1373,7 @@
       "from": "0x006F10B6",
       "to": "0x006F69D7",
       "count": 61,
-      "named": 51,
+      "named": 58,
       "rewritten": 41,
       "verified": 41
     },
@@ -1967,7 +1967,7 @@
       "from": "0x00860B5F",
       "to": "0x00866480",
       "count": 36,
-      "named": 34,
+      "named": 36,
       "rewritten": 7,
       "verified": 7
     },
@@ -1976,7 +1976,7 @@
       "from": "0x00866481",
       "to": "0x0086BDA1",
       "count": 11,
-      "named": 1,
+      "named": 2,
       "rewritten": 0,
       "verified": 0
     },
@@ -2030,7 +2030,7 @@
       "from": "0x00887B4A",
       "to": "0x0088D46B",
       "count": 98,
-      "named": 89,
+      "named": 98,
       "rewritten": 55,
       "verified": 55
     },
@@ -2039,7 +2039,7 @@
       "from": "0x0088D46C",
       "to": "0x00892D8C",
       "count": 125,
-      "named": 123,
+      "named": 125,
       "rewritten": 112,
       "verified": 111
     },
@@ -2535,7 +2535,7 @@
       "to": "0x009C53C4",
       "count": 53,
       "named": 53,
-      "rewritten": 14,
+      "rewritten": 15,
       "verified": 13
     },
     {
@@ -2688,8 +2688,8 @@
       "to": "0x00A23EFF",
       "count": 58,
       "named": 58,
-      "rewritten": 38,
-      "verified": 38
+      "rewritten": 39,
+      "verified": 39
     },
     {
       "stage": "verified",
@@ -3489,7 +3489,7 @@
       "to": "0x00C13BAC",
       "count": 92,
       "named": 92,
-      "rewritten": 23,
+      "rewritten": 25,
       "verified": 20
     },
     {
@@ -3723,8 +3723,8 @@
       "to": "0x00CA4916",
       "count": 79,
       "named": 79,
-      "rewritten": 51,
-      "verified": 49
+      "rewritten": 52,
+      "verified": 50
     },
     {
       "stage": "verified",
@@ -3785,7 +3785,7 @@
       "from": "0x00CC5FE0",
       "to": "0x00CCB901",
       "count": 129,
-      "named": 124,
+      "named": 128,
       "rewritten": 64,
       "verified": 64
     },
@@ -3857,7 +3857,7 @@
       "from": "0x00CF28ED",
       "to": "0x00CF820D",
       "count": 86,
-      "named": 85,
+      "named": 86,
       "rewritten": 38,
       "verified": 38
     },
@@ -3866,7 +3866,7 @@
       "from": "0x00CF820E",
       "to": "0x00CFDB2F",
       "count": 129,
-      "named": 128,
+      "named": 129,
       "rewritten": 71,
       "verified": 71
     },
@@ -3875,7 +3875,7 @@
       "from": "0x00CFDB30",
       "to": "0x00D03451",
       "count": 57,
-      "named": 56,
+      "named": 57,
       "rewritten": 7,
       "verified": 7
     },
@@ -3902,7 +3902,7 @@
       "from": "0x00D0E695",
       "to": "0x00D13FB5",
       "count": 40,
-      "named": 38,
+      "named": 40,
       "rewritten": 3,
       "verified": 3
     },
@@ -3983,7 +3983,7 @@
       "from": "0x00D408C3",
       "to": "0x00D461E4",
       "count": 69,
-      "named": 68,
+      "named": 69,
       "rewritten": 25,
       "verified": 25
     },
@@ -3992,7 +3992,7 @@
       "from": "0x00D461E5",
       "to": "0x00D4BB05",
       "count": 58,
-      "named": 44,
+      "named": 56,
       "rewritten": 8,
       "verified": 8
     },
@@ -4001,7 +4001,7 @@
       "from": "0x00D4BB06",
       "to": "0x00D51427",
       "count": 111,
-      "named": 103,
+      "named": 111,
       "rewritten": 57,
       "verified": 57
     },
@@ -4019,7 +4019,7 @@
       "from": "0x00D56D49",
       "to": "0x00D5C66A",
       "count": 128,
-      "named": 126,
+      "named": 128,
       "rewritten": 49,
       "verified": 49
     },
@@ -4028,7 +4028,7 @@
       "from": "0x00D5C66B",
       "to": "0x00D61F8C",
       "count": 62,
-      "named": 52,
+      "named": 59,
       "rewritten": 0,
       "verified": 0
     },
@@ -4127,7 +4127,7 @@
       "from": "0x00D99ADD",
       "to": "0x00D9F3FD",
       "count": 82,
-      "named": 66,
+      "named": 82,
       "rewritten": 14,
       "verified": 14
     },
@@ -4136,7 +4136,7 @@
       "from": "0x00D9F3FE",
       "to": "0x00DA4D1F",
       "count": 95,
-      "named": 81,
+      "named": 94,
       "rewritten": 32,
       "verified": 32
     },
@@ -4145,7 +4145,7 @@
       "from": "0x00DA4D20",
       "to": "0x00DAA640",
       "count": 127,
-      "named": 124,
+      "named": 126,
       "rewritten": 84,
       "verified": 84
     },
@@ -4469,7 +4469,7 @@
       "from": "0x00E6D5D9",
       "to": "0x00E72EFA",
       "count": 598,
-      "named": 549,
+      "named": 565,
       "rewritten": 160,
       "verified": 160
     }
@@ -4477,9 +4477,9 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2695982,
+    "verified": 2698817,
     "large_functions": 2801402,
-    "large_functions_verified": 789419
+    "large_functions_verified": 792254
   },
   "lifted": {
     "methods": 497,

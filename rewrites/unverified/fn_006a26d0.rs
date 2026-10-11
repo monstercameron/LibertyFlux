@@ -12,26 +12,28 @@
 /// optional cleanup and finalizer run in that order. Calls are intercepted by
 /// the contract, and the function returns `this` after consuming one
 /// reserved stack word.
-const OBJECT_VTABLE: u32 = 0x00FE_3F7C;
-const TLS_CONTEXT_SLOT: usize = 0;
-const VALUE_WORD: usize = 3;
-const OPTIONAL_VALUE_WORD: usize = 2;
-const BASE_MEMBER_OFFSET: u32 = 0x40;
-const OPTIONAL_MEMBER_OFFSET: u32 = 0x10;
-const INVALID_VALUE: u32 = u32::MAX;
+const OBJECT_VTABLE_26D0: u32 = 0x00FE_3F7C;
+const TLS_CONTEXT_SLOT_26D0: usize = 0;
+const VALUE_WORD_26D0: usize = 3;
+const OPTIONAL_VALUE_WORD_26D0: usize = 2;
+const BASE_MEMBER_OFFSET_26D0: u32 = 0x40;
+const OPTIONAL_MEMBER_OFFSET_26D0: u32 = 0x10;
+const INVALID_VALUE_26D0: u32 = u32::MAX;
 
 lf_checker_rt::export!(thiscall, rw_006a26d0(this: u32, _reserved: u32) -> u32 {
     let _ = lf_checker_rt::callee_thiscall!(1, u32, this, this);
     unsafe {
         core::ptr::write_volatile(
             this as *mut u32,
-            lf_checker_rt::relocated(OBJECT_VTABLE),
+            lf_checker_rt::relocated(OBJECT_VTABLE_26D0),
         );
     }
-    let tls_block = lf_checker_rt::tls_slot(TLS_CONTEXT_SLOT) as *const u32;
-    let tls_context = unsafe { core::ptr::read_volatile(tls_block.add(1)) };
+    let tls_block = lf_checker_rt::tls_slot(TLS_CONTEXT_SLOT_26D0) as *const u32;
+    let tls_context = unsafe {
+        core::ptr::read_volatile(tls_block.add(TLS_CONTEXT_SLOT_26D0 + 1))
+    };
     let fields = this as *mut u32;
-    let value_slot = unsafe { fields.add(VALUE_WORD) };
+    let value_slot = unsafe { fields.add(VALUE_WORD_26D0) };
     let current_value = unsafe { core::ptr::read_volatile(value_slot) };
     if tls_context == 0 || current_value == 0 {
         unsafe { core::ptr::write_volatile(value_slot, 0) };
@@ -43,7 +45,7 @@ lf_checker_rt::export!(thiscall, rw_006a26d0(this: u32, _reserved: u32) -> u32 {
             validator_client,
             value_slot as u32,
         );
-        if validation == INVALID_VALUE {
+        if validation == INVALID_VALUE_26D0 {
             unsafe { core::ptr::write_volatile(value_slot, 0) };
         } else {
             let current_value = unsafe { core::ptr::read_volatile(value_slot) };
@@ -55,13 +57,15 @@ lf_checker_rt::export!(thiscall, rw_006a26d0(this: u32, _reserved: u32) -> u32 {
             }
         }
     }
-    let _ = lf_checker_rt::callee_thiscall!(5, u32, this + BASE_MEMBER_OFFSET);
-    let optional_value = unsafe { core::ptr::read_volatile(fields.add(OPTIONAL_VALUE_WORD)) };
+    let _ = lf_checker_rt::callee_thiscall!(5, u32, this + BASE_MEMBER_OFFSET_26D0);
+    let optional_value = unsafe {
+        core::ptr::read_volatile(fields.add(OPTIONAL_VALUE_WORD_26D0))
+    };
     if optional_value != 0 {
         let _ = lf_checker_rt::callee_thiscall!(
             6,
             u32,
-            this + OPTIONAL_MEMBER_OFFSET,
+            this + OPTIONAL_MEMBER_OFFSET_26D0,
             optional_value,
         );
         let _ = lf_checker_rt::callee_thiscall!(7, u32, this);

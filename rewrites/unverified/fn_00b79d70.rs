@@ -5,8 +5,8 @@
 /// releases the optional member pointer at `+0x24`; then tail-calls the common task destructor and returns its result.
 lf_checker_rt::export!(thiscall, rw_00b79d70(this: u32) -> u32 {
     unsafe {
-        const RELEASE_MEMBER: u32 = 1;
         const BASE_DESTRUCTOR: u32 = 5;
+        const RELEASE_MEMBER: u32 = 1;
         const VTABLE_FILE_VA: u32 = 0x00EB3394;
 
         #[inline(always)]

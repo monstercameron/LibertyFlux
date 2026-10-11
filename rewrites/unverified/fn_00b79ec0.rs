@@ -5,8 +5,8 @@
 /// releases the optional member pointer at `+0x28` and clears it after the call; calls the subobject cleanup at `+0x34`; calls the subobject cleanup at `+0x14`; then tail-calls the common task destructor and returns its result.
 lf_checker_rt::export!(thiscall, rw_00b79ec0(this: u32) -> u32 {
     unsafe {
-        const RELEASE_MEMBER: u32 = 1;
         const BASE_DESTRUCTOR: u32 = 5;
+        const RELEASE_MEMBER: u32 = 1;
         const SUBOBJECT_CLEANUP: u32 = 2;
         const VTABLE_FILE_VA: u32 = 0x00EB34BC;
 

@@ -12,23 +12,25 @@
 /// constructor, validator, updater and notification remain outgoing calls;
 /// their scripts are part of the contract. The function returns `this` and
 /// consumes one reserved stack word.
-const OBJECT_VTABLE: u32 = 0x00FE_3F34;
-const TLS_CONTEXT_SLOT: usize = 0;
-const OBJECT_VALUE_WORD: usize = 2;
-const INVALID_VALUE: u32 = u32::MAX;
+const OBJECT_VTABLE_2660: u32 = 0x00FE_3F34;
+const TLS_CONTEXT_SLOT_2660: usize = 0;
+const OBJECT_VALUE_WORD_2660: usize = 2;
+const INVALID_VALUE_2660: u32 = u32::MAX;
 
 lf_checker_rt::export!(thiscall, rw_006a2660(this: u32, _reserved: u32) -> u32 {
     let _ = lf_checker_rt::callee_thiscall!(1, u32, this);
     unsafe {
         core::ptr::write_volatile(
             this as *mut u32,
-            lf_checker_rt::relocated(OBJECT_VTABLE),
+            lf_checker_rt::relocated(OBJECT_VTABLE_2660),
         );
     }
-    let tls_block = lf_checker_rt::tls_slot(TLS_CONTEXT_SLOT) as *const u32;
-    let tls_context = unsafe { core::ptr::read_volatile(tls_block.add(1)) };
+    let tls_block = lf_checker_rt::tls_slot(TLS_CONTEXT_SLOT_2660) as *const u32;
+    let tls_context = unsafe {
+        core::ptr::read_volatile(tls_block.add(TLS_CONTEXT_SLOT_2660 + 1))
+    };
     let object_words = this as *mut u32;
-    let value_slot = unsafe { object_words.add(OBJECT_VALUE_WORD) };
+    let value_slot = unsafe { object_words.add(OBJECT_VALUE_WORD_2660) };
     let current_value = unsafe { core::ptr::read_volatile(value_slot) };
     if tls_context == 0 || current_value == 0 {
         unsafe { core::ptr::write_volatile(value_slot, 0) };
@@ -41,7 +43,7 @@ lf_checker_rt::export!(thiscall, rw_006a2660(this: u32, _reserved: u32) -> u32 {
         validator_client,
         value_slot as u32,
     );
-    if validation == INVALID_VALUE {
+    if validation == INVALID_VALUE_2660 {
         unsafe { core::ptr::write_volatile(value_slot, 0) };
         return this;
     }

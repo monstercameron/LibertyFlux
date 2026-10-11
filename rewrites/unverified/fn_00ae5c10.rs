@@ -8,8 +8,8 @@
 /// `+0x24` has bit 15 set and either its word at `+0x28` has bit 19 set or
 /// the word at `+0x5c` has bit 13 set. If both linked records qualify the
 /// function returns one. Otherwise, the base record returns one when bit 15
-/// at `+0x24` is clear, or when bit 19 at `+0x28` is clear and bit 13 at
-/// `+0x5c` is set. The original defines only AL; the checker compares that
+/// at `+0x24` is clear, or when bit 19 at `+0x28` and bit 13 at `+0x5c` are
+/// both clear. The original defines only AL; the checker compares that
 /// byte as the Boolean result.
 export!(cdecl, rw_00ae5c10(object: u32) -> u32 {
     unsafe {
@@ -46,6 +46,6 @@ export!(cdecl, rw_00ae5c10(object: u32) -> u32 {
         if read_u32(object, 0x28) & (1 << 19) != 0 {
             return 0;
         }
-        u32::from(read_u16(object, 0x5c) & 0x2000 != 0)
+        u32::from(read_u16(object, 0x5c) & 0x2000 == 0)
     }
 });
