@@ -23,8 +23,6 @@ lf_checker_rt::export!(thiscall, rw_00a328f0(this: u32) -> () {
     const MODEL_COUNT: u32 = 1;
     const MODEL_ENTRY: u32 = 2;
     const SPAWN_EFFECT: u32 = 5;
-    const ENTRY_ENABLED: u32 = 3;
-    const GET_AUDIO_PART: u32 = 4;
 
     #[inline(always)]
     unsafe fn read_u8(address: u32) -> u8 {
@@ -57,8 +55,7 @@ lf_checker_rt::export!(thiscall, rw_00a328f0(this: u32) -> () {
         }
 
         let mut entry_index = 0i32;
-        let mut model_count =
-            lf_checker_rt::callee_thiscall!(MODEL_COUNT, u32, model_info) as i32;
+        let mut model_count = lf_checker_rt::callee_thiscall!(MODEL_COUNT, u32, model_info) as i32;
         if model_count <= 0 {
             return;
         }
@@ -95,8 +92,7 @@ lf_checker_rt::export!(thiscall, rw_00a328f0(this: u32) -> () {
             }
 
             entry_index = entry_index.wrapping_add(1);
-            model_count =
-                lf_checker_rt::callee_thiscall!(MODEL_COUNT, u32, model_info) as i32;
+            model_count = lf_checker_rt::callee_thiscall!(MODEL_COUNT, u32, model_info) as i32;
             if entry_index >= model_count {
                 break;
             }

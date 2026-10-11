@@ -3,8 +3,8 @@
 /// Resolves a voice parameter target from the property index, bank, scale,
 /// and bank table, then forwards two single precision values to the channel
 /// setter. The sentinel property selects a zero target. The second input is
-/// forwarded as the setter's first stack argument, matching the wrapper's
-/// original ordering; arithmetic on the target wraps at 32 bits.
+/// forwarded in entry order as the setter's two stack arguments; arithmetic
+/// on the target wraps at 32 bits.
 lf_checker_rt::export!(thiscall, rw_audio_voice_set_f32_8_12(
     voice: u32,
     first_input: f32,
@@ -35,6 +35,6 @@ lf_checker_rt::export!(thiscall, rw_audio_voice_set_f32_8_12(
 
         let set_channel: unsafe extern "thiscall" fn(u32, f32, f32) -> u32 =
             core::mem::transmute(lf_checker_rt::callee_addr(1));
-        set_channel(target, second_input, first_input)
+        set_channel(target, first_input, second_input)
     }
 });

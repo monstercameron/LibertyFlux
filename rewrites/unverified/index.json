@@ -1864,22 +1864,6 @@
   "reason": null
  },
  {
-  "address": "0x00A8F7D0",
-  "name": "interior_portal_has_geometry",
-  "file": "fn_00a8f7d0.rs",
-  "lane": "r-s737",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A8F810",
-  "name": "interior_room_flag_query",
-  "file": "fn_00a8f810.rs",
-  "lane": "r-s737",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A8F850",
   "name": "vehicle_model_has_driver_flag",
   "file": "fn_00a8f850.rs",
@@ -1891,6 +1875,14 @@
   "address": "0x00A8F870",
   "name": "vehicle_model_flag_bit9",
   "file": "fn_00a8f870.rs",
+  "lane": "r-s737",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A8F8F0",
+  "name": "interior_mark_frag_dirty",
+  "file": "fn_00a8f8f0.rs",
   "lane": "r-s737",
   "outcome": "not_reached",
   "reason": null
@@ -2389,14 +2381,6 @@
   "file": "fn_00b126a0.rs",
   "lane": "r-s658",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B13310",
-  "name": "world_pools_function_00b13310",
-  "file": "fn_00b13310.rs",
-  "lane": "r-s741",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4453,6 +4437,326 @@
   "file": "fn_00e4b790.rs",
   "lane": "r-b380",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00E5F4A0",
+  "name": "link_network_timer_node_a",
+  "file": "fn_00e5f4a0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E5F4C0",
+  "name": "link_network_timer_node_b",
+  "file": "fn_00e5f4c0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E5F4E0",
+  "name": "link_network_timer_node_c",
+  "file": "fn_00e5f4e0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E620F0",
+  "name": "initialize_network_thread_pool_and_register_cleanup",
+  "file": "fn_00e620f0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62120",
+  "name": "initialize_network_thread_pool_lock_a",
+  "file": "fn_00e62120.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62140",
+  "name": "initialize_network_thread_pool_lock_b",
+  "file": "fn_00e62140.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62160",
+  "name": "register_network_thread_pool_cleanup",
+  "file": "fn_00e62160.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62170",
+  "name": "initialize_network_thread_pool_lock_c",
+  "file": "fn_00e62170.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62190",
+  "name": "reset_network_pool_records",
+  "file": "fn_00e62190.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E621E0",
+  "name": "initialize_network_pool_state_records",
+  "file": "fn_00e621e0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62280",
+  "name": "initialize_network_thread_pool_lock_d",
+  "file": "fn_00e62280.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E625F0",
+  "name": "register_network_object_cleanup",
+  "file": "fn_00e625f0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62600",
+  "name": "initialize_network_state_object_a",
+  "file": "fn_00e62600.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62620",
+  "name": "register_network_buffer_cleanup",
+  "file": "fn_00e62620.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62630",
+  "name": "initialize_network_state_object_b",
+  "file": "fn_00e62630.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62650",
+  "name": "initialize_light_attribute_state",
+  "file": "fn_00e62650.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62670",
+  "name": "register_global_graphics_object_cleanup",
+  "file": "fn_00e62670.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62680",
+  "name": "store_graphics_scale_ratio_a",
+  "file": "fn_00e62680.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E626A0",
+  "name": "initialize_graphics_state_object_a",
+  "file": "fn_00e626a0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E626C0",
+  "name": "register_graphics_state_object_cleanup_a",
+  "file": "fn_00e626c0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E626D0",
+  "name": "initialize_graphics_state_object_b",
+  "file": "fn_00e626d0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E626F0",
+  "name": "register_graphics_state_object_cleanup_b",
+  "file": "fn_00e626f0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62700",
+  "name": "register_graphics_state_object_cleanup_c",
+  "file": "fn_00e62700.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62710",
+  "name": "register_graphics_resource_release_a",
+  "file": "fn_00e62710.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62720",
+  "name": "register_graphics_resource_release_b",
+  "file": "fn_00e62720.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62B30",
+  "name": "initialize_audio_link_head_and_register_cleanup_c",
+  "file": "fn_00e62b30.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62B50",
+  "name": "initialize_audio_link_head_and_register_cleanup_d",
+  "file": "fn_00e62b50.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62B70",
+  "name": "reset_audio_smoothing_state_f",
+  "file": "fn_00e62b70.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62B90",
+  "name": "reset_audio_smoothing_state_g",
+  "file": "fn_00e62b90.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62BB0",
+  "name": "register_audio_high_end_footprint_setting",
+  "file": "fn_00e62bb0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62BD0",
+  "name": "register_audio_low_end_footprint_setting",
+  "file": "fn_00e62bd0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62BF0",
+  "name": "store_audio_scale_ratio_a",
+  "file": "fn_00e62bf0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62C10",
+  "name": "initialize_audio_link_head_and_register_cleanup_e",
+  "file": "fn_00e62c10.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62C30",
+  "name": "register_audio_buffer_cleanup",
+  "file": "fn_00e62c30.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62C40",
+  "name": "store_audio_scale_ratio_b",
+  "file": "fn_00e62c40.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62C60",
+  "name": "store_audio_scale_ratio_c",
+  "file": "fn_00e62c60.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62C80",
+  "name": "register_network_global_pointer_initializer_a",
+  "file": "fn_00e62c80.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62C90",
+  "name": "initialize_network_state_object_a",
+  "file": "fn_00e62c90.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62CB0",
+  "name": "register_network_global_pointer_initializer_b",
+  "file": "fn_00e62cb0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62CC0",
+  "name": "register_network_global_pointer_initializer_c",
+  "file": "fn_00e62cc0.rs",
+  "lane": "r-s745",
+  "outcome": "not_reached",
   "reason": null
  },
  {

@@ -19,8 +19,8 @@ lf_checker_rt::export!(stdcall, rw_00b43e00(point_a: u32, point_b: u32, mode: u3
     struct QueryContext {
         first: [f32; 4],
         second: [f32; 4],
-        high_z: f32,
         low_z: f32,
+        high_z: f32,
         mode: u8,
         result: u8,
         padding: [u8; 2],
@@ -111,25 +111,33 @@ lf_checker_rt::export!(stdcall, rw_00b43e00(point_a: u32, point_b: u32, mode: u3
 
         let first_z = add_f32(POINT_Z_BIAS, first[2]);
         let second_z = add_f32(POINT_Z_BIAS, second[2]);
-        let (high_z, low_z) = if jbe(second_z, first_z) {
-            (first_z, second_z)
+        let low_z = if jbe(second_z, first_z) {
+            second_z
         } else {
-            (second_z, first_z)
+            first_z
         };
-        let mut context = QueryContext {
-            first: [first[0], first[1], first_z, first[3]],
-            second: [second[0], second[1], second_z, second[3]],
-            high_z,
-            low_z,
-            mode: mode as u8,
-            result: 0,
-            padding: [0; 2],
-            tail: 0,
+        let high_z = if jbe(first_z, second_z) {
+            second_z
+        } else {
+            first_z
         };
 
+        // Keep the two padding bytes in the callback structure untouched,
+        // as the original only stores the mode and result bytes there.
+        let mut context = core::mem::MaybeUninit::<QueryContext>::uninit();
+        let context_raw = context.as_mut_ptr();
+        core::ptr::addr_of_mut!((*context_raw).first)
+            .write([first[0], first[1], first_z, first[3]]);
+        core::ptr::addr_of_mut!((*context_raw).second)
+            .write([second[0], second[1], second_z, second[3]]);
+        core::ptr::addr_of_mut!((*context_raw).low_z).write(low_z);
+        core::ptr::addr_of_mut!((*context_raw).high_z).write(high_z);
+        core::ptr::addr_of_mut!((*context_raw).mode).write(mode as u8);
+        core::ptr::addr_of_mut!((*context_raw).result).write(0);
+
         let bounds_ptr = bounds.as_mut_ptr() as u32;
-        let context_ptr = &mut context as *mut QueryContext as u32;
-        let callback_ptr = local_hit_callback as usize as u32;
+        let context_ptr = context_raw as u32;
+        let callback_ptr = local_hit_callback as *const () as usize as u32;
         let _ = lf_checker_rt::callee_cdecl!(
             SPATIAL_ENUM_CALL,
             u32,
