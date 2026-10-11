@@ -32625,6 +32625,15 @@
   "lane": "r-s605"
  },
  {
+  "address": "0x00593DD0",
+  "name": "leaderboard_find_key_position_for_index",
+  "kind": "function",
+  "file": "functions/fn_00593dd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
   "address": "0x00593E40",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_256, player_schema::LeaderboardInfo, 10>::vf13",
   "kind": "function",
@@ -33885,6 +33894,33 @@
   "lane": "r-s339"
  },
  {
+  "address": "0x00599520",
+  "name": "leaderboard_copy_resource_address_for_match",
+  "kind": "function",
+  "file": "functions/fn_00599520.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00599550",
+  "name": "leaderboard_find_key_position_for_index",
+  "kind": "function",
+  "file": "functions/fn_00599550.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x005995C0",
+  "name": "leaderboard_read_value_for_key",
+  "kind": "function",
+  "file": "functions/fn_005995c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
   "address": "0x00599630",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_Episodic_6, player_schema::LeaderboardInfo, 10>::vf14",
   "kind": "function",
@@ -33892,6 +33928,69 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "a-S01"
+ },
+ {
+  "address": "0x005997B0",
+  "name": "leaderboard_find_key_index",
+  "kind": "function",
+  "file": "functions/fn_005997b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00599810",
+  "name": "leaderboard_read_value_at_index",
+  "kind": "function",
+  "file": "functions/fn_00599810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00599850",
+  "name": "leaderboard_entry_width_at_index",
+  "kind": "function",
+  "file": "functions/fn_00599850.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00599980",
+  "name": "leaderboard_copy_resource_address_for_match",
+  "kind": "function",
+  "file": "functions/fn_00599980.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x005999B0",
+  "name": "leaderboard_find_key_position_for_index",
+  "kind": "function",
+  "file": "functions/fn_005999b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00599A20",
+  "name": "leaderboard_read_value_for_key",
+  "kind": "function",
+  "file": "functions/fn_00599a20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00599C10",
+  "name": "leaderboard_find_key_index",
+  "kind": "function",
+  "file": "functions/fn_00599c10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
  },
  {
   "address": "0x0059D870",
@@ -38113,6 +38212,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b311"
+ },
+ {
+  "address": "0x00624C80",
+  "name": "pending_00624c80",
+  "kind": "function",
+  "file": "functions/fn_00624c80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
  },
  {
   "address": "0x00624E20",
@@ -60885,6 +60993,15 @@
   "lane": "r-b316"
  },
  {
+  "address": "0x009364F0",
+  "name": "reset_network_object_counter",
+  "kind": "function",
+  "file": "functions/fn_009364f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
   "address": "0x00936510",
   "name": "net_state_poll",
   "kind": "function",
@@ -60894,6 +61011,24 @@
   "lane": "a-G34"
  },
  {
+  "address": "0x009366A0",
+  "name": "submit_network_transition_values",
+  "kind": "function",
+  "file": "functions/fn_009366a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00936770",
+  "name": "forward_network_transition_values",
+  "kind": "function",
+  "file": "functions/fn_00936770.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
   "address": "0x00936840",
   "name": "net_msg_build_send",
   "kind": "function",
@@ -60901,6 +61036,33 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G34"
+ },
+ {
+  "address": "0x00936A20",
+  "name": "compact_network_state_records",
+  "kind": "function",
+  "file": "functions/fn_00936a20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00936C80",
+  "name": "forward_network_transition_defaults",
+  "kind": "function",
+  "file": "functions/fn_00936c80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00936CA0",
+  "name": "clear_stale_network_state_generation",
+  "kind": "function",
+  "file": "functions/fn_00936ca0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
  },
  {
   "address": "0x00936CD0",
@@ -76120,6 +76282,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s601"
+ },
+ {
+  "address": "0x009FBC90",
+  "name": "play_stat_indexed_init_009fbc90",
+  "kind": "function",
+  "file": "functions/fn_009fbc90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
  },
  {
   "address": "0x009FC110",
@@ -91764,6 +91935,15 @@
   "lane": "r-b303"
  },
  {
+  "address": "0x00B0BD80",
+  "name": "Pickup_ApplyStateTransition",
+  "kind": "function",
+  "file": "functions/fn_00b0bd80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
   "address": "0x00B0BF50",
   "name": "net_slot_init_row",
   "kind": "function",
@@ -91773,6 +91953,15 @@
   "lane": "r-b303"
  },
  {
+  "address": "0x00B0C5C0",
+  "name": "Pickup_SlotFromHandle",
+  "kind": "function",
+  "file": "functions/fn_00b0c5c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
   "address": "0x00B0C840",
   "name": "net_event_dispatch",
   "kind": "function",
@@ -91780,6 +91969,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b304"
+ },
+ {
+  "address": "0x00B0CD40",
+  "name": "Pickup_RegisterGlobalHandler",
+  "kind": "function",
+  "file": "functions/fn_00b0cd40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
  },
  {
   "address": "0x00B0CD60",
@@ -91816,6 +92014,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b317"
+ },
+ {
+  "address": "0x00B0E200",
+  "name": "Pickup_ProcessSpecialStates",
+  "kind": "function",
+  "file": "functions/fn_00b0e200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
  },
  {
   "address": "0x00B0E410",
@@ -140004,6 +140211,33 @@
   "lane": "r-s604"
  },
  {
+  "address": "0x00D16D90",
+  "name": "CTaskSimplePlayAnimAndSlideOutOfCover::vf17",
+  "kind": "function",
+  "file": "functions/fn_00d16d90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00D16E20",
+  "name": "CTaskSimplePlaySwatSignalAnim::vf17",
+  "kind": "function",
+  "file": "functions/fn_00d16e20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
+  "address": "0x00D16EE0",
+  "name": "CTaskSimplePlayUpperCombatAnim::vf17",
+  "kind": "function",
+  "file": "functions/fn_00d16ee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
+ },
+ {
   "address": "0x00D17120",
   "name": "CTaskSimplePlayAnimAndSlideOutOfCover::vf13",
   "kind": "function",
@@ -140011,6 +140245,15 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G34"
+ },
+ {
+  "address": "0x00D173B0",
+  "name": "ped_position_outside_radius",
+  "kind": "function",
+  "file": "functions/fn_00d173b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
  },
  {
   "address": "0x00D17410",
@@ -140038,6 +140281,15 @@
   "trials": 1100,
   "checker": "version 8",
   "lane": "r-s604"
+ },
+ {
+  "address": "0x00D17A10",
+  "name": "set_task_output_fields",
+  "kind": "function",
+  "file": "functions/fn_00d17a10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U103"
  },
  {
   "address": "0x00D17B10",
