@@ -53460,6 +53460,24 @@
   "lane": "r-s428"
  },
  {
+  "address": "0x008D1920",
+  "name": "PlayerTargetCheck",
+  "kind": "function",
+  "file": "functions/fn_008d1920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U50"
+ },
+ {
+  "address": "0x008D1D10",
+  "name": "PlayerTargetCheckNear",
+  "kind": "function",
+  "file": "functions/fn_008d1d10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U50"
+ },
+ {
   "address": "0x008D20E0",
   "name": "Player_GetPedByInfoOrCurrent",
   "kind": "function",
