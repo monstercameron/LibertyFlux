@@ -126873,6 +126873,51 @@
   "lane": "a-Q21"
  },
  {
+  "address": "0x00C72110",
+  "name": "CAnimAssociations::vf2",
+  "kind": "function",
+  "file": "functions/fn_00c72110.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C72180",
+  "name": "cleanup_animation_manager",
+  "kind": "function",
+  "file": "functions/fn_00c72180.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C72270",
+  "name": "copy_animation_tracks",
+  "kind": "function",
+  "file": "functions/fn_00c72270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C722F0",
+  "name": "append_animation_tracks",
+  "kind": "function",
+  "file": "functions/fn_00c722f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C72330",
+  "name": "initialize_animation_stream_segment",
+  "kind": "function",
+  "file": "functions/fn_00c72330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
   "address": "0x00C723B0",
   "name": "proposed: ped_task_spatial_query_alloc",
   "kind": "function",
@@ -126891,6 +126936,15 @@
   "lane": "r-b492"
  },
  {
+  "address": "0x00C726B0",
+  "name": "set_ped_task_flag",
+  "kind": "function",
+  "file": "functions/fn_00c726b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
   "address": "0x00C727A0",
   "name": "proposed: ped_task_target_update",
   "kind": "function",
@@ -126898,6 +126952,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b492"
+ },
+ {
+  "address": "0x00C728B0",
+  "name": "initialize_animation_motion_flags",
+  "kind": "function",
+  "file": "functions/fn_00c728b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C729E0",
+  "name": "initialize_animation_bundle_compact",
+  "kind": "function",
+  "file": "functions/fn_00c729e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
  },
  {
   "address": "0x00C72A70",
@@ -126909,6 +126981,15 @@
   "lane": "r-b492"
  },
  {
+  "address": "0x00C72C50",
+  "name": "scale_animation_timing_fields",
+  "kind": "function",
+  "file": "functions/fn_00c72c50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
   "address": "0x00C72CB0",
   "name": "proposed: ped_task_params_rescale",
   "kind": "function",
@@ -126918,6 +126999,51 @@
   "lane": "r-b492"
  },
  {
+  "address": "0x00C72E20",
+  "name": "animation_record_at_index",
+  "kind": "function",
+  "file": "functions/fn_00c72e20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C72E30",
+  "name": "find_animation_record_or_null",
+  "kind": "function",
+  "file": "functions/fn_00c72e30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C72E50",
+  "name": "find_animation_record_index",
+  "kind": "function",
+  "file": "functions/fn_00c72e50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C72EE0",
+  "name": "initialize_animation_lookup_tables",
+  "kind": "function",
+  "file": "functions/fn_00c72ee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C73F00",
+  "name": "register_animation_stream_block",
+  "kind": "function",
+  "file": "functions/fn_00c73f00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
   "address": "0x00C740A0",
   "name": "proposed: ped_task_zone_test",
   "kind": "function",
@@ -126925,6 +127051,60 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b492"
+ },
+ {
+  "address": "0x00C74230",
+  "name": "find_ped_type_by_name",
+  "kind": "function",
+  "file": "functions/fn_00c74230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C742A0",
+  "name": "ped_type_name_at_index",
+  "kind": "function",
+  "file": "functions/fn_00c742a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C743B0",
+  "name": "append_model_info_pair",
+  "kind": "function",
+  "file": "functions/fn_00c743b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C743F0",
+  "name": "CPedModelInfo::vf8",
+  "kind": "function",
+  "file": "functions/fn_00c743f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C74450",
+  "name": "CPedModelInfo::vf11",
+  "kind": "function",
+  "file": "functions/fn_00c74450.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C744E0",
+  "name": "find_model_info_pair",
+  "kind": "function",
+  "file": "functions/fn_00c744e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
  },
  {
   "address": "0x00C745D0",
@@ -126952,6 +127132,51 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b479"
+ },
+ {
+  "address": "0x00C768B0",
+  "name": "CPedModelInfo::vf6",
+  "kind": "function",
+  "file": "functions/fn_00c768b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C768D0",
+  "name": "CPedModelInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00c768d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C76990",
+  "name": "CPedModelInfo::vf4",
+  "kind": "function",
+  "file": "functions/fn_00c76990.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C76A50",
+  "name": "resolve_model_class_resource",
+  "kind": "function",
+  "file": "functions/fn_00c76a50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
+ },
+ {
+  "address": "0x00C76B30",
+  "name": "CMloModelInfo::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c76b30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s653"
  },
  {
   "address": "0x00C7A530",
