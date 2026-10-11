@@ -116532,6 +116532,195 @@
   "lane": "a-07"
  },
  {
+  "address": "0x00BD47D0",
+  "name": "NativeImpl_CREATE_CHECKPOINT",
+  "kind": "function",
+  "file": "functions/fn_00bd47d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD4890",
+  "name": "NativeImpl_DRAW_CHECKPOINT",
+  "kind": "function",
+  "file": "functions/fn_00bd4890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD48F0",
+  "name": "NativeImpl_DRAW_CHECKPOINT_WITH_ALPHA",
+  "kind": "function",
+  "file": "functions/fn_00bd48f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD49E0",
+  "name": "NativeImpl_DRAW_CORONA",
+  "kind": "function",
+  "file": "functions/fn_00bd49e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD4D40",
+  "name": "NativeImpl_DRAW_MOVIE",
+  "kind": "function",
+  "file": "functions/fn_00bd4d40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD5870",
+  "name": "NativeImpl_GET_PHYSICAL_SCREEN_RESOLUTION",
+  "kind": "function",
+  "file": "functions/fn_00bd5870.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD5F50",
+  "name": "NativeImpl_START_PTFX",
+  "kind": "function",
+  "file": "functions/fn_00bd5f50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD6010",
+  "name": "NativeImpl_START_PTFX_ON_OBJ",
+  "kind": "function",
+  "file": "functions/fn_00bd6010.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD60E0",
+  "name": "NativeImpl_START_PTFX_ON_OBJ_BONE",
+  "kind": "function",
+  "file": "functions/fn_00bd60e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD61B0",
+  "name": "NativeImpl_START_PTFX_ON_PED",
+  "kind": "function",
+  "file": "functions/fn_00bd61b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD6280",
+  "name": "NativeImpl_START_PTFX_ON_PED_BONE",
+  "kind": "function",
+  "file": "functions/fn_00bd6280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD6350",
+  "name": "NativeImpl_START_PTFX_ON_VEH",
+  "kind": "function",
+  "file": "functions/fn_00bd6350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD6470",
+  "name": "NativeImpl_TRIGGER_PTFX",
+  "kind": "function",
+  "file": "functions/fn_00bd6470.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD6510",
+  "name": "NativeImpl_TRIGGER_PTFX_ON_OBJ",
+  "kind": "function",
+  "file": "functions/fn_00bd6510.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD65C0",
+  "name": "NativeImpl_TRIGGER_PTFX_ON_OBJ_BONE",
+  "kind": "function",
+  "file": "functions/fn_00bd65c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD6670",
+  "name": "NativeImpl_TRIGGER_PTFX_ON_PED",
+  "kind": "function",
+  "file": "functions/fn_00bd6670.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD6720",
+  "name": "NativeImpl_TRIGGER_PTFX_ON_PED_BONE",
+  "kind": "function",
+  "file": "functions/fn_00bd6720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD67D0",
+  "name": "NativeImpl_TRIGGER_PTFX_ON_VEH",
+  "kind": "function",
+  "file": "functions/fn_00bd67d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD6880",
+  "name": "NativeImpl_UPDATE_PTFX_OFFSETS",
+  "kind": "function",
+  "file": "functions/fn_00bd6880.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD6A80",
+  "name": "Txd_FindLoaded",
+  "kind": "function",
+  "file": "functions/fn_00bd6a80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
+  "address": "0x00BD6C20",
+  "name": "NativeImpl_REMOVE_PROJTEX_IN_RANGE_2",
+  "kind": "function",
+  "file": "functions/fn_00bd6c20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s662"
+ },
+ {
   "address": "0x00BD7160",
   "name": "COMPARE_TWO_DATES",
   "kind": "native",
