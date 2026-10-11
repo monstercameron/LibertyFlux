@@ -14,6 +14,7 @@ lf_checker_rt::export!(stdcall, rw_00d21570(object: u32, mode: u32, context: u32
     const RAYCAST_RADIUS_BITS: u32 = 0xbf80_0000;
     const CAPTURE_RADIUS_BITS: u32 = 0x4020_0000;
     const SAMPLE_TABLE_FILE_VA: u32 = 0x00c1_9080;
+    const SAMPLE_END_FILE_VA: u32 = 0x0062_e7a0;
 
     if mode == MODE_RAYCAST {
         let _ = lf_checker_rt::callee_thiscall!(1, u32, object);
@@ -31,7 +32,7 @@ lf_checker_rt::export!(stdcall, rw_00d21570(object: u32, mode: u32, context: u32
             core::ptr::read_volatile(local_words_ptr),
             core::ptr::read_volatile(local_words_ptr.add(1)),
             core::ptr::read_volatile(local_words_ptr.add(2)),
-            core::ptr::read_volatile(local_words_ptr.add(3)),
+            lf_checker_rt::relocated(SAMPLE_END_FILE_VA),
         ] };
         unsafe {
             (object as *mut u32).write_unaligned(words[0]);

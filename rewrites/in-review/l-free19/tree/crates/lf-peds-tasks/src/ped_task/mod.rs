@@ -53,6 +53,7 @@ mod pose;
 mod record_scan;
 mod seek;
 pub mod subobject_tables;
+pub mod aim_blend;
 mod task_block;
 mod task_owner;
 mod task_predicates;
@@ -112,6 +113,7 @@ pub use pose::{
     LinkMatrix, Matrix, NORM_COUNT, NormSlot, PoseFill, PoseSample, PoseVolume, Transformed,
 };
 pub use seek::{SEEK_MODE, STEP_SCALE, SeekGoal, SeekMover, SeekRecord, TUNING};
+pub use aim_blend::{AimBlend, AimBlendCallees, BlendResult};
 pub use subobject_tables::{
     AffineBlock, CountReads, SubobjectHooks, TaskSubobjects, WalkEnd,
 };
