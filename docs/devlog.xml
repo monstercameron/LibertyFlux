@@ -306,7 +306,7 @@ unreached for a whole probe run, and a callee whose call site was left unpatched
 &lt;p&gt;&lt;strong&gt;Reproduce.&lt;/strong&gt; Run the checker on the z contract and on the corrected replay of the stage 12 contract, and compare the callee's declared word count with the original's three pushes.&lt;/p&gt;</content>
   </entry>
   <entry>
-    <title>A stdcall callee's out-parameter write faults the rewrite on the stock checker (lane a-H21)</title>
+    <title>A callee's write into the caller's frame faulted the rewrite: the contract asked for eight words where two fit (lane a-H21, corrected)</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#a-h21-stdcall-writes-fault"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-h21-stdcall-writes-fault</id>
     <published>2026-10-11T00:00:00Z</published>
