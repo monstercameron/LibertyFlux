@@ -26,7 +26,7 @@ lf_checker_rt::export!(cdecl, rw_00b56230(out: u32, input_scale: f32, source: u3
         }
 
         let basis = lf_checker_rt::global::<u32>(STATIC_BASIS);
-        for index in 0..3u32 {
+        for index in 0..4u32 {
             let value = unsafe { basis.add(index as usize).read_unaligned() };
             unsafe { write_u32(out.wrapping_add(index * 4), value) };
         }
