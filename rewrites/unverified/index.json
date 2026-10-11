@@ -472,83 +472,19 @@
   "reason": null
  },
  {
-  "address": "0x005D2BD0",
-  "name": null,
-  "file": "fn_005d2bd0.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D2C30",
-  "name": null,
-  "file": "fn_005d2c30.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D2CA0",
-  "name": null,
-  "file": "fn_005d2ca0.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D2D10",
-  "name": null,
-  "file": "fn_005d2d10.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x005D2E90",
-  "name": null,
+  "name": "blip_slot_alloc",
   "file": "fn_005d2e90.rs",
   "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "runtime_table"
  },
  {
-  "address": "0x005D30A0",
-  "name": null,
-  "file": "fn_005d30a0.rs",
+  "address": "0x005D3450",
+  "name": "CTaskComplexCarDriveMissionFleeScene::vf7",
+  "file": "fn_005d3450.rs",
   "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D3370",
-  "name": null,
-  "file": "fn_005d3370.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D33E0",
-  "name": null,
-  "file": "fn_005d33e0.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D3420",
-  "name": null,
-  "file": "fn_005d3420.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D3430",
-  "name": null,
-  "file": "fn_005d3430.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -1456,9 +1392,9 @@
   "reason": null
  },
  {
-  "address": "0x0098C430",
-  "name": "audio_thread_slot_ptr",
-  "file": "fn_0098c430.rs",
+  "address": "0x0098C0B0",
+  "name": "audio_vehicle_mix_level_get",
+  "file": "fn_0098c0b0.rs",
   "lane": "r-s735",
   "outcome": "not_reached",
   "reason": null
@@ -1480,14 +1416,6 @@
   "reason": null
  },
  {
-  "address": "0x00990930",
-  "name": "audVehicleAudioEntity::stop_heli_damage_loop",
-  "file": "fn_00990930.rs",
-  "lane": "r-s735",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009AA110",
   "name": "conv_first_or_null",
   "file": "fn_009aa110.rs",
@@ -1496,25 +1424,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009B0DD0",
-  "name": "audPoliceScanner::clear_report_slot",
-  "file": "fn_009b0dd0.rs",
-  "lane": "r-s734",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B3200",
-  "name": "audPoliceScanner::report_player_spotted",
-  "file": "fn_009b3200.rs",
-  "lane": "r-s734",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B38E0",
-  "name": "audPoliceScanner::tally_crime",
-  "file": "fn_009b38e0.rs",
+  "address": "0x009B18B0",
+  "name": "audPoliceScanner::maybe_play_dispatch_update",
+  "file": "fn_009b18b0.rs",
   "lane": "r-s734",
   "outcome": "not_reached",
   "reason": null
@@ -1728,26 +1640,18 @@
   "reason": null
  },
  {
-  "address": "0x00A096D0",
-  "name": null,
-  "file": "fn_00a096d0.rs",
-  "lane": "r-s738",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00A09E20",
   "name": null,
   "file": "fn_00a09e20.rs",
-  "lane": "r-s738",
-  "outcome": "not yet run",
+  "lane": "r-s465",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A0A330",
-  "name": null,
+  "name": "cleanup_entry_apply_interior",
   "file": "fn_00a0a330.rs",
-  "lane": "r-s465",
+  "lane": "r-s738",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1969,25 +1873,25 @@
  },
  {
   "address": "0x00A8AE90",
-  "name": "pool_cookie_scan_dispatch",
+  "name": "pool_load_named",
   "file": "fn_00a8ae90.rs",
-  "lane": "r-s737",
+  "lane": "r-s463",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00A8B210",
-  "name": "find_entry_by_name_prefix",
-  "file": "fn_00a8b210.rs",
+  "address": "0x00A8C9C0",
+  "name": "count_matching_query_rows",
+  "file": "fn_00a8c9c0.rs",
   "lane": "r-s737",
   "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A8D5F0",
-  "name": "pool_emit_positioned",
+  "name": "pool_vec_kernel_notify",
   "file": "fn_00a8d5f0.rs",
-  "lane": "r-s463",
+  "lane": "r-s737",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2544,6 +2448,14 @@
   "reason": null
  },
  {
+  "address": "0x00B42C70",
+  "name": "physical_frag_update",
+  "file": "fn_00b42c70.rs",
+  "lane": "r-b701",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B4BC20",
   "name": "group_free_entry",
   "file": "fn_00b4bc20.rs",
@@ -2558,14 +2470,6 @@
   "lane": "r-s730",
   "outcome": "not_reached",
   "reason": null
- },
- {
-  "address": "0x00B4BF20",
-  "name": "group_count_members",
-  "file": "fn_00b4bf20.rs",
-  "lane": "r-s730",
-  "outcome": "deferred",
-  "reason": "partly_proven"
  },
  {
   "address": "0x00B4C120",
@@ -2584,25 +2488,9 @@
   "reason": null
  },
  {
-  "address": "0x00B4C200",
-  "name": "group_member_dense_index",
-  "file": "fn_00b4c200.rs",
-  "lane": "r-s730",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
   "address": "0x00B4C290",
   "name": "group_entry_from_ped",
   "file": "fn_00b4c290.rs",
-  "lane": "r-s730",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
-  "address": "0x00B4C2B0",
-  "name": "nested_signed_byte_at_4e6",
-  "file": "fn_00b4c2b0.rs",
   "lane": "r-s730",
   "outcome": "deferred",
   "reason": "partly_proven"
@@ -4590,30 +4478,6 @@
   "lane": "r-s461",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00E6CFB0",
-  "name": "initialize_vehicle_index_table_sentinels",
-  "file": "fn_00e6cfb0.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6CFD0",
-  "name": "vehicle_tuning_ratio_init_46",
-  "file": "fn_00e6cfd0.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6D000",
-  "name": "vehicle_tuning_ratio_init_47",
-  "file": "fn_00e6d000.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E6D020",

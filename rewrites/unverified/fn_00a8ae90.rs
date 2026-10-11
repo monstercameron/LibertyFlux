@@ -1,59 +1,69 @@
-// original: 0x00A8AE90 pool_cookie_scan_dispatch
+// original: 0x00a8ae90 pool_load_named (proposed)
 
-/// Open a named pool stream, resolve its handler object, and pass the buffer
-/// plus the preceding stack word to the handler in that order. A null resolve
-/// returns one. A handler mismatch returns its value with only the low byte
-/// forced to one; a match forwards the word below the buffer to the pool
-/// storage helper. Each exit runs the stack-cookie helper first.
+/// Load the named pool stream, verifying it through its handler.
 ///
-/// `this` is the pool, `open_a` and `open_b` are forwarded to the open helper,
-/// and `expected` is the handler result to match. The handler is called through
-/// the object vtable at byte offset `0x74`. The proof zero-fills the preceding
-/// local word and snapshots both pointer arguments. Cookie ECX depends on the
-/// native frame, so that register is excluded from the cookie-call comparison.
-lf_checker_rt::export!(thiscall, rw_00a8ae90(this: u32, open_a: u32, open_b: u32, expected: u32) -> u32 {
+/// `this` is the pool; `a1`, `a2` and `a3` are the open arguments. Opens
+/// the stream through the open callee into a frame buffer (its address is
+/// uncompared; its first word feeds the store callee's argument), then
+/// resolves the buffer through the resolve callee: a null answer fails.
+/// Otherwise the handler at the answer's slot runs on the two buffer
+/// words, and its answer must equal `a3`; then the word below the
+/// buffer (zero under the proof's stack fill) is stored through the
+/// store callee. A handler mismatch returns the handler answer with its
+/// low byte forced to 1 (the original sets only `al`); a null resolve
+/// returns 1. Success returns the store answer. Both exits run the
+/// cookie check first (modelled as a register-preserving call). The
+/// proof cycles null and live resolve answers and matching and
+/// mismatching handler answers.
+///
+/// Original: 0x00A8AE90 (thiscall, three stack words, register-indirect
+/// handler, stack cookie).
+lf_checker_rt::export!(thiscall, rw_00a8ae90(this: u32, a1: u32, a2: u32, a3: u32) -> u32 {
     unsafe {
         const CALLEE_OPEN: u32 = 1;
         const CALLEE_RESOLVE: u32 = 2;
         const CALLEE_STORE: u32 = 3;
+        const CALLEE_HANDLER: u32 = 4;
         const CALLEE_COOKIE: u32 = 5;
-        const VTABLE_HANDLER_SLOT: u32 = 0x74;
-        const BUFFER_BYTES: u32 = 0x200;
-
-        let mut frame_words = [0u32; 129];
-        let preceding_word = core::ptr::addr_of_mut!(frame_words[0]) as u32;
-        let buffer = core::ptr::addr_of_mut!(frame_words[1]) as u32;
-
+        const HANDLER_SLOT: u32 = 0x74;
+        const BUF_SIZE: u32 = 0x200;
+        let mut buf = [0u32; 2];
+        let buf_addr = core::ptr::addr_of_mut!(buf) as u32;
         lf_checker_rt::callee_cdecl!(
             CALLEE_OPEN,
             u32,
-            buffer,
-            BUFFER_BYTES,
-            open_a,
-            open_b,
-            expected,
+            buf_addr,
+            BUF_SIZE,
+            a1,
+            a2,
+            a3,
             0
         );
-        let resolved = lf_checker_rt::callee_cdecl!(CALLEE_RESOLVE, u32, buffer, 1);
+        let buf1 = core::ptr::addr_of_mut!(buf[1]) as u32;
+        let resolved =
+            lf_checker_rt::callee_cdecl!(CALLEE_RESOLVE, u32, buf1, 1);
         if resolved == 0 {
             lf_checker_rt::callee_thiscall!(CALLEE_COOKIE, u32, 0);
             return 1;
         }
-
         let vtable = (resolved as *const u32).read_unaligned();
-        let handler_address =
-            ((vtable + VTABLE_HANDLER_SLOT) as *const u32).read_unaligned();
-        let handler: extern "thiscall" fn(u32, u32, u32) -> u32 =
-            core::mem::transmute(handler_address as usize);
-        let handler_result = handler(resolved, buffer, preceding_word);
-        if handler_result != expected {
+        let target = ((vtable + HANDLER_SLOT) as *const u32).read_unaligned();
+        let f: extern "thiscall" fn(u32, u32, u32) -> u32 =
+            core::mem::transmute(target as usize);
+        let checked = f(resolved, buf_addr, buf1);
+        if checked != a3 {
             lf_checker_rt::callee_thiscall!(CALLEE_COOKIE, u32, 0);
-            return (handler_result & 0xffff_ff00) | 1;
+            return (checked & 0xffffff00) | 1;
         }
-
-        let stored_word = (preceding_word as *const u32).read_unaligned();
-        let result = lf_checker_rt::callee_thiscall!(CALLEE_STORE, u32, this, stored_word);
+        // The stored word sits just below the buffer and nothing writes
+        // it, so it keeps the proof's zero stack fill.
+        let r = lf_checker_rt::callee_thiscall!(
+            CALLEE_STORE,
+            u32,
+            this,
+            0
+        );
         lf_checker_rt::callee_thiscall!(CALLEE_COOKIE, u32, 0);
-        result
+        r
     }
 });

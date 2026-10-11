@@ -1,11 +1,11 @@
-// original: 0x00C33AC0 vehicle_effect_cooldown_update
+// original: 0x00C33AC0 CHeli::vf106
 
 /// Update the vehicle's effect cooldown state. The method continues when the
 /// word at `0xf48` is zero or `0xffff`, or when the masked status at `0x28`
 /// equals `0x0c00`; it then stops if the timer dword at `0x12ec` is nonzero.
 /// A nonzero byte at `0x12f1` is decremented when the stack flag is zero.
 /// Otherwise a scripted random value selects a replacement byte, and the timer
-/// dword is set to `0x22` except for replacement buckets two and three. This
+/// dword is set to `0x22` for replacement buckets zero through three. This
 /// thiscall method accepts one stack flag and calls the random provider only
 /// on the randomized path.
 lf_checker_rt::export!(thiscall, rw_00c33ac0(
@@ -39,11 +39,11 @@ lf_checker_rt::export!(thiscall, rw_00c33ac0(
             return;
         }
 
-        let random_word: u32 = lf_checker_rt::callee_cdecl!(RANDOM_CALLEE, u32);
+        let random_word: u32 = lf_checker_rt::callee_cdecl!(RANDOM_CALLEE, u32,);
         let next_state = (random_word as u8 & RANDOM_VALUE_MASK).wrapping_sub(RANDOM_BIAS);
         this.add(EFFECT_STATE_OFFSET).write(next_state);
         let bucket = next_state & 0x07;
-        if bucket < 2 || bucket >= 4 {
+        if bucket < 4 {
             this.add(COOLDOWN_OFFSET).cast::<u32>().write_unaligned(TIMER_VALUE);
         }
     }

@@ -2,7 +2,7 @@
 
 use lf_checker_rt as rt;
 
-/// Specification (lane a-S25). Two faults are corrected in this rewrite. The
+// Specification (lane a-S25). Two faults are corrected in this rewrite. The
 // withdrawn form had both; the first was the cause of the withdrawal.
 // (1) Region 3 builds a sign/magnitude mask from x0f = x4 - x3 against the sign
 //     of x3. The original takes the mask from a negated not-less-or-equal compare
@@ -21,8 +21,7 @@ use lf_checker_rt as rt;
 // Slots other than -2, -1, 0 to 5 and 8 (the caller's stack beyond the flag
 // argument, and the frame below the scratch) still give 0.0. The contract keeps
 // the index in the range the original accepts; see the lane's result.
-
-// Periodic tick over two banks of global float state, driven by one flag argument.
+/// Periodic tick over two banks of global float state, driven by one flag argument.
 ///
 /// `flag` (only its low byte is read) selects the slow path: when nonzero, an
 /// index/count global is stepped up or down by comparing two flag bytes of a
