@@ -18,8 +18,8 @@ lf_checker_rt::export!(thiscall, rw_00d254d0(this: u32, draw_command: u32) -> ()
         if draw_command != 0 {
             let vtable = read_u32(draw_command, 0);
             let target = read_u32(vtable, 0);
-            let method: extern "thiscall" fn(u32, u32) = core::mem::transmute(target as usize);
-            method(draw_command, CALL_ARGUMENT);
+            let method: extern "thiscall" fn(u32, u32) -> u32 = core::mem::transmute(target as usize);
+            let _ = method(draw_command, CALL_ARGUMENT);
         }
     }
 });

@@ -28,7 +28,7 @@ pub extern "thiscall" fn rw_init_html_render_state(this: *mut u8) -> *mut u8 {
         unsafe { core::ptr::write_unaligned(base.add(offset), value) }
     }
 
-    let tls = lf_checker_rt::tls_slot(0).cast::<u8>();
+    let tls = lf_checker_rt::tls_slot(0) as usize as *const u8;
     let resolver_state = unsafe {
         core::ptr::read_unaligned(tls.add(4).cast::<u32>())
     };
