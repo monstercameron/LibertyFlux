@@ -123390,6 +123390,78 @@
   "lane": "a-R01"
  },
  {
+  "address": "0x00C91A10",
+  "name": "CIkManager::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c91a10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00C91A30",
+  "name": "CSimpleIkManager::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c91a30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00C91A50",
+  "name": "CTaskSimpleIK::~CTaskSimpleIK__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c91a50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00C91A70",
+  "name": "FindTaskAndApplyValue",
+  "kind": "function",
+  "file": "functions/fn_00c91a70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00C91A90",
+  "name": "FindTaskAndApplyZero",
+  "kind": "function",
+  "file": "functions/fn_00c91a90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00C91AA0",
+  "name": "FindTaskWithMatchingFieldAndApplyValue",
+  "kind": "function",
+  "file": "functions/fn_00c91aa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00C91AD0",
+  "name": "StoreIndexedTaskWord",
+  "kind": "function",
+  "file": "functions/fn_00c91ad0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00C91AE0",
+  "name": "StoreIkTaskFloatsAndFlags",
+  "kind": "function",
+  "file": "functions/fn_00c91ae0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
   "address": "0x00C94C70",
   "name": "task_pose_update",
   "kind": "function",
@@ -123397,6 +123469,24 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b628"
+ },
+ {
+  "address": "0x00C954A0",
+  "name": "ClearTaskStateBitAndSetValue",
+  "kind": "function",
+  "file": "functions/fn_00c954a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00C954C0",
+  "name": "SetTaskValueAndResetState",
+  "kind": "function",
+  "file": "functions/fn_00c954c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
  },
  {
   "address": "0x00C95620",
@@ -123478,6 +123568,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "a-R05"
+ },
+ {
+  "address": "0x00C9BEB0",
+  "name": "GetTaskContextOrZero",
+  "kind": "function",
+  "file": "functions/fn_00c9beb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
  },
  {
   "address": "0x00C9BED0",
@@ -123750,6 +123849,24 @@
   "lane": "r-s337"
  },
  {
+  "address": "0x00CA2150",
+  "name": "GetPedScenarioStateValue",
+  "kind": "function",
+  "file": "functions/fn_00ca2150.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00CA21A0",
+  "name": "GetPedScenarioEntityValue",
+  "kind": "function",
+  "file": "functions/fn_00ca21a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
   "address": "0x00CA22D0",
   "name": "slot_ptr_field28",
   "kind": "function",
@@ -123766,6 +123883,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s337"
+ },
+ {
+  "address": "0x00CA2320",
+  "name": "GetScenarioProgressValue",
+  "kind": "function",
+  "file": "functions/fn_00ca2320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
  },
  {
   "address": "0x00CA2380",
@@ -123946,6 +124072,33 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s337"
+ },
+ {
+  "address": "0x00CA2D20",
+  "name": "CPedDamageResponse::vf0",
+  "kind": "function",
+  "file": "functions/fn_00ca2d20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00CA3EF0",
+  "name": "CEventDeath::vf4",
+  "kind": "function",
+  "file": "functions/fn_00ca3ef0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
+ },
+ {
+  "address": "0x00CA3F20",
+  "name": "CEventDamage::vf21",
+  "kind": "function",
+  "file": "functions/fn_00ca3f20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s615"
  },
  {
   "address": "0x00CA4E10",
