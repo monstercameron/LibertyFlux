@@ -141696,6 +141696,60 @@
   "lane": "r-s444"
  },
  {
+  "address": "0x00D5AFD0",
+  "name": "loader_release_request_handle",
+  "kind": "function",
+  "file": "functions/fn_00d5afd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s692"
+ },
+ {
+  "address": "0x00D5B230",
+  "name": "loader_remove_ring_entry",
+  "kind": "function",
+  "file": "functions/fn_00d5b230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s692"
+ },
+ {
+  "address": "0x00D5B290",
+  "name": "loader_find_active_request_by_type",
+  "kind": "function",
+  "file": "functions/fn_00d5b290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s692"
+ },
+ {
+  "address": "0x00D5B380",
+  "name": "loader_tls_resource_scope",
+  "kind": "function",
+  "file": "functions/fn_00d5b380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s692"
+ },
+ {
+  "address": "0x00D5C480",
+  "name": "loader_list_insert_head",
+  "kind": "function",
+  "file": "functions/fn_00d5c480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s692"
+ },
+ {
+  "address": "0x00D5C520",
+  "name": "loader_list_remove_node",
+  "kind": "function",
+  "file": "functions/fn_00d5c520.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s692"
+ },
+ {
   "address": "0x00D670B0",
   "name": "emit_blend_blocks",
   "kind": "function",
