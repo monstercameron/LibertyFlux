@@ -113,7 +113,12 @@ impl RecordTable {
     /// strict greater-than, so a not-a-number on either side keeps nothing.
     /// The limit is checked after each kept point: the scan stops once the
     /// count is at least `max` (a signed comparison).
-    pub fn collect_near(&self, radius: f32, max: i32, callee: &mut impl FetchCallee) -> Vec<ScanEntry> {
+    pub fn collect_near(
+        &self,
+        radius: f32,
+        max: i32,
+        callee: &mut impl FetchCallee,
+    ) -> Vec<ScanEntry> {
         let limit = radius * radius;
         let mut kept = Vec::new();
         for (index, record) in self.records.iter().enumerate() {

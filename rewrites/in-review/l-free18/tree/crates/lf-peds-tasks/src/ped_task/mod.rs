@@ -48,6 +48,7 @@ mod id_lookup;
 mod mover;
 mod pose;
 mod seek;
+mod aim_record;
 mod record_scan;
 mod task_block;
 mod task_owner;
@@ -59,6 +60,9 @@ mod task_turn;
 pub mod registry;
 pub mod shape_registry;
 
+pub use aim_record::{
+    AimCallees, AimOwner, AimTask, RecordWords, normalised_direction,
+};
 pub use record_scan::{
     ENTRY_CONSTANTS, Anchor, FetchCallee, RecordTable, ScanEntry, ScratchSlot, TABLE_SLOTS, TAG_SLOT_FIRST, TAG_SLOT_SECOND, TAG_SLOT_THIRD, TableRecord, slot_for_tag,
 };

@@ -18,7 +18,9 @@
 
 #![cfg(target_arch = "x86")]
 
-use lf_peds_tasks::ped_task::{BLOCK_WORDS, StateRecord, TaskStateBlock, STATE_RECORD_COUNT, STATE_RECORD_WORDS};
+use lf_peds_tasks::ped_task::{
+    BLOCK_WORDS, STATE_RECORD_COUNT, STATE_RECORD_WORDS, StateRecord, TaskStateBlock,
+};
 use lf_taskshapediff::Xorshift;
 use lf_taskshapediff::rewrites::fn_00cc2eb0;
 
@@ -43,7 +45,9 @@ fn decode(words: &[u32]) -> TaskStateBlock {
         let base = 1 + k * STATE_RECORD_WORDS;
         record.handle_a = words[base];
         record.handle_b = words[base + 1];
-        record.words.copy_from_slice(&words[base + 2..base + STATE_RECORD_WORDS]);
+        record
+            .words
+            .copy_from_slice(&words[base + 2..base + STATE_RECORD_WORDS]);
     }
     block
 }
@@ -113,7 +117,8 @@ fn reset_wrong_versions_are_caught() {
     });
     // Only the handle words are reset; the six further words keep their values.
     assert_caught("payload kept", |block| {
-        let kept: Vec<[u32; STATE_RECORD_WORDS - 2]> = block.records.iter().map(|r| r.words).collect();
+        let kept: Vec<[u32; STATE_RECORD_WORDS - 2]> =
+            block.records.iter().map(|r| r.words).collect();
         block.reset();
         for (record, words) in block.records.iter_mut().zip(kept) {
             record.words = words;

@@ -267,12 +267,18 @@ fn run_rewrite(rng: &mut Xorshift) -> Case {
 /// Checks that the rewrite changed no byte the lift does not own, and that
 /// its return value is the handle.
 fn check_rewrite_effects(case: &Case) {
-    assert_eq!(case.returned, case.handle, "the rewrite returns the block handle");
+    assert_eq!(
+        case.returned, case.handle,
+        "the rewrite returns the block handle"
+    );
     let before = bytes_of(&case.before);
     let after = bytes_of(&case.after);
     for offset in 0..BLOCK_BYTES as usize {
         if !owned(offset) {
-            assert_eq!(before[offset], after[offset], "unowned byte {offset:#x} unchanged");
+            assert_eq!(
+                before[offset], after[offset],
+                "unowned byte {offset:#x} unchanged"
+            );
         }
     }
 }
@@ -337,7 +343,11 @@ fn run_wrong(kind: Wrong, case: &Case) -> (TaskBlock, Vec<Call>) {
     recorder.setup_first(handle);
     let draw = recorder.draw();
     let tick_copy = recorder.tick();
-    let mask = if matches!(kind, Wrong::DrawFifteenBits) { 0x7FFF } else { 0xFFFF };
+    let mask = if matches!(kind, Wrong::DrawFifteenBits) {
+        0x7FFF
+    } else {
+        0xFFFF
+    };
     let scaled = ((draw & mask) as f32 * case.scale.inverse_range) * case.scale.factor;
     let in_range = scaled >= -2_147_483_648.0 && scaled < 2_147_483_648.0;
     let take = if matches!(kind, Wrong::IndefiniteTruncation) && !in_range {
@@ -345,7 +355,11 @@ fn run_wrong(kind: Wrong, case: &Case) -> (TaskBlock, Vec<Call>) {
     } else {
         truncate_to_i32(scaled)
     };
-    let base = if matches!(kind, Wrong::CountdownBase) { COUNTDOWN_BASE - 1 } else { COUNTDOWN_BASE };
+    let base = if matches!(kind, Wrong::CountdownBase) {
+        COUNTDOWN_BASE - 1
+    } else {
+        COUNTDOWN_BASE
+    };
     recorder.setup_second(handle, 0);
     recorder.setup_third(handle, 0);
     let block = TaskBlock {
@@ -354,10 +368,18 @@ fn run_wrong(kind: Wrong, case: &Case) -> (TaskBlock, Vec<Call>) {
         unit_scale_tail: 0,
         tick_copy,
         countdown: base.wrapping_sub(take as u32),
-        ready: if matches!(kind, Wrong::ReadyClear) { 0 } else { 1 },
+        ready: if matches!(kind, Wrong::ReadyClear) {
+            0
+        } else {
+            1
+        },
         result: 0,
         ctrl_a: 0,
-        selector: if matches!(kind, Wrong::SelectorZero) { 0 } else { SELECTOR_NONE },
+        selector: if matches!(kind, Wrong::SelectorZero) {
+            0
+        } else {
+            SELECTOR_NONE
+        },
         ctrl_b: 0,
         flag_b: 0,
         tail: 0,
@@ -409,6 +431,9 @@ fn block_init_wrong_versions_are_caught() {
         Wrong::IndefiniteTruncation,
         Wrong::ReadyClear,
     ] {
-        assert!(wrong_mismatches(kind) > 0, "wrong version {kind:?} is caught");
+        assert!(
+            wrong_mismatches(kind) > 0,
+            "wrong version {kind:?} is caught"
+        );
     }
 }

@@ -8,8 +8,8 @@ lf_checker_rt::export!(cdecl, rw_00ba3a30(
     area_y: f32,
     area_z: f32,
     area_range: f32,
-    normalize_option: u32,
-    trailing_option: u32,
+    first_option: u32,
+    second_option: u32,
 ) -> u32 {
     const HANDLE_KIND: u32 = 7;
     const MAX_EVENT_INDEX: u32 = 0x35;
@@ -56,8 +56,8 @@ lf_checker_rt::export!(cdecl, rw_00ba3a30(
     };
 
     let records = [
-        trailing_option,
-        u32::from(normalize_option as u8 != 0),
+        second_option as u8 as u32,
+        first_option as u8 as u32,
         area_range.to_bits(),
         area_z.to_bits(),
         area_x.to_bits(),

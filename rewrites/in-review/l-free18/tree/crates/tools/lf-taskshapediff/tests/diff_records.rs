@@ -1,4 +1,4 @@
-﻿//! Differential cases of the typed-record scan against its verified 32-bit
+//! Differential cases of the typed-record scan against its verified 32-bit
 //! rewrite.
 //!
 //! The lifted scan and the rewrite run on the same generated record table,
@@ -86,7 +86,9 @@ extern "thiscall" fn stub_fetch(record_address: u32, buffer: u32) -> u32 {
     let index = (record_address.wrapping_sub(*TABLE_PTR.lock().unwrap()) / RECORD_STRIDE) as usize;
     let tag = TAGS.lock().unwrap()[index];
     let slot = slot_for_tag(tag).unwrap_or(ScratchSlot::First);
-    LOG.lock().unwrap().push((TAG_FETCH, index as u32, slot_code(slot)));
+    LOG.lock()
+        .unwrap()
+        .push((TAG_FETCH, index as u32, slot_code(slot)));
     let points = POINTS.lock().unwrap()[index];
     for (i, value) in points.iter().enumerate() {
         let at = buffer.wrapping_add(4 * i as u32);
@@ -116,7 +118,6 @@ impl FetchCallee for Recorder {
 /// One generated case and what the rewrite did with it.
 struct Case {
     table: Vec<u8>,
-    object: Vec<u8>,
     anchor_block: Vec<u8>,
     out_before: Vec<u8>,
     out_after: Vec<u8>,
@@ -169,11 +170,15 @@ fn tag_pick(rng: &mut Xorshift) -> u32 {
 
 /// Generates a case, plants it and runs the rewrite on it.
 fn run_rewrite(rng: &mut Xorshift) -> Case {
-    let mut table: Vec<u8> = (0..TABLE_BYTES).map(|_| (rng.next_u32() & 0xFF) as u8).collect();
+    let mut table: Vec<u8> = (0..TABLE_BYTES)
+        .map(|_| (rng.next_u32() & 0xFF) as u8)
+        .collect();
     let table_address = address_of(&table);
     let mut tags = [0_u32; TABLE_SLOTS];
     let mut points = [[0.0_f32; 4]; TABLE_SLOTS];
-    let mut anchor_block: Vec<u8> = (0..OBJECT_BYTES).map(|_| (rng.next_u32() & 0xFF) as u8).collect();
+    let mut anchor_block: Vec<u8> = (0..OBJECT_BYTES)
+        .map(|_| (rng.next_u32() & 0xFF) as u8)
+        .collect();
     let anchor = [rng.word(), rng.word(), rng.word()];
     set_word(&mut anchor_block, ANCHOR_X, anchor[0]);
     set_word(&mut anchor_block, ANCHOR_X + 4, anchor[1]);
@@ -185,20 +190,39 @@ fn run_rewrite(rng: &mut Xorshift) -> Case {
         // A quarter of the records fetch the anchor itself, so the distance
         // is exactly zero and the strict comparison is exercised at zero.
         let on_anchor = rng.next_u32() % 4 == 0;
-        let first = if on_anchor { f32::from_bits(anchor[0]) } else { f32::from_bits(rng.word()) };
-        let second = if on_anchor { f32::from_bits(anchor[1]) } else { f32::from_bits(rng.word()) };
-        let third = if on_anchor { f32::from_bits(anchor[2]) } else { f32::from_bits(rng.word()) };
+        let first = if on_anchor {
+            f32::from_bits(anchor[0])
+        } else {
+            f32::from_bits(rng.word())
+        };
+        let second = if on_anchor {
+            f32::from_bits(anchor[1])
+        } else {
+            f32::from_bits(rng.word())
+        };
+        let third = if on_anchor {
+            f32::from_bits(anchor[2])
+        } else {
+            f32::from_bits(rng.word())
+        };
         points[k] = [first, second, third, f32::from_bits(rng.word())];
-        rt::set_extra(TABLE_VA + k as u32 * RECORD_STRIDE, table_address + k as u32 * RECORD_STRIDE);
+        rt::set_extra(
+            TABLE_VA + k as u32 * RECORD_STRIDE,
+            table_address + k as u32 * RECORD_STRIDE,
+        );
     }
     *TABLE_PTR.lock().unwrap() = table_address;
     *TAGS.lock().unwrap() = tags;
     *POINTS.lock().unwrap() = points;
 
-    let mut object: Vec<u8> = (0..OBJECT_BYTES).map(|_| (rng.next_u32() & 0xFF) as u8).collect();
+    let mut object: Vec<u8> = (0..OBJECT_BYTES)
+        .map(|_| (rng.next_u32() & 0xFF) as u8)
+        .collect();
     set_word(&mut object, ANCHOR_SLOT, address_of(&anchor_block));
 
-    let mut out: Vec<u8> = (0..OUT_BYTES).map(|_| (rng.next_u32() & 0xFF) as u8).collect();
+    let mut out: Vec<u8> = (0..OUT_BYTES)
+        .map(|_| (rng.next_u32() & 0xFF) as u8)
+        .collect();
     let out_before = out.clone();
 
     let radius_bits = match rng.next_u32() % 4 {
@@ -225,7 +249,6 @@ fn run_rewrite(rng: &mut Xorshift) -> Case {
     let out_after = std::mem::take(&mut out);
     Case {
         table,
-        object,
         anchor_block,
         out_before,
         out_after,
@@ -263,7 +286,12 @@ fn entries_written(out: &[u8], count: usize) -> Vec<[u32; 8]> {
 /// The bit pattern of an entry, in output order.
 fn entry_bits(entry: &ScanEntry) -> [u32; 8] {
     let mut words = [0_u32; 8];
-    for (i, value) in entry.points.iter().chain(ENTRY_CONSTANTS.iter()).enumerate() {
+    for (i, value) in entry
+        .points
+        .iter()
+        .chain(entry.constants.iter())
+        .enumerate()
+    {
         words[i] = value.to_bits();
     }
     words
@@ -302,7 +330,11 @@ fn assert_case(case: &Case) {
     assert_eq!(kept.len(), case.returned as usize, "the count matches");
     let written = entries_written(&case.out_after, kept.len());
     for (k, entry) in kept.iter().enumerate() {
-        assert_eq!(entry_bits(entry), written[k], "entry {k} matches bit for bit");
+        assert_eq!(
+            entry_bits(entry),
+            written[k],
+            "entry {k} matches bit for bit"
+        );
     }
 }
 
@@ -331,7 +363,11 @@ fn run_wrong(kind: Wrong, case: &Case) -> (Vec<[u32; 8]>, Vec<Call>) {
     let table = decode_table(&case.table);
     let anchor = anchor_of(case);
     let radius = f32::from_bits(case.radius_bits);
-    let limit = if matches!(kind, Wrong::RadiusNotSquared) { radius } else { radius * radius };
+    let limit = if matches!(kind, Wrong::RadiusNotSquared) {
+        radius
+    } else {
+        radius * radius
+    };
     let points_table = *POINTS.lock().unwrap();
     let mut calls = Vec::new();
     let mut entries = Vec::new();
@@ -355,7 +391,11 @@ fn run_wrong(kind: Wrong, case: &Case) -> (Vec<[u32; 8]>, Vec<Call>) {
         } else {
             ((dy * dy) + (dx * dx)) + (dz * dz)
         };
-        let keep = if matches!(kind, Wrong::LessOrEqual) { limit >= dist } else { limit > dist };
+        let keep = if matches!(kind, Wrong::LessOrEqual) {
+            limit >= dist
+        } else {
+            limit > dist
+        };
         if keep {
             let mut constants = ENTRY_CONSTANTS;
             if matches!(kind, Wrong::OtherConstant) {
@@ -421,6 +461,9 @@ fn record_scan_wrong_versions_are_caught() {
         Wrong::ReversedPoints,
         Wrong::NoThirdComponent,
     ] {
-        assert!(wrong_mismatches(kind) > 0, "wrong version {kind:?} is caught");
+        assert!(
+            wrong_mismatches(kind) > 0,
+            "wrong version {kind:?} is caught"
+        );
     }
 }

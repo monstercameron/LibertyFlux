@@ -24,7 +24,9 @@
 
 use std::sync::Mutex;
 
-use lf_peds_tasks::ped_task::{DIR_SCALE, RATE_GATE, RATE_STEP, TurnParams, TurnTask, TurnTrig, Vec3};
+use lf_peds_tasks::ped_task::{
+    DIR_SCALE, RATE_GATE, RATE_STEP, TurnParams, TurnTask, TurnTrig, Vec3,
+};
 use lf_taskshapediff::rewrites::fn_00a218a0;
 use lf_taskshapediff::{Xorshift, rt};
 
@@ -145,25 +147,39 @@ fn flag_pick(rng: &mut Xorshift) -> u8 {
     } else {
         (rng.next_u32() & 0xFF) as u8
     };
-    if (pick >> 16) % 2 == 0 { base | 0x80 } else { base }
+    if (pick >> 16) % 2 == 0 {
+        base | 0x80
+    } else {
+        base
+    }
 }
 
 /// Generates a case and runs the rewrite on it.
 fn run_rewrite(rng: &mut Xorshift) -> Case {
-    let mut object: Vec<u8> = (0..OBJECT_BYTES).map(|_| (rng.next_u32() & 0xFF) as u8).collect();
+    let mut object: Vec<u8> = (0..OBJECT_BYTES)
+        .map(|_| (rng.next_u32() & 0xFF) as u8)
+        .collect();
     set_word(&mut object, RATE_OFFSET, rng.word());
     object[FLAG_OFFSET] = flag_pick(rng);
     let object_before = object.clone();
 
-    let mut inner: Vec<u8> = (0..INNER_BYTES).map(|_| (rng.next_u32() & 0xFF) as u8).collect();
+    let mut inner: Vec<u8> = (0..INNER_BYTES)
+        .map(|_| (rng.next_u32() & 0xFF) as u8)
+        .collect();
     set_word(&mut inner, INNER_X, rng.word());
     set_word(&mut inner, INNER_Y, rng.word());
     set_word(&mut inner, INNER_Z, rng.word());
 
-    let mut param: Vec<u8> = (0..PARAM_BYTES).map(|_| (rng.next_u32() & 0xFF) as u8).collect();
+    let mut param: Vec<u8> = (0..PARAM_BYTES)
+        .map(|_| (rng.next_u32() & 0xFF) as u8)
+        .collect();
     set_word(&mut param, ANGLE_OFFSET, rng.word());
     let has_inner = rng.next_u32() % 2 == 0;
-    set_word(&mut param, INNER_OFFSET, if has_inner { address_of(&inner) } else { 0 });
+    set_word(
+        &mut param,
+        INNER_OFFSET,
+        if has_inner { address_of(&inner) } else { 0 },
+    );
 
     let mut target: Vec<u8> = (0..12).map(|_| (rng.next_u32() & 0xFF) as u8).collect();
     set_word(&mut target, 0, rng.word());
@@ -247,7 +263,10 @@ fn bits_of(point: Vec3) -> [u32; 3] {
 /// Checks the rewrite's own effects: its return value, and that it changed
 /// only the rate word of the task object.
 fn check_rewrite_effects(case: &Case) {
-    assert_eq!(case.returned, case.target_handle, "the rewrite returns the target");
+    assert_eq!(
+        case.returned, case.target_handle,
+        "the rewrite returns the target"
+    );
     for offset in 0..OBJECT_BYTES {
         if offset < RATE_OFFSET || offset >= RATE_OFFSET + 4 {
             assert_eq!(
@@ -282,7 +301,10 @@ fn assert_case(case: &Case) {
         word_at(&case.object_after, RATE_OFFSET),
         "the rate matches bit for bit"
     );
-    assert_eq!(task.flag, case.object_after[FLAG_OFFSET], "the flag is unchanged");
+    assert_eq!(
+        task.flag, case.object_after[FLAG_OFFSET],
+        "the flag is unchanged"
+    );
     assert_eq!(
         bits_of(target),
         bits_of(target_of(&case.target_after)),
@@ -326,18 +348,34 @@ fn run_wrong(kind: Wrong, case: &Case) -> (TurnTask, Vec3, Vec<Call>) {
     if task.flag & 0x80 != 0 && !matches!(kind, Wrong::NoReset) {
         rate = 1.0;
     }
-    let open = if matches!(kind, Wrong::GateInclusive) { gate >= RATE_GATE } else { gate > RATE_GATE };
+    let open = if matches!(kind, Wrong::GateInclusive) {
+        gate >= RATE_GATE
+    } else {
+        gate > RATE_GATE
+    };
     let before = rate;
     if open {
-        let step = if matches!(kind, Wrong::DoubleStep) { RATE_STEP * 2.0 } else { RATE_STEP };
+        let step = if matches!(kind, Wrong::DoubleStep) {
+            RATE_STEP * 2.0
+        } else {
+            RATE_STEP
+        };
         let mut raised = rate + step;
         if !matches!(kind, Wrong::NoCap) && !(1.0 > raised) {
             raised = 1.0;
         }
         rate = raised;
     }
-    let used = if matches!(kind, Wrong::PreUpdateRate) { before } else { rate };
-    let inner = if matches!(kind, Wrong::InnerIgnored) { None } else { params.inner };
+    let used = if matches!(kind, Wrong::PreUpdateRate) {
+        before
+    } else {
+        rate
+    };
+    let inner = if matches!(kind, Wrong::InnerIgnored) {
+        None
+    } else {
+        params.inner
+    };
     let (dx, dy, dz) = match inner {
         Some(direction) => (direction.x, direction.y, direction.z),
         None => {
@@ -355,15 +393,26 @@ fn run_wrong(kind: Wrong, case: &Case) -> (TurnTask, Vec3, Vec<Call>) {
             } else {
                 f32::from_bits(sine.to_bits() ^ 0x8000_0000)
             };
-            let z = if matches!(kind, Wrong::SineInZ) { sine } else { 0.0 };
+            let z = if matches!(kind, Wrong::SineInZ) {
+                sine
+            } else {
+                0.0
+            };
             (x, cosine, z)
         }
     };
-    let scale = if matches!(kind, Wrong::NoScale) { 1.0 } else { DIR_SCALE };
+    let scale = if matches!(kind, Wrong::NoScale) {
+        1.0
+    } else {
+        DIR_SCALE
+    };
     target.x -= (dx * scale) * used;
     target.y -= (dy * scale) * used;
     target.z -= (dz * scale) * used;
-    let out = TurnTask { rate, flag: task.flag };
+    let out = TurnTask {
+        rate,
+        flag: task.flag,
+    };
     (out, target, recorder.log)
 }
 
@@ -423,6 +472,9 @@ fn turn_advance_wrong_versions_are_caught() {
         Wrong::CosineFirst,
         Wrong::SineInZ,
     ] {
-        assert!(wrong_mismatches(kind) > 0, "wrong version {kind:?} is caught");
+        assert!(
+            wrong_mismatches(kind) > 0,
+            "wrong version {kind:?} is caught"
+        );
     }
 }

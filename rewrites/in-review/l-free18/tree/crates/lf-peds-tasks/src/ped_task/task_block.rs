@@ -1,4 +1,4 @@
-﻿//! The ped task block initialiser: the constructor that sets up a task's
+//! The ped task block initialiser: the constructor that sets up a task's
 //! parameter area, its countdown and its control words, and runs the
 //! block's construction and setup calls in order.
 //!
@@ -100,11 +100,7 @@ impl TaskBlock {
     /// The routine returns no value of its own; the original returns the
     /// block's handle, which the caller already holds.
     #[must_use]
-    pub fn initialise(
-        handle: u32,
-        callees: &mut impl BlockCallees,
-        scale: ScaleFactors,
-    ) -> Self {
+    pub fn initialise(handle: u32, callees: &mut impl BlockCallees, scale: ScaleFactors) -> Self {
         callees.construct_first(handle);
         callees.construct_middle(handle.wrapping_add(SUB_HEAD_OFFSET));
         callees.construct_tail(handle.wrapping_add(SUB_TAIL_OFFSET));

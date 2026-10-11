@@ -952,6 +952,30 @@
   "reason": null
  },
  {
+  "address": "0x00635F20",
+  "name": "streaming_resource_cleanup_variant_a",
+  "file": "fn_00635f20.rs",
+  "lane": "r-s679",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00635FA0",
+  "name": "streaming_resource_cleanup_variant_b",
+  "file": "fn_00635fa0.rs",
+  "lane": "r-s679",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00636020",
+  "name": "streaming_resource_cleanup_variant_c",
+  "file": "fn_00636020.rs",
+  "lane": "r-s679",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x006607F0",
   "name": "rage::snAddRemoteGamerTask::vf3",
   "file": "fn_006607f0.rs",
@@ -1248,9 +1272,17 @@
   "reason": null
  },
  {
-  "address": "0x008D5FB0",
-  "name": "pending_008d5fb0",
-  "file": "fn_008d5fb0.rs",
+  "address": "0x008C5BE0",
+  "name": "pending_008c5be0",
+  "file": "fn_008c5be0.rs",
+  "lane": "r-s678",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008C5DF0",
+  "name": "pending_008c5df0",
+  "file": "fn_008c5df0.rs",
   "lane": "r-s678",
   "outcome": "not_reached",
   "reason": null
@@ -1268,8 +1300,8 @@
   "name": "frontend_audio_event_is_ready",
   "file": "fn_008e54d0.rs",
   "lane": "r-s672",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x009094A0",
@@ -1286,14 +1318,6 @@
   "lane": "r-b248",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00922B70",
-  "name": "streaming_fn_00922b70",
-  "file": "fn_00922b70.rs",
-  "lane": "r-s676",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x0092AE00",
@@ -1451,6 +1475,14 @@
   "address": "0x009B6510",
   "name": "pending_009b6510",
   "file": "fn_009b6510.rs",
+  "lane": "r-s668",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B6550",
+  "name": "pending_009b6550",
+  "file": "fn_009b6550.rs",
   "lane": "r-s668",
   "outcome": "not_reached",
   "reason": null
@@ -2275,30 +2307,6 @@
   "address": "0x00B888F0",
   "name": "NativeImpl_CAM_IS_SPHERE_VISIBLE",
   "file": "fn_00b888f0.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B89550",
-  "name": "NativeImpl_SET_CAM_ROT_2",
-  "file": "fn_00b89550.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B89770",
-  "name": "NativeImpl_SET_FOLLOW_VEHICLE_CAM_OFFSET",
-  "file": "fn_00b89770.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B899A0",
-  "name": "NativeImpl_POINT_CAM_AT_COORD",
-  "file": "fn_00b899a0.rs",
   "lane": "r-s674",
   "outcome": "not_reached",
   "reason": ""
@@ -3608,6 +3616,14 @@
   "reason": null
  },
  {
+  "address": "0x00D11EB0",
+  "name": "peds_task_00D11EB0",
+  "file": "fn_00d11eb0.rs",
+  "lane": "r-b683",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00D26830",
   "name": "ped_task_request_fire",
   "file": "fn_00d26830.rs",
@@ -3808,9 +3824,9 @@
   "reason": null
  },
  {
-  "address": "0x00D9F100",
-  "name": "streaming_00d9f100",
-  "file": "fn_00d9f100.rs",
+  "address": "0x00D9E950",
+  "name": "streaming_00d9e950",
+  "file": "fn_00d9e950.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
   "reason": null

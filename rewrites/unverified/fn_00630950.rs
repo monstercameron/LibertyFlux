@@ -1,7 +1,7 @@
 // original: 0x00630950 streaming_find_record_key_00630950
 /// Searches a signed-count table of record pointers using four independently sized key fields.
 ///
-/// The signed count is at +0x1580; the pointer table is at +0x1504. The
+/// The signed count is at +0x1580; the inline pointer table begins at +0x1504. The
 /// two dword and two word fields are compared in the same order as the original. Nonpositive signed
 /// counts and misses return -1; the first matching row returns its zero-based index. This is a 32-bit
 /// thiscall operation with one pointer argument.
@@ -25,7 +25,7 @@ lf_checker_rt::export!(thiscall, rw_00630950(this_ptr: u32, key_ptr: u32) -> i32
     let wanted_1 = unsafe { (key_ptr.wrapping_add(KEY_WORD_A) as *const u16).read_unaligned() };
     let wanted_2 = unsafe { (key_ptr.wrapping_add(KEY_DWORD_B) as *const u32).read_unaligned() };
     let wanted_3 = unsafe { (key_ptr.wrapping_add(KEY_WORD_B) as *const u16).read_unaligned() };
-    let table = unsafe { (this_ptr.wrapping_add(TABLE_OFFSET) as *const u32).read_unaligned() };
+    let table = this_ptr.wrapping_add(TABLE_OFFSET);
     for index in 0..(signed_count as u32) {
         let record = unsafe { (table.wrapping_add(index.wrapping_mul(4)) as *const u32).read_unaligned() };
         let actual_0 = unsafe { (record.wrapping_add(RECORD_DWORD_A) as *const u32).read_unaligned() };

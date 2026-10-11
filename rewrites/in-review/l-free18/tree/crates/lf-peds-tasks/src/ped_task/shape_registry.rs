@@ -89,6 +89,22 @@ pub const ROWS: &[Row] = &[
             "the task words outside the rate and flag are not modelled; the proof checks that the rewrite leaves them unchanged",
         ],
     },
+    // RecordTable: the typed-record scan over the 32-entry table. It keeps
+    // the records of three tags whose fetched point lies strictly inside the
+    // radius of an anchor.
+    Row {
+        class: "RecordTable",
+        method: "collect_near",
+        state: State::Proven,
+        narrows: &[
+            "the fetch callee and the anchor travel as FetchCallee; the proof's collaborator records the fetch calls with the record index and the scratch slot, in order, as the rewrite's stub records them after mapping the record address back to its index",
+            "the anchor is read through the object's pointer in the original for each record; the lift asks FetchCallee for it at the same point of each record, and the proof's anchor block is not written by the stub",
+            "the table is decoded from the planted records: only each record's tag word is modelled; the rest of each record is not read by the scan",
+            "the scratch buffers the callee writes into are not modelled: the stub writes the fetched values into the buffer the rewrite passes, and the lift takes the values the collaborator answers",
+            "the entry constants are the four image constants the rewrite stores; the proof compares them bit for bit in every kept entry",
+            "output bytes past the written entries are compared unchanged; the original's writes that stay inside the output are the entries only",
+        ],
+    },
 ];
 /// Counts of (proven, lifted-but-unproven, missing) rows in this section.
 #[must_use]

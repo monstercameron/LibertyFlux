@@ -9,7 +9,7 @@
 lf_checker_rt::export!(stdcall, rw_009b64d0(expected_token: u32) -> u32 {
     unsafe {
         const MANAGER_GLOBAL: u32 = 0x0103_e49c;
-        const ENTRY_SELECTOR: u32 = 39;
+        const ENTRY_SELECTOR: u32 = 27;
         const SECONDARY_SELECTOR: u32 = 0;
         const RECORD_LOOKUP: u32 = 1;
         const MATCH_ACTION: u32 = 2;
