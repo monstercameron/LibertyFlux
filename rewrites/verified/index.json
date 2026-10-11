@@ -94095,6 +94095,267 @@
   "lane": "r-s613"
  },
  {
+  "address": "0x00B45040",
+  "name": "CEventClimbLadderOnRoute::CEventClimbLadderOnRoute",
+  "kind": "function",
+  "file": "functions/fn_00b45040.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B450A0",
+  "name": "CEventClimbNavMeshOnRoute::CEventClimbNavMeshOnRoute",
+  "kind": "function",
+  "file": "functions/fn_00b450a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45130",
+  "name": "CEventCommunicateEvent::CEventCommunicateEvent",
+  "kind": "function",
+  "file": "functions/fn_00b45130.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B451C0",
+  "name": "CEventCopCarBeingStolen::CEventCopCarBeingStolen",
+  "kind": "function",
+  "file": "functions/fn_00b451c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45200",
+  "name": "CEventDraggedOutCar::CEventDraggedOutCar",
+  "kind": "function",
+  "file": "functions/fn_00b45200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45250",
+  "name": "CEventEditableResponse::CEventEditableResponse",
+  "kind": "function",
+  "file": "functions/fn_00b45250.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45290",
+  "name": "CEventFireNearby::CEventFireNearby",
+  "kind": "function",
+  "file": "functions/fn_00b45290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B452C0",
+  "name": "NativeImpl_REMOVE_PED_HELMET",
+  "kind": "function",
+  "file": "functions/fn_00b452c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B452F0",
+  "name": "CEventGunAimedAt::CEventGunAimedAt",
+  "kind": "function",
+  "file": "functions/fn_00b452f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45320",
+  "name": "CEventGunShot::CEventGunShot",
+  "kind": "function",
+  "file": "functions/fn_00b45320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B453A0",
+  "name": "CEventGunShotBulletImpact::CEventGunShotBulletImpact",
+  "kind": "function",
+  "file": "functions/fn_00b453a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B453D0",
+  "name": "CEventGunShotWhizzedBy::CEventGunShotWhizzedBy",
+  "kind": "function",
+  "file": "functions/fn_00b453d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45420",
+  "name": "CEventInWater::CEventInWater",
+  "kind": "function",
+  "file": "functions/fn_00b45420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45440",
+  "name": "CEventMeleeAction::CEventMeleeAction",
+  "kind": "function",
+  "file": "functions/fn_00b45440.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45490",
+  "name": "CEventMustLeaveBoat::CEventMustLeaveBoat",
+  "kind": "function",
+  "file": "functions/fn_00b45490.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B454C0",
+  "name": "CEventObjectCollision::CEventObjectCollision",
+  "kind": "function",
+  "file": "functions/fn_00b454c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45540",
+  "name": "CEventPedCollisionWithPed::CEventPedCollisionWithPed",
+  "kind": "function",
+  "file": "functions/fn_00b45540.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B455C0",
+  "name": "CEventPedEnteredMyVehicle::CEventPedEnteredMyVehicle",
+  "kind": "function",
+  "file": "functions/fn_00b455c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45600",
+  "name": "CEventPedOnCarRoof::CEventPedOnCarRoof",
+  "kind": "function",
+  "file": "functions/fn_00b45600.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45640",
+  "name": "CEventPedToChase::CEventPedToChase",
+  "kind": "function",
+  "file": "functions/fn_00b45640.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45670",
+  "name": "CEventPedToFlee::CEventPedToFlee",
+  "kind": "function",
+  "file": "functions/fn_00b45670.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B456A0",
+  "name": "CEventPlayerLockOnTarget::CEventPlayerLockOnTarget",
+  "kind": "function",
+  "file": "functions/fn_00b456a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B456F0",
+  "name": "CEventPotentialBeWalkedInto::CEventPotentialBeWalkedInto",
+  "kind": "function",
+  "file": "functions/fn_00b456f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45730",
+  "name": "CEventPotentialGetRunOver::CEventPotentialGetRunOver",
+  "kind": "function",
+  "file": "functions/fn_00b45730.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45760",
+  "name": "CEventPotentialWalkIntoFire::CEventPotentialWalkIntoFire",
+  "kind": "function",
+  "file": "functions/fn_00b45760.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B457E0",
+  "name": "CEventPotentialWalkIntoVehicle::CEventPotentialWalkIntoVehicle",
+  "kind": "function",
+  "file": "functions/fn_00b457e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45810",
+  "name": "CEventRanOverPed::CEventRanOverPed",
+  "kind": "function",
+  "file": "functions/fn_00b45810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B45860",
+  "name": "CEventRevived::CEventRevived",
+  "kind": "function",
+  "file": "functions/fn_00b45860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
+  "address": "0x00B458B0",
+  "name": "CEventScriptCommand::CEventScriptCommand",
+  "kind": "function",
+  "file": "functions/fn_00b458b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s718"
+ },
+ {
   "address": "0x00B45B50",
   "name": "event_vtable_init",
   "kind": "function",
