@@ -1552,6 +1552,22 @@
   "reason": null
  },
  {
+  "address": "0x009DD6E0",
+  "name": null,
+  "file": "fn_009dd6e0.rs",
+  "lane": "r-s740",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x009DD7A0",
+  "name": null,
+  "file": "fn_009dd7a0.rs",
+  "lane": "r-s740",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x009EF350",
   "name": "CPlayerPed::vf58",
   "file": "fn_009ef350.rs",
@@ -1625,9 +1641,9 @@
  },
  {
   "address": "0x00A0A420",
-  "name": "mission_cleanup_load",
+  "name": null,
   "file": "fn_00a0a420.rs",
-  "lane": "r-s738",
+  "lane": "r-s465",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2456,14 +2472,6 @@
   "reason": null
  },
  {
-  "address": "0x00B42C70",
-  "name": "physical_frag_update",
-  "file": "fn_00b42c70.rs",
-  "lane": "r-b701",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B4BC20",
   "name": "group_free_entry",
   "file": "fn_00b4bc20.rs",
@@ -2494,14 +2502,6 @@
   "lane": "r-s730",
   "outcome": "not_reached",
   "reason": null
- },
- {
-  "address": "0x00B4C460",
-  "name": "NativeImpl_IS_GROUP_LEADER",
-  "file": "fn_00b4c460.rs",
-  "lane": "r-s730",
-  "outcome": "deferred",
-  "reason": "partly_proven"
  },
  {
   "address": "0x00B505D0",
@@ -3102,6 +3102,14 @@
   "lane": "r-b548",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00C38880",
+  "name": "zone_table_row_for_mode",
+  "file": "fn_00c38880.rs",
+  "lane": "r-s733",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00C38BA0",
@@ -4462,14 +4470,6 @@
   "lane": "r-s461",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00E6D5E0",
-  "name": "vehicle_tuning_ratio_init_51",
-  "file": "fn_00e6d5e0.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E6D600",
