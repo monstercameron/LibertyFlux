@@ -2,7 +2,7 @@
   {
     "date": "2026-10-11",
     "title": "Changelog: one duplicate entry removed and one entry's text corrected",
-    "commit": null,
+    "commit": "e222daab5f956776cc5684417161c26cd9544db5",
     "summary": "Two commits collided when four rewrites were withdrawn, and the changelog came out wrong in two places.",
     "changes": [
       "The withdrawal's entry had been written twice, once by a commit attempt that failed on a repository lock and once by the retry; one copy is removed.",
