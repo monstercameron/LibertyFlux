@@ -86265,6 +86265,15 @@
   "lane": "r-b610"
  },
  {
+  "address": "0x00ABD480",
+  "name": "setup_probe_kernel",
+  "kind": "function",
+  "file": "functions/fn_00abd480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U89"
+ },
+ {
   "address": "0x00ABD8A0",
   "name": "vec_light_kernel_gated",
   "kind": "function",
@@ -128221,6 +128230,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G07"
+ },
+ {
+  "address": "0x00C684E0",
+  "name": "gather_flagged_ids_or_probe_tables",
+  "kind": "function",
+  "file": "functions/fn_00c684e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U89"
  },
  {
   "address": "0x00C68710",
