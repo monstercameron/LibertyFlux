@@ -121140,6 +121140,15 @@
   "lane": "r-s491"
  },
  {
+  "address": "0x00C8BED0",
+  "name": "audio_voice_render_setup",
+  "kind": "function",
+  "file": "functions/fn_00c8bed0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U02"
+ },
+ {
   "address": "0x00C8C310",
   "name": "audio_emitter_poll",
   "kind": "function",
@@ -121174,6 +121183,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s491"
+ },
+ {
+  "address": "0x00C8CAA0",
+  "name": "audio_position_blend",
+  "kind": "function",
+  "file": "functions/fn_00c8caa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U02"
  },
  {
   "address": "0x00C8D240",
@@ -131101,6 +131119,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b238"
+ },
+ {
+  "address": "0x00D7D600",
+  "name": "input_stick_update",
+  "kind": "function",
+  "file": "functions/fn_00d7d600.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U02"
  },
  {
   "address": "0x00D7D9A0",
