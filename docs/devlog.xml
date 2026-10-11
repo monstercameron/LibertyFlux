@@ -9,6 +9,40 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>The checker's option for unrelocated absolute reads has never set up on this machine</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#absolute-read-option-unavailable-2026-10-11"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#absolute-read-option-unavailable-2026-10-11</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>The checker has a contract option for an original that reads an absolute address which the loader did not relocate: the worker holds the address range of the original's preferred base, so such a read lands on a copy of the image. A lane on a large function asked for the option, was refused, and reported that the repository's own self-test contract for it fails the same way. A checker investigation lane took 15 minutes to settle it. The option fails at set-up on this machine every time, it has done so since the day it was added, and nothing a lane can do changes that.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;The checker has a contract option for an original that reads an absolute address which the loader did not relocate: the worker holds the address range of the original's preferred base, so such a read lands on a copy of the image. A lane on a large function asked for the option, was refused, and reported that the repository's own self-test contract for it fails the same way. A checker investigation lane took 15 minutes to settle it. The option fails at set-up on this machine every time, it has done so since the day it was added, and nothing a lane can do changes that.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Is the refusal a fault in the checker, a fault in the lane's contract, or the machine? Twenty deferred functions, 27,343 bytes, were queued behind this option, so the answer mattered beyond one lane.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Question&lt;/th&gt;&lt;th role="columnheader"&gt;Finding&lt;/th&gt;&lt;th role="columnheader"&gt;How it is known&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Does the self-test contract fail?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;Yes, at set-up, before any trial: 10 of 10 fresh driver runs, 40 of 40 set-up attempts counting the driver's own retries.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Verified: run on the stock driver and worker.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;What holds the range?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;One block mapped by the system, present at the first line of the worker's own code, covering the whole range. It is not the worker's image, which sits elsewhere. None of the 768 pieces of the range can be reserved, and the block cannot be released.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Verified: a private copy of the worker that lists the regions in the range before it reserves anything.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Does it depend on how the worker is linked?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;The layout changes and the outcome does not. Linked at a fixed base, as the worker is, the block is always there. Linked to load at a random base, some pieces of the range are free on some starts, never all of them: 0 of 40 set-ups.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Verified: two small 32-bit probe programs, one linked each way.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Is it new?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;No. The first lane log that records the worker holding none of the range is from 4 October, the day the option went live. Forty-one lane logs record a deferral for it since. No log of a contract passing with the option was found on this machine.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Verified for the logs; that it never passed is inferred from finding none.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Does it depend on load, or on how the worker is started?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;No: the same with 25 other workers running and with none started by the driver.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Verified.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Would it work after a restart, or on a machine with an x86 processor?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;Unknown. This machine runs 32-bit x86 code under emulation, which may be what maps the block; that was not tested.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Unknown.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Repairs tried and ruled out: linking the worker differently, reserving earlier (the block is there before the worker runs), releasing the block, and retrying. Covering only the pieces that can be held was not tried, on purpose: the worker refuses a partial cover by design, because a read that lands on a piece it does not hold would silently read the worker's own memory.&lt;/p&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;No lane is sent at a contract that needs this option, or at its self-test contract. The self-test's failure is a known condition of this machine, not a regression in the checker.&lt;/li&gt;
+&lt;li&gt;The twenty queued functions stay deferred with this as the stated reason. Before any of them is believed to need the option, its claim is checked with the relocation checker: an earlier devlog entry records that every such claim examined so far was wrong, and the worker already relocates absolute immediates so that most data reads work without the option (see the entry of 5 October on a production lane).&lt;/li&gt;
+&lt;li&gt;Getting the option to work is a design change to the checker, for the owner to decide: for example loading the original at its preferred base in a process built for that purpose. It is not a lane repair.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Correction&lt;/h3&gt;
+&lt;p&gt;Lane notes since 4 October say the range is taken "in every 32-bit process". That is true only of programs linked at a fixed base. It does not change the outcome, and it is corrected here so the next investigation does not start from it.&lt;/p&gt;
+&lt;h3&gt;How to reproduce&lt;/h3&gt;
+&lt;p&gt;Run the self-test contract for the option from the checker's contract folder on the stock driver, ten times, each in a fresh driver process, and read the set-up message. The investigation lane's commands, outputs and the region listings are in its scratch folder.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Hourly reviews, 11 October</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-2026-10-11"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-2026-10-11</id>
@@ -1076,31 +1110,5 @@ otherwise identical logs is the signature.&lt;/p&gt;</content>
 &lt;p&gt;Run the lane's contracts with the stock checker driver and worker; every verdict records full branch shapes and a failing wrong version. The signed-bound behaviour can be re-derived by reading the index compare and the sign-extending move that follows it in the register routine. The silent-range behaviour is preserved in the lane's early probe verdicts, where two misdeclared ranges passed all comparisons.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Two rewrites first failed on missed register reloads just before a return, one branch was read inverted, one multi-argument call passed its words in push order instead of argument order, and code-pointer constants had to be relocated exactly as the original's loader fixups do. Each was caught by the first probe run and fixed from the checker's first mismatch. A build file lock from a lingering scan was worked around by moving the old library aside.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>The optimizer can delete the reads a fault-parity proof needs</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s496"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s496</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>Verified A logically identical Rust rewrite of a filter-matching predicate survived memory reads the original faults on, because the compiler proved the result from the arguments alone and skipped the reads. Marking the reads volatile restored fault parity with no change in logic.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A logically identical Rust rewrite of a filter-matching predicate survived memory reads the original faults on, because the compiler proved the result from the arguments alone and skipped the reads. Marking the reads volatile restored fault parity with no change in logic.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite sixteen small motion-tree routines in Rust and prove each one identical to the original with the project checker, which runs both sides from identical state and compares return values, written memory, outgoing calls and faults over one thousand trials each.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One predicate reads its entry count from the same table it then walks, so a count of two or more re-reads the count word as an entry pointer and faults. The first rewrite transcribed the loop faithfully, yet on three trials in sixty the original faulted while the rewrite returned normally.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Disassembly of the compiled rewrite showed the cause: the compiler had split the loop into several versions keyed on the argument values, and the version for arguments whose answer is always zero returned without reading a single entry. The reads were logically redundant, so removing them was a valid optimisation of the value computed, but it changed which addresses fault.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Reading the entry bytes with volatile loads keeps every read in program order while still compiling to plain byte loads. After that change the rewrite passed one thousand trials with matching faults on the count-overlap trials, and a deliberately wrong version with an inverted gate failed as required.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; A sibling predicate verified by an earlier lane passed with plain reads only because it takes no arguments for the compiler to split on. Any search loop whose result is fully determined by loop-invariant arguments can fall into this trap.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;When a pure loop shows original-faults while rewrite-returns, suspect versioned loops before suspecting the logic, and confirm by disassembling the rewrite.&lt;/li&gt;
-&lt;li&gt;Use volatile loads for the fault-relevant reads in such loops, with a comment saying why, rather than restructuring the logic.&lt;/li&gt;
-&lt;li&gt;Keep fault-parity trials (counts that re-read as pointers, short tables) in every such contract: without them the elided reads are invisible.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build a rewrite of an entry-walking predicate whose match conditions depend only on the arguments, include trials where the count word is re-read as a pointer, and run the checker: the correct rewrite fails with the original faulting and the rewrite returning. Disassembling the rewrite shows an early-return path that reads nothing. Switching the entry-byte reads to volatile loads makes the same contract pass.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first failure looked like a logic error in the match conditions, and the conditions were rechecked twice before the compiled code was examined. The mismatch detail only said one side faulted and the other did not, which pointed at the reads rather than the branches once the faulting address (the small count value) was noticed.&lt;/p&gt;</content>
   </entry>
 </feed>
