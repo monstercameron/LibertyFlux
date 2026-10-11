@@ -77580,6 +77580,15 @@
   "lane": "r-s331"
  },
  {
+  "address": "0x00A1D5F0",
+  "name": "task_probe_surroundings",
+  "kind": "function",
+  "file": "functions/fn_00a1d5f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U85"
+ },
+ {
   "address": "0x00A1D7F0",
   "name": "task_group_release_enabled_records",
   "kind": "function",
@@ -91402,6 +91411,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G01"
+ },
+ {
+  "address": "0x00B2F940",
+  "name": "ped_task_spawn_or_update",
+  "kind": "function",
+  "file": "functions/fn_00b2f940.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U85"
  },
  {
   "address": "0x00B2FD30",
