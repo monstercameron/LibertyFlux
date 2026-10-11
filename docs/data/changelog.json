@@ -1,6 +1,20 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 4 more withdrawn after their differences on widened inputs were reduced to a cause",
+    "commit": null,
+    "summary": "The verified count goes down by four. An investigation lane took four of the eight rewrites that differ from the original on widened inputs for a reason other than a conversion, and showed each difference on the stock checker on trials the original completes.",
+    "changes": [
+      "A camera curve evaluator builds a mask with a float comparison whose predicate is wrong when the operands are equal: the original's instruction is \"not less than or equal\" and the rewrite wrote \"not less than\". With a whole-number index it fails every one of 1,000 trials, and passes with the one comparison changed. This is the second verified rewrite with that fault today.",
+      "A task target selector passes two arguments to a helper in the wrong order: the original pushes the answer and then a zero, so the zero is the first argument. With the earlier callee's answer held at one value it fails 300 of 1,200 trials; the corrected copy passes the widened contract and the contract of record. The proof of record passed because its inputs made the two arguments interchangeable.",
+      "A gated scaler adds three floats; the compiler was free to reorder the sum, and when two operands are both not-a-number the result's payload depends on which comes first. Pinning both operands passes the widened contract; the tracked form fails 3 of 1,000.",
+      "A list refresh for the input interface reads a field of a list element at a point where the original does not, and faults on a null element when one list's count is large: 55 of 1,000 trials with that count alone raised. The cause is located but not yet corrected.",
+      "Three have corrected copies and go to a strengthening lane; the fourth goes back to an investigation lane. The lane also noted that one of the four publishes a zero where the original publishes an uninitialised stack word, which the checker's stack fill makes equal: that goes into the strengthening lane's brief as a narrowing to state or remove.",
+      "Thirteen verified rewrites have now been withdrawn today for differences outside the range their proofs drew; seven of them are proven again, and an eighth has been proven by its lane and is in the coordinator's re-run."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 4 files from lanes (584 unverified rewrites, 82 in review)",
     "commit": "b3fe6870f4204ff2c9bd8c9fab6a2fa389f35a43",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
