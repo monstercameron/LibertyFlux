@@ -68202,6 +68202,42 @@
   "lane": "r-s513"
  },
  {
+  "address": "0x009BDD40",
+  "name": "ped_task_event_registration",
+  "kind": "function",
+  "file": "functions/fn_009bdd40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009BDF60",
+  "name": "ped_event_query_status",
+  "kind": "function",
+  "file": "functions/fn_009bdf60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009BDF80",
+  "name": "CEventImminentDanger::CEventImminentDanger",
+  "kind": "function",
+  "file": "functions/fn_009bdf80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009BE000",
+  "name": "CEventImminentDanger::vf0",
+  "kind": "function",
+  "file": "functions/fn_009be000.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
   "address": "0x009BE040",
   "name": "spawn_effect_slot_alloc",
   "kind": "function",
@@ -68211,6 +68247,24 @@
   "lane": "r-b532"
  },
  {
+  "address": "0x009BF080",
+  "name": "ped_event_cleanup_reset",
+  "kind": "function",
+  "file": "functions/fn_009bf080.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009BF0E0",
+  "name": "CEventImminentDanger::vf4",
+  "kind": "function",
+  "file": "functions/fn_009bf0e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
   "address": "0x009BF120",
   "name": "rot_axis_angle_between",
   "kind": "function",
@@ -68218,6 +68272,114 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b532"
+ },
+ {
+  "address": "0x009BF550",
+  "name": "ped_task_refresh_matching_deadlines",
+  "kind": "function",
+  "file": "functions/fn_009bf550.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009BF5B0",
+  "name": "ped_task_select_lowest_deadline_record",
+  "kind": "function",
+  "file": "functions/fn_009bf5b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009BF630",
+  "name": "ped_task_select_event_entry",
+  "kind": "function",
+  "file": "functions/fn_009bf630.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009BF7F0",
+  "name": "ped_task_record_lookup",
+  "kind": "function",
+  "file": "functions/fn_009bf7f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009C04A0",
+  "name": "ped_event_delay_for_type",
+  "kind": "function",
+  "file": "functions/fn_009c04a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009C07F0",
+  "name": "ped_task_record_matches",
+  "kind": "function",
+  "file": "functions/fn_009c07f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009C0990",
+  "name": "ped_task_event_flag_update",
+  "kind": "function",
+  "file": "functions/fn_009c0990.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009C0D80",
+  "name": "ped_task_check_nearby_event",
+  "kind": "function",
+  "file": "functions/fn_009c0d80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009C0E40",
+  "name": "ped_task_release_active_records",
+  "kind": "function",
+  "file": "functions/fn_009c0e40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009C0E70",
+  "name": "ped_task_release_nonqueued_records",
+  "kind": "function",
+  "file": "functions/fn_009c0e70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009C1270",
+  "name": "ped_task_record_replace_object",
+  "kind": "function",
+  "file": "functions/fn_009c1270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
+ },
+ {
+  "address": "0x009C12B0",
+  "name": "ped_task_replace_owner_object",
+  "kind": "function",
+  "file": "functions/fn_009c12b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s640"
  },
  {
   "address": "0x009C1300",
