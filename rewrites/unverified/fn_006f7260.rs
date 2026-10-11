@@ -4,7 +4,8 @@
 /// Each visited node compares the low 16 bits of `new_key - node_key`; a set
 /// sign bit follows the right link, otherwise the left link is followed with
 /// its low-bit tag preserved. Empty trees and empty child slots are handled
-/// separately. After linking the node, the function marks it, calls the tree
+/// separately; a duplicate key leaves the tree unchanged. After linking the
+/// node, the function marks it, calls the tree
 /// balancing helper, copies the input key into the node, increments the tree
 /// count, and writes the insertion result to the first stack argument.
 lf_checker_rt::export!(thiscall, rw_006f7260(tree: u32, result: u32, key_ptr: u32, node: u32) -> u32 {
@@ -42,6 +43,10 @@ lf_checker_rt::export!(thiscall, rw_006f7260(tree: u32, result: u32, key_ptr: u3
                         break;
                     }
                 } else {
+                    let reverse_difference = node_key.wrapping_sub(new_key);
+                    if reverse_difference & 0x8000 == 0 {
+                        break;
+                    }
                     let tagged_left = read32(current + LEFT);
                     let left = tagged_left & !1;
                     if left != 0 {

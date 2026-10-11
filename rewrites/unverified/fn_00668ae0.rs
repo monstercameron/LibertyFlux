@@ -21,7 +21,7 @@ lf_checker_rt::export!(thiscall, rw_00668AE0(this: u32) -> u32 {
     let first_event = unsafe { read_u32(this.wrapping_add(FIRST_EVENT)) };
     let first_value = if first_event == 0 { 0 } else { unsafe { vcall0(first_event, FIRST_SLOT) } };
     let first_component = this.wrapping_add(FIRST_COMPONENT);
-    let first_accepted = lf_checker_rt::callee_thiscall!(1, u8, first_component, helper_value);
+    let first_accepted = lf_checker_rt::callee_thiscall!(1, u8, first_component, first_value);
     if first_accepted == 0 {
         let _ignored_result = lf_checker_rt::callee_thiscall!(2, u32, first_component, first_value);
     }

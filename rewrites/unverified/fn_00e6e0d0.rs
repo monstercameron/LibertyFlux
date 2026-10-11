@@ -9,10 +9,11 @@
 lf_checker_rt::export!(cdecl, rw_invoke_thread_local_cleanup_00e6e0d0() -> u32 {
     unsafe {
         const TLS_OBJECT_CHILD_OFFSET: u32 = 0x08;
-        const CLEANUP_ARGUMENT: u32 = 0x00F1B54C;
+        const CLEANUP_ARGUMENT_VA: u32 = 0x00F1B54C;
         let tls_object = lf_checker_rt::tls_slot(0);
         let service_object = ((tls_object.wrapping_add(TLS_OBJECT_CHILD_OFFSET)) as *const u32)
             .read_unaligned();
-        lf_checker_rt::callee_thiscall!(1, u32, service_object, CLEANUP_ARGUMENT, 0u32)
+        let cleanup_argument = lf_checker_rt::relocated(CLEANUP_ARGUMENT_VA);
+        lf_checker_rt::callee_thiscall!(1, u32, service_object, cleanup_argument, 0u32)
     }
 });

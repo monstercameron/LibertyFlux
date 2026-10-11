@@ -3,7 +3,8 @@
 /// Insert the supplied node into the secondary tagged tree by its 16-bit
 /// key. The tree uses child and parent links at offsets 0x4C, 0x50 and 0x54,
 /// with the key at 0x58. The low 16 bits of `new_key - node_key` select the
-/// right link when their sign bit is set and the left link otherwise. After
+/// right link when their sign bit is set, the left link when the reverse
+/// difference is negative, and leave equal keys unchanged. After
 /// insertion the node is marked, the balancing helper is called, the key is
 /// copied into the node, the tree count is incremented, and the result is
 /// written to the first stack argument.
@@ -42,6 +43,10 @@ lf_checker_rt::export!(thiscall, rw_006f7540(tree: u32, result: u32, key_ptr: u3
                         break;
                     }
                 } else {
+                    let reverse_difference = node_key.wrapping_sub(new_key);
+                    if reverse_difference & 0x8000 == 0 {
+                        break;
+                    }
                     let tagged_left = read32(current + LEFT);
                     let left = tagged_left & !1;
                     if left != 0 {

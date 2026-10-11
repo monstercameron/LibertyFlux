@@ -8,8 +8,9 @@
 /// with flag `0x10` set or a zero weight are skipped; other weights are
 /// multiplied by the XMM2 value in that operand order and passed on the stack
 /// to the record's vtable slot `+0x1c`. EAX is not a meaningful return value.
-lf_checker_rt::export!(thiscall, rw_0068DC50(wrapper: u32, weight_array: u32, _reserved: u32) -> () {
+lf_checker_rt::export!(thiscall, rw_0068DC50(wrapper: u32, _reserved: u32, weight_array: u32) -> () {
     unsafe {
+        let _reserved = core::hint::black_box(_reserved);
         const COMPONENT_OFFSET: u32 = 0;
         const RECORD_ARRAY_OFFSET: u32 = 0x0c;
         const RECORD_COUNT_OFFSET: u32 = 0x10;
