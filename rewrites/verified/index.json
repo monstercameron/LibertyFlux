@@ -33993,6 +33993,51 @@
   "lane": "a-U103"
  },
  {
+  "address": "0x00599C70",
+  "name": "leaderboard_read_value_at_index",
+  "kind": "function",
+  "file": "functions/fn_00599c70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
+  "address": "0x00599CB0",
+  "name": "leaderboard_entry_width_at_index",
+  "kind": "function",
+  "file": "functions/fn_00599cb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
+  "address": "0x00599DE0",
+  "name": "leaderboard_schema_ctor_episodic_8",
+  "kind": "function",
+  "file": "functions/fn_00599de0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
+  "address": "0x00599E10",
+  "name": "leaderboard_find_key_position_for_index",
+  "kind": "function",
+  "file": "functions/fn_00599e10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
+  "address": "0x00599E80",
+  "name": "leaderboard_read_value_for_key",
+  "kind": "function",
+  "file": "functions/fn_00599e80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
   "address": "0x0059D870",
   "name": "forward_with_slot_pointer",
   "kind": "function",
@@ -137070,6 +137115,33 @@
   "lane": "r-s610"
  },
  {
+  "address": "0x00CBCA00",
+  "name": "initialize_on_foot_move_blend",
+  "kind": "function",
+  "file": "functions/fn_00cbca00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
+  "address": "0x00CBCA20",
+  "name": "CPedMoveBlendBase::~deleting",
+  "kind": "function",
+  "file": "functions/fn_00cbca20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
+  "address": "0x00CBCA50",
+  "name": "append_move_blend_sample",
+  "kind": "function",
+  "file": "functions/fn_00cbca50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
   "address": "0x00CBD7A0",
   "name": "ped_task_update_heading",
   "kind": "function",
@@ -137095,6 +137167,24 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "a-S06"
+ },
+ {
+  "address": "0x00CBF000",
+  "name": "filter_task_candidate",
+  "kind": "function",
+  "file": "functions/fn_00cbf000.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
+  "address": "0x00CBF050",
+  "name": "select_task_from_candidate_list",
+  "kind": "function",
+  "file": "functions/fn_00cbf050.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
  },
  {
   "address": "0x00CBF090",
@@ -137133,6 +137223,15 @@
   "lane": "r-b468"
  },
  {
+  "address": "0x00CBFD80",
+  "name": "clamp_blend_weights",
+  "kind": "function",
+  "file": "functions/fn_00cbfd80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
   "address": "0x00CBFE10",
   "name": "task_state_init_defaults",
   "kind": "function",
@@ -137140,6 +137239,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G34"
+ },
+ {
+  "address": "0x00CBFF30",
+  "name": "create_player_on_foot_task",
+  "kind": "function",
+  "file": "functions/fn_00cbff30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
+ },
+ {
+  "address": "0x00CBFF50",
+  "name": "update_tasks_beyond_threshold",
+  "kind": "function",
+  "file": "functions/fn_00cbff50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U104"
  },
  {
   "address": "0x00CC00B0",
