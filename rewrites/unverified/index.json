@@ -1312,17 +1312,17 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009BB1E0",
-  "name": "CCamScriptInstruction_SetViewportPriority::vf2",
-  "file": "fn_009bb1e0.rs",
-  "lane": "r-s667",
+  "address": "0x009B5BE0",
+  "name": "pending_009b5be0",
+  "file": "fn_009b5be0.rs",
+  "lane": "r-s668",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x009BB290",
-  "name": "CCamScriptInstruction_SnapShotCam::vf2",
-  "file": "fn_009bb290.rs",
+  "address": "0x009BB1E0",
+  "name": "CCamScriptInstruction_SetViewportPriority::vf2",
+  "file": "fn_009bb1e0.rs",
   "lane": "r-s667",
   "outcome": "not_reached",
   "reason": null
@@ -2005,14 +2005,6 @@
   "file": "fn_00b126a0.rs",
   "lane": "r-s658",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B23610",
-  "name": "physics_dispatch_slot_84",
-  "file": "fn_00b23610.rs",
-  "lane": "r-s665",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2776,14 +2768,6 @@
   "reason": null
  },
  {
-  "address": "0x00C78190",
-  "name": "phbound_register_all_entries",
-  "file": "fn_00c78190.rs",
-  "lane": "r-s663",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C78430",
   "name": "phbound_registry_find_by_pointer",
   "file": "fn_00c78430.rs",
@@ -3147,6 +3131,14 @@
   "address": "0x00CC8720",
   "name": "fragInstGta::vf64",
   "file": "fn_00cc8720.rs",
+  "lane": "r-s664",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CC94A0",
+  "name": "fn_00CC94A0",
+  "file": "fn_00cc94a0.rs",
   "lane": "r-s664",
   "outcome": "not_reached",
   "reason": null
@@ -3872,6 +3864,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00DADD80",
+  "name": "pending_00dadd80",
+  "file": "fn_00dadd80.rs",
+  "lane": "r-b680",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DC0980",
   "name": "task_flag_compatibility",
   "file": "fn_00dc0980.rs",
@@ -3928,6 +3928,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00DE1840",
+  "name": "UIScrollingMenu::vf121",
+  "file": "fn_00de1840.rs",
+  "lane": "r-s669",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DE43A0",
   "name": "UIRowLayout::vf139",
   "file": "fn_00de43a0.rs",
@@ -3940,8 +3948,8 @@
   "name": "scrolling_menu_adjust_selection",
   "file": "fn_00de6a50.rs",
   "lane": "r-s666",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00DE6AE0",
