@@ -2,7 +2,7 @@
 /// Updates a task's steering blend and its child blend state.
 ///
 /// The task flag gates two integer-derived steering components. A low object
-/// type nibble enables the normalized magnitude path, which calls the pool,
+/// type nibble independently enables the normalized magnitude path, which calls the pool,
 /// double-precision blend helper, and trigonometric helpers before using a
 /// scripted gate. A second flag-gated state check selects the coefficient
 /// ladder. The result is clamped, reflected in the task flag, stored through
@@ -97,7 +97,7 @@ lf_checker_rt::export!(thiscall, rw_00CD4B00(this: u32, a0: u32) -> u32 {
         let mut ratio = 0.0f32;
         let mut main_path_ran = false;
         let object_nibble = rd8(a0 + TYPE_OFF) & 0x0f;
-        if initial_flags & 4 != 0 && object_nibble < 2 {
+        if object_nibble < 2 {
             let second_squared = mul(component_y, component_y);
             let first_squared = mul(component_x, component_x);
             let magnitude = add(second_squared, first_squared).sqrt();

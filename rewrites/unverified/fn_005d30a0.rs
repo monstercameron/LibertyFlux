@@ -5,7 +5,6 @@
 /// The routine has no arguments, returns the relocated address of the first
 /// word, and writes zero to the nine 32-bit globals at the declared offsets.
 /// The gaps between these words belong to other state and are left untouched.
-#[allow(clippy::too_many_lines)]
 lf_checker_rt::export!(cdecl, rw_005d30a0() -> u32 {
     unsafe {
         const SEARCH_STATE_WORDS: [u32; 9] = [

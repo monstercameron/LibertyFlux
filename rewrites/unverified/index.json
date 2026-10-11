@@ -1368,25 +1368,9 @@
   "reason": null
  },
  {
-  "address": "0x0098EE80",
-  "name": "audVehicleAudioEntity::set_gps_voice",
-  "file": "fn_0098ee80.rs",
-  "lane": "r-s735",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0098EEA0",
-  "name": "NativeImpl_HELI_AUDIO_SHOULD_SKIP_STARTUP",
-  "file": "fn_0098eea0.rs",
-  "lane": "r-s735",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0098EEC0",
-  "name": "audVehicleAudioEntity::set_loud_radio",
-  "file": "fn_0098eec0.rs",
+  "address": "0x0098CD20",
+  "name": "audVehicleAudioEntity::horn_flag_check",
+  "file": "fn_0098cd20.rs",
   "lane": "r-s735",
   "outcome": "not_reached",
   "reason": null
@@ -3072,6 +3056,14 @@
   "reason": "out_of_time"
  },
  {
+  "address": "0x00BE80C0",
+  "name": null,
+  "file": "fn_00be80c0.rs",
+  "lane": "a-S24",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00BE8300",
   "name": "clear_matching_task_records",
   "file": "fn_00be8300.rs",
@@ -3142,6 +3134,14 @@
   "lane": "r-b548",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00C2F7C0",
+  "name": "vehicle_dynamics_sample_clamped_factor",
+  "file": "fn_00c2f7c0.rs",
+  "lane": "r-s733",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00C3F0D0",
@@ -3896,6 +3896,14 @@
   "reason": "partly_proven"
  },
  {
+  "address": "0x00CCFAB0",
+  "name": null,
+  "file": "fn_00ccfab0.rs",
+  "lane": "a-U113",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00CD4B00",
   "name": "peds_task_steer_blend2",
   "file": "fn_00cd4b00.rs",
@@ -4408,6 +4416,14 @@
   "reason": null
  },
  {
+  "address": "0x00D8FB00",
+  "name": null,
+  "file": "fn_00d8fb00.rs",
+  "lane": "a-S24",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00D9E950",
   "name": "stream_global_record_value",
   "file": "fn_00d9e950.rs",
@@ -4499,6 +4515,14 @@
   "address": "0x00DCD930",
   "name": null,
   "file": "fn_00dcd930.rs",
+  "lane": "a-U112",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00DCDED0",
+  "name": null,
+  "file": "fn_00dcded0.rs",
   "lane": "a-U112",
   "outcome": "not yet run",
   "reason": null

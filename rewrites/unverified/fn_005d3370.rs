@@ -9,9 +9,9 @@
 /// thiscall frame has two stack arguments and the callee removes eight bytes.
 lf_checker_rt::export!(thiscall, rw_005d3370(this: u32, source: u32, destination: u32) -> u32 {
     unsafe {
-        const TYPE_TAG: usize = 0;
+        const FIRST_PAYLOAD_WORD: usize = 0;
         const EMBEDDED_PAYLOAD: u32 = 0x10;
-        const WORD_BYTES: u32 = 4;
+        const LAST_PAYLOAD_WORD: usize = 3;
         const TAG_INLINE: u32 = 5;
         const TAG_POINTER: u32 = 4;
 
@@ -26,13 +26,13 @@ lf_checker_rt::export!(thiscall, rw_005d3370(this: u32, source: u32, destination
         let destination_words = destination as *mut u32;
         // The original stages the first three loads before any store, then
         // reads the fourth word after those stores; preserve that overlap case.
-        let first = source_words.add(TYPE_TAG / core::mem::size_of::<u32>()).read_unaligned();
+        let first = source_words.add(FIRST_PAYLOAD_WORD).read_unaligned();
         let second = source_words.add(1).read_unaligned();
         let third = source_words.add(2).read_unaligned();
         destination_words.write_unaligned(first);
         destination_words.add(1).write_unaligned(second);
         destination_words.add(2).write_unaligned(third);
-        let fourth = source_words.add((3 * WORD_BYTES) as usize / core::mem::size_of::<u32>()).read_unaligned();
+        let fourth = source_words.add(LAST_PAYLOAD_WORD).read_unaligned();
         destination_words.add(3).write_unaligned(fourth);
         1
     }

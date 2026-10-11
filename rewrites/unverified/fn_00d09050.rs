@@ -2,7 +2,7 @@
 
 /// Select and create a ped's gun or projectile task.
 ///
-/// `self` is the task object and `ped` is its single stack argument. The ped's
+/// `owner` is the task object and `ped` is its single stack argument. The ped's
 /// weapon component is at `+0x2b0`; the method checks the two state bytes at
 /// `+0x218` and `+0x219`, then looks up the weapon flags. A usable throwable
 /// gets the projectile-task constructor. Other states create a gun task and
@@ -13,7 +13,7 @@
 /// singleton slot is read through the checker relocation helper. The original
 /// overwrites its incoming stack argument before its projectile tail call;
 /// that value is observed in the recorded tail-call argument.
-lf_checker_rt::export!(thiscall, rw_00d09050(self: u32, ped: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00d09050(owner: u32, ped: u32) -> u32 {
     unsafe {
         const TASK_POOL_GLOBAL: u32 = 0x0167_E2A0;
         const PED_WEAPON: u32 = 1;
@@ -126,11 +126,11 @@ lf_checker_rt::export!(thiscall, rw_00d09050(self: u32, ped: u32) -> u32 {
         }
 
         let pool = unsafe { task_pool() };
-        let stored_subtask = unsafe { read_u32(self.wrapping_add(0x30)) };
+        let stored_subtask = unsafe { read_u32(owner.wrapping_add(0x30)) };
         let alternate_subtask = if stored_subtask != 0 {
             0
         } else {
-            self.wrapping_add(0x20)
+            owner.wrapping_add(0x20)
         };
         if pool == 0 {
             unsafe { write_task_flags(0, FALLBACK_TASK_FLAGS) };
