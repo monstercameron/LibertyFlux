@@ -1232,6 +1232,14 @@
   "reason": "other"
  },
  {
+  "address": "0x008D5FB0",
+  "name": "pending_008d5fb0",
+  "file": "fn_008d5fb0.rs",
+  "lane": "r-s678",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x008DBF60",
   "name": "task_ctor_update_thread_range",
   "file": "fn_008dbf60.rs",
@@ -1254,6 +1262,14 @@
   "lane": "r-b248",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00922B70",
+  "name": "streaming_fn_00922b70",
+  "file": "fn_00922b70.rs",
+  "lane": "r-s676",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x0092AE00",
@@ -1398,14 +1414,6 @@
   "lane": "r-s420",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x009B6370",
-  "name": "pending_009b6370",
-  "file": "fn_009b6370.rs",
-  "lane": "r-s668",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x009B6410",
@@ -2264,30 +2272,6 @@
   "reason": ""
  },
  {
-  "address": "0x00B89260",
-  "name": "NativeImpl_SET_CAM_POINT_OFFSET_2",
-  "file": "fn_00b89260.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B89410",
-  "name": "NativeImpl_SET_CAM_ATTACH_OFFSET_2",
-  "file": "fn_00b89410.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B894E0",
-  "name": "NativeImpl_SET_CAM_POS_2",
-  "file": "fn_00b894e0.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00B89550",
   "name": "NativeImpl_SET_CAM_ROT_2",
   "file": "fn_00b89550.rs",
@@ -2878,14 +2862,6 @@
   "lane": "r-b450",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00CA0B10",
-  "name": "ik_two_bone_solver_angles",
-  "file": "fn_00ca0b10.rs",
-  "lane": "a-U57",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00CA4C60",

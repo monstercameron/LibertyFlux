@@ -6,3 +6,4 @@ pub mod fn_005c43e0 { #![allow(unused_imports)] include!(concat!(env!("CARGO_MAN
 pub mod fn_005c4420 { #![allow(unused_imports)] include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_005C4420.rs")); }
 pub mod fn_00cc2eb0 { #![allow(unused_imports)] include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00CC2EB0.rs")); }
 pub mod fn_00ca1d70 { #![allow(unused_imports)] include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00CA1D70.rs")); }
+pub mod fn_00a218a0 { #![allow(unused_imports)] include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00A218A0.rs")); }
