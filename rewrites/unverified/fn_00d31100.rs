@@ -1,10 +1,10 @@
 // original: 0x00D31100 CTaskComplexNewExitVehicle::CTaskComplexNewExitVehicle
 /// Constructs a new-exit-vehicle task by delegating base initialization, storing the vehicle, raw
 /// speed bits and handle, initializing the embedded animation object, and setting default state
-/// fields. Positive speed triggers one helper call; a non-null vehicle is checked through a
-/// signed 16-bit model index and a global model table before setting a flag; a non-null handle is
-/// then retained through its field address. The thiscall method receives four stack words and
-/// returns this.
+/// fields. A nonpositive ordered speed triggers one helper call; an unordered speed skips it. A
+/// non-null vehicle is checked through a signed 16-bit model index and a global model table
+/// before setting a flag; a non-null handle is then retained through its field address. The
+/// thiscall method receives four stack words and returns this.
 lf_checker_rt::export!(thiscall, rw_00d31100(this: u32, vehicle: u32, task_code: u32, speed_bits: u32, handle: u32) -> u32 {
     const BASE_TASK: u32 = 0x14;
     const VEHICLE_INDEX: u32 = 0x2e;
@@ -46,7 +46,7 @@ lf_checker_rt::export!(thiscall, rw_00d31100(this: u32, vehicle: u32, task_code:
         write_u32(this, 0x38, 0);
         write_u32(this, 0x3c, 0);
         write_u32(this, 0x40, 0);
-        if 0.0f32 < f32::from_bits(speed_bits) {
+        if f32::from_bits(speed_bits) <= 0.0f32 {
             let _ = lf_checker_rt::callee_thiscall!(3, u32, this, 1);
         }
         if vehicle != 0 {

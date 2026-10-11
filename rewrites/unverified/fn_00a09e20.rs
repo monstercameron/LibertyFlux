@@ -1,75 +1,112 @@
-// original: 0x00a09e20 radar_blip_sweep_active (proposed)
-/// Sweep the 256 radar-blip slots and re-arm the live ones.
-///
-/// Asks the cleanup gate first; when it says no, nothing happens. Otherwise
-/// each slot whose tag byte is nonzero and whose flag at +0xc is 1 is
-/// handled by tag (1, 2 and 4 resolve their handle through pools A, B and
-/// C and validate it; 7 runs the pair check and skips the slot when it
-/// answers negative; 3, 5 and 6 go straight on) and every handled slot is
-/// re-armed with (handle, tag, 0, 1). Returns the last answer seen.
-/// Thiscall, no stack words.
-lf_checker_rt::export!(thiscall, rw_00a09e20(this: u32) -> u32 {
+// original: 0x00a09e20 mission_cleanup_release_flagged
+/// Release flagged mission-cleanup records for the seven supported entry
+/// kinds. The manager stores 0x2c-byte entries at +4; a nonzero kind is
+/// processed only when the word at +0x0c is exactly one. Kinds 1, 2, and 3
+/// resolve their handle through the corresponding entity, pedestrian, or
+/// object pool and dispatch only for a live object. Kind 4 resolves the
+/// handle with mode eight and dispatches only for a nonnegative result. Kinds
+/// 5 through 7 have no kind-specific dispatch. Every selected record is
+/// reset with (handle, kind, 0, 1), even when lookup returns null. The manager
+/// is armed by a no-argument thiscall helper; a false result leaves it alone.
+/// The method uses thiscall with no stack arguments and returns no value.
+lf_checker_rt::export!(thiscall, rw_00a09e20(this: u32) -> () {
     unsafe {
-        const POOL_A: u32 = 0x012e22a4;
-        const POOL_B: u32 = 0x018b6f1c;
-        const POOL_C: u32 = 0x01632c60;
-        const GATE: u32 = 0;
-        const LOOKUP: u32 = 1;
-        const VAL_A: u32 = 2;
-        const VAL_B: u32 = 3;
-        const VAL_C: u32 = 4;
-        const PAIR: u32 = 5;
-        const COMMIT: u32 = 6;
-        const REARM: u32 = 7;
-        const COUNT: u32 = 0x100;
-        const STRIDE: u32 = 0x2c;
-        let gate: u32 = lf_checker_rt::callee_cdecl!(GATE, u32,);
-        if (gate & 0xff) == 0 {
-            return gate;
+        const ENTRY_BASE: u32 = 4;
+        const ENTRY_STRIDE: u32 = 0x2c;
+        const ENTRY_COUNT: u32 = 256;
+        const ENTRY_KIND: u32 = 0;
+        const ENTRY_HANDLE: u32 = 4;
+        const ENTRY_FLAG: u32 = 0x0c;
+
+        const ENTITY_POOL_GLOBAL: u32 = 0x012e22a4;
+        const PED_POOL_GLOBAL: u32 = 0x018b6f1c;
+        const OBJECT_POOL_GLOBAL: u32 = 0x01632c60;
+
+        const IS_ARMED: u32 = 0;
+        const POOL_GET: u32 = 1;
+        const DISPATCH_ENTITY: u32 = 2;
+        const DISPATCH_PED: u32 = 3;
+        const DISPATCH_OBJECT: u32 = 4;
+        const FIND_SPECIAL_INDEX: u32 = 5;
+        const APPLY_SPECIAL_INDEX: u32 = 6;
+        const RESET_ENTRY: u32 = 7;
+
+        #[inline(always)]
+        unsafe fn read_u8(address: u32) -> u8 {
+            unsafe { (address as *const u8).read() }
         }
-        let pool_a = (lf_checker_rt::global::<u32>(POOL_A) as *const u32).read_unaligned();
-        let pool_b = (lf_checker_rt::global::<u32>(POOL_B) as *const u32).read_unaligned();
-        let pool_c = (lf_checker_rt::global::<u32>(POOL_C) as *const u32).read_unaligned();
-        let mut last: u32 = gate;
-        let mut slot = this + 4;
-        let mut i = 0u32;
-        while i < COUNT {
-            let tag = (slot as *const u8).read();
-            let flag = ((slot + 0x0c) as *const u32).read_unaligned();
-            if tag != 0 && flag == 1 {
-                let handle = ((slot + 4) as *const u32).read_unaligned();
-                let mut go = true;
-                match tag {
-                    1 | 2 | 4 => {
-                        let (pool, val) = match tag {
-                            1 => (pool_a, VAL_A),
-                            2 => (pool_b, VAL_B),
-                            _ => (pool_c, VAL_C),
-                        };
-                        let obj = lf_checker_rt::callee_thiscall!(LOOKUP, u32, pool, handle);
-                        if obj != 0 {
-                            last = lf_checker_rt::callee_cdecl!(val, u32, obj);
-                        }
-                    }
-                    7 => {
-                        let r: u32 = lf_checker_rt::callee_cdecl!(PAIR, u32, handle, 8u32);
-                        last = r;
-                        if (r as i32) < 0 {
-                            go = false;
-                        } else {
-                            last = lf_checker_rt::callee_cdecl!(COMMIT, u32, r, 1u32);
-                        }
-                    }
-                    _ => {}
-                }
-                if go {
-                    last = lf_checker_rt::callee_thiscall!(
-                        REARM, u32, this, handle, tag as u32, 0u32, 1u32);
-                }
+
+        #[inline(always)]
+        unsafe fn read_u32(address: u32) -> u32 {
+            unsafe { (address as *const u32).read_unaligned() }
+        }
+
+        #[inline(always)]
+        unsafe fn read_global_pointer(file_va: u32) -> u32 {
+            let slot = lf_checker_rt::global::<u32>(file_va);
+            unsafe { slot.read_unaligned() }
+        }
+
+        if lf_checker_rt::callee_thiscall!(IS_ARMED, u8, this) == 0 {
+            return;
+        }
+
+        for index in 0..ENTRY_COUNT {
+            let entry = this
+                .wrapping_add(ENTRY_BASE)
+                .wrapping_add(index.wrapping_mul(ENTRY_STRIDE));
+            let kind = read_u8(entry.wrapping_add(ENTRY_KIND));
+            if kind == 0 || read_u32(entry.wrapping_add(ENTRY_FLAG)) != 1 {
+                continue;
             }
-            i += 1;
-            slot += STRIDE;
+
+            let handle = read_u32(entry.wrapping_add(ENTRY_HANDLE));
+            match kind {
+                1 => {
+                    let pool = read_global_pointer(ENTITY_POOL_GLOBAL);
+                    let object = lf_checker_rt::callee_thiscall!(POOL_GET, u32, pool, handle);
+                    if object != 0 {
+                        let _ = lf_checker_rt::callee_cdecl!(DISPATCH_ENTITY, u32, object);
+                    }
+                }
+                2 => {
+                    let pool = read_global_pointer(PED_POOL_GLOBAL);
+                    let object = lf_checker_rt::callee_thiscall!(POOL_GET, u32, pool, handle);
+                    if object != 0 {
+                        let _ = lf_checker_rt::callee_cdecl!(DISPATCH_PED, u32, object);
+                    }
+                }
+                3 => {
+                    let pool = read_global_pointer(OBJECT_POOL_GLOBAL);
+                    let object = lf_checker_rt::callee_thiscall!(POOL_GET, u32, pool, handle);
+                    if object != 0 {
+                        let _ = lf_checker_rt::callee_cdecl!(DISPATCH_OBJECT, u32, object);
+                    }
+                }
+                4 => {
+                    let special_index =
+                        lf_checker_rt::callee_cdecl!(FIND_SPECIAL_INDEX, i32, handle, 8);
+                    if special_index >= 0 {
+                        let _ = lf_checker_rt::callee_cdecl!(
+                            APPLY_SPECIAL_INDEX,
+                            u32,
+                            special_index as u32,
+                            1
+                        );
+                    }
+                }
+                _ => {}
+            }
+
+            let _ = lf_checker_rt::callee_thiscall!(
+                RESET_ENTRY,
+                u32,
+                this,
+                handle,
+                kind as u32,
+                0,
+                1
+            );
         }
-        last
     }
 });

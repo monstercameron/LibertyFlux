@@ -9,7 +9,7 @@ lf_checker_rt::export!(thiscall, rw_009b1b30(this: u32, slot_index: u32) -> u32 
     const READY_FLAG: u32 = 0x0128e204;
     const NOISE_HANDLE: u32 = 0x0128e200;
     const NOISE_CONFIG: u32 = 0x0128aa84;
-    const LOOP_HASH: u32 = 0x00e93728;
+    const LOOP_HASH_ADDRESS: u32 = 0x00e93728;
     const RECORD_COUNT: u32 = 16;
     const RECORD_BASE: u32 = 0xa4;
     const RECORD_STRIDE: u32 = 0x14;
@@ -19,7 +19,8 @@ lf_checker_rt::export!(thiscall, rw_009b1b30(this: u32, slot_index: u32) -> u32 
         let flags = ready.read_unaligned();
         let loop_handle = if flags & 1 == 0 {
             ready.write_unaligned(flags | 1);
-            let handle = lf_checker_rt::callee_cdecl!(1, u32, LOOP_HASH, 0);
+            let hash_address = lf_checker_rt::global::<u8>(LOOP_HASH_ADDRESS) as usize as u32;
+            let handle = lf_checker_rt::callee_cdecl!(1, u32, hash_address, 0);
             lf_checker_rt::global::<u32>(NOISE_HANDLE).write_unaligned(handle);
             handle
         } else {

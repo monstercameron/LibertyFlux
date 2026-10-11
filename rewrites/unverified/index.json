@@ -1440,17 +1440,9 @@
   "reason": null
  },
  {
-  "address": "0x0098C180",
-  "name": "NativeImpl_RETUNE_RADIO_UP_4",
-  "file": "fn_0098c180.rs",
-  "lane": "r-s735",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0098CBA0",
-  "name": "audVehicleAudioEntity::model_config_name",
-  "file": "fn_0098cba0.rs",
+  "address": "0x0098C430",
+  "name": "audio_thread_slot_ptr",
+  "file": "fn_0098c430.rs",
   "lane": "r-s735",
   "outcome": "not_reached",
   "reason": null
@@ -1467,14 +1459,6 @@
   "address": "0x0098D690",
   "name": "id_table_contains",
   "file": "fn_0098d690.rs",
-  "lane": "r-s735",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009918C0",
-  "name": "audVehicleAudioEntity::notify_headlamp_switch",
-  "file": "fn_009918c0.rs",
   "lane": "r-s735",
   "outcome": "not_reached",
   "reason": null
@@ -1744,11 +1728,19 @@
   "reason": null
  },
  {
+  "address": "0x00A096D0",
+  "name": null,
+  "file": "fn_00a096d0.rs",
+  "lane": "r-s738",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00A09E20",
   "name": null,
   "file": "fn_00a09e20.rs",
-  "lane": "r-s465",
-  "outcome": "not_reached",
+  "lane": "r-s738",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -1969,9 +1961,9 @@
  },
  {
   "address": "0x00A8AD20",
-  "name": "pool_refill_loop",
+  "name": "world_pool_operation_a8ad20",
   "file": "fn_00a8ad20.rs",
-  "lane": "r-s463",
+  "lane": "r-s737",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2552,14 +2544,6 @@
   "reason": null
  },
  {
-  "address": "0x00B41AB0",
-  "name": null,
-  "file": "fn_00b41ab0.rs",
-  "lane": "a-U112",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00B4BA80",
   "name": "CEventVehicleCollision::vf20",
   "file": "fn_00b4ba80.rs",
@@ -2595,6 +2579,14 @@
   "address": "0x00B4BB30",
   "name": "group_init_member_slots",
   "file": "fn_00b4bb30.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4BEA0",
+  "name": "peds_in_same_group",
+  "file": "fn_00b4bea0.rs",
   "lane": "r-s730",
   "outcome": "not_reached",
   "reason": null
@@ -3278,6 +3270,14 @@
   "lane": "r-b548",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00C2F650",
+  "name": "detach_owned_timing_node",
+  "file": "fn_00c2f650.rs",
+  "lane": "r-s733",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00C3F0D0",
@@ -4296,14 +4296,6 @@
   "reason": null
  },
  {
-  "address": "0x00D09050",
-  "name": null,
-  "file": "fn_00d09050.rs",
-  "lane": "r-b699",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00D24A70",
   "name": "CCustomShaderEffectVehicleFX::CCustomShaderEffectVehicleFX",
   "file": "fn_00d24a70.rs",
@@ -4420,8 +4412,8 @@
   "name": "find_route_sub_task",
   "file": "fn_00d30f50.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "runtime_table"
  },
  {
   "address": "0x00D31030",
@@ -4452,16 +4444,16 @@
   "name": "CTaskComplexNewExitVehicle::CTaskComplexNewExitVehicle",
   "file": "fn_00d31100.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00D311C0",
   "name": "CTaskComplexNewGetInVehicle::CTaskComplexNewGetInVehicle",
   "file": "fn_00d311c0.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00D31230",
@@ -4484,24 +4476,24 @@
   "name": "CTaskComplexCloseVehicleDoor::~CTaskComplexCloseVehicleDoor",
   "file": "fn_00d312e0.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00D31310",
   "name": "CTaskComplexNewExitVehicle::~CTaskComplexNewExitVehicle",
   "file": "fn_00d31310.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00D31350",
   "name": "CTaskComplexNewGetInVehicle::~CTaskComplexNewGetInVehicle",
   "file": "fn_00d31350.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00D31A60",
@@ -4632,22 +4624,6 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00DCD930",
-  "name": null,
-  "file": "fn_00dcd930.rs",
-  "lane": "a-U112",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DCDED0",
-  "name": null,
-  "file": "fn_00dcded0.rs",
-  "lane": "a-U112",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00DD34B0",
   "name": "UIMontageContainer::vf100",
   "file": "fn_00dd34b0.rs",
@@ -4726,30 +4702,6 @@
   "lane": "r-s461",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00E6CE20",
-  "name": "vehicle_tuning_ratio_init_34",
-  "file": "fn_00e6ce20.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6CE40",
-  "name": "vehicle_tuning_ratio_init_35",
-  "file": "fn_00e6ce40.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6CE60",
-  "name": "vehicle_tuning_ratio_init_36",
-  "file": "fn_00e6ce60.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E6CE80",
