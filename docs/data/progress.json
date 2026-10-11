@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-10",
-  "updated_at": "2026-10-10 23:03",
+  "updated_at": "2026-10-10 23:08",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,8 +12,8 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 32227,
-    "rewritten": 17058,
+    "named": 32229,
+    "rewritten": 17063,
     "verified": 16992
   },
   "structures": 340,
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 32227,
+      "value": 32229,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (23223); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (23225); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites of game functions that passed the checker in a lane",
@@ -135,7 +135,7 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 17058,
+      "value": 17063,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
@@ -148,8 +148,8 @@
   ],
   "activity": {
     "lanes_running": 11,
-    "lanes_finished": 1944,
-    "lanes_incomplete": 283,
+    "lanes_finished": 1945,
+    "lanes_incomplete": 284,
     "devlog_entries": 552
   },
   "map": [
@@ -1221,7 +1221,7 @@
       "to": "0x00697E9C",
       "count": 152,
       "named": 150,
-      "rewritten": 83,
+      "rewritten": 85,
       "verified": 68
     },
     {
@@ -3813,7 +3813,7 @@
       "to": "0x00CDC465",
       "count": 141,
       "named": 141,
-      "rewritten": 24,
+      "rewritten": 26,
       "verified": 14
     },
     {
@@ -4163,8 +4163,8 @@
       "from": "0x00DAFF63",
       "to": "0x00DB5883",
       "count": 130,
-      "named": 53,
-      "rewritten": 43,
+      "named": 55,
+      "rewritten": 44,
       "verified": 39
     },
     {
