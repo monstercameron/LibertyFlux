@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 2 more functions pass the checker (19025 in total)",
+    "title": "Rewrites: one function imported without its re-run is taken out again",
     "commit": null,
+    "summary": "The verified count goes down by one. The coordinator imported a lane's two claims by hand a few minutes ago; one of them had not passed the coordinator's re-run and should have been held.",
+    "changes": [
+      "A lane claimed two functions. The coordinator's re-run confirmed one and could not run the other: its contract names the lane's wrong-version library, and the lane's last build of that library holds neither that function nor its wrong version. The coordinator marked the claim as held and imported the lane, but wrote the mark in a form the importer does not read, so both functions went in.",
+      "The unchecked function, a steering blend for a pedestrian task, is removed from the verified set. It is not known to differ from the original: its proof could not be repeated, which is a different thing, and it goes back to the queue as an ordinary function, not to the list of rewrites known to be wrong.",
+      "It was in the verified set for under two minutes. The hold is now written in the importer's form, and holds are written with the script that does it, not by hand."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 2 more functions pass the checker (19025 in total)",
+    "commit": "e93ecbb0aaa04f7ce7c3497ecf8f260d6f2f888f",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "2 rewrites added under rewrites/verified: 0 script native handlers and 2 other functions.",
