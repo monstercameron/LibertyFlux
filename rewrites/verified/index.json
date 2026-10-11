@@ -87678,6 +87678,60 @@
   "lane": "r-s403"
  },
  {
+  "address": "0x00B3BC40",
+  "name": "process_task_registries",
+  "kind": "function",
+  "file": "functions/fn_00b3bc40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s613"
+ },
+ {
+  "address": "0x00B3BCD0",
+  "name": "apply_object_updates_and_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00b3bcd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s613"
+ },
+ {
+  "address": "0x00B3BD40",
+  "name": "resolve_handle_or_apply_context",
+  "kind": "function",
+  "file": "functions/fn_00b3bd40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s613"
+ },
+ {
+  "address": "0x00B3BD80",
+  "name": "copy_setting_vector_and_mark_ready",
+  "kind": "function",
+  "file": "functions/fn_00b3bd80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s613"
+ },
+ {
+  "address": "0x00B3BDF0",
+  "name": "NativeImpl_SET_PED_DENSITY_MULTIPLIER",
+  "kind": "function",
+  "file": "functions/fn_00b3bdf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s613"
+ },
+ {
+  "address": "0x00B3BE00",
+  "name": "store_two_global_scalars",
+  "kind": "function",
+  "file": "functions/fn_00b3be00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s613"
+ },
+ {
   "address": "0x00B3BF40",
   "name": "task_guard_enqueue_check",
   "kind": "function",
@@ -87982,6 +88036,42 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s242"
+ },
+ {
+  "address": "0x00B44F40",
+  "name": "CEventAcquaintancePed::CEventAcquaintancePed",
+  "kind": "function",
+  "file": "functions/fn_00b44f40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s613"
+ },
+ {
+  "address": "0x00B44F70",
+  "name": "CEventAttractor::CEventAttractor",
+  "kind": "function",
+  "file": "functions/fn_00b44f70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s613"
+ },
+ {
+  "address": "0x00B44FB0",
+  "name": "CEventBuildingCollision::CEventBuildingCollision",
+  "kind": "function",
+  "file": "functions/fn_00b44fb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s613"
+ },
+ {
+  "address": "0x00B45010",
+  "name": "CEventCarUndriveable::CEventCarUndriveable",
+  "kind": "function",
+  "file": "functions/fn_00b45010.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s613"
  },
  {
   "address": "0x00B45B50",
