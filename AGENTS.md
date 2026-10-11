@@ -263,6 +263,65 @@ The changes are made in the same hour, not listed for later. The review is poste
 with a changelog entry. `review_metrics.py` in the coordinator's scratch folder produces the numbers
 and keeps a history so each review is compared with the one before.
 
+### The review's checklist (the owner's, 10 October 2026)
+
+The review has its own timer, at five past every hour, so that it runs whether or not the status
+loop notices the time. It takes five to ten minutes of coordinator time and must never become the
+bottleneck: numbers and exceptions here, deeper audits and experiments in lanes of their own.
+`review_scorecard.py` prints the scorecard and the list of exceptions; where this checklist and the
+list above differ, this one governs.
+
+The measure that matters is newly verified code, in bytes per wall-clock hour, that reproduces on
+the coordinator's own re-run. Portable lifts are counted separately. Function counts are shown and
+are not the measure.
+
+| Priority | Area | What to inspect and act on |
+|---|---|---|
+| P0 | Agent health | Running, stalled and crashed lanes, early exits, exhausted budgets, idle slots. Restart or reassign. |
+| P0 | Proof integrity | Checker and library used, meaningful contracts, wrong versions, independent re-runs. Withdraw invalid proofs. |
+| P0 | Throughput | Verified functions and bytes in the hour, accepted work per lane-hour, trend against earlier hours. |
+| P0 | Machine resources | Available memory, kernel memory, processor, disk, page file, leaked processes, sleep, concurrency limits. |
+| P0 | Pipeline failures | Failing pipeline, build breaks, checker crashes, failed imports, anything that blocks publication. |
+| P1 | Model efficiency | Success rate and verified bytes per lane-hour by model, retries, which difficulty suits which model. |
+| P1 | Task scheduling | Lanes get meaningful work: large functions, partly proven functions, high-value blockers. |
+| P1 | Deferral analysis | Group deferrals by cause; find recurring checker gaps, false deferrals, unsupported calling patterns. |
+| P1 | Review backlog | Unverified, in-review and integration-blocked items: count, reconcile, assign an owner. |
+| P1 | Portable Rust lifting | New proven lifts, coverage, differential tests, stalled lift lanes. |
+| P1 | Checker improvement | New false passes and false failures, regression results, withdrawals, share recorded on the current checker. |
+| P1 | Architecture | Portable engine boundaries stay clean; harness and compatibility logic does not leak into native subsystems. |
+| P2 | Functional coverage | Subsystem coverage, complex functions, naming gaps, dependency blockers, progress toward boot. |
+| P2 | Task list | Close what is done, find duplicates and stale items, create tasks for real gaps. |
+| P2 | Artifacts | Clear obsolete temporary files and orphaned folders; keep evidence and resumable work. |
+| P2 | Devlog and dashboard | Record material findings, publish accurate numbers, check the public status is consistent. |
+
+The scorecard, every hour: verified functions and bytes, portable lifts, withdrawals, active lanes,
+stalled lanes; and with them the share of functions of 1,000 bytes and more that are verified, the
+regression backlog and the share recorded on the current checker, accepted bytes per lane-hour by
+model, the top deferral reasons, the pipeline's state, available memory and memory per agent.
+
+The review acts, it does not only report:
+
+| Detected | Response |
+|---|---|
+| A lane with no progress | Read its log; restart or reassign |
+| Throughput falls markedly | Compare resource use, deferral reasons and task difficulty |
+| The same checker-related deferral repeats | A focused checker investigation lane |
+| A function fails repeatedly | Escalate to a stronger or specialised lane |
+| A proof does not reproduce | Hold the proof; investigate where it came from |
+| The in-review queue grows | Integration first; unblock what is stuck |
+| Lift throughput is zero | Check for blockers; allocate a lift lane |
+| Memory under the safe threshold | Throttle starts; find what holds it |
+| The pipeline is broken | A repair lane before further integration |
+| A finished task is still open | Check the evidence and close it |
+
+The coordinator owns scheduling, evidence, verification, integration decisions and recovery.
+Implementation, checker fixes and game-system changes included, belongs to lanes: the coordinator
+assigns it and does not make such changes quietly itself.
+
+Every review ends with five answers: what changed; the three biggest blockers, with evidence; what
+was fixed; what happens next, with an owner and a priority for each item; and whether the project is
+accelerating against the previous hours and the rolling 24-hour baseline.
+
 ## Commit history: one feature at a time
 
 Keep the history readable as a sequence of single changes. Someone reading the log should be able to
