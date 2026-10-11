@@ -47,8 +47,8 @@ lf_checker_rt::export!(cdecl, rw_00d26250(source: u32, animation_context: u32, a
             _ => DEFAULT_TAG,
         }
     };
-    let frame_words = [0u32, source, animation_context, action_code, source_tag, source_flags];
-    let frame_pointer = frame_words.as_ptr() as u32;
+    let frame_words = [source, animation_context, action_tag, source_tag, source_flags];
+    let frame_pointer = frame_words.as_ptr().wrapping_add(2) as u32;
     let link_result = unsafe {
         lf_checker_rt::callee_cdecl!(2, u32, animation_context, frame_pointer, source_flags, source_tag, 0, 0, 0, 0)
     };

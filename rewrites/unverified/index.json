@@ -392,46 +392,6 @@
   "reason": ""
  },
  {
-  "address": "0x00599C70",
-  "name": "leaderboard_read_value_at_index",
-  "file": "fn_00599c70.rs",
-  "lane": "r-s605",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00599CB0",
-  "name": "leaderboard_entry_width_at_index",
-  "file": "fn_00599cb0.rs",
-  "lane": "r-s605",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00599DE0",
-  "name": "leaderboard_copy_resource_address_for_match",
-  "file": "fn_00599de0.rs",
-  "lane": "r-s605",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00599E10",
-  "name": "leaderboard_find_key_position_for_index",
-  "file": "fn_00599e10.rs",
-  "lane": "r-s605",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00599E80",
-  "name": "leaderboard_read_value_for_key",
-  "file": "fn_00599e80.rs",
-  "lane": "r-s605",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
   "address": "0x0059E530",
   "name": "timing_tables_calibrate",
   "file": "fn_0059e530.rs",
@@ -640,9 +600,9 @@
   "reason": null
  },
  {
-  "address": "0x005E0AE0",
-  "name": "CTaskComplexUseWaterCannon::control_sub_task",
-  "file": "fn_005e0ae0.rs",
+  "address": "0x005E1160",
+  "name": "CPedDataCop::~CPedDataCop__deleting",
+  "file": "fn_005e1160.rs",
   "lane": "r-s726",
   "outcome": "not_reached",
   "reason": null
@@ -1240,14 +1200,6 @@
   "reason": "other"
  },
  {
-  "address": "0x0088DAC0",
-  "name": null,
-  "file": "fn_0088dac0.rs",
-  "lane": "a-U107",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x008B1270",
   "name": "biquad coefficient update",
   "file": "fn_008b1270.rs",
@@ -1499,6 +1451,14 @@
   "address": "0x009B0930",
   "name": "audPoliceScanner::alloc_report_slot",
   "file": "fn_009b0930.rs",
+  "lane": "r-s734",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B0960",
+  "name": "TimeShift_UpdateB",
+  "file": "fn_009b0960.rs",
   "lane": "r-s734",
   "outcome": "not_reached",
   "reason": null
@@ -2220,14 +2180,6 @@
   "name": null,
   "file": "fn_00b094c0.rs",
   "lane": "a-U74",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B0C150",
-  "name": null,
-  "file": "fn_00b0c150.rs",
-  "lane": "a-U107",
   "outcome": "not yet run",
   "reason": null
  },
@@ -3184,33 +3136,9 @@
   "reason": "other"
  },
  {
-  "address": "0x00C2F190",
-  "name": "vehicle_dynamics_parameters_reset",
-  "file": "fn_00c2f190.rs",
-  "lane": "r-s733",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C2F1C0",
-  "name": "vehicle_dynamics_parameters_set_scalar",
-  "file": "fn_00c2f1c0.rs",
-  "lane": "r-s733",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C2F620",
-  "name": "aud_placeable_tracker_state_init",
-  "file": "fn_00c2f620.rs",
-  "lane": "r-s733",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C30C40",
-  "name": "vehicle_heading_clear_state",
-  "file": "fn_00c30c40.rs",
+  "address": "0x00C321B0",
+  "name": "vehicle_function_00c321b0",
+  "file": "fn_00c321b0.rs",
   "lane": "r-s733",
   "outcome": "not_reached",
   "reason": null
@@ -3299,6 +3227,14 @@
   "address": "0x00C4A760",
   "name": null,
   "file": "fn_00c4a760.rs",
+  "lane": "r-s729",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C4A7E0",
+  "name": null,
+  "file": "fn_00c4a7e0.rs",
   "lane": "r-s729",
   "outcome": "not yet run",
   "reason": null
@@ -3576,73 +3512,9 @@
   "reason": "The non-vacuous stock-worker probe timed out on 3 of 60 correct trials (57 completed); all 3 mutant trials also timed out, so neither a 1,000-trial accept nor a caught mutant was established. The worker banner reported checker4 although this task requires v8, leaving the loaded worker version unclear. Unlike the earlier lane, this attempt used the ST0 double transport and modeled the callback stack-slot overwrite, then removed unused callees to make the contract non-vacuous."
  },
  {
-  "address": "0x00CBCA00",
-  "name": "initialize_on_foot_move_blend",
-  "file": "fn_00cbca00.rs",
-  "lane": "r-s610",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CBCA20",
-  "name": "CPedMoveBlendBase::vf0",
-  "file": "fn_00cbca20.rs",
-  "lane": "r-s610",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CBCA50",
-  "name": "append_move_blend_sample",
-  "file": "fn_00cbca50.rs",
-  "lane": "r-s610",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
   "address": "0x00CBE990",
   "name": "update_move_blend_weights",
   "file": "fn_00cbe990.rs",
-  "lane": "r-s610",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CBF000",
-  "name": "filter_task_candidate",
-  "file": "fn_00cbf000.rs",
-  "lane": "r-s610",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CBF050",
-  "name": "select_task_from_candidate_list",
-  "file": "fn_00cbf050.rs",
-  "lane": "r-s610",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CBFD80",
-  "name": "CPedMoveBlendOnFoot::vf19",
-  "file": "fn_00cbfd80.rs",
-  "lane": "r-s610",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CBFF30",
-  "name": "CPedMoveBlendOnFoot::vf7",
-  "file": "fn_00cbff30.rs",
-  "lane": "r-s610",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CBFF50",
-  "name": "update_tasks_beyond_threshold",
-  "file": "fn_00cbff50.rs",
   "lane": "r-s610",
   "outcome": "deferred",
   "reason": "out_of_time"
@@ -4368,6 +4240,14 @@
   "reason": null
  },
  {
+  "address": "0x00D30F50",
+  "name": "find_route_sub_task",
+  "file": "fn_00d30f50.rs",
+  "lane": "r-s727",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00D31030",
   "name": "CTaskComplexClearVehicleSeat::CTaskComplexClearVehicleSeat",
   "file": "fn_00d31030.rs",
@@ -4452,38 +4332,22 @@
   "name": "CTaskComplexNewExitVehicle::clone",
   "file": "fn_00d31a60.rs",
   "lane": "r-s728",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00D31B80",
   "name": "CTaskComplexWaitForSteppingOut::CTaskComplexWaitForSteppingOut",
   "file": "fn_00d31b80.rs",
   "lane": "r-s728",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00D44890",
   "name": null,
   "file": "fn_00d44890.rs",
   "lane": "r-b673",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D58470",
-  "name": "CCamFireTruck::constructor",
-  "file": "fn_00d58470.rs",
-  "lane": "r-s725",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D58490",
-  "name": "CCamFireTruck::destructor",
-  "file": "fn_00d58490.rs",
-  "lane": "r-s725",
   "outcome": "not_reached",
   "reason": null
  },
@@ -4582,6 +4446,14 @@
   "lane": "r-s722",
   "outcome": "deferred",
   "reason": "out_of_time"
+ },
+ {
+  "address": "0x00DCD930",
+  "name": "CTaskSimpleReloadGun::UpdatePedState",
+  "file": "fn_00dcd930.rs",
+  "lane": "a-U112",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00DD34B0",
