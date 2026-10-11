@@ -8,6 +8,7 @@ lf_checker_rt::export!(thiscall, rw_006f7ee0(destination: u32, first_value: u32,
     const FORMAT_STRING_FILE_VA: u32 = 0x00fae0f0;
     unsafe { (destination as *mut u8).write(0); }
     if first_value != 0 || second_value != 0 {
+        let format_string = lf_checker_rt::relocated(FORMAT_STRING_FILE_VA);
         lf_checker_rt::callee_cdecl!(1, u32, destination, format_string, first_value, second_value)
     } else {
         first_value
