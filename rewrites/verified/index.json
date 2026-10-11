@@ -66987,6 +66987,141 @@
   "lane": "r-b559"
  },
  {
+  "address": "0x009B5950",
+  "name": "script_state_refresh_flags",
+  "kind": "function",
+  "file": "functions/fn_009b5950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B5A00",
+  "name": "script_state_initialize_fields",
+  "kind": "function",
+  "file": "functions/fn_009b5a00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B5AA0",
+  "name": "script_state_copy_selected_vectors",
+  "kind": "function",
+  "file": "functions/fn_009b5aa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B5B80",
+  "name": "script_state_check_ready_flags",
+  "kind": "function",
+  "file": "functions/fn_009b5b80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B5BE0",
+  "name": "script_distance_fade_factor",
+  "kind": "function",
+  "file": "functions/fn_009b5be0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B5CE0",
+  "name": "script_read_selected_record_values",
+  "kind": "function",
+  "file": "functions/fn_009b5ce0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B6220",
+  "name": "script_maximum_position_value",
+  "kind": "function",
+  "file": "functions/fn_009b6220.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B6280",
+  "name": "script_any_position_component_ready",
+  "kind": "function",
+  "file": "functions/fn_009b6280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B62B0",
+  "name": "script_position_countdown_gate",
+  "kind": "function",
+  "file": "functions/fn_009b62b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B62E0",
+  "name": "script_forward_current_action_code",
+  "kind": "function",
+  "file": "functions/fn_009b62e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B6300",
+  "name": "script_copy_paired_position_records",
+  "kind": "function",
+  "file": "functions/fn_009b6300.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B6370",
+  "name": "script_read_component_angle",
+  "kind": "function",
+  "file": "functions/fn_009b6370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B6410",
+  "name": "script_reset_component_defaults",
+  "kind": "function",
+  "file": "functions/fn_009b6410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B64D0",
+  "name": "script_match_position_action_for_token",
+  "kind": "function",
+  "file": "functions/fn_009b64d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
+  "address": "0x009B6510",
+  "name": "script_get_position_action_for_token",
+  "kind": "function",
+  "file": "functions/fn_009b6510.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s668"
+ },
+ {
   "address": "0x009B68E0",
   "name": "CViewportScripted::~CViewportScripted__deleting",
   "kind": "function",
