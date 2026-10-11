@@ -6,12 +6,13 @@
 lf_checker_rt::export!(thiscall, rw_00cbca20(this: *mut u8, options: u32) -> u32 {
     const BASE_VTABLE: u32 = 0x00EAC454;
     const GLOBAL_MANAGER: u32 = 0x018B6F18;
+    const UPDATE_MANAGER_OPTION: u32 = 1;
 
     unsafe {
         this.cast::<u32>()
             .write_unaligned(lf_checker_rt::relocated(BASE_VTABLE));
     }
-    if options & 1 != 0 {
+    if options & UPDATE_MANAGER_OPTION != 0 {
         let manager = unsafe { lf_checker_rt::global::<u32>(GLOBAL_MANAGER).read_unaligned() };
         let _ = lf_checker_rt::callee_thiscall!(1, u32, manager, this as u32);
     }

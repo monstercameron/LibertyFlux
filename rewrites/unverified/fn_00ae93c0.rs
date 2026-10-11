@@ -6,8 +6,8 @@
 /// third input supplies the shift count, reduced to its low five bits.
 ///
 /// Calling convention: cdecl with two signed 32-bit indexes and one unsigned
-/// shift value. The helper receives the mask followed by the second and first
-/// indexes.
+/// shift value. The helper receives the first and second indexes followed by
+/// the mask.
 lf_checker_rt::export!(cdecl, rw_00ae93c0(first_index: i32, second_index: i32, shift_index: u32) -> () {
     if first_index < 0 || second_index < 0 || first_index >= 30 || second_index >= 30 {
         return;
@@ -18,8 +18,8 @@ lf_checker_rt::export!(cdecl, rw_00ae93c0(first_index: i32, second_index: i32, s
     lf_checker_rt::callee_cdecl!(
         APPLY_MASK_CALLEE,
         u32,
-        bit,
-        second_index as u32,
         first_index as u32,
+        second_index as u32,
+        bit,
     );
 });

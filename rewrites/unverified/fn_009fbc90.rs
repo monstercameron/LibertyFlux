@@ -17,6 +17,9 @@ lf_checker_rt::export!(cdecl, rw_009fbc90(index: i32) -> u32 {
     const NEGATIVE_SECOND: u32 = 0x00e996b0;
     const EMIT_BYTES: u32 = 0x38;
     unsafe {
+        let positive_label = lf_checker_rt::relocated(POSITIVE_LABEL);
+        let negative_first = lf_checker_rt::relocated(NEGATIVE_FIRST);
+        let negative_second = lf_checker_rt::relocated(NEGATIVE_SECOND);
         let mut local_frame = [0u32; 24];
         let frame_base = local_frame.as_mut_ptr();
         let temporary = frame_base.add(TEMP_WORD_OFFSET);
@@ -31,10 +34,10 @@ lf_checker_rt::export!(cdecl, rw_009fbc90(index: i32) -> u32 {
             let table = lf_checker_rt::relocated(INDEXED_TABLE_VA) as *const u32;
             let object = table.wrapping_add(index as usize).read_unaligned();
             let value = (object.wrapping_add(VALUE_FIELD_OFFSET) as *const u32).read_unaligned();
-            (value, POSITIVE_LABEL)
+            (value, positive_label)
         } else {
-            let fallback_value = lf_checker_rt::callee_cdecl!(4, u32, NEGATIVE_SECOND, 0, NEGATIVE_FIRST);
-            (fallback_value, NEGATIVE_FIRST)
+            let fallback_value = lf_checker_rt::callee_cdecl!(4, u32, negative_second, 0, negative_first);
+            (fallback_value, negative_first)
         };
 
         let _: u32 = lf_checker_rt::callee_thiscall!(5, u32, temporary as u32, selected_value, selected_label);

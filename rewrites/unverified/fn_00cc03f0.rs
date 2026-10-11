@@ -4,7 +4,9 @@
 /// Task type is the dword at task offset 0x0C. The manager is a stack argument.
 lf_checker_rt::export!(thiscall, rw_00cc03f0(_this: u32, manager: u32) -> u32 {
     const ACCEPTED_TASK_TYPES: [u32; 10] = [0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x1A,0x1B];
-    let mut task = lf_checker_rt::callee_thiscall!(1, u32, manager, 0, 2);
+    const FIRST_TASK_INDEX: u32 = 0;
+    const TASK_QUERY_LIMIT: u32 = 2;
+    let mut task = lf_checker_rt::callee_thiscall!(1, u32, manager, FIRST_TASK_INDEX, TASK_QUERY_LIMIT);
     loop {
         if task == 0 {
             return 0;
@@ -13,6 +15,6 @@ lf_checker_rt::export!(thiscall, rw_00cc03f0(_this: u32, manager: u32) -> u32 {
         if ACCEPTED_TASK_TYPES.contains(&task_type) {
             return task;
         }
-        task = lf_checker_rt::callee_thiscall!(2, u32, manager, 0, 2);
+        task = lf_checker_rt::callee_thiscall!(2, u32, manager, FIRST_TASK_INDEX, TASK_QUERY_LIMIT);
     }
 });

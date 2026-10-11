@@ -1,131 +1,112 @@
-// original: 0x00D2CB70 CTaskComplexUseLadderOnRoute::vf20
+﻿// original: 0x00D2CB70 CTaskComplexUseLadderOnRoute::vf20
+use lf_checker_rt::{callee_cdecl, callee_thiscall, relocated};
 
-/// Timer-gated route-ladder task update: either takes the gate path and
-/// returns 0, or, when the gate fails, refreshes the sub-task's stored
-/// position from a helper.
+const TIMER_CLOCK_ADDRESS: u32 = 0x0117_35B4;
+const TIMER_ENABLED: u32 = 0x44;
+const TIMER_RESET: u32 = 0x45;
+const TIMER_BASELINE: u32 = 0x3C;
+const TIMER_DELAY: u32 = 0x40;
+const TASK_FLAGS: u32 = 0x0C;
+const TASK_OWNER: u32 = 0x08;
+const TASK_ROUTE: u32 = 0x34;
+const TASK_VECTOR: u32 = 0x20;
+const TASK_VECTOR_W: u32 = 0x30;
+const OWNER_KIND: u32 = 0x3A6;
+
+#[inline(always)]
+unsafe fn read_u32(address: u32) -> u32 {
+    unsafe { (address as *const u32).read_unaligned() }
+}
+
+#[inline(always)]
+unsafe fn write_u32(address: u32, value: u32) {
+    unsafe { (address as *mut u32).write_unaligned(value) }
+}
+
+#[inline(always)]
+unsafe fn read_u8(address: u32) -> u8 {
+    unsafe { (address as *const u8).read_unaligned() }
+}
+
+#[inline(always)]
+unsafe fn write_u8(address: u32, value: u8) {
+    unsafe { (address as *mut u8).write_unaligned(value) }
+}
+
+/// Advance the ladder-on-route task for one route traversal.
 ///
-/// `this` is the task object (thiscall, one opaque stack word passed through
-/// to the poll call, callee pops 4). The stack argument is never read here.
-///
-/// Gate: when byte `+0x44` is set, and after latching the game timer into
-/// `+0x3c` when byte `+0x45` is set (clearing it), the task proceeds only if
-/// `start + duration` (`+0x3c`, `+0x40`) has reached the game timer, compared
-/// as SIGNED 32-bit. Unless flag bit 1 at `+0xc` is set, virtual slot 5 of
-/// the task is polled as `wants(arg, 1, 0)`; a zero low byte fails the gate,
-/// otherwise bit 2 is set at `+0xc`. The gate path returns 0.
-///
-/// Otherwise (gate flag clear, timer not reached, or poll refused): when the
-/// pointer at `+0x34` is null, or the object at `+0x8` does not report type
-/// `0x3a6` from its virtual slot 3, the object at `+0x8` is returned
-/// unchanged. Else four floats (`+0x20..+0x28`, `+0x30`) are staged; if the
-/// word at `+0x20` of the `+0x34` object is zero it is first initialised by
-/// two direct calls (a thiscall/0 then a thiscall/1 on `+0x10`); then a
-/// cdecl/3 helper fills four output floats from the staged values, which are
-/// stored at `+0xc0..+0xcc` of the `+0x8` object, plus the staged `+0x30`
-/// float at `+0xd8`. Returns the `+0x8` object.
-///
-/// Edge cases: all float moves are bitwise copies (no arithmetic, NaNs pass
-/// through); the timer comparison is signed, so large unsigned values behave
-/// as negatives; the low byte of the poll result alone decides.
-lf_checker_rt::export!(thiscall, rw_00D2CB70(this: u32, arg: u32) -> u32 {
+/// The task arrives in ECX and the traversal pointer is the stack argument.
+/// The traversal pointer is forwarded to the task's readiness virtual call.
+/// The timer comparison is signed; an enabled due timer calls that virtual
+/// readiness method and returns zero. Otherwise the task owner is queried
+/// for exact route kind 934. That route kind copies raw float words through
+/// the route-vector helper into the owner's output fields. The helper's two
+/// stack pointers overlap in one five-word scratch array.
+unsafe fn ladder_route_impl(
+    task: u32,
+    traversal: u32,
+    expected_owner_kind: u32,
+    ready_flag_mask: u32,
+) -> u32 {
     unsafe {
-        const TIMER: u32 = 0x0117_35B4;
-        const TASK_FLAGS: u32 = 0x0c;
-        const POLL_DONE_BIT: u32 = 0x1;
-        const POLL_OK_BIT: u32 = 0x2;
-        const SUB_TASK: u32 = 0x08;
-        const LADDER_DATA: u32 = 0x34;
-        const TIMER_START: u32 = 0x3c;
-        const TIMER_DUR: u32 = 0x40;
-        const TIMER_ARMED: u32 = 0x44;
-        const TIMER_LATCH: u32 = 0x45;
-        const POS_X: u32 = 0x20;
-        const POS_Y: u32 = 0x24;
-        const POS_Z: u32 = 0x28;
-        const POS_W: u32 = 0x30;
-        const EXPECTED_TYPE: u32 = 0x3a6;
-        const INIT_FLAG: u32 = 0x20;
-        const INIT_OBJ: u32 = 0x10;
-        const OUT_X: u32 = 0xc0;
-        const OUT_Y: u32 = 0xc4;
-        const OUT_Z: u32 = 0xc8;
-        const OUT_W: u32 = 0xcc;
-        const OUT_EXTRA: u32 = 0xd8;
-        const VT_POLL: u32 = 0x14;
-        const VT_TYPE: u32 = 0x0c;
-
-        #[inline(always)]
-        unsafe fn rd32(a: u32) -> u32 {
-            unsafe { (a as *const u32).read_unaligned() }
-        }
-        #[inline(always)]
-        unsafe fn rd8(a: u32) -> u8 {
-            unsafe { (a as *const u8).read() }
-        }
-        #[inline(always)]
-        unsafe fn wr32(a: u32, v: u32) {
-            unsafe { (a as *mut u32).write_unaligned(v) }
-        }
-        #[inline(always)]
-        unsafe fn wr8(a: u32, v: u8) {
-            unsafe { (a as *mut u8).write(v) }
-        }
-        #[inline(always)]
-        unsafe fn timer() -> u32 {
-            unsafe { lf_checker_rt::global::<u32>(TIMER).read() }
-        }
-
-        let mut gated = false;
-        if rd8(this + TIMER_ARMED) != 0 {
-            if rd8(this + TIMER_LATCH) != 0 {
-                wr32(this + TIMER_START, timer());
-                wr8(this + TIMER_LATCH, 0);
+        if read_u8(task + TIMER_ENABLED) != 0 {
+            if read_u8(task + TIMER_RESET) != 0 {
+                let current_time = read_u32(relocated(TIMER_CLOCK_ADDRESS));
+                write_u32(task + TIMER_BASELINE, current_time);
+                write_u8(task + TIMER_RESET, 0);
             }
-            let end = rd32(this + TIMER_DUR).wrapping_add(rd32(this + TIMER_START));
-            if (end as i32) <= (timer() as i32) {
-                gated = true;
-            }
-        }
-        if gated && (rd32(this + TASK_FLAGS) & POLL_DONE_BIT) == 0 {
-            let vt = rd32(this);
-            let poll: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
-                unsafe { core::mem::transmute(rd32(vt + VT_POLL)) };
-            if (poll(this, arg, 1, 0) & 0xFF) == 0 {
-                gated = false;
-            } else {
-                wr32(this + TASK_FLAGS, rd32(this + TASK_FLAGS) | POLL_OK_BIT);
-            }
-        }
-        if gated {
-            return 0;
-        }
 
-        let sub = rd32(this + SUB_TASK);
-        let data = rd32(this + LADDER_DATA);
-        if data != 0 {
-            let vt = rd32(sub);
-            let get_type: extern "thiscall" fn(u32) -> u32 =
-                unsafe { core::mem::transmute(rd32(vt + VT_TYPE)) };
-            if get_type(sub) == EXPECTED_TYPE {
-                let mut out = [rd32(this + POS_X), rd32(this + POS_Y), rd32(this + POS_Z), 0u32];
-                let mut extra = rd32(this + POS_W);
-                if rd32(data + INIT_FLAG) == 0 {
-                    lf_checker_rt::callee_thiscall!(3, u32, data);
-                    lf_checker_rt::callee_thiscall!(4, u32, data + INIT_OBJ, rd32(data + INIT_FLAG));
+            let deadline = read_u32(task + TIMER_DELAY)
+                .wrapping_add(read_u32(task + TIMER_BASELINE));
+            let current_time = read_u32(relocated(TIMER_CLOCK_ADDRESS));
+            if (deadline as i32) <= (current_time as i32) {
+                if read_u32(task + TASK_FLAGS) & 1 == 0 {
+                    let ready: u32 = callee_thiscall!(1, u32, task, traversal, 1, 0);
+                    if ready & 0xFF != 0 {
+                        let task_flags = read_u32(task + TASK_FLAGS);
+                        write_u32(task + TASK_FLAGS, task_flags | ready_flag_mask);
+                    }
                 }
-                lf_checker_rt::callee_cdecl!(
-                    5, u32,
-                    out.as_mut_ptr() as u32,
-                    core::ptr::addr_of_mut!(extra) as u32,
-                    rd32(data + INIT_FLAG)
-                );
-                wr32(sub + OUT_X, out[0]);
-                wr32(sub + OUT_Y, out[1]);
-                wr32(sub + OUT_Z, out[2]);
-                wr32(sub + OUT_W, out[3]);
-                wr32(sub + OUT_EXTRA, extra);
+                return 0;
             }
         }
-        sub
+
+        let owner = read_u32(task + TASK_OWNER);
+        let route = read_u32(task + TASK_ROUTE);
+        if route != 0 {
+            let owner_kind: u32 = callee_thiscall!(2, u32, owner);
+            if owner_kind == expected_owner_kind {
+                let route_interval = read_u32(route + TASK_VECTOR);
+                let mut scratch_vectors = [
+                    read_u32(task + TASK_VECTOR_W),
+                    read_u32(task + TASK_VECTOR),
+                    read_u32(task + TASK_VECTOR + 4),
+                    read_u32(task + TASK_VECTOR + 8),
+                    0,
+                ];
+
+                if route_interval == 0 {
+                    let _route_state: u32 = callee_thiscall!(3, u32, route);
+                    let _route_duration: u32 =
+                        callee_thiscall!(4, u32, route + 0x10, route_interval);
+                }
+
+                let scratch = scratch_vectors.as_mut_ptr() as u32;
+                let _vector_result: u32 = callee_cdecl!(5, u32, scratch + 4, scratch, route_interval);
+                write_u32(owner + 0xC0, scratch_vectors[1]);
+                write_u32(owner + 0xC4, scratch_vectors[2]);
+                write_u32(owner + 0xC8, scratch_vectors[3]);
+                write_u32(owner + 0xCC, scratch_vectors[4]);
+                write_u32(owner + 0xD8, scratch_vectors[0]);
+            }
+        }
+
+        owner
     }
+}
+
+lf_checker_rt::export!(thiscall, rw_00d2cb70(task: u32, traversal: u32) -> u32 {
+    unsafe { ladder_route_impl(task, traversal, OWNER_KIND, 2) }
 });
+
+

@@ -8,11 +8,12 @@ lf_checker_rt::export!(cdecl, rw_00cc03c0(entity: *const u8) -> u32 {
     const TASK_TYPE_OFFSET: usize = 0x1304;
     const REQUIRED_FLAG_BITS: u32 = 0x3C0;
     const REQUIRED_FLAGS: u32 = 0x80;
+    const REQUIRED_TASK_TYPE: u32 = 2;
     let task = unsafe { entity.add(TASK_POINTER_OFFSET).cast::<u32>().read_unaligned() as *const u8 };
     if task.is_null() {
         return 0;
     }
     let flags = unsafe { task.add(TASK_FLAGS_OFFSET).cast::<u32>().read_unaligned() };
     let task_type = unsafe { task.add(TASK_TYPE_OFFSET).cast::<u32>().read_unaligned() };
-    u32::from(flags & REQUIRED_FLAG_BITS == REQUIRED_FLAGS && task_type == 2)
+    u32::from(flags & REQUIRED_FLAG_BITS == REQUIRED_FLAGS && task_type == REQUIRED_TASK_TYPE)
 });

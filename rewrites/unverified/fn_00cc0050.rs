@@ -5,6 +5,7 @@
 lf_checker_rt::export!(thiscall, rw_00cc0050(this: *mut u8, _unused: u32, output: *mut u8) -> u32 {
     const SOURCE_HANDLE_OFFSET: usize = 0x3C;
     const SOURCE_COMPONENTS_OFFSET: usize = 0x360;
+    const ZERO_WORD: u32 = 0;
     let source_handle = unsafe { this.add(SOURCE_HANDLE_OFFSET).cast::<u32>().read_unaligned() };
     let source = lf_checker_rt::callee_cdecl!(1, u32, source_handle);
     let source = if source == 0 {
@@ -16,7 +17,7 @@ lf_checker_rt::export!(thiscall, rw_00cc0050(this: *mut u8, _unused: u32, output
     let second = unsafe { source.add(SOURCE_COMPONENTS_OFFSET + 4).cast::<u32>().read_unaligned() };
     let third = unsafe { source.add(SOURCE_COMPONENTS_OFFSET + 8).cast::<u32>().read_unaligned() };
     unsafe {
-        output.cast::<u32>().write_unaligned(0);
+        output.cast::<u32>().write_unaligned(ZERO_WORD);
         output.add(4).cast::<u32>().write_unaligned(first);
         output.add(8).cast::<u32>().write_unaligned(second);
         output.add(12).cast::<u32>().write_unaligned(third);
