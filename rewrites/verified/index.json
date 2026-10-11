@@ -36378,6 +36378,105 @@
   "lane": "r-s580"
  },
  {
+  "address": "0x00626E70",
+  "name": "network_record_validate_entry_list",
+  "kind": "function",
+  "file": "functions/fn_00626e70.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x00626FF0",
+  "name": "network_record_validate_alternate_entry_list",
+  "kind": "function",
+  "file": "functions/fn_00626ff0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x006271A0",
+  "name": "network_record_walk_entries_and_set_fields",
+  "kind": "function",
+  "file": "functions/fn_006271a0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x006272A0",
+  "name": "network_record_write_field_validity",
+  "kind": "function",
+  "file": "functions/fn_006272a0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x006272F0",
+  "name": "network_record_validate_list_entries",
+  "kind": "function",
+  "file": "functions/fn_006272f0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x00627360",
+  "name": "network_record_append_header_and_validate_payload",
+  "kind": "function",
+  "file": "functions/fn_00627360.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x00627550",
+  "name": "network_record_forward_range_chunks",
+  "kind": "function",
+  "file": "functions/fn_00627550.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x006275B0",
+  "name": "network_record_parse_large_envelope",
+  "kind": "function",
+  "file": "functions/fn_006275b0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x00627640",
+  "name": "network_record_parse_extended_payload",
+  "kind": "function",
+  "file": "functions/fn_00627640.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x006276D0",
+  "name": "network_record_validate_full_envelope",
+  "kind": "function",
+  "file": "functions/fn_006276d0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
+  "address": "0x00627780",
+  "name": "network_record_read_list_outputs",
+  "kind": "function",
+  "file": "functions/fn_00627780.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s580"
+ },
+ {
   "address": "0x00627970",
   "name": "network_record_copy_chunks_with_mode",
   "kind": "function",
