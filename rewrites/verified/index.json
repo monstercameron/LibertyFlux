@@ -77643,6 +77643,24 @@
   "lane": "a-G13"
  },
  {
+  "address": "0x00A73ED0",
+  "name": "CTaskSimpleMovePlayer::vf17",
+  "kind": "function",
+  "file": "functions/fn_00a73ed0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U32"
+ },
+ {
+  "address": "0x00A74000",
+  "name": "CTaskSimpleMoveSwim::vf17",
+  "kind": "function",
+  "file": "functions/fn_00a74000.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U32"
+ },
+ {
   "address": "0x00A74B70",
   "name": "ped_task_update_float_state",
   "kind": "function",
@@ -128727,6 +128745,15 @@
   "lane": "r-b267"
  },
  {
+  "address": "0x00CE5FF0",
+  "name": "peds_task_randomized_schedule_init",
+  "kind": "function",
+  "file": "functions/fn_00ce5ff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U32"
+ },
+ {
   "address": "0x00CE6110",
   "name": "update_blend_from_nm",
   "kind": "function",
@@ -128788,6 +128815,33 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b448"
+ },
+ {
+  "address": "0x00CE98E0",
+  "name": "CTaskSimpleNMJumpRollFromRoadVehicle::vf26",
+  "kind": "function",
+  "file": "functions/fn_00ce98e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U32"
+ },
+ {
+  "address": "0x00CE9D60",
+  "name": "CTaskSimpleNMRollUpAndRelax::vf26",
+  "kind": "function",
+  "file": "functions/fn_00ce9d60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U32"
+ },
+ {
+  "address": "0x00CE9FA0",
+  "name": "CTaskSimpleNMSit::vf26",
+  "kind": "function",
+  "file": "functions/fn_00ce9fa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U32"
  },
  {
   "address": "0x00CF1B50",
