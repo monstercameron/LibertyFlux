@@ -1,4 +1,4 @@
-//! `lf-taskshapediff`: differential tests of two task shapes of the ped
+﻿//! `lf-taskshapediff`: differential tests of two task shapes of the ped
 //! task family against their verified 32-bit rewrites.
 //!
 //! The verified rewrite files are included unchanged; on the 32-bit target
@@ -16,6 +16,10 @@
 extern crate self as lf_checker_rt;
 
 pub mod rt;
+
+pub use rt::callee_addr;
+pub use rt::global;
+pub use rt::relocated;
 
 #[cfg(target_arch = "x86")]
 pub mod rewrites;

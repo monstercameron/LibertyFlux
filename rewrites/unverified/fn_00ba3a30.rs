@@ -2,9 +2,8 @@
 
 lf_checker_rt::export!(cdecl, rw_00ba3a30(
     decision_maker_handle: u32,
-    _unused_argument: u32,
-    response_flags: u32,
-    response_type: u32,
+    response_kind: u32,
+    response_value: u32,
     area_x: f32,
     area_y: f32,
     area_z: f32,
@@ -70,8 +69,8 @@ lf_checker_rt::export!(cdecl, rw_00ba3a30(
         u32,
         decision_maker,
         event_index,
-        response_type,
-        response_flags,
+        response_kind,
+        response_value,
         later_record,
         records.as_ptr() as u32,
         0u32,

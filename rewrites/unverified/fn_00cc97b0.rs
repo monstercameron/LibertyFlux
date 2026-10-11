@@ -4,7 +4,7 @@
 /// associated object. The record kind must be 2 through 4 and flag bit zero at
 /// `+0x24` must be set. It rejects an object whose nested pointer aliases this
 /// record, and also rejects a matching linked record when the packed type
-/// nibble is 3 or 7 and bit 7 is set. A nonzero count at `+0x1f8` invokes a
+/// nibble is 3 or 7 and bit 7 is clear. A nonzero count at `+0x1f8` invokes a
 /// matcher; nonzero AL rejects. For kind bits `0x80` and type 3, a manager
 /// lookup is checked against the same fields. The result is returned in AL;
 /// both helper implementations are scripted by the contract.
@@ -53,7 +53,7 @@ lf_checker_rt::export!(thiscall, rw_00cc97b0(this: u32, other: u32) -> u8 {
                 (nested.wrapping_add(PACKED_TYPE) as *const u16).read_unaligned()
             };
             let nibble = packed & 0x0f;
-            if (nibble == 3 || nibble == 7) && packed & 0x80 != 0 {
+            if (nibble == 3 || nibble == 7) && packed & 0x80 == 0 {
                 return 0;
             }
         }

@@ -48,6 +48,7 @@ mod id_lookup;
 mod mover;
 mod pose;
 mod seek;
+mod task_block;
 mod task_owner;
 mod task_predicates;
 mod task_slots;
@@ -56,6 +57,9 @@ mod task_state;
 pub mod registry;
 pub mod shape_registry;
 
+pub use task_block::{
+    BLOCK_BYTES, BlockCallees, COUNTDOWN_BASE, PARAM_WORDS, SELECTOR_NONE, SUB_HEAD_OFFSET, SUB_TAIL_OFFSET, ScaleFactors, TaskBlock, truncate_to_i32,
+};
 pub use task_predicates::{
     COUNT_OFFSET, ENABLED_OFFSET, FLAG_SATISFIED, FLAGS_OFFSET, KIND_MINIMUM, KIND_OFFSET,
     KIND_TYPE_MASK, PredicateTask, RESOURCE_OFFSET, RESOURCE_TAG_OFFSET, ResourceTag, TAG_EXPECTED,

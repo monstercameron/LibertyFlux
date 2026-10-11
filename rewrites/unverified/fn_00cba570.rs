@@ -36,16 +36,16 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
     const SECONDARY_VALUE: u32 = 0x3C;
     const OBJECT_FLAGS: u32 = 0x0C;
 
-    const RVA_SIGN_MASK: u32 = 0x00BE_8FA0;
-    const RVA_ABS_MASK: u32 = 0x00BE_8F80;
-    const RVA_GLOBAL_TICK: u32 = 0x00D7_35B4;
-    const RVA_FLOAT_SCALE: u32 = 0x00D7_35BC;
-    const RVA_ONE: u32 = 0x00BE_88E8;
-    const RVA_NEG_ONE: u32 = 0x00BE_8D94;
-    const RVA_PI_F32: u32 = 0x00BE_8AA0;
-    const RVA_NEG_PI_F32: u32 = 0x00BE_8DC4;
-    const RVA_PI_F64: u32 = 0x00BE_8A50;
-    const RVA_COMPLETION_EPSILON: u32 = 0x0065_0E68;
+    const VA_SIGN_MASK: u32 = 0x00FE_8FA0;
+    const VA_ABS_MASK: u32 = 0x00FE_8F80;
+    const VA_GLOBAL_TICK: u32 = 0x0117_35B4;
+    const VA_FLOAT_SCALE: u32 = 0x0117_35BC;
+    const VA_ONE: u32 = 0x00FE_88E8;
+    const VA_NEG_ONE: u32 = 0x00FE_8D94;
+    const VA_PI_F32: u32 = 0x00FE_8AA0;
+    const VA_NEG_PI_F32: u32 = 0x00FE_8DC4;
+    const VA_PI_F64: u32 = 0x00FE_8A50;
+    const VA_COMPLETION_EPSILON: u32 = 0x0105_0E68;
 
     const CALLEE_TASK_HOOK: u32 = 0;
     const CALLEE_INITIALIZE: u32 = 1;
@@ -137,11 +137,11 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
         let mut task_tick = read_word(task_tick_address);
         if task_tick == u32::MAX {
             if read_word(this + THIS_FLAGS) & 2 == 0 {
-                task_tick = read_word(lf_checker_rt::relocated(RVA_GLOBAL_TICK))
+                task_tick = read_word(lf_checker_rt::relocated(VA_GLOBAL_TICK))
                     .wrapping_add(INITIAL_TICK_OFFSET);
                 write_word(task_tick_address, task_tick);
             } else if finish_gate != 0 {
-                task_tick = read_word(lf_checker_rt::relocated(RVA_GLOBAL_TICK))
+                task_tick = read_word(lf_checker_rt::relocated(VA_GLOBAL_TICK))
                     .wrapping_add(ACTIVE_TICK_OFFSET);
                 write_word(task_tick_address, task_tick);
             }
@@ -235,15 +235,13 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
             let target = read_float(state + TASK_TARGET);
             let current = read_float(this + THIS_CURRENT);
             let displacement = float_sub(target, current);
-            let pi = read_float(lf_checker_rt::relocated(RVA_PI_F32));
-            let negative_pi = read_float(lf_checker_rt::relocated(RVA_NEG_PI_F32));
+            let pi = read_float(lf_checker_rt::relocated(VA_PI_F32));
+            let negative_pi = read_float(lf_checker_rt::relocated(VA_NEG_PI_F32));
             let boundary = if displacement < 0.0 { negative_pi } else { pi };
             let _unobserved_second_argument = f64::from(float_add(boundary, displacement));
 
             let pi_bits = unsafe {
-                core::ptr::read_unaligned(
-                    lf_checker_rt::relocated(RVA_PI_F64) as *const u64
-                )
+                core::ptr::read_unaligned(lf_checker_rt::relocated(VA_PI_F64) as *const u64)
             };
             let angle_result: f64 = lf_checker_rt::callee_cdecl!(
                 CALLEE_ANGLE,
@@ -257,18 +255,18 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
             } else {
                 rounded_angle
             };
-            let sign_mask = read_word(lf_checker_rt::relocated(RVA_SIGN_MASK));
+            let sign_mask = read_word(lf_checker_rt::relocated(VA_SIGN_MASK));
             let negative_angle = f32::from_bits(adjusted_angle.to_bits() ^ sign_mask);
-            let mut direction = read_float(lf_checker_rt::relocated(RVA_NEG_ONE));
+            let mut direction = read_float(lf_checker_rt::relocated(VA_NEG_ONE));
             if !(0.0 > negative_angle) {
                 direction = if negative_angle == 0.0 {
                     0.0
                 } else {
-                    read_float(lf_checker_rt::relocated(RVA_ONE))
+                    read_float(lf_checker_rt::relocated(VA_ONE))
                 };
             }
 
-            let scale = read_float(lf_checker_rt::relocated(RVA_FLOAT_SCALE));
+            let scale = read_float(lf_checker_rt::relocated(VA_FLOAT_SCALE));
             let scaled_delta = float_mul(movement_delta, scale);
             let directed_delta = float_mul(scaled_delta, direction);
             let mut next_current = float_add(directed_delta, target);
@@ -293,13 +291,13 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
             let _: u32 = lf_checker_rt::callee_thiscall!(
                 CALLEE_VTABLE_FLOAT,
                 u32,
-                state_object,
+                state,
                 mapped_value.to_bits()
             );
             let _: u32 = lf_checker_rt::callee_thiscall!(
                 CALLEE_FLOAT_UPDATE,
                 u32,
-                state_object,
+                state,
                 direction.to_bits()
             );
             direction
@@ -308,7 +306,7 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
         let _: u32 = lf_checker_rt::callee_thiscall!(
             CALLEE_FINAL_FLOAT,
             u32,
-            state_object,
+            state,
             final_float.to_bits()
         );
 
@@ -320,7 +318,7 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
         let offset_x = float_sub(source_x, point_x);
         let offset_y = float_sub(source_y, point_y);
         let task_tick = read_word(this + THIS_TICK);
-        let global_tick = read_word(lf_checker_rt::relocated(RVA_GLOBAL_TICK));
+        let global_tick = read_word(lf_checker_rt::relocated(VA_GLOBAL_TICK));
 
         if (task_tick as i32) < (global_tick as i32) {
             let target_delta = float_sub(
@@ -332,9 +330,9 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
                 f32,
                 target_delta.to_bits()
             );
-            let abs_mask = read_word(lf_checker_rt::relocated(RVA_ABS_MASK));
+            let abs_mask = read_word(lf_checker_rt::relocated(VA_ABS_MASK));
             let absolute_distance = f32::from_bits(distance_value.to_bits() & abs_mask);
-            let epsilon = read_float(lf_checker_rt::relocated(RVA_COMPLETION_EPSILON));
+            let epsilon = read_float(lf_checker_rt::relocated(VA_COMPLETION_EPSILON));
             if epsilon > absolute_distance {
                 return 1;
             }
@@ -356,9 +354,9 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
                     f32,
                     target_delta.to_bits()
                 );
-                let abs_mask = read_word(lf_checker_rt::relocated(RVA_ABS_MASK));
+                let abs_mask = read_word(lf_checker_rt::relocated(VA_ABS_MASK));
                 let absolute_distance = f32::from_bits(distance_value.to_bits() & abs_mask);
-                let epsilon = read_float(lf_checker_rt::relocated(RVA_COMPLETION_EPSILON));
+                let epsilon = read_float(lf_checker_rt::relocated(VA_COMPLETION_EPSILON));
                 if epsilon > absolute_distance {
                     return 1;
                 }

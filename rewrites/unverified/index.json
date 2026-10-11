@@ -1248,6 +1248,22 @@
   "reason": "other"
  },
  {
+  "address": "0x008C5730",
+  "name": "pending_008c5730",
+  "file": "fn_008c5730.rs",
+  "lane": "r-s678",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008C5C70",
+  "name": "pending_008c5c70",
+  "file": "fn_008c5c70.rs",
+  "lane": "r-s678",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x008DBF60",
   "name": "task_ctor_update_thread_range",
   "file": "fn_008dbf60.rs",
@@ -1270,14 +1286,6 @@
   "lane": "r-b248",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00922210",
-  "name": "streaming_fn_00922210",
-  "file": "fn_00922210.rs",
-  "lane": "r-s676",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x0092AE00",
@@ -1424,17 +1432,17 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009B6300",
-  "name": "pending_009b6300",
-  "file": "fn_009b6300.rs",
+  "address": "0x009B6370",
+  "name": "pending_009b6370",
+  "file": "fn_009b6370.rs",
   "lane": "r-s668",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x009B6370",
-  "name": "pending_009b6370",
-  "file": "fn_009b6370.rs",
+  "address": "0x009B6410",
+  "name": "pending_009b6410",
+  "file": "fn_009b6410.rs",
   "lane": "r-s668",
   "outcome": "not_reached",
   "reason": null
@@ -2256,22 +2264,6 @@
   "reason": null
  },
  {
-  "address": "0x00B886C0",
-  "name": "NativeImpl_GET_VIEWPORT_POS_AND_SIZE_2",
-  "file": "fn_00b886c0.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B88720",
-  "name": "NativeImpl_HINT_CAM_2",
-  "file": "fn_00b88720.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00B888F0",
   "name": "NativeImpl_CAM_IS_SPHERE_VISIBLE",
   "file": "fn_00b888f0.rs",
@@ -2366,6 +2358,14 @@
   "lane": "r-n86",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00B8AD90",
+  "name": "NativeImpl_IS_POS_IN_CUTSCENE_BLOCKING_BOUNDS",
+  "file": "fn_00b8ad90.rs",
+  "lane": "r-s674",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00B8CA40",
@@ -3832,9 +3832,9 @@
   "reason": null
  },
  {
-  "address": "0x00D9F8C0",
-  "name": "streaming_00d9f8c0",
-  "file": "fn_00d9f8c0.rs",
+  "address": "0x00D9F100",
+  "name": "streaming_00d9f100",
+  "file": "fn_00d9f100.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
   "reason": null
@@ -3950,14 +3950,6 @@
   "lane": "r-s525",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00DE21C0",
-  "name": "UIScrollingMenu::vf110",
-  "file": "fn_00de21c0.rs",
-  "lane": "r-s669",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00DE43A0",
