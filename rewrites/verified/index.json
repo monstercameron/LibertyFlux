@@ -39042,6 +39042,51 @@
   "lane": "a-G37"
  },
  {
+  "address": "0x006595A0",
+  "name": "stream_clear_child_flags",
+  "kind": "function",
+  "file": "functions/fn_006595a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s688"
+ },
+ {
+  "address": "0x006595F0",
+  "name": "stream_rebuild_entry_links",
+  "kind": "function",
+  "file": "functions/fn_006595f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s688"
+ },
+ {
+  "address": "0x006596B0",
+  "name": "stream_find_entry_parameter",
+  "kind": "function",
+  "file": "functions/fn_006596b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s688"
+ },
+ {
+  "address": "0x00659DA0",
+  "name": "stream_build_child_byte_bitset",
+  "kind": "function",
+  "file": "functions/fn_00659da0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s688"
+ },
+ {
+  "address": "0x00659E90",
+  "name": "stream_refresh_entry_state",
+  "kind": "function",
+  "file": "functions/fn_00659e90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s688"
+ },
+ {
   "address": "0x0065AF00",
   "name": "shader_bind_pass_arrays",
   "kind": "function",
