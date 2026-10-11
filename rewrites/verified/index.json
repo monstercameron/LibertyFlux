@@ -57627,6 +57627,24 @@
   "lane": "r-s113"
  },
  {
+  "address": "0x00935930",
+  "name": "clear_network_record_flag",
+  "kind": "function",
+  "file": "functions/fn_00935930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s597"
+ },
+ {
+  "address": "0x00935950",
+  "name": "clear_network_record_state",
+  "kind": "function",
+  "file": "functions/fn_00935950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s597"
+ },
+ {
   "address": "0x00935D10",
   "name": "net_obj_update_a",
   "kind": "function",
