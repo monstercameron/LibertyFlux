@@ -53910,6 +53910,105 @@
   "lane": "r-s428"
  },
  {
+  "address": "0x008CEB60",
+  "name": "streaming_record_get_field_34f8",
+  "kind": "function",
+  "file": "functions/fn_008ceb60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
+  "address": "0x008CEB90",
+  "name": "streaming_record_get_status_word",
+  "kind": "function",
+  "file": "functions/fn_008ceb90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
+  "address": "0x008D01C0",
+  "name": "streaming_record_get_state_byte",
+  "kind": "function",
+  "file": "functions/fn_008d01c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
+  "address": "0x008D01F0",
+  "name": "streaming_record_has_flag_byte",
+  "kind": "function",
+  "file": "functions/fn_008d01f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
+  "address": "0x008D0280",
+  "name": "streaming_record_write_indexed_byte",
+  "kind": "function",
+  "file": "functions/fn_008d0280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
+  "address": "0x008D02B0",
+  "name": "streaming_record_write_three_dwords",
+  "kind": "function",
+  "file": "functions/fn_008d02b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
+  "address": "0x008D0330",
+  "name": "streaming_record_write_indexed_float",
+  "kind": "function",
+  "file": "functions/fn_008d0330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
+  "address": "0x008D0380",
+  "name": "streaming_record_write_float",
+  "kind": "function",
+  "file": "functions/fn_008d0380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
+  "address": "0x008D03B0",
+  "name": "streaming_record_write_indexed_dword",
+  "kind": "function",
+  "file": "functions/fn_008d03b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
+  "address": "0x008D03E0",
+  "name": "streaming_record_write_byte",
+  "kind": "function",
+  "file": "functions/fn_008d03e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
+  "address": "0x008D0620",
+  "name": "streaming_record_set_money",
+  "kind": "function",
+  "file": "functions/fn_008d0620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s677"
+ },
+ {
   "address": "0x008D1920",
   "name": "PlayerTargetCheck",
   "kind": "function",
