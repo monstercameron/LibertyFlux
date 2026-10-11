@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 2 more withdrawn on widened inputs, one of them for the second time today",
+    "commit": null,
+    "summary": "The verified count goes down by two. The second investigation lane settled its four functions: two are real differences and are withdrawn, and two are cleared.",
+    "changes": [
+      "A collector of visible timing entries differs from the original in two ways on trials the original completes: it compares a limit global as an unsigned number where the original's conditional is signed (281 of 1,200 trials), and it converts two floats to integers with a cast that saturates where the original's instruction gives a fixed out-of-range result (140 trials once the comparison is corrected). With both corrected it still fails 31 trials, where the original writes an overflow flag and the rewrite does not; that third difference is not yet located.",
+      "An audio query matcher was withdrawn this morning for a float conversion, corrected, proven again on a widened contract and imported. On the audit's wider contract the corrected form fails 317 of 1,100 trials in the calls it makes, on trials the original completes, and the lane checked that the wider inputs break nothing the function's callers guarantee. It is withdrawn again; the cause is not yet located. The morning's second proof widened the inputs around the fault it was correcting and not the rest, which is why every strengthening lane since has been told to widen everything the function reads.",
+      "Two are cleared and stay verified. For one, the widened contract itself was inconsistent: it widened a word in memory without widening the scripted callee answer that holds the same word, a state the real callee cannot leave; with both widened together the rewrite passes all 1,000 trials. For the other, the only failing trials are those on which the original itself faults, after a word it uses as a pointer was widened.",
+      "The signed comparison is the second of its kind found today, and the first found outside the audit lane that sampled 30 comparisons and found none: that audit's scan did not reach comparisons against untyped values, and it said so. Where the day stands: fifteen withdrawals of fourteen rewrites for differences outside the range their proofs drew, and seven of the fourteen proven again and counted."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 1 files from lanes (580 unverified rewrites, 89 in review)",
     "commit": "d27f58fcd3a92266330124cba0cf3aeae936e3d2",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
