@@ -37926,6 +37926,15 @@
   "lane": "r-s195"
  },
  {
+  "address": "0x00660B90",
+  "name": "sn_key_pair_active_lookup",
+  "kind": "function",
+  "file": "functions/fn_00660b90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s587"
+ },
+ {
   "address": "0x00660C10",
   "name": "fn_00660c10",
   "kind": "function",
@@ -38313,6 +38322,24 @@
   "lane": "r-b627"
  },
  {
+  "address": "0x00664AE0",
+  "name": "rage::snChangeAttributesTask::vf3",
+  "kind": "function",
+  "file": "functions/fn_00664ae0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s587"
+ },
+ {
+  "address": "0x00664B30",
+  "name": "network_task_state_initialize",
+  "kind": "function",
+  "file": "functions/fn_00664b30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s587"
+ },
+ {
   "address": "0x00664BE0",
   "name": "sn_task_alloc_copy_strings",
   "kind": "function",
@@ -38320,6 +38347,24 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b627"
+ },
+ {
+  "address": "0x00664CF0",
+  "name": "rage::snSendInvitesTask::vf2",
+  "kind": "function",
+  "file": "functions/fn_00664cf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s587"
+ },
+ {
+  "address": "0x00664D50",
+  "name": "rage::snSendInvitesTask::vf7",
+  "kind": "function",
+  "file": "functions/fn_00664d50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s587"
  },
  {
   "address": "0x006650B0",
