@@ -1,8 +1,20 @@
 [
   {
+    "date": "2026-10-10",
+    "title": "Hourly review: the owner's checklist, a scorecard and its own timer",
+    "commit": null,
+    "summary": "The hourly review now follows a checklist the owner supplied, runs from its own timer at five past each hour, and starts from a scorecard a script prints.",
+    "changes": [
+      "The agent rules carry the checklist: sixteen areas in three priorities, the scorecard every review must produce, the responses expected to each kind of problem, and the five answers each review ends with.",
+      "The measure that matters is stated: newly verified code in bytes per wall-clock hour that reproduces on the coordinator's re-run, with portable lifts counted separately. Function counts are shown and are not the measure.",
+      "The review used to depend on the status loop noticing the time, and one was missed when the laptop slept. It now has a timer of its own.",
+      "The division of work is written down: the coordinator schedules, collects evidence, verifies, integrates and recovers; implementation, including checker fixes, is assigned to lanes."
+    ]
+  },
+  {
     "date": "2026-10-11",
     "title": "Rust in progress: 9 files from lanes (417 unverified rewrites, 41 in review)",
-    "commit": null,
+    "commit": "f1e0f51310cc56cbad85b9db0a47e4c196823d2e",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 417 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
