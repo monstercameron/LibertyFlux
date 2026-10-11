@@ -672,35 +672,11 @@
   "reason": null
  },
  {
-  "address": "0x005E07D0",
-  "name": "CTaskComplexDriveFireTruck::vf0",
-  "file": "fn_005e07d0.rs",
-  "lane": "r-s726",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005E0830",
   "name": "CTaskComplexDriveFireTruck::vf18",
   "file": "fn_005e0830.rs",
   "lane": "r-s726",
   "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x005E16F0",
-  "name": null,
-  "file": "fn_005e16f0.rs",
-  "lane": "r-b695",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005E2300",
-  "name": null,
-  "file": "fn_005e2300.rs",
-  "lane": "r-b695",
-  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -2072,14 +2048,6 @@
   "reason": null
  },
  {
-  "address": "0x00A847D0",
-  "name": "CDieInfo::append_network_sequence_id",
-  "file": "fn_00a847d0.rs",
-  "lane": "r-s723",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A8ABE0",
   "name": "pool_construct_full",
   "file": "fn_00a8abe0.rs",
@@ -2686,14 +2654,6 @@
   "lane": "r-s383",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00B45130",
-  "name": "CEventCommunicateEvent::CEventCommunicateEvent",
-  "file": "fn_00b45130.rs",
-  "lane": "r-s718",
-  "outcome": "deferred",
-  "reason": "other"
  },
  {
   "address": "0x00B505D0",
@@ -3304,94 +3264,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00C41E80",
-  "name": null,
-  "file": "fn_00c41e80.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C42C50",
-  "name": null,
-  "file": "fn_00c42c50.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C43090",
-  "name": null,
-  "file": "fn_00c43090.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C43EA0",
-  "name": null,
-  "file": "fn_00c43ea0.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C43EC0",
-  "name": null,
-  "file": "fn_00c43ec0.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C43EE0",
-  "name": null,
-  "file": "fn_00c43ee0.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C44480",
-  "name": null,
-  "file": "fn_00c44480.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C44F70",
-  "name": null,
-  "file": "fn_00c44f70.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C45270",
-  "name": null,
-  "file": "fn_00c45270.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C45290",
-  "name": null,
-  "file": "fn_00c45290.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C45380",
-  "name": null,
-  "file": "fn_00c45380.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00C496D0",
   "name": null,
   "file": "fn_00c496d0.rs",
@@ -3462,14 +3334,6 @@
   "lane": "r-s720",
   "outcome": "not_reached",
   "reason": ""
- },
- {
-  "address": "0x00C6F720",
-  "name": "anim_group_name",
-  "file": "fn_00c6f720.rs",
-  "lane": "r-s720",
-  "outcome": "deferred",
-  "reason": "partly_proven"
  },
  {
   "address": "0x00C6F740",
@@ -4512,6 +4376,38 @@
   "reason": null
  },
  {
+  "address": "0x00D24AF0",
+  "name": "CCustomShaderEffectVehicleFX::vf7",
+  "file": "fn_00d24af0.rs",
+  "lane": "r-s727",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D24B60",
+  "name": "copy_vehicle_paint_state",
+  "file": "fn_00d24b60.rs",
+  "lane": "r-s727",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D254D0",
+  "name": "CCustomShaderEffectVehicleFX::vf6",
+  "file": "fn_00d254d0.rs",
+  "lane": "r-s727",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D25CC0",
+  "name": "get_burnt_vehicle_texture",
+  "file": "fn_00d25cc0.rs",
+  "lane": "r-s727",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00D26830",
   "name": "ped_task_request_fire",
   "file": "fn_00d26830.rs",
@@ -4832,14 +4728,6 @@
   "reason": null
  },
  {
-  "address": "0x00D57010",
-  "name": "CCamViewports::destructor",
-  "file": "fn_00d57010.rs",
-  "lane": "r-s725",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00D57030",
   "name": "CCamViewports::vf0",
   "file": "fn_00d57030.rs",
@@ -4960,14 +4848,6 @@
   "reason": null
  },
  {
-  "address": "0x00D99300",
-  "name": "CBoat::vf0",
-  "file": "fn_00d99300.rs",
-  "lane": "r-s721",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00D9E950",
   "name": "stream_global_record_value",
   "file": "fn_00d9e950.rs",
@@ -5040,17 +4920,17 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00DCA730",
-  "name": "CTaskComplexCarReactToVehicleCollisionGetOut::vf20",
-  "file": "fn_00dca730.rs",
+  "address": "0x00DCA7E0",
+  "name": "CTaskComplexCarReactToVehicleCollision::vf19",
+  "file": "fn_00dca7e0.rs",
   "lane": "r-s722",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00DCA7E0",
-  "name": "CTaskComplexCarReactToVehicleCollision::vf19",
-  "file": "fn_00dca7e0.rs",
+  "address": "0x00DCAB40",
+  "name": "CTaskComplexCarReactToVehicleCollision::vf18",
+  "file": "fn_00dcab40.rs",
   "lane": "r-s722",
   "outcome": "not_reached",
   "reason": null

@@ -326,32 +326,30 @@ lf_checker_rt::export!(cdecl, rw_00b0c150(
         let _ = lf_checker_rt::callee_cdecl!(CALL_SLOT_PREPARE, u32, row_index);
         let sequence: u32 = lf_checker_rt::callee_cdecl!(CALL_SLOT_SEQUENCE, u32, row_index);
 
-        if mode != SPECIAL_MODE {
-            let refresh: u8 = lf_checker_rt::callee_cdecl!(CALL_REFRESH_GATE, u8,);
-            let mut notify = refresh != 0;
-            if !notify {
-                notify = lf_checker_rt::callee_cdecl!(CALL_GATE, u8,) != 0;
-            }
-            if notify {
-                let context = global_u32(EXTERNAL_CONTEXT);
-                let first_object: u32 = lf_checker_rt::callee_thiscall!(CALL_EXTERNAL_LOOKUP, u32, context);
-                if first_object != 0 {
-                    let object: u32 = lf_checker_rt::callee_thiscall!(CALL_EXTERNAL_LOOKUP, u32, context);
-                    let vtable = read_u32(object);
-                    let callback = read_u32(vtable.wrapping_add(0x34));
-                    let callback_fn: extern "thiscall" fn(u32, u32) -> u32 =
-                        core::mem::transmute(callback as usize);
-                    let _ = callback_fn(object, row_index.wrapping_sub(SPECIAL_LIMIT));
+        let refresh: u8 = lf_checker_rt::callee_cdecl!(CALL_REFRESH_GATE, u8,);
+        let mut notify = refresh != 0;
+        if !notify {
+            notify = lf_checker_rt::callee_cdecl!(CALL_GATE, u8,) != 0;
+        }
+        if notify {
+            let context = global_u32(EXTERNAL_CONTEXT);
+            let first_object: u32 = lf_checker_rt::callee_thiscall!(CALL_EXTERNAL_LOOKUP, u32, context);
+            if first_object != 0 {
+                let object: u32 = lf_checker_rt::callee_thiscall!(CALL_EXTERNAL_LOOKUP, u32, context);
+                let vtable = read_u32(object);
+                let callback = read_u32(vtable.wrapping_add(0x34));
+                let callback_fn: extern "thiscall" fn(u32, u32) -> u32 =
+                    core::mem::transmute(callback as usize);
+                let _ = callback_fn(object, row_index.wrapping_sub(SPECIAL_LIMIT));
 
-                    if global_u8(EXTERNAL_ENABLED) != 0 && owner_gate as u8 != 0 {
-                        let object: u32 = lf_checker_rt::callee_thiscall!(CALL_EXTERNAL_LOOKUP, u32, context);
-                        let _ = lf_checker_rt::callee_thiscall!(
-                            CALL_EXTERNAL_COMMIT,
-                            u32,
-                            object,
-                            row_index.wrapping_sub(SPECIAL_LIMIT),
-                        );
-                    }
+                if global_u8(EXTERNAL_ENABLED) != 0 && owner_gate as u8 != 0 {
+                    let object: u32 = lf_checker_rt::callee_thiscall!(CALL_EXTERNAL_LOOKUP, u32, context);
+                    let _ = lf_checker_rt::callee_thiscall!(
+                        CALL_EXTERNAL_COMMIT,
+                        u32,
+                        object,
+                        row_index.wrapping_sub(SPECIAL_LIMIT),
+                    );
                 }
             }
         }
