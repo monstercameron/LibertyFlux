@@ -9,6 +9,59 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>How many lanes this machine can run: measured at thirty, sixty and over a hundred</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lane-count-measured-2026-10-11"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lane-count-measured-2026-10-11</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>The machine has 18 logical processors and 48 GB of memory. For most of the project the lane count was set by memory, because a lane's agent process is small and memory was what ran out first in the early weeks. On 10 and 11 October the count was taken to sixty and then to over a hundred, and the result was measured each time. Memory is not the limit for lanes that verify; the processor is.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;The machine has 18 logical processors and 48 GB of memory. For most of the project the lane count was set by memory, because a lane's agent process is small and memory was what ran out first in the early weeks. On 10 and 11 October the count was taken to sixty and then to over a hundred, and the result was measured each time. Memory is not the limit for lanes that verify; the processor is.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;The owner asked for lanes to fill memory down to a 2 GB reserve, first to finish naming and then to keep verification moving, and later asked directly whether adding more agents speeds verification up.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Lanes of the main model&lt;/th&gt;&lt;th role="columnheader"&gt;Newly verified code&lt;/th&gt;&lt;th role="columnheader"&gt;Per lane-hour&lt;/th&gt;&lt;th role="columnheader"&gt;What else was seen&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;About 12 (earlier in the week)&lt;/td&gt;&lt;td role="cell" data-label="Newly verified code"&gt;Not measured by the hour then&lt;/td&gt;&lt;td role="cell" data-label="Per lane-hour"&gt;About 4,000 bytes&lt;/td&gt;&lt;td role="cell" data-label="What else was seen"&gt;Memory to spare, processor not saturated.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;30 (four hours of the night of 10 to 11 October)&lt;/td&gt;&lt;td role="cell" data-label="Newly verified code"&gt;25,000 to 51,000 bytes an hour; 129 to 403 functions&lt;/td&gt;&lt;td role="cell" data-label="Per lane-hour"&gt;1,000 to 2,300 bytes&lt;/td&gt;&lt;td role="cell" data-label="What else was seen"&gt;Processor at 100%, 8 to 10 GB of memory unused, small-function lanes finishing most of their batches.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;About 60 (two hours the same night)&lt;/td&gt;&lt;td role="cell" data-label="Newly verified code"&gt;About 19,000 bytes an hour&lt;/td&gt;&lt;td role="cell" data-label="Per lane-hour"&gt;400 to 500 bytes&lt;/td&gt;&lt;td role="cell" data-label="What else was seen"&gt;The coordinator's own commands took up to ten minutes; lanes deferred functions for time.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;90 to 115 (the afternoon of 11 October)&lt;/td&gt;&lt;td role="cell" data-label="Newly verified code"&gt;About 19,000 bytes an hour over two hours, most of it imported after the count had fallen&lt;/td&gt;&lt;td role="cell" data-label="Per lane-hour"&gt;359 bytes&lt;/td&gt;&lt;td role="cell" data-label="What else was seen"&gt;181 to 244 threads waiting for 18 processors. Lanes' checker runs hit their time limits. The supervisor took fifteen minutes between imports. The regression runner needed 290 seconds a proof against 13 on a free machine. One coordinator command did not start for 23 minutes. Memory at the reserve, with the floor guard stopping lanes' link steps.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;All figures are verified from the hourly scorecards and the system's own counters. The comparison across rows is not perfectly clean: the lanes of the last row included many that had sat through a standby, and batches differ in difficulty. The direction is the same in every measurement.&lt;/p&gt;
+&lt;h3&gt;Why naming is different&lt;/h3&gt;
+&lt;p&gt;A naming lane is one agent reading code, with no compiler and no checker. Forty of them at once named 1,164 functions in two and a half hours, and filling memory with them worked. A verification lane compiles Rust and runs the original and the rewrite thousands of times in checker workers; three such workers per lane, across a hundred lanes, is several times what 18 processors can serve.&lt;/p&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The lane count for verification is the owner's decision and the figures above were put to him with a recommendation of about thirty. Until he answers, the count is held at thirty, which both of the options before him include.&lt;/li&gt;
+&lt;li&gt;Whatever the count, these now hold: lanes of the main model and the regression runner run below normal priority; the coordinator's supervising and importing processes run above normal; lane starts pause when available memory is under 4.5 GB and resume at 6 GB, so that lanes already running do not push the machine under the reserve; a second and, in a wave, a third finisher import ended lanes.&lt;/li&gt;
+&lt;li&gt;Naming lanes and Haiku lanes are counted apart from the thirty: the first are light, and the second are few.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What it cost to find out&lt;/h3&gt;
+&lt;p&gt;About four hours of reduced output across the two days, and lanes whose batches came back a quarter done. Nothing false was recorded: a lane that runs out of time defers, and a re-run that times out imports nothing.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Lift: task record sub-object tables and the aim blend (ped_task group, two shapes)</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free19"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free19</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>Asked. Lift the 90 verified routines of the ped task group, grouped by the data they share, one shape at a time, each lifted routine proven against its verified 32-bit rewrite.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the 90 verified routines of the ped task group, grouped by the data they share, one shape at a time, each lifted routine proven against its verified 32-bit rewrite.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Found (Verified).&lt;/strong&gt; The name group holds about nineteen data shapes. Most shapes have one routine. Two shapes had clear data and were lifted: the four sub-object tables of the task record (two routines that walk them), and the aim blend of the record (one routine with two gate calls and a hook on the target).&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Shape&lt;/th&gt;&lt;th&gt;Routines lifted&lt;/th&gt;&lt;th&gt;Proof&lt;/th&gt;&lt;th&gt;Narrowed&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Task record sub-object tables (frame remap, matrix transform)&lt;/td&gt;&lt;td data-label="Routines lifted"&gt;2&lt;/td&gt;&lt;td data-label="Proof"&gt;3,000 generated cases per routine; calls in order, record bytes and the answer compared; 17 wrong versions, all caught&lt;/td&gt;&lt;td data-label="Narrowed"&gt;A stack word the transform stores is taken as zero; callees are scripted, not the sub-objects&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Aim blend&lt;/td&gt;&lt;td data-label="Routines lifted"&gt;1&lt;/td&gt;&lt;td data-label="Proof"&gt;3,000 generated cases; calls, record bytes and answer compared; 8 wrong versions, all caught&lt;/td&gt;&lt;td data-label="Narrowed"&gt;The hook's scratch argument is masked; the hook's answer is its three floats&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Found (Verified).&lt;/strong&gt; The transform stores a word its routine never writes: it is an uninitialised stack scratch in the original, and the checker's stack fill makes it zero. The lift stores zero and records this as a narrowing. Whether the game reads that word is open.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Found (Verified).&lt;/strong&gt; The four tables share their flag bytes: table k, slot i reads the byte at k plus i, so the first table's second slot and the second table's first slot are the same byte.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Not reached.&lt;/strong&gt; The zone list routine needs a larger memory window in the differential runtime than the runtime has. The other shapes were triaged by call counts and offsets only.&lt;/p&gt;
+&lt;p&gt;Written by lane l-free19; integrated by the coordinator.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A fault blamed on an unrelocated read was undeclared callees, and a pass that depended on a mis-sized stack (lane a-H31)</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#a-h31-native-callees-not-relocation"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-h31-native-callees-not-relocation</id>
@@ -207,9 +260,8 @@
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free18</id>
     <published>2026-10-11T00:00:00Z</published>
     <updated>2026-10-11T00:00:00Z</updated>
-    <summary>From lane l-free18.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-free18.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the 118 verified routines named as the ped task group that the earlier lane had not settled, grouped by the data they share rather than by name, one shape at a time, each lifted routine proven against its verified 32-bit rewrite.&lt;/p&gt;
+    <summary>Asked. Lift the 118 verified routines named as the ped task group that the earlier lane had not settled, grouped by the data they share rather than by name, one shape at a time, each lifted routine proven against its verified 32-bit rewrite.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the 118 verified routines named as the ped task group that the earlier lane had not settled, grouped by the data they share rather than by name, one shape at a time, each lifted routine proven against its verified 32-bit rewrite.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Found (Verified).&lt;/strong&gt; The names do not match the structures. Four names are shared by different routines: the aim update (four routines), the range check (two), the heading update (two) and the state initialiser (two). Grouping by what the rewrites read and write through their first argument gives eight shapes that could be lifted with a small owned type each, a set of forwarders with constant arguments, a set of routines whose target is computed from an index, and a set of routines that walk several objects. Nine routines in eight shapes were lifted; the rest is listed by reason in the lane's results.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Shape&lt;/th&gt;&lt;th&gt;Routines lifted&lt;/th&gt;&lt;th&gt;Proof&lt;/th&gt;&lt;th&gt;Left out, and why&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
@@ -228,7 +280,8 @@
 &lt;p&gt;&lt;strong&gt;Finding (Verified).&lt;/strong&gt; In the aim update, a not-a-number first direction component kept a different sign in the lift until the operand order of the single-precision operations was pinned with the same opaque-operand helper the rewrite uses. The rewrite was not changed.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Finding (Inferred).&lt;/strong&gt; One routine copies a 170-entry preset table into the task system. The table is game data, so copying it into tracked source needs a decision; it is left out.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Each shape gets its own owned type, named for its data, in a separate module: none of the shapes shares a structure, so no single class was lifted. Collaborators travel as one trait per routine; their constant arguments are supplied by the implementation, and the proof compares the calls in order with their arguments. Callee-written scratch words are compared as non-null tokens; the proof does not compare their contents. Wrong versions each change one thing, and the proof prints how often each wrong version differs from its rewrite.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Build the eight differential test programs of the test crate for the 32-bit target and run them one at a time; then run the host tests of the peds-tasks crate on the 64-bit host. The include paths in the test crate are local to the lane's scratch tree and are shortened by the integration script.&lt;/p&gt;</content>
+&lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Build the eight differential test programs of the test crate for the 32-bit target and run them one at a time; then run the host tests of the peds-tasks crate on the 64-bit host. The include paths in the test crate are local to the lane's scratch tree and are shortened by the integration script.&lt;/p&gt;
+&lt;p&gt;Written by lane l-free18; integrated by the coordinator.&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>Lift: task event table, task manager slots and the audio task record (ped_task group)</title>
@@ -236,9 +289,8 @@
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free17</id>
     <published>2026-10-11T00:00:00Z</published>
     <updated>2026-10-11T00:00:00Z</updated>
-    <summary>From lane l-free17.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-free17.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the 149 verified routines named as the task family, grouped by the data they share rather than by name, one shape at a time, each lifted routine proven against its verified 32-bit rewrite.&lt;/p&gt;
+    <summary>Asked. Lift the 149 verified routines named as the task family, grouped by the data they share rather than by name, one shape at a time, each lifted routine proven against its verified 32-bit rewrite.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the 149 verified routines named as the task family, grouped by the data they share rather than by name, one shape at a time, each lifted routine proven against its verified 32-bit rewrite.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Found (Verified).&lt;/strong&gt; The name group is not one structure. Grouping by what the rewrites read and write through their first argument gives at least seven unrelated shapes, a family of forwarders with constant arguments, and receiver routines. Three shapes had clear data and were lifted, and one single owner-slot routine was lifted with them: a 32-record table of event and deadline records (9 routines), the task manager's pointer arrays and bomb requests (5 routines), and the audio task record (8 routines, three of them one generic release and two of them one generic stamp).&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Shape&lt;/th&gt;&lt;th&gt;Routines lifted&lt;/th&gt;&lt;th&gt;Proof&lt;/th&gt;&lt;th&gt;Left out, and why&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
@@ -253,7 +305,8 @@
 &lt;p&gt;&lt;strong&gt;Finding (Verified).&lt;/strong&gt; The window routine's comments name two deadline words "first" and "second", and the stamp routines that write the same words name them the other way round. The lift names the words by what writes them and documents the window routine's reads.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Finding (Inferred).&lt;/strong&gt; An indexed-table write routine, on the branch where its index byte is all ones, computes a zero base and writes at a small absolute address. This routine was not lifted. Whether that branch can be reached in the game is not established.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Helper addresses that a routine passes to a helper are rebuilt in the proof from the record index the lift passes. Each helper is a trait method; no operating-system call is in any lifted routine. Callee effects are assumed not to write the table or the record, and that assumption is listed in each routine's registry row.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Build and run the four differential test programs of the test crate for the 32-bit target, then the host tests of the peds-tasks crate on the 64-bit host. The test crate's include paths are local to the lane's scratch tree.&lt;/p&gt;</content>
+&lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Build and run the four differential test programs of the test crate for the 32-bit target, then the host tests of the peds-tasks crate on the 64-bit host. The test crate's include paths are local to the lane's scratch tree.&lt;/p&gt;
+&lt;p&gt;Written by lane l-free17; integrated by the coordinator.&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>Ped task mover, seek record and task id lookup lifted and proven</title>
@@ -261,9 +314,8 @@
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free16</id>
     <published>2026-10-11T00:00:00Z</published>
     <updated>2026-10-11T00:00:00Z</updated>
-    <summary>From lane l-free16.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-free16.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the group of verified free functions named as the peds-tasks part of the ped task family (109 routines, about 93 KB), starting with the simplest sub-group, and say what the group is. Method: triage by data shape, then one owning type per shape with the unlifted callees behind a trait, proven against the verified 32-bit rewrites.&lt;/p&gt;
+    <summary>Asked. Lift the group of verified free functions named as the peds-tasks part of the ped task family (109 routines, about 93 KB), starting with the simplest sub-group, and say what the group is. Method: triage by data shape, then one owning type per shape with the unlifted callees behind a trait, proven against the verified 32-bit rewrites.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the group of verified free functions named as the peds-tasks part of the ped task family (109 routines, about 93 KB), starting with the simplest sub-group, and say what the group is. Method: triage by data shape, then one owning type per shape with the unlifted callees behind a trait, proven against the verified 32-bit rewrites.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Found (Verified).&lt;/strong&gt; The 109 names are not one structure. Triage by callee count and by the constants and offsets each rewrite uses through its first argument gives about nine shapes, and the largest of them have 8 to 26 callees each. Four shapes were small enough to take first:&lt;/p&gt;
 &lt;table&gt;
 &lt;tr&gt;&lt;th&gt;Shape&lt;/th&gt;&lt;th&gt;Routines lifted&lt;/th&gt;&lt;th&gt;Proof&lt;/th&gt;&lt;/tr&gt;
@@ -275,7 +327,8 @@
 &lt;p&gt;Findings: a rewrite's comment gave 10000.0 for a constant whose verified bits read 9999.5; the lift follows the bits. A turn-tracker routine reads its sine and cosine results from the integer return register while its contract declares a float result in the SSE register; this is not resolved and that routine is not lifted.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; The owning types are the pose (with the blend state and a callee trait), the seek record and the key; the gate has no owned data and is a free function over the words it reads. Float operations keep the original operand order by passing each operand through an optimisation barrier. The drive step's blend callee is an opaque method: its shape matches the lerp routine but no callee map proves that. Lifted code has no unsafe and no addresses.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Reproduce.&lt;/strong&gt; Build the test crate for the 32-bit target and run each test program alone; the host tests run on the 64-bit host. The triage is a script that reads the work list and the rewrites and prints each routine's callee count and its constants.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Status.&lt;/strong&gt; Proofs pass on the 32-bit target (15 of 15) and host tests pass (36 of 36). The other 103 routines are not lifted; the largest families are the aim and pose solvers and the dispatch builders.&lt;/p&gt;</content>
+&lt;p&gt;&lt;strong&gt;Status.&lt;/strong&gt; Proofs pass on the 32-bit target (15 of 15) and host tests pass (36 of 36). The other 103 routines are not lifted; the largest families are the aim and pose solvers and the dispatch builders.&lt;/p&gt;
+&lt;p&gt;Written by lane l-free16; integrated by the coordinator.&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>Lane a-H30: three things the staged proof did not expect</title>
@@ -303,9 +356,8 @@ this, and the fix is a pair of variables updated only on the merge back-edges.&l
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-h28-route-probe-pin</id>
     <published>2026-10-11T00:00:00Z</published>
     <updated>2026-10-11T00:00:00Z</updated>
-    <summary>From lane a-H28.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane a-H28.&lt;/p&gt;
-&lt;p&gt;What was asked: a lane probe had to get the original to call a new helper on at least 20 of 60 completed trials,
+    <summary>What was asked: a lane probe had to get the original to call a new helper on at least 20 of 60 completed trials, and the probe had been run for 60 trials with the helper's call site stubbed. It never fired the helper.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;What was asked: a lane probe had to get the original to call a new helper on at least 20 of 60 completed trials,
 and the probe had been run for 60 trials with the helper's call site stubbed. It never fired the helper.&lt;/p&gt;
 &lt;p&gt;What was found (Verified): the probe scripted the lookup callee that the original calls just before the helper
 (a state-word record lookup) to answer zero. The original then takes a different branch and never reaches the helper.
@@ -316,7 +368,8 @@ concluding the route is unreachable. A cycled script indexes by trial number, so
 reach needs an odd index in its script.&lt;/p&gt;
 &lt;p&gt;Also (Verified): a helper answer and a region object answer scripted on the wrong parity left the branch
 unreached for a whole probe run, and a callee whose call site was left unpatched ran the real code natively.&lt;/p&gt;
-&lt;p&gt;How to reproduce: the probe contract and its generator are in the lane's retry folder (mkprobe.py, contracts28).&lt;/p&gt;</content>
+&lt;p&gt;How to reproduce: the probe contract and its generator are in the lane's retry folder (mkprobe.py, contracts28).&lt;/p&gt;
+&lt;p&gt;Written by lane a-H28; integrated by the coordinator.&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>A checked contract passed with the wrong stack-word count</title>
@@ -446,9 +499,8 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-h03-aud-occlusion-stack-word</id>
     <published>2026-10-10T00:00:00Z</published>
     <updated>2026-10-10T00:00:00Z</updated>
-    <summary>From lane a-H03.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane a-H03.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Finish the deferred occlusion group update function from the earlier stage work.&lt;/p&gt;
+    <summary>Asked. Finish the deferred occlusion group update function from the earlier stage work.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Finish the deferred occlusion group update function from the earlier stage work.&lt;/p&gt;
 &lt;table&gt;
 &lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Meaning&lt;/th&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;Stage proofs re-run on the stock worker&lt;/td&gt;&lt;td data-label="Value"&gt;7 stages, 1000/1000 each, wrong export 3/3&lt;/td&gt;&lt;td data-label="Meaning"&gt;Verified (ran it)&lt;/td&gt;&lt;/tr&gt;
@@ -457,7 +509,8 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;tr&gt;&lt;td&gt;Stack fill 1 on the ID4 and zero stages&lt;/td&gt;&lt;td data-label="Value"&gt;pass&lt;/td&gt;&lt;td data-label="Meaning"&gt;Verified (ran it). Those paths do not read that word.&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Deferred as partly proven. Full verification needs the game's value of that frame word and whether any caller reads the closed-gate EAX; neither can be settled by the checker.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Unknown.&lt;/strong&gt; The game's value of the uninitialised word; whether callers use the closed-gate return.&lt;/p&gt;</content>
+&lt;p&gt;&lt;strong&gt;Unknown.&lt;/strong&gt; The game's value of the uninitialised word; whether callers use the closed-gate return.&lt;/p&gt;
+&lt;p&gt;Written by lane a-H03; integrated by the coordinator.&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>A checker callee's seq list answers only its first step in each trial</title>
@@ -465,9 +518,8 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#checker-seq-answers-first-step-per-trial</id>
     <published>2026-10-10T00:00:00Z</published>
     <updated>2026-10-10T00:00:00Z</updated>
-    <summary>From lane a-H02.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane a-H02.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;What was asked.&lt;/strong&gt; A lane continuing a deferred function had to extend an earlier stage contract so that a callee alternates its answer between the two sides of a branch, so that the branch the callee guards is exercised.&lt;/p&gt;
+    <summary>What was asked. A lane continuing a deferred function had to extend an earlier stage contract so that a callee alternates its answer between the two sides of a branch, so that the branch the callee guards is exercised.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;What was asked.&lt;/strong&gt; A lane continuing a deferred function had to extend an earlier stage contract so that a callee alternates its answer between the two sides of a branch, so that the branch the callee guards is exercised.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;What was found.&lt;/strong&gt; The earlier contracts used a &lt;code&gt;seq&lt;/code&gt; list for the callee. A &lt;code&gt;seq&lt;/code&gt; list is consumed per call, and its position is not carried from one trial to the next. A callee that the original calls once per trial therefore always answered its first step, and the second step never ran. The earlier proof reported that the callee alternated. It did not. The branch guarded by the second answer was never executed, though the function's proof was reported as covering it.&lt;/p&gt;
 &lt;table&gt;
 &lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;
@@ -477,7 +529,8 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;What was decided.&lt;/strong&gt; Every alternating answer in this lane's contracts uses &lt;code&gt;script&lt;/code&gt;, which the driver cycles per trial. The earlier stage contracts for the same function are not changed here; the next lane should re-derive them with the same rule before relying on them.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Run the driver on one contract with a callee given &lt;code&gt;seq&lt;/code&gt; [0, 1] and one with &lt;code&gt;script&lt;/code&gt; [0, 1], both called once per trial. Read the callee's entry in the verdict's coverage block (&lt;code&gt;callees_fired_on_ok&lt;/code&gt;) and the branch shapes.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Also learned.&lt;/strong&gt; A rewrite that keeps only the low byte of a callee's return loses the callee's upper bits. When the original's return value is compared in full, the callee's upper bits are part of the result and must be kept. The checker reproduces them only when the rewrite calls the same stub.&lt;/p&gt;</content>
+&lt;p&gt;&lt;strong&gt;Also learned.&lt;/strong&gt; A rewrite that keeps only the low byte of a callee's return loses the callee's upper bits. When the original's return value is compared in full, the callee's upper bits are part of the result and must be kept. The checker reproduces them only when the rewrite calls the same stub.&lt;/p&gt;
+&lt;p&gt;Written by lane a-H02; integrated by the coordinator.&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>Encrypted callees are stubbed like plain ones; no live capture is needed for them</title>
@@ -485,9 +538,8 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#encrypted-callees-stub-like-plain-ones</id>
     <published>2026-10-10T00:00:00Z</published>
     <updated>2026-10-10T00:00:00Z</updated>
-    <summary>From lane a-H01.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane a-H01.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; A deferred renderer function (its earlier lanes proved only the early exits) was said to need a live capture of the owner's running game, because one of its direct callees lies in the encrypted first megabyte of code and faults when the checker runs it natively.&lt;/p&gt;
+    <summary>Asked. A deferred renderer function (its earlier lanes proved only the early exits) was said to need a live capture of the owner's running game, because one of its direct callees lies in the encrypted first megabyte of code and faults when the checker runs it natively.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; A deferred renderer function (its earlier lanes proved only the early exits) was said to need a live capture of the owner's running game, because one of its direct callees lies in the encrypted first megabyte of code and faults when the checker runs it natively.&lt;/p&gt;
 &lt;table&gt;
 &lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;Direct callee in the encrypted range faults when run natively&lt;/td&gt;&lt;td data-label="Value"&gt;Verified&lt;/td&gt;&lt;td data-label="What it means"&gt;The checker reports a read fault at the callee's first instruction.&lt;/td&gt;&lt;/tr&gt;
@@ -497,7 +549,8 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Encrypted callees are handled by stubs exactly like plain callees. A capture is needed only if a callee's real behaviour must be proven, which a stub never does. The earlier deferral's reason, that the mapped image is ciphertext at the callee, is correct about the bytes but was not a blocker for the checker. The function is recorded as verified with its narrowed list (stub semantics, null-receiver fault paths not proven).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Reproduce.&lt;/strong&gt; Patch each direct call instruction of the function (its relative address in the image) to a scripted callee id in the contract, and plant the stub in each indirect target slot. Run the stock checker in a 60-trial probe: the original reports ok, orig_ok equal to the trial count.&lt;/p&gt;
-&lt;p&gt;Limits: the proof covers the function under the stub model only; a callee's real effects on its pointer arguments are not compared.&lt;/p&gt;</content>
+&lt;p&gt;Limits: the proof covers the function under the stub model only; a callee's real effects on its pointer arguments are not compared.&lt;/p&gt;
+&lt;p&gt;Written by lane a-H01; integrated by the coordinator.&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>The checker's option for unrelocated absolute reads has never set up on this machine</title>
@@ -1107,58 +1160,5 @@ verdict: read-first sites first.&lt;/p&gt;
 &lt;p&gt;Reproduce: the lane folder holds the list, all run verdicts, the
 consolidation script, and the per-function results; the one repair ships
 with its contract, verdict and caught mutant.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Production batch: three fire-task dispatches verified, plus a driver output trap</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b643"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b643</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Three neighbouring fire-task dispatch routines (about one thousand bytes each) were rewritten in Rust and verified against the originals with twelve hundred trials each, including fault-parity and wrong-version runs. The batch also exposed a tooling trap worth knowing: the checker driver writes its run summary to results.json next to itself, which silently overwrote this lane's deliverable of the same name twice.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three neighbouring fire-task dispatch routines (about one thousand bytes each) were rewritten in Rust and verified against the originals with twelve hundred trials each, including fault-parity and wrong-version runs. The batch also exposed a tooling trap worth knowing: the checker driver writes its run summary to &lt;code&gt;results.json&lt;/code&gt; next to itself, which silently overwrote this lane's deliverable of the same name twice.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite three medium-sized routines from the same task-dispatch module and prove each rewrite behaves identically to the original, with contracts that script every outgoing call (including calls into the encrypted first megabyte of code and calls through object function tables) and a deliberately wrong version per routine that must fail.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All three routines verified on the stock checker with no deferrals: one over four staged contracts (including fault-parity trials for a re-initialisation path), one over three stages, one in a single contract. Every wrong version failed on exactly the word it changed.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The driver summary clobber is real and repeatable: each run replaced the lane's results file with run statistics. Both losses were reconstructed from the per-contract verdict files. Redirecting driver output to a subdirectory avoids it.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The float gates in this family are equality tests, not NaN tests. A compare-against-zero followed by a parity-tested flag check branches exactly when the value is not positive zero (any nonzero value or NaN takes the same side). A direct equality comparison in the rewrite matches bit-exactly.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Direct calls into the encrypted region intercept and script normally, confirming earlier lanes; no routine here needed deferring for that reason.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Consider renaming the driver's summary output so it cannot collide with lane deliverables, or briefing lanes to redirect driver output. Until then, a running lane's results file should not be read as authoritative mid-run.&lt;/li&gt;
-&lt;li&gt;Lanes modelling flag-based float branches should work out the parity logic from the flag definitions rather than assuming a NaN test; the wrong first guess cost this lane one probe cycle.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run any checker driver copy from a folder containing a file named &lt;code&gt;results.json&lt;/code&gt; and observe it replaced after the run. For the float gate, compare the taken side across positive zero, negative zero, nonzero values, and NaN inputs against a plain equality comparison.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Time perception without the clock: the lane estimated forty minutes more had passed than the machine showed, nearly stopping an hour early. Two stack-map computations mixed decimal and hexadecimal offsets and were corrected from snapshot diffs. One diagnostics script initially ignored a register-skip setting and reported phantom differences until fixed.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A wrong rewrite passed, and the checker could not see it</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s522"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s522</id>
-    <published>2026-10-06T00:00:00Z</published>
-    <updated>2026-10-06T00:00:00Z</updated>
-    <summary>A production lane proving small input-system functions found that the checker's comparison of changed global variables ignores where inside a declared range each change happened, so a rewrite that stores the right values at the wrong addresses still passes. Every contract in the lane was rewritten to declare globals one word at a time, which restores the check, and nothing in the checker itself was changed.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production lane proving small input-system functions found that the checker's comparison of changed global variables ignores where inside a declared range each change happened, so a rewrite that stores the right values at the wrong addresses still passes. Every contract in the lane was rewritten to declare globals one word at a time, which restores the check, and nothing in the checker itself was changed.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite forty small neighbouring functions in Rust and prove each one behaves identically to the original, with a deliberately wrong version per function to show the proof can tell right from wrong.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty-nine of the forty functions were proved, each over one thousand trials with its wrong version caught. The remaining one cannot be proved as a single contract for a documented checker limitation.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One wrong version stored its result one table slot too low and passed. Reading the checker's comparison code showed why: changed heap and stack words are recorded with their exact offsets, but changed globals are recorded with only the start address of the declared range, so all values written anywhere inside one range compare as an unordered pile. A second experiment confirmed the check runs but is blind to position: a wrong constant at the right place failed, a right value at the wrong place passed.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Declaring each global word as its own range fixes the proofs without touching the checker: the same slot-shifted wrong version then fails, naming the two word addresses. All contracts in the lane use this shape.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two smaller lessons from the same batch. Direct calls into the encrypted first megabyte of the program are intercepted at the call site and verify normally, so that flag alone is not a reason to defer a function. And three functions read a floating-point value from uninitialized caller stack space; under the checker's zero stack fill they deterministically read zero, which is what the rewrites store, with the limitation recorded on each proof.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Keep declaring globals one word per range in new contracts until the comparison records word offsets.&lt;/li&gt;
-&lt;li&gt;Consider re-running earlier proofs whose contracts declare multi-word globals ranges with two or more written words: those proofs cannot show which word got which value, and a slot-shifted wrong version is the test that tells.&lt;/li&gt;
-&lt;li&gt;Do not defer functions only because they call into the encrypted region; defer only what the checker cannot intercept.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Write a contract whose function stores two different values to two words of one declared globals range, with a wrong version that swaps the two stores. The wrong version passes. Split the range into one range per word and run again: the wrong version fails. The lane's report names the comparison routine and the contracts that demonstrate both outcomes.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The passing wrong version first looked like a mistake in the new contract, and only a second, louder wrong version showed the contract was fine and the comparison was weak. Six other first attempts failed for a sillier reason: the lane wrote callee arguments in push order instead of call order, which the checker caught every time.&lt;/p&gt;</content>
   </entry>
 </feed>
