@@ -60831,6 +60831,15 @@
   "lane": "r-s291"
  },
  {
+  "address": "0x00967180",
+  "name": "or_worker_local_flags",
+  "kind": "function",
+  "file": "functions/fn_00967180.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
   "address": "0x009671B0",
   "name": "refresh_system_metrics",
   "kind": "function",
@@ -61011,6 +61020,15 @@
   "lane": "r-s291"
  },
  {
+  "address": "0x009685B0",
+  "name": "clear_timing_sample_fields",
+  "kind": "function",
+  "file": "functions/fn_009685b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
   "address": "0x00968660",
   "name": "timing_grid_direction",
   "kind": "function",
@@ -61036,6 +61054,33 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b292"
+ },
+ {
+  "address": "0x00969210",
+  "name": "copy_worker_timing_state",
+  "kind": "function",
+  "file": "functions/fn_00969210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
+  "address": "0x00969350",
+  "name": "clear_timing_flag_bit",
+  "kind": "function",
+  "file": "functions/fn_00969350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
+  "address": "0x009693F0",
+  "name": "sum_timing_sample_triplets",
+  "kind": "function",
+  "file": "functions/fn_009693f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
  },
  {
   "address": "0x00969440",
@@ -61074,6 +61119,24 @@
   "lane": "r-b292"
  },
  {
+  "address": "0x00969D80",
+  "name": "sample_timing_profile",
+  "kind": "function",
+  "file": "functions/fn_00969d80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
+  "address": "0x00969DD0",
+  "name": "copy_timing_pair_to_outputs",
+  "kind": "function",
+  "file": "functions/fn_00969dd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
   "address": "0x00969E10",
   "name": "sample_slot_scorer",
   "kind": "function",
@@ -61090,6 +61153,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b635"
+ },
+ {
+  "address": "0x0096A410",
+  "name": "find_subway_sample",
+  "kind": "function",
+  "file": "functions/fn_0096a410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
  },
  {
   "address": "0x0096A470",
@@ -61110,6 +61182,15 @@
   "lane": "r-b279"
  },
  {
+  "address": "0x0096ACC0",
+  "name": "timing_worker_record_at",
+  "kind": "function",
+  "file": "functions/fn_0096acc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
   "address": "0x0096ACF0",
   "name": "DEAFENING_STRENGTH_TO_ATTENUATION",
   "kind": "function",
@@ -61117,6 +61198,42 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b279"
+ },
+ {
+  "address": "0x0096BCC0",
+  "name": "all_timing_slots_ready",
+  "kind": "function",
+  "file": "functions/fn_0096bcc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
+  "address": "0x0096BCE0",
+  "name": "has_timing_transition",
+  "kind": "function",
+  "file": "functions/fn_0096bce0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
+  "address": "0x0096BD00",
+  "name": "read_timing_state_outputs",
+  "kind": "function",
+  "file": "functions/fn_0096bd00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
+  "address": "0x0096BD30",
+  "name": "contains_timing_pair",
+  "kind": "function",
+  "file": "functions/fn_0096bd30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
  },
  {
   "address": "0x0096C140",
@@ -61137,6 +61254,33 @@
   "lane": "r-b296"
  },
  {
+  "address": "0x0096CD10",
+  "name": "interpolate_timing_value",
+  "kind": "function",
+  "file": "functions/fn_0096cd10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
+  "address": "0x0096D180",
+  "name": "append_timing_sample",
+  "kind": "function",
+  "file": "functions/fn_0096d180.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
+  "address": "0x0096D1E0",
+  "name": "build_timing_curve_sample",
+  "kind": "function",
+  "file": "functions/fn_0096d1e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
+ },
+ {
   "address": "0x0096D230",
   "name": "basis_from_target_pos",
   "kind": "function",
@@ -61144,6 +61288,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b296"
+ },
+ {
+  "address": "0x0096D450",
+  "name": "copy_timing_sample_record",
+  "kind": "function",
+  "file": "functions/fn_0096d450.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s592"
  },
  {
   "address": "0x0096E680",
