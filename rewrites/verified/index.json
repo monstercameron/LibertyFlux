@@ -43587,6 +43587,150 @@
   "lane": "r-s474"
  },
  {
+  "address": "0x008765A0",
+  "name": "crmt_blend_request_teardown",
+  "kind": "function",
+  "file": "functions/fn_008765a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876610",
+  "name": "rage::crmtRequestBlend::vf1",
+  "kind": "function",
+  "file": "functions/fn_00876610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876650",
+  "name": "crmt_blend_weight_clamp",
+  "kind": "function",
+  "file": "functions/fn_00876650.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876680",
+  "name": "crmt_blend_request_set_source",
+  "kind": "function",
+  "file": "functions/fn_00876680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876710",
+  "name": "crmt_request_source_initialize",
+  "kind": "function",
+  "file": "functions/fn_00876710.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876760",
+  "name": "rage::crmtRequestExpression::vf0",
+  "kind": "function",
+  "file": "functions/fn_00876760.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876790",
+  "name": "crmt_request_source_replace",
+  "kind": "function",
+  "file": "functions/fn_00876790.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876800",
+  "name": "crmt_expression_request_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00876800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876860",
+  "name": "crmt_expression_request_set_source",
+  "kind": "function",
+  "file": "functions/fn_00876860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876890",
+  "name": "rage::crmtRequestExpression::vf2",
+  "kind": "function",
+  "file": "functions/fn_00876890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876950",
+  "name": "crmt_extrapolate_request_initialize",
+  "kind": "function",
+  "file": "functions/fn_00876950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x008769C0",
+  "name": "crmt_extrapolate_request_reset",
+  "kind": "function",
+  "file": "functions/fn_008769c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876A10",
+  "name": "rage::crmtRequestExtrapolate::vf1",
+  "kind": "function",
+  "file": "functions/fn_00876a10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876A80",
+  "name": "rage::crmtRequestFrame::vf0",
+  "kind": "function",
+  "file": "functions/fn_00876a80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876AB0",
+  "name": "crmt_frame_request_initialize",
+  "kind": "function",
+  "file": "functions/fn_00876ab0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
+  "address": "0x00876B00",
+  "name": "crmt_frame_request_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00876b00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s583"
+ },
+ {
   "address": "0x00877810",
   "name": "rage::crmtComposerOptimized::vf1",
   "kind": "function",
