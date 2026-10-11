@@ -480,14 +480,6 @@
   "reason": "runtime_table"
  },
  {
-  "address": "0x005D3470",
-  "name": "pending_005d3470",
-  "file": "fn_005d3470.rs",
-  "lane": "r-s731",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005DA100",
   "name": "fn_005da100",
   "file": "fn_005da100.rs",
@@ -1224,14 +1216,6 @@
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
  },
  {
-  "address": "0x008B1270",
-  "name": "biquad coefficient update",
-  "file": "fn_008b1270.rs",
-  "lane": "a-U69",
-  "outcome": "failed_v8",
-  "reason": "The stock v8 full run failed 17/1000 heap comparisons on NaN sign bits in the final coefficient; 1000 originals completed and a 60-trial probe passed."
- },
- {
   "address": "0x008DBF60",
   "name": "task_ctor_update_thread_range",
   "file": "fn_008dbf60.rs",
@@ -1384,17 +1368,9 @@
   "reason": null
  },
  {
-  "address": "0x0098C0B0",
-  "name": "audio_vehicle_mix_level_get",
-  "file": "fn_0098c0b0.rs",
-  "lane": "r-s735",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0098C1A0",
-  "name": "audVehicleAudioEntity::ensure_heli_config",
-  "file": "fn_0098c1a0.rs",
+  "address": "0x0098C3C0",
+  "name": "audVehicleAudioEntity::compute_occluded_gains",
+  "file": "fn_0098c3c0.rs",
   "lane": "r-s735",
   "outcome": "not_reached",
   "reason": null
@@ -1406,6 +1382,14 @@
   "lane": "r-s420",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x009B3EB0",
+  "name": "NativeImpl_REPORT_CRIME",
+  "file": "fn_009b3eb0.rs",
+  "lane": "r-s734",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x009B6550",
@@ -1568,6 +1552,14 @@
   "reason": null
  },
  {
+  "address": "0x009E2DD0",
+  "name": null,
+  "file": "fn_009e2dd0.rs",
+  "lane": "a-U122",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x009EF350",
   "name": "CPlayerPed::vf58",
   "file": "fn_009ef350.rs",
@@ -1649,8 +1641,16 @@
  },
  {
   "address": "0x00A0B1A0",
-  "name": "RadarBlipMgr_FlushMissionBlips",
+  "name": null,
   "file": "fn_00a0b1a0.rs",
+  "lane": "r-s465",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A0B390",
+  "name": "ScriptHandle_CheckOwned",
+  "file": "fn_00a0b390.rs",
   "lane": "r-s738",
   "outcome": "not_reached",
   "reason": null
@@ -1840,14 +1840,6 @@
   "reason": null
  },
  {
-  "address": "0x00A87680",
-  "name": null,
-  "file": "fn_00a87680.rs",
-  "lane": "a-U116",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00A8ABE0",
   "name": "pool_construct_full",
   "file": "fn_00a8abe0.rs",
@@ -1873,9 +1865,9 @@
  },
  {
   "address": "0x00A8D5F0",
-  "name": "pool_vec_kernel_notify",
+  "name": "pool_emit_positioned",
   "file": "fn_00a8d5f0.rs",
-  "lane": "r-s737",
+  "lane": "r-s463",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2400,14 +2392,6 @@
   "reason": null
  },
  {
-  "address": "0x00B12D60",
-  "name": "CObject::vf0",
-  "file": "fn_00b12d60.rs",
-  "lane": "r-s741",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B13310",
   "name": "world_pools_function_00b13310",
   "file": "fn_00b13310.rs",
@@ -2472,36 +2456,28 @@
   "reason": null
  },
  {
-  "address": "0x00B4BC20",
-  "name": "group_free_entry",
-  "file": "fn_00b4bc20.rs",
-  "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B4BEA0",
   "name": "peds_in_same_group",
   "file": "fn_00b4bea0.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00B4C120",
   "name": "group_remove_all_members",
   "file": "fn_00b4c120.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00B4C160",
   "name": "group_index_from_entry",
   "file": "fn_00b4c160.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00B505D0",
@@ -3104,17 +3080,17 @@
   "reason": "other"
  },
  {
-  "address": "0x00C38880",
-  "name": "zone_table_row_for_mode",
-  "file": "fn_00c38880.rs",
+  "address": "0x00C319B0",
+  "name": "CPlane::vf110",
+  "file": "fn_00c319b0.rs",
   "lane": "r-s733",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00C38BA0",
-  "name": "CTrain::vf0",
-  "file": "fn_00c38ba0.rs",
+  "address": "0x00C38880",
+  "name": "zone_table_row_for_mode",
+  "file": "fn_00c38880.rs",
   "lane": "r-s733",
   "outcome": "not_reached",
   "reason": null
@@ -4136,9 +4112,9 @@
   "reason": null
  },
  {
-  "address": "0x00D09940",
-  "name": "CTaskComplexBackOff::vf19",
-  "file": "fn_00d09940.rs",
+  "address": "0x00D09CC0",
+  "name": "CTaskComplexCombatClosestTargetInArea::vf19",
+  "file": "fn_00d09cc0.rs",
   "lane": "r-b699",
   "outcome": "not_reached",
   "reason": ""
@@ -4424,6 +4400,14 @@
   "reason": "other"
  },
  {
+  "address": "0x00DFC344",
+  "name": "__atof_l",
+  "file": "fn_00dfc344.rs",
+  "lane": "a-U121",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00E4B5D0",
   "name": null,
   "file": "fn_00e4b5d0.rs",
@@ -4470,38 +4454,6 @@
   "lane": "r-s461",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00E6D600",
-  "name": "initialize_unarmed_weapon_hash",
-  "file": "fn_00e6d600.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6D620",
-  "name": "random_point_workspace_allocate_and_register_cleanup",
-  "file": "fn_00e6d620.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6D640",
-  "name": "streaming_vector_register_storage_cleanup",
-  "file": "fn_00e6d640.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6D650",
-  "name": "vehicle_tuning_ratio_init_52",
-  "file": "fn_00e6d650.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E6D670",

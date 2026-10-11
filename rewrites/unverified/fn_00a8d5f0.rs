@@ -1,4 +1,4 @@
-// original: 0x00A8D5F0 pool_vec_kernel_notify
+// original: 0x00a8d5f0 pool_emit_positioned (proposed)
 
 /// Emit one positioned record through the sink callee.
 ///

@@ -8,7 +8,7 @@
 //! through the indexed TLS slot while the child drawable is attached. It
 //! releases the TLS batch, restores the callback-updated TLS link, balances
 //! the active-context counter, conditionally requests streaming when the
-//! pending byte is set, pops the TXD resource, and returns one in AL. Model
+//! pending byte is set, pops the TXD resource, and returns whether the child pointer is non-null in AL. Model
 //! ids are sign-extended from the word at model + 0x48. All object words use
 //! the original 32-bit layout.
 
@@ -64,7 +64,7 @@ lf_checker_rt::export!(cdecl, rw_009dd7a0(model_index: u32, resource: u32) -> u8
         core::ptr::read_volatile(model.wrapping_add(MODEL_TXD_ID_OFFSET) as *const i16)
     } as i32 as u32;
 
-    let _: u32 = lf_checker_rt::callee_cdecl!(PIN_RESOURCE_CALLEE, u32);
+    let _: u32 = lf_checker_rt::callee_cdecl!(PIN_RESOURCE_CALLEE, u32,);
     let _: u32 = lf_checker_rt::callee_cdecl!(SWAP_RESOURCE_CALLEE, u32, txd_id);
 
     let tls_index = unsafe { read_word(lf_checker_rt::relocated(TLS_INDEX_FILE_VA)) } as usize;
@@ -109,6 +109,6 @@ lf_checker_rt::export!(cdecl, rw_009dd7a0(model_index: u32, resource: u32) -> u8
         );
     }
 
-    let _: u32 = lf_checker_rt::callee_cdecl!(POP_RESOURCE_CALLEE, u32);
-    1
+    let _: u32 = lf_checker_rt::callee_cdecl!(POP_RESOURCE_CALLEE, u32,);
+    u8::from(child != 0)
 });

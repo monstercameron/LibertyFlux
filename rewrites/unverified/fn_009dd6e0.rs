@@ -64,7 +64,7 @@ lf_checker_rt::export!(cdecl, rw_009dd6e0(model_index: u32, resource: u32) -> u8
         core::ptr::read_volatile(model.wrapping_add(MODEL_TXD_ID_OFFSET) as *const i16)
     } as i32 as u32;
 
-    let _: u32 = lf_checker_rt::callee_cdecl!(PIN_RESOURCE_CALLEE, u32);
+    let _: u32 = lf_checker_rt::callee_cdecl!(PIN_RESOURCE_CALLEE, u32,);
     let _: u32 = lf_checker_rt::callee_cdecl!(SWAP_RESOURCE_CALLEE, u32, txd_id);
 
     let tls_index = unsafe { read_word(lf_checker_rt::relocated(TLS_INDEX_FILE_VA)) } as usize;
@@ -109,6 +109,6 @@ lf_checker_rt::export!(cdecl, rw_009dd6e0(model_index: u32, resource: u32) -> u8
         );
     }
 
-    let _: u32 = lf_checker_rt::callee_cdecl!(POP_RESOURCE_CALLEE, u32);
+    let _: u32 = lf_checker_rt::callee_cdecl!(POP_RESOURCE_CALLEE, u32,);
     1
 });

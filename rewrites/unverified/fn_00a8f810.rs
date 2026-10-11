@@ -11,10 +11,10 @@
 lf_checker_rt::export!(thiscall, rw_00a8f810(this: u32, a: u32, b: u32) -> u32 {
     unsafe {
         const HANDLE_OFFSET: u32 = 0x2e;
-        const POOL_POINTER_TABLE: u32 = 0x00e9_5cd8;
+        const POOL_POINTER_TABLE: u32 = 0x0129_5cd8;
         const PAGE_OFFSET: u32 = 0x70;
         const RESULT_INDEX_OFFSET: u32 = 0x10;
-        const SIGNED_WORD_TABLE: u32 = 0x0125_56d8;
+        const SIGNED_WORD_TABLE: u32 = 0x0165_56d8;
         const FLAG_OFFSET: u32 = 0x4c;
         const FLAG_BIT: u32 = 3;
         const FIRST_HELPER: u32 = 1;
