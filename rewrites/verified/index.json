@@ -136566,6 +136566,15 @@
   "lane": "a-S14"
  },
  {
+  "address": "0x00DC0920",
+  "name": "task_record_insert",
+  "kind": "function",
+  "file": "functions/fn_00dc0920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s616"
+ },
+ {
   "address": "0x00DC12B0",
   "name": "peds_task_normalize",
   "kind": "function",
@@ -136611,6 +136620,15 @@
   "lane": "r-b427"
  },
  {
+  "address": "0x00DC4220",
+  "name": "task_slot_add_reference",
+  "kind": "function",
+  "file": "functions/fn_00dc4220.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s616"
+ },
+ {
   "address": "0x00DC4350",
   "name": "path_distance_to_marked_node",
   "kind": "function",
@@ -136618,6 +136636,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b427"
+ },
+ {
+  "address": "0x00DC4600",
+  "name": "task_slots_release_all",
+  "kind": "function",
+  "file": "functions/fn_00dc4600.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s616"
+ },
+ {
+  "address": "0x00DC4C50",
+  "name": "task_state_flag_lookup",
+  "kind": "function",
+  "file": "functions/fn_00dc4c50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s616"
  },
  {
   "address": "0x00DC5560",
@@ -136636,6 +136672,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b455"
+ },
+ {
+  "address": "0x00DC7630",
+  "name": "task_record_set_type",
+  "kind": "function",
+  "file": "functions/fn_00dc7630.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s616"
+ },
+ {
+  "address": "0x00DC79B0",
+  "name": "task_record_set_default_type",
+  "kind": "function",
+  "file": "functions/fn_00dc79b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s616"
  },
  {
   "address": "0x00DC8160",
