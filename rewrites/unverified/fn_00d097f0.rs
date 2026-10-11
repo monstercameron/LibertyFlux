@@ -25,6 +25,7 @@ lf_checker_rt::export!(thiscall, rw_00d097f0(owner: u32, ped: u32) -> u32 {
         const PED_SPEECH: u32 = 0x570;
         const TASK_CONTEXT: u32 = 0x20;
         const TASK_TIME_LIMIT: u32 = 0x6C;
+        const POSITIVE_ONE_F32: u32 = 0x3F80_0000;
         const POSITIVE_FIVE_F32: u32 = 0x40A0_0000;
         const ARRESTED_STRING: u32 = 0x00ED_F634;
         const ARREST_PED_STRING: u32 = 0x00ED_F640;
@@ -91,7 +92,7 @@ lf_checker_rt::export!(thiscall, rw_00d097f0(owner: u32, ped: u32) -> u32 {
                 u32::MAX,
                 context_ped,
                 speech_hash,
-                1,
+                POSITIVE_ONE_F32,
                 0,
                 0,
             )
