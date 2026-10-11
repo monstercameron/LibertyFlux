@@ -53190,6 +53190,87 @@
   "lane": "r-b612"
  },
  {
+  "address": "0x008C5710",
+  "name": "NativeImpl_SAVE_SETTINGS_4",
+  "kind": "function",
+  "file": "functions/fn_008c5710.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s678"
+ },
+ {
+  "address": "0x008C5730",
+  "name": "file_memory_state_initialize",
+  "kind": "function",
+  "file": "functions/fn_008c5730.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s678"
+ },
+ {
+  "address": "0x008C58B0",
+  "name": "two_byte_element_buffer_create",
+  "kind": "function",
+  "file": "functions/fn_008c58b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s678"
+ },
+ {
+  "address": "0x008C58E0",
+  "name": "eight_byte_element_buffer_create",
+  "kind": "function",
+  "file": "functions/fn_008c58e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s678"
+ },
+ {
+  "address": "0x008C5920",
+  "name": "twenty_four_byte_record_buffer_create",
+  "kind": "function",
+  "file": "functions/fn_008c5920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s678"
+ },
+ {
+  "address": "0x008C5960",
+  "name": "sorted_record_binary_search",
+  "kind": "function",
+  "file": "functions/fn_008c5960.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s678"
+ },
+ {
+  "address": "0x008C59B0",
+  "name": "copy_ansi_to_utf16",
+  "kind": "function",
+  "file": "functions/fn_008c59b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s678"
+ },
+ {
+  "address": "0x008C5A00",
+  "name": "copy_utf16_low_bytes",
+  "kind": "function",
+  "file": "functions/fn_008c5a00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s678"
+ },
+ {
+  "address": "0x008C5C70",
+  "name": "text_hash_index",
+  "kind": "function",
+  "file": "functions/fn_008c5c70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s678"
+ },
+ {
   "address": "0x008C5EC0",
   "name": "stream_dispatch_indexed",
   "kind": "function",
@@ -54493,6 +54574,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G06"
+ },
+ {
+  "address": "0x008D5FB0",
+  "name": "cached_record_key_equal",
+  "kind": "function",
+  "file": "functions/fn_008d5fb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s678"
  },
  {
   "address": "0x008D61E0",

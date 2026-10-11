@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Devlog: the findings of 10 and 11 October written up, with fourteen lane entries",
+    "title": "Rewrites: 10 more functions pass the checker (18461 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "10 rewrites added under rewrites/verified: 0 script native handlers and 10 other functions.",
+      "The tree now holds 18461 rewrites, 18458 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Devlog: the findings of 10 and 11 October written up, with fourteen lane entries",
+    "commit": "ce9215ccf6ac646ab256c88ad15d37deb049bc94",
     "summary": "The night's findings were in the hourly review rows and the changelog only. They are now devlog entries of their own, and the entries that lanes wrote are integrated.",
     "changes": [
       "Five entries by the coordinator: what closing eight large functions taught about proofs (a wrong version that passes is a contract fault; unwritten branches against paths the original faults on; untested inputs against unwritten code; no wrong versions in a published rewrite); the regression runner, the three faults found in it and the list maker that had hidden 5,000 proofs; six operating faults of the night, among them the machine's standby and the rule that stalled naming; three questions about the checker, two settled and the audit of float-to-integer casts still open; and the evaluation of an outside reverse-engineering toolkit, not adopted, with the one idea taken from it.",
