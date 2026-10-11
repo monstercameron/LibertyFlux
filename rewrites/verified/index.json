@@ -125604,6 +125604,132 @@
   "lane": "a-18"
  },
  {
+  "address": "0x00C10B50",
+  "name": "streaming_request_submit_if_ready",
+  "kind": "function",
+  "file": "functions/fn_00c10b50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C10BA0",
+  "name": "streaming_request_create_with_vector_and_object",
+  "kind": "function",
+  "file": "functions/fn_00c10ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C10C00",
+  "name": "streaming_request_submit_payload_pair",
+  "kind": "function",
+  "file": "functions/fn_00c10c00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C10C20",
+  "name": "streaming_request_pair_vectors",
+  "kind": "function",
+  "file": "functions/fn_00c10c20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C10CE0",
+  "name": "streaming_request_finalize_asset_metadata",
+  "kind": "function",
+  "file": "functions/fn_00c10ce0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C10D30",
+  "name": "streaming_request_submit_asset_stream",
+  "kind": "function",
+  "file": "functions/fn_00c10d30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C111B0",
+  "name": "streaming_request_copy_three_byte_code",
+  "kind": "function",
+  "file": "functions/fn_00c111b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C11200",
+  "name": "streaming_request_set_object_and_mode",
+  "kind": "function",
+  "file": "functions/fn_00c11200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C11290",
+  "name": "streaming_request_compose_vector_and_weight",
+  "kind": "function",
+  "file": "functions/fn_00c11290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C11300",
+  "name": "streaming_request_release_asset_reference",
+  "kind": "function",
+  "file": "functions/fn_00c11300.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C11320",
+  "name": "streaming_request_create_with_modes",
+  "kind": "function",
+  "file": "functions/fn_00c11320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C11370",
+  "name": "streaming_request_set_byte_value",
+  "kind": "function",
+  "file": "functions/fn_00c11370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C116B0",
+  "name": "streaming_record_update_flag_mask",
+  "kind": "function",
+  "file": "functions/fn_00c116b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
+  "address": "0x00C119A0",
+  "name": "streaming_request_forward_when_flagged",
+  "kind": "function",
+  "file": "functions/fn_00c119a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s689"
+ },
+ {
   "address": "0x00C15080",
   "name": "table_update_cond",
   "kind": "function",
