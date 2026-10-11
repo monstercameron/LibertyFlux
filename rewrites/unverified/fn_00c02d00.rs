@@ -1,5 +1,5 @@
 // original: 0x00c02d00 call_vector_transform_helper
-/// Ask a receiver helper for three output words through three stack-local pointers, then pass those words in reverse order with the receiver's f32 bits and constant one to the cdecl transform helper. Return its EAX result. The output locals are never observed except as the next call's arguments.
+/// Ask a receiver helper for three output words through three stack-local pointers, then pass all three output words in order, the receiver's f32 bits and constant one to the cdecl transform helper. Return its EAX result. The local output words are observed through the scripted call writes and the exact next-call argument log.
 lf_checker_rt::export!(thiscall, rw_00c02d00(this: u32) -> u32 {
         unsafe {
                     #[inline(always)]
@@ -63,8 +63,8 @@ lf_checker_rt::export!(thiscall, rw_00c02d00(this: u32) -> u32 {
                 outputs.add(1) as usize as u32,
                 outputs.add(2) as usize as u32,
             );
-            let first_arg = if false { transformed_words[0] } else { transformed_words[2] };
-            let third_arg = if false { transformed_words[2] } else { transformed_words[0] };
+            let first_arg = if false { transformed_words[2] } else { transformed_words[0] };
+            let third_arg = if false { transformed_words[0] } else { transformed_words[2] };
             lf_checker_rt::callee_cdecl!(2, u32, first_arg, transformed_words[1], third_arg, read_u32(this, 0x14), 1)
         }
     });

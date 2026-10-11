@@ -3,10 +3,11 @@
 /// When the physics resource has its low flag bit set, notify the shared
 /// attachment manager with the resource's embedded block and mode one. Then
 /// call the object's virtual resource lookup. A non-null result is looked up a
-/// second time and its slot at +0xe0 is called; otherwise the fallback field at
-/// +0x100 is used and the virtual lookup is retried. The selected value is
-/// forwarded to the tail helper, while a null fallback returns zero. The
-/// vtable calls and tail helper are scripted stand-ins. This is a no-argument
+/// second time and its slot at +0xe0 is called. A nonzero result or the fallback
+/// field at +0x100 then enters the second lookup stage; a null value returns
+/// zero. If that lookup is null, forward the fallback to the tail helper;
+/// otherwise look up once more, call slot +0xe0, and forward that result. The
+/// vtable calls and tail helper use planted stubs. This is a no-argument
 /// thiscall method.
 lf_checker_rt::export!(thiscall, rw_00b11aa0(this: u32) -> u32 {
     const RESOURCE: u32 = 0x78;
@@ -49,22 +50,24 @@ lf_checker_rt::export!(thiscall, rw_00b11aa0(this: u32) -> u32 {
         }
 
         let first_result = call_lookup(this);
-        let selected = if first_result != 0 {
+        let current = if first_result != 0 {
             let next = call_lookup(this);
             call_resource_method(next)
         } else {
-            let fallback = read_u32(this.wrapping_add(FALLBACK));
-            if fallback == 0 {
-                return 0;
-            }
-            let retried = call_lookup(this);
-            if retried == 0 {
-                return lf_checker_rt::callee_thiscall!(4, u32, fallback);
-            }
-            let next = call_lookup(this);
-            call_resource_method(next)
+            read_u32(this.wrapping_add(FALLBACK))
         };
+        if current == 0 {
+            return 0;
+        }
 
+        let retry_result = call_lookup(this);
+        if retry_result == 0 {
+            let fallback = read_u32(this.wrapping_add(FALLBACK));
+            return lf_checker_rt::callee_thiscall!(4, u32, fallback);
+        }
+
+        let next = call_lookup(this);
+        let selected = call_resource_method(next);
         lf_checker_rt::callee_thiscall!(4, u32, selected)
     }
 });

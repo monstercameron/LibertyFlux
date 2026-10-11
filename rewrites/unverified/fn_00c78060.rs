@@ -35,7 +35,8 @@ lf_checker_rt::export!(thiscall, rw_pg_dictionary_phbound_destroy(this: u32) -> 
             unsafe { (address as *mut u32).write_unaligned(value) }
         }
 
-        unsafe { write_u32(this, CLASS_MARKER) };
+        let class_marker = lf_checker_rt::relocated(CLASS_MARKER);
+        unsafe { write_u32(this, class_marker) };
         let object = unsafe { read_u32(this + OBJECT_PTR) };
         if object != 0 {
             let remaining = unsafe { read_u32(object + OBJECT_REFS) }.wrapping_sub(1);
