@@ -440,6 +440,14 @@
   "reason": null
  },
  {
+  "address": "0x005D2E90",
+  "name": null,
+  "file": "fn_005d2e90.rs",
+  "lane": "r-s731",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x005D30A0",
   "name": null,
   "file": "fn_005d30a0.rs",
@@ -1200,6 +1208,14 @@
   "reason": "other"
  },
  {
+  "address": "0x00895A00",
+  "name": "audio_voice_render",
+  "file": "fn_00895a00.rs",
+  "lane": "a-U105",
+  "outcome": "deferred",
+  "reason": "Unimplemented behavior: the Rust body discards its computed row-selection predicate and omits the mode-dependent persistent status-byte update; the proof only pins row/index 0 and varies status 2 versus the early-return status 3."
+ },
+ {
   "address": "0x008B1270",
   "name": "biquad coefficient update",
   "file": "fn_008b1270.rs",
@@ -1483,6 +1499,22 @@
   "address": "0x009B0A40",
   "name": "audPoliceScanner::clear_slots_for_id",
   "file": "fn_009b0a40.rs",
+  "lane": "r-s734",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B38E0",
+  "name": "audPoliceScanner::tally_crime",
+  "file": "fn_009b38e0.rs",
+  "lane": "r-s734",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B3CB0",
+  "name": "audPoliceScanner::tally_crime_detailed",
+  "file": "fn_009b3cb0.rs",
   "lane": "r-s734",
   "outcome": "not_reached",
   "reason": null
@@ -4462,14 +4494,6 @@
   "lane": "r-s722",
   "outcome": "deferred",
   "reason": "out_of_time"
- },
- {
-  "address": "0x00DCD930",
-  "name": "CTaskSimpleReloadGun::UpdatePedState",
-  "file": "fn_00dcd930.rs",
-  "lane": "a-U112",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00DD34B0",
