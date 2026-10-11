@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 2 more withdrawn on widened inputs, one of them for the second time today",
+    "title": "Rust in progress: 13 files from lanes (577 unverified rewrites, 89 in review)",
     "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 577 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 89 Rust files from 3 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "43 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 2 more withdrawn on widened inputs, one of them for the second time today",
+    "commit": "38260c7f0a751ecc2e653d15dab447869400d4f4",
     "summary": "The verified count goes down by two. The second investigation lane settled its four functions: two are real differences and are withdrawn, and two are cleared.",
     "changes": [
       "A collector of visible timing entries differs from the original in two ways on trials the original completes: it compares a limit global as an unsigned number where the original's conditional is signed (281 of 1,200 trials), and it converts two floats to integers with a cast that saturates where the original's instruction gives a fixed out-of-range result (140 trials once the comparison is corrected). With both corrected it still fails 31 trials, where the original writes an overflow flag and the rewrite does not; that third difference is not yet located.",

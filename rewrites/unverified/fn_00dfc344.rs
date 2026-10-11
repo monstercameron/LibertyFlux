@@ -52,8 +52,8 @@ lf_checker_rt::export!(cdecl, rw_00dfc344(input: u32, locale: u32) -> f64 {
             let parsed = lf_checker_rt::callee_cdecl!(
                 5,
                 u32,
-                text,
                 &mut end as *mut u32 as u32,
+                text,
                 context.as_ptr() as u32
             );
             (parsed.wrapping_add(0x10) as *const f64).read()

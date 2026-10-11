@@ -1368,9 +1368,9 @@
   "reason": null
  },
  {
-  "address": "0x0098C3C0",
-  "name": "audVehicleAudioEntity::compute_occluded_gains",
-  "file": "fn_0098c3c0.rs",
+  "address": "0x0098F0C0",
+  "name": "audio_voice_set_f32_8_12",
+  "file": "fn_0098f0c0.rs",
   "lane": "r-s735",
   "outcome": "not_reached",
   "reason": null
@@ -1382,14 +1382,6 @@
   "lane": "r-s420",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x009B3EB0",
-  "name": "NativeImpl_REPORT_CRIME",
-  "file": "fn_009b3eb0.rs",
-  "lane": "r-s734",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x009B6550",
@@ -1648,14 +1640,6 @@
   "reason": null
  },
  {
-  "address": "0x00A0B390",
-  "name": "ScriptHandle_CheckOwned",
-  "file": "fn_00a0b390.rs",
-  "lane": "r-s738",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A0B420",
   "name": null,
   "file": "fn_00a0b420.rs",
@@ -1683,6 +1667,14 @@
   "address": "0x00A32610",
   "name": null,
   "file": "fn_00a32610.rs",
+  "lane": "r-s743",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00A328F0",
+  "name": null,
+  "file": "fn_00a328f0.rs",
   "lane": "r-s743",
   "outcome": "not yet run",
   "reason": null
@@ -1868,14 +1860,6 @@
   "name": "pool_emit_positioned",
   "file": "fn_00a8d5f0.rs",
   "lane": "r-s463",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A8F790",
-  "name": "interior_portal_flag_query",
-  "file": "fn_00a8f790.rs",
-  "lane": "r-s737",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2469,6 +2453,22 @@
   "file": "fn_00b3bbd0.rs",
   "lane": "r-s383",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B3F640",
+  "name": null,
+  "file": "fn_00b3f640.rs",
+  "lane": "a-S26",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B43E00",
+  "name": "spatial_box_query",
+  "file": "fn_00b43e00.rs",
+  "lane": "r-b701",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4486,30 +4486,6 @@
   "lane": "r-s461",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00E6D6B0",
-  "name": "vehicle_tuning_ratio_init_55",
-  "file": "fn_00e6d6b0.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6D6D0",
-  "name": "vehicle_tuning_ratio_init_56",
-  "file": "fn_00e6d6d0.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6D6F0",
-  "name": "vehicle_tuning_ratio_init_57",
-  "file": "fn_00e6d6f0.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E6D790",
