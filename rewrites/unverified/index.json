@@ -1960,14 +1960,6 @@
   "reason": null
  },
  {
-  "address": "0x00A55CF0",
-  "name": "composite_bound_stamp_word_all",
-  "file": "fn_00a55cf0.rs",
-  "lane": "r-s717",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A75A40",
   "name": "ped_task_update_dispatch",
   "file": "fn_00a75a40.rs",
@@ -2532,6 +2524,14 @@
   "name": "Pickup_ApplyStateTransition",
   "file": "fn_00b0bd80.rs",
   "lane": "a-U103",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B0C150",
+  "name": null,
+  "file": "fn_00b0c150.rs",
+  "lane": "a-U107",
   "outcome": "not yet run",
   "reason": null
  },
@@ -3472,52 +3472,20 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00C1FA70",
-  "name": "streaming_test_hash_bits",
-  "file": "fn_00c1fa70.rs",
-  "lane": "r-s708",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C1FAA0",
-  "name": "streaming_lookup_named_entry",
-  "file": "fn_00c1faa0.rs",
-  "lane": "r-s708",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C1FAE0",
   "name": "streaming_initialize_sixteen_slots",
   "file": "fn_00c1fae0.rs",
   "lane": "r-s708",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C1FB30",
-  "name": "streaming_clear_entry_flags",
-  "file": "fn_00c1fb30.rs",
-  "lane": "r-s708",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C1FBB0",
-  "name": "streaming_release_entry_if_present",
-  "file": "fn_00c1fbb0.rs",
-  "lane": "r-s708",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00C1FBE0",
   "name": "streaming_append_pending_request",
   "file": "fn_00c1fbe0.rs",
   "lane": "r-s708",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00C2E810",
