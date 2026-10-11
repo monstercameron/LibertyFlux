@@ -25,7 +25,7 @@ export!(cdecl, rw_aff630() -> u32 {
     unsafe { pool_cull_and_sort(false); 0 }
 });
 
-/// Wrong version for the proof contract: reverses the distance ordering.
+// Wrong version for the proof contract: reverses the distance ordering.
 export!(cdecl, mut_aff630() -> u32 {
     unsafe { pool_cull_and_sort(true); 0 }
 });
@@ -90,7 +90,7 @@ unsafe fn pool_cull_and_sort(mutant: bool) {
         if keep_count < eligible_count {
             let mut actions_left = eligible_count.wrapping_sub(keep_count);
             let mut player = [0.0f32; 3];
-            callee_cdecl!(5, u32, player.as_mut_ptr());
+            callee_cdecl!(5, u32, player.as_mut_ptr() as u32);
 
             for i in 0..candidate_count {
                 let row = candidate_rows[i];
@@ -149,8 +149,8 @@ unsafe fn pool_cull_and_sort(mutant: bool) {
                             u32,
                             relocated(FIXED_RANGE_OBJECT),
                             matrix.wrapping_add(0x30),
-                            20.0f32,
-                            &mut range_scratch
+                            20.0f32.to_bits(),
+                            (&mut range_scratch as *mut u32) as u32
                         ) as u8)
                             != 0
                     } else {
