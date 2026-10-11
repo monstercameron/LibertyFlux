@@ -131472,6 +131472,15 @@
   "lane": "r-b500"
  },
  {
+  "address": "0x00CBA090",
+  "name": "CTaskSimpleMoveAchieveHeading::vf17",
+  "kind": "function",
+  "file": "functions/fn_00cba090.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b677"
+ },
+ {
   "address": "0x00CBA1A0",
   "name": "CTaskComplexMoveGoToPointAnyMeans::vf17",
   "kind": "function",
@@ -131560,6 +131569,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b323"
+ },
+ {
+  "address": "0x00CBAF30",
+  "name": "reverse_task_records",
+  "kind": "function",
+  "file": "functions/fn_00cbaf30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b677"
  },
  {
   "address": "0x00CBB880",
