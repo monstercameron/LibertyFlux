@@ -127422,6 +127422,33 @@
   "lane": "r-b649"
  },
  {
+  "address": "0x00CAFEB0",
+  "name": "clamp_distance_to_task_radius",
+  "kind": "function",
+  "file": "functions/fn_00cafeb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
+  "address": "0x00CB0010",
+  "name": "copy_task_position_and_speed",
+  "kind": "function",
+  "file": "functions/fn_00cb0010.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
+  "address": "0x00CB0040",
+  "name": "CTaskComplexFollowPatrolRoute::vf20",
+  "kind": "function",
+  "file": "functions/fn_00cb0040.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
   "address": "0x00CB0060",
   "name": "CTaskComplexGetOutOfWater::vf20",
   "kind": "function",
@@ -127501,6 +127528,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b462"
+ },
+ {
+  "address": "0x00CB26C0",
+  "name": "CTaskComplexGoToPointAndStandStillTimed::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb26c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
  },
  {
   "address": "0x00CB26E0",
@@ -127915,6 +127951,33 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G13"
+ },
+ {
+  "address": "0x00CB7480",
+  "name": "CTaskSimpleMoveGoToPointOnRoute::vf7",
+  "kind": "function",
+  "file": "functions/fn_00cb7480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
+  "address": "0x00CB74A0",
+  "name": "CTaskSimpleMovePathfindProblem::vf7",
+  "kind": "function",
+  "file": "functions/fn_00cb74a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
+  "address": "0x00CB74C0",
+  "name": "CTaskSimpleMoveTrackingEntity::vf7",
+  "kind": "function",
+  "file": "functions/fn_00cb74c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
  },
  {
   "address": "0x00CB7820",
@@ -128374,6 +128437,69 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s336"
+ },
+ {
+  "address": "0x00CBBEE0",
+  "name": "CTaskComplexMoveCrowdAroundLocation::vf9",
+  "kind": "function",
+  "file": "functions/fn_00cbbee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
+  "address": "0x00CBBFA0",
+  "name": "CTaskComplexGoToPointAndStandStillTimed::vf9",
+  "kind": "function",
+  "file": "functions/fn_00cbbfa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
+  "address": "0x00CBC000",
+  "name": "CTaskSimpleMoveGoToPointOnRoute::vf9",
+  "kind": "function",
+  "file": "functions/fn_00cbc000.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
+  "address": "0x00CBC070",
+  "name": "CTaskComplexMoveGetToPointContinuous::vf10",
+  "kind": "function",
+  "file": "functions/fn_00cbc070.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
+  "address": "0x00CBC090",
+  "name": "CTaskComplexGoToPointAndStandStillTimed::vf10",
+  "kind": "function",
+  "file": "functions/fn_00cbc090.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
+  "address": "0x00CBC0B0",
+  "name": "CTaskComplexMoveGoToPointRelativeToEntityAndStandStill::vf10",
+  "kind": "function",
+  "file": "functions/fn_00cbc0b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
+ },
+ {
+  "address": "0x00CBC0D0",
+  "name": "CTaskSimpleMoveGoToPointOnRoute::vf10",
+  "kind": "function",
+  "file": "functions/fn_00cbc0d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s629"
  },
  {
   "address": "0x00CBC190",
