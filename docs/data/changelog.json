@@ -2,7 +2,7 @@
   {
     "date": "2026-10-11",
     "title": "Pipeline: the event-handler lift tests no longer include a withdrawn rewrite",
-    "commit": null,
+    "commit": "28bb28aa8c78161fc4cd47193de83feaca6ae948",
     "summary": "The second of two repairs to the pipeline. One differential test crate did not compile, so the whole job of 32-bit lift tests failed. This entry records the repair; its two file changes are in the commit before it.",
     "changes": [
       "The crate that tests the lifted event-handler routines against their verified originals included the rewrite of one function that was withdrawn from the verified tree on 7 October, when its proof was found to fail the comparison of a call's receiver. The file was gone and the crate could not be built.",
