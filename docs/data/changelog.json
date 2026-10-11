@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 11 more functions pass the checker (19035 in total)",
+    "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "11 rewrites added under rewrites/verified: 0 script native handlers and 11 other functions.",
+      "The tree now holds 19035 rewrites, 19032 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Devlog: the failed pipeline run, and 706 verified rewrites that do not build from their published file",
     "commit": "52039770874757370687649cc463f309d4b0cd99",
     "summary": "The afternoon's pipeline failure is written up as one entry: lost index rows, an assembler that blamed the wrong files, and what the corrected assembler's manifest shows about the verified set.",
