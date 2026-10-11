@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-10",
+    "title": "Devlog: hourly review, 22:10 on 10 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "Work resumed at 20:30 with seven Luna lanes and three Claude Haiku lanes; the laptop slept from about 20:57 to 22:06 and every lane stood still. 16,958 verified, unchanged.",
+      "Added: a launcher for Luna lanes as Codex processes, a guard that keeps 8 GB of memory available, a keep-awake request, and a second version of the Haiku launch note (no early stop, the form a large rewrite must have, two checks before deferring)."
+    ]
+  },
+  {
+    "date": "2026-10-10",
     "title": "Dashboard and status: count Luna lanes started with the Codex command line",
     "commit": "b3221eaeeea7719055662746803d8619ed6f15c6",
     "summary": "Work resumed in the evening with two kinds of lane started by one coordinator: Luna lanes run as Codex command-line processes, and Claude Haiku subagents. The local dashboard and the status script now see both.",
