@@ -1899,7 +1899,7 @@
   "address": "0x00A504A0",
   "name": "vehicle_dispatch_kind3_b",
   "file": "fn_00a504a0.rs",
-  "lane": "r-s717",
+  "lane": "r-s452",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2044,14 +2044,6 @@
   "name": "CSimpleNMHighFallTaskInfo::vf9",
   "file": "fn_00a7f6a0.rs",
   "lane": "r-s596",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A83B00",
-  "name": "CComplexSlideIntoCoverInfo::append_cover_animation",
-  "file": "fn_00a83b00.rs",
-  "lane": "r-s723",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2752,30 +2744,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00B457E0",
-  "name": "CEventPotentialWalkIntoVehicle::CEventPotentialWalkIntoVehicle",
-  "file": "fn_00b457e0.rs",
-  "lane": "r-s718",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B45810",
-  "name": "CEventRanOverPed::CEventRanOverPed",
-  "file": "fn_00b45810.rs",
-  "lane": "r-s718",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B45860",
-  "name": "CEventRevived::CEventRevived",
-  "file": "fn_00b45860.rs",
-  "lane": "r-s718",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B458B0",
   "name": "CEventScriptCommand::CEventScriptCommand",
   "file": "fn_00b458b0.rs",
@@ -3454,14 +3422,6 @@
   "lane": "a-Q109",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00C6F5D0",
-  "name": "function_00C6F5D0",
-  "file": "fn_00c6f5d0.rs",
-  "lane": "r-s720",
-  "outcome": "deferred",
-  "reason": "partly_proven"
  },
  {
   "address": "0x00C6F630",
@@ -5005,6 +4965,14 @@
   "file": "fn_00d82cd0.rs",
   "lane": "r-b212",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00D99300",
+  "name": "CBoat::vf0",
+  "file": "fn_00d99300.rs",
+  "lane": "r-s721",
+  "outcome": "not_reached",
   "reason": null
  },
  {

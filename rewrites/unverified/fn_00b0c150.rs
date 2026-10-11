@@ -301,7 +301,7 @@ lf_checker_rt::export!(cdecl, rw_00b0c150(
                 u32,
                 row,
                 callback_out,
-                CALLBACK_TABLE,
+                lf_checker_rt::relocated(CALLBACK_TABLE),
                 row_index,
             );
             let token: u32 = lf_checker_rt::callee_cdecl!(CALL_TOKEN_FINALIZE, u32, callback_value);
