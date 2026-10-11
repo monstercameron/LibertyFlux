@@ -54,5 +54,5 @@ pub extern "thiscall" fn rw_phone_model_render(this: *mut u8) {
         let _cancelled = lf_checker_rt::callee_cdecl!(3, u32, 0);
     }
 
-    let _dispatch_result = lf_checker_rt::callee_cdecl!(4, u32);
+    let _dispatch_result = lf_checker_rt::callee_cdecl!(4, u32,);
 }
