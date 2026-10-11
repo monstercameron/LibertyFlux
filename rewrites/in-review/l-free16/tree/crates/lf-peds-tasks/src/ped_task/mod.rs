@@ -36,6 +36,7 @@
 #![forbid(unsafe_code)]
 
 mod create;
+mod gate;
 mod id_lookup;
 mod mover;
 mod pose;
@@ -47,6 +48,7 @@ pub use mover::{
     BlendState, COMMIT_FLAG_ARG, MoverCallees, MoverPose, NOT_READY, SNAP_FLAG,
 };
 pub use seek::{SEEK_MODE, SeekGoal, SeekMover, SeekRecord, STEP_SCALE, TUNING};
+pub use gate::{GateCandidate, GateStatus, GateWords, admits};
 pub use id_lookup::{DEFAULT_ID, NO_ID, TaskIdTable, TaskKey};
 pub use create::{
     ArgLookup, BuildManagers, ChainClone, ChainCloner, ChainEntry, ChainNode, ChainOwner,

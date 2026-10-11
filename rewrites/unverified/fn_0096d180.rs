@@ -16,7 +16,7 @@ lf_checker_rt::export!(thiscall, rw_0096d180(this: u32, sample_time: f32) -> u32
         let _ = lf_checker_rt::callee_thiscall!(1, u32, this);
     }
 
-    let sample = lf_checker_rt::callee_thiscall!(2, f32, this, sample_time);
+    let sample = lf_checker_rt::callee_thiscall!(2, f32, this, sample_time.to_bits());
     let extended = f64::from(sample);
     let sample_integer = if !extended.is_finite()
         || extended < i64::MIN as f64
@@ -24,7 +24,7 @@ lf_checker_rt::export!(thiscall, rw_0096d180(this: u32, sample_time: f32) -> u32
     {
         0
     } else {
-        (extended.trunc() as i64) as u32
+        (extended as i64) as u32
     };
 
     unsafe {

@@ -48,6 +48,30 @@ pub fn callee_addr(id: u32) -> u32 {
     addr
 }
 
+/// Planted global addresses, by file address: the relocated words the
+/// rewrites read through `relocated`.
+static RELOCATED: std::sync::Mutex<Vec<(u32, u32)>> = std::sync::Mutex::new(Vec::new());
+
+/// Plants the relocated address of a file address.
+pub fn set_relocated(file_va: u32, addr: u32) {
+    let mut table = RELOCATED.lock().unwrap();
+    table.retain(|(va, _)| *va != file_va);
+    table.push((file_va, addr));
+}
+
+/// The relocated address planted for a file address.
+///
+/// # Panics
+///
+/// When no address was planted for it: a case bug.
+#[must_use]
+pub fn relocated(file_va: u32) -> u32 {
+    let table = RELOCATED.lock().unwrap();
+    table
+        .iter()
+        .find(|(va, _)| *va == file_va)
+        .map_or_else(|| panic!("no relocated address planted for {file_va:#x}"), |(_, addr)| *addr)
+}
 /// Declare a rewrite export with the original's calling convention.
 /// Mirrors `lf-checker-rt::export`.
 #[macro_export]

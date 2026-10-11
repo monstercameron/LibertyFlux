@@ -6,3 +6,4 @@ pub mod fn_00BEE3F0 { #![allow(unused_imports)] use super::{callee_addr}; includ
 pub mod fn_00BEE6A0 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00bee6a0.rs")); }
 pub mod fn_00CFD810 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00cfd810.rs")); }
 pub mod fn_009E74A0 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_009e74a0.rs")); }
+pub mod fn_00A2B720 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00a2b720.rs")); }
