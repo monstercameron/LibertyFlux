@@ -24,6 +24,10 @@ lf_checker_rt::export!(thiscall, rw_00ce9a20(this: u32, owner: u32) -> u32 {
         unsafe fn wr32(address: u32, value: u32) {
             unsafe { (address as *mut u32).write_unaligned(value) }
         }
+        #[inline(always)]
+        unsafe fn rd8(address: u32) -> u8 {
+            unsafe { (address as *const u8).read() }
+        }
 
     const MESSAGE_BYTES: usize = 0xCC4;
     const TASK_STYLE: u32 = 0x4C;
@@ -40,7 +44,6 @@ lf_checker_rt::export!(thiscall, rw_00ce9a20(this: u32, owner: u32) -> u32 {
     const CAL_ADD_FLOAT: u32 = 5;
     const CAL_ADD_LABEL: u32 = 6;
     const CAL_RESET: u32 = 7;
-    const CAL_VTABLE_METHOD: u32 = 9;
 
     let style = rd32(this.wrapping_add(TASK_STYLE));
     let table_row = TABLE_BASE.wrapping_add(style.wrapping_mul(TABLE_STRIDE));
@@ -105,7 +108,7 @@ lf_checker_rt::export!(thiscall, rw_00ce9a20(this: u32, owner: u32) -> u32 {
     let old_flags = rd32(this.wrapping_add(TASK_FLAGS));
     let new_flags = old_flags | 1;
     wr32(this.wrapping_add(TASK_FLAGS), new_flags);
-    if rd32(this.wrapping_add(TASK_USE_TABLE_VALUE)) & 0xFF != 0 {
+    if rd8(this.wrapping_add(TASK_USE_TABLE_VALUE)) != 0 {
         let style_time = rd32(0x0171CAA0u32.wrapping_add(style.wrapping_mul(TABLE_STRIDE)));
         let running_time = lf_checker_rt::global::<u32>(RUNNING_BASE_VA).read();
         wr32(

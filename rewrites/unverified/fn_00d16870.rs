@@ -1,8 +1,8 @@
 // original: 0x00d16870 CTaskSimpleCombatRoll::vf17
-//! Checks the task's active flag, optionally creates the selected combat-roll
-//! subtask, and returns AL as a completion flag. The state comparison is
-//! unsigned; states above three use the invalid action code. The intercepted
-//! factory receives the entity, task kind, action, duration bits, and a flag.
+/// Checks the task's active flag, optionally creates the selected combat-roll
+/// subtask, and returns AL as a completion flag. The state comparison is
+/// unsigned; states above three use the invalid action code. The intercepted
+/// factory receives the entity, task kind, action, duration bits, and a flag.
 
 const ACTIVE_FLAG: u32 = 1 << 2;
 const FIRST_ACTION: u32 = 0xAB;

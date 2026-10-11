@@ -344,7 +344,7 @@ const TRIALS: u32 = 4000;
 #[test]
 fn seek_target_setup_matches_rewrite() {
     let _guard = lock();
-    let report = diff_run(0x5EE0_0001, TRIALS, SeekRecord::toward_for_harness);
+    let report = diff_run(0x5EE0_0001, TRIALS, SeekRecord::toward);
     assert_eq!(report.mismatches, 0, "{:?}", report.first);
     assert_eq!(report.trials, TRIALS);
 }
