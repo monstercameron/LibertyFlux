@@ -9,6 +9,18 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A fault blamed on an unrelocated read was undeclared callees, and a pass that depended on a mis-sized stack (lane a-H31)</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#a-h31-native-callees-not-relocation"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-h31-native-callees-not-relocation</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>Surprise 1 (Verified). A checker run that faulted on an unrelocated read was not a relocation problem. The relocation audit reported every absolute operand of the function relocated. The cause was native code: the probe's second argument took a polled-call block whose three callees had no declared stub or call-site patch, so the worker ran that original code directly and it jumped into an unrelocated address. Declaring the stubs (the same ones stage 20 used) and scripting the helper's answer as a valid heap object made the original complete 60 of 60.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;Surprise 1 (Verified).&lt;/strong&gt; A checker run that faulted on an unrelocated read was not a relocation problem. The relocation audit reported every absolute operand of the function relocated. The cause was native code: the probe's second argument took a polled-call block whose three callees had no declared stub or call-site patch, so the worker ran that original code directly and it jumped into an unrelocated address. Declaring the stubs (the same ones stage 20 used) and scripting the helper's answer as a valid heap object made the original complete 60 of 60.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Surprise 2 (Verified).&lt;/strong&gt; A callee whose stack-word count is wrong does not show as an error in the stub; the run stalled. Setting the count to the six words the original pushes fixed it, and the stack check (esp) then passed on both sides.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Surprise 3 (Verified).&lt;/strong&gt; A stage that matched by coincidence: the query threshold read the frame's scale word where the original reads the gate word. The mismatch appeared only after the stack count was corrected, so the earlier pass had been produced by the mis-sized stack.&lt;/p&gt;
+&lt;p&gt;Decision: the function stays deferred (partly_proven); steps 3, 4, 5 and the dl = 1 route in the rewrite are open. Probe s29r is in retry\probe for the next lane.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>An outside reverse-engineering toolkit evaluated from its documentation: not adopted, one idea taken</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#rea-evaluated-2026-10-11"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#rea-evaluated-2026-10-11</id>
@@ -1147,30 +1159,5 @@ with its contract, verdict and caught mutant.&lt;/p&gt;</content>
 &lt;p&gt;Write a contract whose function stores two different values to two words of one declared globals range, with a wrong version that swaps the two stores. The wrong version passes. Split the range into one range per word and run again: the wrong version fails. The lane's report names the comparison routine and the contracts that demonstrate both outcomes.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The passing wrong version first looked like a mistake in the new contract, and only a second, louder wrong version showed the contract was fine and the comparison was weak. Six other first attempts failed for a sillier reason: the lane wrote callee arguments in push order instead of call order, which the checker caught every time.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Same-period contract cyclers can starve whole code regions</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b642"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b642</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Verified A production lane verifying a large ped-task function found that three groups of check trials never ran, not because the paths were rare but because the contract's cycling value lists all shared one period and stayed phase-locked: the trials that reached a region never carried the values that region needed. Giving the cyclers coprime periods fixed it, and all fifty helper stand-ins then fired.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A production lane verifying a large ped-task function found that three groups of check trials never ran, not because the paths were rare but because the contract's cycling value lists all shared one period and stayed phase-locked: the trials that reached a region never carried the values that region needed. Giving the cyclers coprime periods fixed it, and all fifty helper stand-ins then fired.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite one large game function in Rust and prove it identical with the checker, covering every helper it calls.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Per-trial cycling lists (helper answers, pinned heap words) advance in lock-step by trial number. Three locks were found by reading per-helper fire counts:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;One helper shared a single answer list between its gate call and its loop calls, so the loop-exhaustion path and the poll-fail path could never co-occur. Splitting the two call sites across two helper entries with independent lists fixed it.&lt;/li&gt;
-&lt;li&gt;Three period-four cyclers (a bypass-flag pin, an aux pin, a null-or-pointer answer list) all put their active value on the same trials, so the bypass always skipped the aux path. Moving one pin's active slot fixed it.&lt;/li&gt;
-&lt;li&gt;Several period-two and period-three answer lists aligned with the conditions that reach them, hiding branches. Coprime periods (four, five, eight) made every combination occur.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two smaller traps in the same function: float answers delivered in a vector register must be read as plain 32-bit words (a float-typed read picks up unrelated floating-point-stack leftovers), and the original's frame keeps two words of floating-point control-word residue that later snapshots observe, so the rewrite seeds them.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;When two cycling lists must combine (a reach condition plus a branch value), give them different periods so the combination occurs by arithmetic rather than luck, and check per-helper fire counts before the full run. A helper with zero firings after hundreds of trials is a lock, not bad luck.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run any multi-branch contract, read the per-helper fire counts in the verdict, and list which trial residues reach each region versus which residues each cycler needs. The lane's generator script and contract show the fixed periods.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first full run passed every trial yet stayed vacuous with three helpers unfired, which looked like rarity until the residues were written out. A later period change silently re-locked two other regions the same way, found the same way. Nothing about the failure pointed at periods; only the fire counts did.&lt;/p&gt;</content>
   </entry>
 </feed>
