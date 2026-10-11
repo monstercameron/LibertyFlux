@@ -115146,6 +115146,96 @@
   "lane": "r-b679"
  },
  {
+  "address": "0x00BC9860",
+  "name": "physics_submit_vector_command",
+  "kind": "function",
+  "file": "functions/fn_00bc9860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s661"
+ },
+ {
+  "address": "0x00BC9A20",
+  "name": "physics_configure_vector",
+  "kind": "function",
+  "file": "functions/fn_00bc9a20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s661"
+ },
+ {
+  "address": "0x00BCA9B0",
+  "name": "physics_vector_magnitude",
+  "kind": "function",
+  "file": "functions/fn_00bca9b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s661"
+ },
+ {
+  "address": "0x00BCAA10",
+  "name": "physics_copy_and_transform_vector",
+  "kind": "function",
+  "file": "functions/fn_00bcaa10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s661"
+ },
+ {
+  "address": "0x00BCB490",
+  "name": "physics_combine_object_vectors",
+  "kind": "function",
+  "file": "functions/fn_00bcb490.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s661"
+ },
+ {
+  "address": "0x00BCC000",
+  "name": "physics_copy_vector_components",
+  "kind": "function",
+  "file": "functions/fn_00bcc000.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s661"
+ },
+ {
+  "address": "0x00BCC410",
+  "name": "physics_prepare_vector_process",
+  "kind": "function",
+  "file": "functions/fn_00bcc410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s661"
+ },
+ {
+  "address": "0x00BCC480",
+  "name": "physics_prepare_extended_vector_process",
+  "kind": "function",
+  "file": "functions/fn_00bcc480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s661"
+ },
+ {
+  "address": "0x00BCCC60",
+  "name": "physics_check_status_flags",
+  "kind": "function",
+  "file": "functions/fn_00bccc60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s661"
+ },
+ {
+  "address": "0x00BCCFA0",
+  "name": "physics_request_object_processing",
+  "kind": "function",
+  "file": "functions/fn_00bccfa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s661"
+ },
+ {
   "address": "0x00BD0D30",
   "name": "ADD_AMMO_TO_CHAR",
   "kind": "native",
