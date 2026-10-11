@@ -2,7 +2,7 @@
   {
     "date": "2026-10-11",
     "title": "Changelog: a count corrected in the entry on the conversion audit",
-    "commit": null,
+    "commit": "b2c38bd7f6d6059c6b376f5902ef21a403742986",
     "summary": "The entry on the two latest withdrawals said nine rewrites differ because of their conversion. The number is six.",
     "changes": [
       "Six verified rewrites have been shown to differ from the original because of a float-to-integer conversion, all withdrawn and three of them proven again; the entry had nine, a slip of the coordinator's when adding up two lanes' lists."
