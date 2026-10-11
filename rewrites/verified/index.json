@@ -77175,6 +77175,15 @@
   "lane": "r-s331"
  },
  {
+  "address": "0x00A1DF80",
+  "name": "task_gated_direction_solve",
+  "kind": "function",
+  "file": "functions/fn_00a1df80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U57"
+ },
+ {
   "address": "0x00A1E0D0",
   "name": "task_sync_anchor_and_solve",
   "kind": "function",
@@ -77380,6 +77389,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s331"
+ },
+ {
+  "address": "0x00A21440",
+  "name": "ped_task_move_blend",
+  "kind": "function",
+  "file": "functions/fn_00a21440.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U57"
  },
  {
   "address": "0x00A217B0",
@@ -130057,6 +130075,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b414"
+ },
+ {
+  "address": "0x00CA0B10",
+  "name": "ik_two_bone_solver_angles",
+  "kind": "function",
+  "file": "functions/fn_00ca0b10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U57"
  },
  {
   "address": "0x00CA11D0",
