@@ -114201,6 +114201,123 @@
   "lane": "a-05"
  },
  {
+  "address": "0x00BDE810",
+  "name": "ped_task_pool_word_at_index",
+  "kind": "function",
+  "file": "functions/fn_00bde810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDE840",
+  "name": "ped_task_pool_record_word_at_index",
+  "kind": "function",
+  "file": "functions/fn_00bde840.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDE9E0",
+  "name": "ped_task_pool_release_entry",
+  "kind": "function",
+  "file": "functions/fn_00bde9e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDEC10",
+  "name": "TaskAttachToPedIntelligence",
+  "kind": "function",
+  "file": "functions/fn_00bdec10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDEC50",
+  "name": "CTaskComplexInWater::CTaskComplexInWater",
+  "kind": "function",
+  "file": "functions/fn_00bdec50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDECF0",
+  "name": "CTaskComplexMoveSequence::CTaskComplexMoveSequence",
+  "kind": "function",
+  "file": "functions/fn_00bdecf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDED40",
+  "name": "CTaskComplexReact::CTaskComplexReact",
+  "kind": "function",
+  "file": "functions/fn_00bded40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDEE00",
+  "name": "CTaskComplexSequence::CTaskComplexSequence",
+  "kind": "function",
+  "file": "functions/fn_00bdee00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDEFC0",
+  "name": "CTaskComplexSitIdle::CTaskComplexSitIdle",
+  "kind": "function",
+  "file": "functions/fn_00bdefc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDF030",
+  "name": "CTaskComplexUseAttractor::CTaskComplexUseAttractor",
+  "kind": "function",
+  "file": "functions/fn_00bdf030.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDF050",
+  "name": "CTaskComplexUseEffect::CTaskComplexUseEffect",
+  "kind": "function",
+  "file": "functions/fn_00bdf050.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDF0A0",
+  "name": "CTaskComplexUseMobilePhone::CTaskComplexUseMobilePhone",
+  "kind": "function",
+  "file": "functions/fn_00bdf0a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
+  "address": "0x00BDF120",
+  "name": "CTaskComplexWaitAtAttractor::CTaskComplexWaitAtAttractor",
+  "kind": "function",
+  "file": "functions/fn_00bdf120.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s603"
+ },
+ {
   "address": "0x00BDF340",
   "name": "audio_ctor_optional_ref",
   "kind": "function",
