@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 2 more withdrawn for their float-to-integer conversions; the conversion audit has tested every function it listed",
+    "commit": null,
+    "summary": "The verified count goes down by two. The scripted audit finished the 39 functions it had not reached and decided, for every rewrite that differs on widened inputs, whether the conversion is the cause.",
+    "changes": [
+      "Two rewrites, an animation sampler and an audio query emitter, fail on a widened contract (19 of 1,200 and 156 of 1,100 trials) and pass with their conversions written to match the original's instruction. Both are withdrawn until a strengthening lane proves the corrected copies.",
+      "Where the audit of 291 functions with such a conversion stands: 193 safe because every conversion is guarded exactly; 9 differ because of the conversion (all withdrawn; three proven again today); 2 agree with the extreme values shown to reach the conversion; 1 bounded by its own code; 1 fails only where the original itself faults; 60 passed without an extreme value reaching the conversion, which settles nothing and needs each one's inputs steered; 12 could not be run.",
+      "Eight further rewrites differ from the original on widened inputs for a reason that is not the conversion: the same rewrites with corrected conversions still fail. They are not withdrawn on that alone, because a widened contract can also break something the function's callers always guarantee. Two investigation lanes are reproducing each, checking that the original completes the failing trials, and reducing it to the input that causes it; four examined that way earlier today were all real differences and were withdrawn.",
+      "One of the eight was withdrawn and proven again earlier today with one conversion corrected; on a wider widening its corrected copy still fails. It stays counted while it is examined, with that stated here."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 5 files from lanes (588 unverified rewrites, 298 in review)",
     "commit": "0d9f80c229a507c89f4444a4417170c31da9b647",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
