@@ -154233,6 +154233,123 @@
   "lane": "a-S15"
  },
  {
+  "address": "0x00E6E100",
+  "name": "mainloop_timing_release_critical_section_primary",
+  "kind": "function",
+  "file": "functions/fn_00e6e100.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E110",
+  "name": "mainloop_timing_release_resource_group_a",
+  "kind": "function",
+  "file": "functions/fn_00e6e110.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E150",
+  "name": "mainloop_timing_release_resource_group_b",
+  "kind": "function",
+  "file": "functions/fn_00e6e150.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E1C0",
+  "name": "mainloop_timing_dispatch_pending_buffer",
+  "kind": "function",
+  "file": "functions/fn_00e6e1c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E250",
+  "name": "mainloop_timing_release_thread_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e6e250.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E290",
+  "name": "mainloop_timing_00E6E290",
+  "kind": "function",
+  "file": "functions/fn_00e6e290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E2A0",
+  "name": "mainloop_timing_00E6E2A0",
+  "kind": "function",
+  "file": "functions/fn_00e6e2a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E2B0",
+  "name": "mainloop_timing_00E6E2B0",
+  "kind": "function",
+  "file": "functions/fn_00e6e2b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E3A0",
+  "name": "mainloop_timing_tls_cleanup_group_a",
+  "kind": "function",
+  "file": "functions/fn_00e6e3a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E3D0",
+  "name": "mainloop_timing_tls_cleanup_group_b",
+  "kind": "function",
+  "file": "functions/fn_00e6e3d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E5A0",
+  "name": "mainloop_timing_initialize_tail",
+  "kind": "function",
+  "file": "functions/fn_00e6e5a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E860",
+  "name": "mainloop_timing_state_reset",
+  "kind": "function",
+  "file": "functions/fn_00e6e860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
+  "address": "0x00E6E950",
+  "name": "mainloop_timing_initialize_object_table",
+  "kind": "function",
+  "file": "functions/fn_00e6e950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s588"
+ },
+ {
   "address": "0x00E6F520",
   "name": "timer_hook_dispatch",
   "kind": "function",

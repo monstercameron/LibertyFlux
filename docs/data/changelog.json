@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Devlog: hourly reviews of 00:20 and 01:25 on 11 October",
+    "title": "Rewrites: 13 more functions pass the checker (17241 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "13 rewrites added under rewrites/verified: 0 script native handlers and 13 other functions.",
+      "The tree now holds 17241 rewrites, 17238 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Devlog: hourly reviews of 00:20 and 01:25 on 11 October",
+    "commit": "fc7d1fcd45b93ca4f2bd7ad13b300d4540ac2740",
     "summary": "Two reviews on the owner's checklist. The second covers the best hour since work resumed, and the pipeline's first pass since 8 October.",
     "changes": [
       "01:25: verified code up by 14,183 bytes in 105 functions in 1.1 hours, five routines lifted, 36,003 of 37,413 functions named. Haiku lanes have closed four large functions tonight.",
