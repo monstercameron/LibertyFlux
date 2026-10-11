@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Devlog: lane entries open with their finding, not with the lane's name",
+    "commit": null,
+    "summary": "Eight integrated lane entries began with a line naming the lane, which is what the devlog page showed as each entry's excerpt.",
+    "changes": [
+      "The line that says which lane wrote an entry is moved from the first paragraph to the last in eight entries, so the page's list shows what was found. Checked on the locally served devlog page: the day's entries are listed and open, with no errors in the page's console."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rewrites: 4 withdrawn because they differ from the original outside the range their proofs drew",
     "commit": null,
     "summary": "The verified count goes down by four. The audit that widens a proof's inputs found four verified rewrites that differ from the original on inputs the original handles. An investigation lane reproduced each on the stock checker and reduced it to the input that causes it. Only one of the four is a float-to-integer conversion of the kind the audit was looking for.",
