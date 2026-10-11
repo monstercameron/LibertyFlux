@@ -20,7 +20,7 @@ lf_checker_rt::export!(cdecl, rw_00dcb980(entity: u32) -> u8 {
             unsafe { (address as *const i16).read_unaligned() }
         }
 
-        let helper_succeeded = lf_checker_rt::callee_cdecl!(TEST_RESPONSE_GATE, u32);
+        let helper_succeeded = lf_checker_rt::callee_cdecl!(TEST_RESPONSE_GATE, u32,);
         if helper_succeeded as u8 != 0 {
             return 0;
         }
