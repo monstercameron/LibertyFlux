@@ -96732,6 +96732,15 @@
   "lane": "r-s419"
  },
  {
+  "address": "0x00B85C20",
+  "name": "script_vm_helper_00b85c20",
+  "kind": "function",
+  "file": "functions/fn_00b85c20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
   "address": "0x00B85C60",
   "name": "registry_release_lazy",
   "kind": "function",
@@ -98539,6 +98548,123 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-07"
+ },
+ {
+  "address": "0x00B884C0",
+  "name": "NativeImpl_GET_CAM_POS_2",
+  "kind": "function",
+  "file": "functions/fn_00b884c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B88510",
+  "name": "NativeImpl_GET_CAM_ROT_2",
+  "kind": "function",
+  "file": "functions/fn_00b88510.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B886C0",
+  "name": "NativeImpl_GET_VIEWPORT_POS_AND_SIZE_2",
+  "kind": "function",
+  "file": "functions/fn_00b886c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B88720",
+  "name": "NativeImpl_HINT_CAM_2",
+  "kind": "function",
+  "file": "functions/fn_00b88720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B88E40",
+  "name": "NativeImpl_POINT_FIXED_CAM_AT_POS",
+  "kind": "function",
+  "file": "functions/fn_00b88e40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B88E90",
+  "name": "NativeImpl_SET_FIXED_CAM_POS",
+  "kind": "function",
+  "file": "functions/fn_00b88e90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B88F10",
+  "name": "NativeImpl_POINT_FIXED_CAM",
+  "kind": "function",
+  "file": "functions/fn_00b88f10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B89260",
+  "name": "NativeImpl_SET_CAM_POINT_OFFSET_2",
+  "kind": "function",
+  "file": "functions/fn_00b89260.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B89410",
+  "name": "NativeImpl_SET_CAM_ATTACH_OFFSET_2",
+  "kind": "function",
+  "file": "functions/fn_00b89410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B894E0",
+  "name": "NativeImpl_SET_CAM_POS_2",
+  "kind": "function",
+  "file": "functions/fn_00b894e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B89550",
+  "name": "NativeImpl_SET_CAM_ROT_2",
+  "kind": "function",
+  "file": "functions/fn_00b89550.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B89770",
+  "name": "NativeImpl_SET_FOLLOW_VEHICLE_CAM_OFFSET",
+  "kind": "function",
+  "file": "functions/fn_00b89770.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
+ },
+ {
+  "address": "0x00B899A0",
+  "name": "NativeImpl_POINT_CAM_AT_COORD",
+  "kind": "function",
+  "file": "functions/fn_00b899a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s674"
  },
  {
   "address": "0x00B8AA90",
