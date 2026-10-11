@@ -5,8 +5,9 @@
 /// `this` is the task in ECX and `context` is its one stack argument. The
 /// current subtask's virtual type is queried first. Only type `0x76c` asks the
 /// helper whether the task may continue; a zero low byte forwards the call to
-/// the task's virtual control slot. Each path returns the EAX value left by
-/// its last call, or the subtask type when the selected type does not match.
+/// the task's virtual control slot. The type-mismatch and helper-allowed paths
+/// return the current subtask pointer; the virtual control path returns its
+/// callee's EAX value.
 lf_checker_rt::export!(thiscall, rw_00dca6f0(this: u32, context: u32) -> u32 {
     unsafe {
         const TASK_TYPE: u32 = 0x76c;
