@@ -71460,6 +71460,24 @@
   "lane": "a-G09"
  },
  {
+  "address": "0x009FBBB0",
+  "name": "CPlayStatInt::CPlayStatInt_3",
+  "kind": "function",
+  "file": "functions/fn_009fbbb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s601"
+ },
+ {
+  "address": "0x009FBC20",
+  "name": "CPlayStatInt::CPlayStatInt_4",
+  "kind": "function",
+  "file": "functions/fn_009fbc20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s601"
+ },
+ {
   "address": "0x009FC110",
   "name": "CPlayStatSessionInfo::~CPlayStatSessionInfo",
   "kind": "function",
@@ -71467,6 +71485,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b312"
+ },
+ {
+  "address": "0x009FC5F0",
+  "name": "socket_ioctl_mode",
+  "kind": "function",
+  "file": "functions/fn_009fc5f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s601"
  },
  {
   "address": "0x009FC880",
