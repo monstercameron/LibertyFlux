@@ -1,6 +1,20 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Lift: nine more pedestrian-task routines in eight data shapes",
+    "commit": null,
+    "summary": "Nine more verified routines of the pedestrian-task code now have a portable Rust counterpart, each proven against its verified original. The functions this lane was given turned out to share a name prefix and almost nothing else.",
+    "changes": [
+      "Lifted into lf-peds-tasks, one owning type per shape: two one-object predicates, a task state reset, a task block constructor with seven callees, a turn tracker, a scan of a table of typed records, an aim record update, an owner flag update, and an entry initialiser. The new modules are 1,128 lines with no unsafe and no addresses; each routine's callees sit behind a trait of its own, and the proof compares the calls in order.",
+      "A new differential test crate, lf-taskshapediff, runs each verified rewrite and its lifted counterpart on the same memory, 3,000 generated cases per routine, and compares memory, calls and return values, floats bit for bit: 18 tests pass on the 32-bit target and 56 deliberately wrong versions are caught. It is added to the workspace and to the pipeline's 32-bit lift job. The crate's 303 host tests pass.",
+      "The nine routines have their own registry of rows beside the earlier one, so the earlier registry's pinned count is unchanged.",
+      "Of the 118 functions the lane was given, 19 were examined and not lifted, with reasons: nine forwarders or near-forwarders with no behaviour of their own, six whose target is computed from an index or a selector, one table of preset identifiers that is game data and needs a decision, and three that walk several objects. Ninety were not reached. Functions with one name here are up to four different routines, and no shape held more than one routine, so there was no class to lift; the method held as one type per shape.",
+      "The lane reported that two verified rewrites convert a float to an integer in different ways when the value is not a number or out of range: one as the processor does, one as Rust's cast does. Each lift follows its own rewrite. For the one that uses Rust's cast the lane read the two factors involved from the image and found the product stays in range, so the difference is not reached there; the wider question, which other verified rewrites use Rust's cast where the original's instruction behaves differently, is to be audited.",
+      "Written by a lift lane; integrated, tested and committed by the coordinator."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 21 files from lanes (512 unverified rewrites, 69 in review)",
     "commit": "38be2d17e861116199908e4e47f9d8e00b915ec1",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

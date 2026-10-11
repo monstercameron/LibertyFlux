@@ -40,18 +40,49 @@
 
 #![forbid(unsafe_code)]
 
+mod aim_record;
 mod audio_release;
 mod create;
+mod entry_init;
 mod event_table;
+mod flag_update;
 mod gate;
 mod id_lookup;
 mod mover;
 mod pose;
+mod record_scan;
 mod seek;
+mod task_block;
 mod task_owner;
+mod task_predicates;
 mod task_slots;
+mod task_state;
+mod task_turn;
 
 pub mod registry;
+pub mod shape_registry;
+
+pub use aim_record::{AimCallees, AimOwner, AimTask, RecordWords, normalised_direction};
+pub use record_scan::{
+    Anchor, ENTRY_CONSTANTS, FetchCallee, RecordTable, ScanEntry, ScratchSlot, TABLE_SLOTS,
+    TAG_SLOT_FIRST, TAG_SLOT_SECOND, TAG_SLOT_THIRD, TableRecord, slot_for_tag,
+};
+pub use task_block::{
+    BLOCK_BYTES, BlockCallees, COUNTDOWN_BASE, PARAM_WORDS, SELECTOR_NONE, SUB_HEAD_OFFSET,
+    SUB_TAIL_OFFSET, ScaleFactors, TaskBlock, truncate_to_i32,
+};
+pub use task_predicates::{
+    COUNT_OFFSET, ENABLED_OFFSET, FLAG_SATISFIED, FLAGS_OFFSET, KIND_MINIMUM, KIND_OFFSET,
+    KIND_TYPE_MASK, PredicateTask, RESOURCE_OFFSET, RESOURCE_TAG_OFFSET, ResourceTag, TAG_EXPECTED,
+    TAG_MASK,
+};
+pub use task_state::{
+    BLOCK_WORDS, INVALID_HANDLE, STATE_RECORD_COUNT, STATE_RECORD_WORDS, StateRecord,
+    TaskStateBlock,
+};
+pub use task_turn::{
+    DIR_SCALE, FLAG_RESET, RATE_GATE, RATE_ONE, RATE_STEP, TurnParams, TurnTask, TurnTrig, Vec3,
+};
 
 pub use audio_release::{
     AudioObjects, AudioSlot, AudioTask, CANDIDATE_KIND_MASK, CANDIDATE_KIND_SPECIAL,
@@ -63,9 +94,14 @@ pub use create::{
     CloneProduct, FLAG_DONE, FLAG_EXTRA, FoundEntry, KIND_11, Kind11Task, NONE, PRIORITY, PedMgr,
     PedTaskOutcome, TaskBuildCtx,
 };
+pub use entry_init::{EntryArgs, EntryCallees, TaskEntry, truncate_indefinite};
 pub use event_table::{
     DELAY_GAP, EventCallees, EventObjects, EventRecord, EventTable, NEARBY_DISTANCE_SQUARED,
     QUEUED_KIND, RECORD_COUNT, REDUCED_THRESHOLD, STANDARD_THRESHOLD,
+};
+pub use flag_update::{
+    COMPONENT_OFFSET, DRAW_THRESHOLD, FlagCallees, FlagOwner, RANDOM_FLAG, SKIP_SUBJECT_FLAG,
+    SubjectFlag,
 };
 pub use gate::{GateCandidate, GateStatus, GateWords, admits};
 pub use id_lookup::{DEFAULT_ID, NO_ID, TaskIdTable, TaskKey};
