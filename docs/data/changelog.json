@@ -2,7 +2,7 @@
   {
     "date": "2026-10-10",
     "title": "Rewrites: 1 withdrawn because its old proof is vacuous on the current checker",
-    "commit": null,
+    "commit": "5f0d2bca00d6a6ccfccf067b048e18cbd4affd40",
     "summary": "The verified count goes down by one. A regression lane re-ran 312 proofs made on checker version 3, unchanged, on version 8: 291 hold and are now recorded on the current checker, one is vacuous, and 20 could not be run.",
     "changes": [
       "The withdrawn function's contract declares a callee that never fired on any completed trial, so the part of the function that calls it was never compared. The checker that accepted it had no rule against that. The rewrite is not known to be wrong; a proof is what is missing, and the function goes to the queue of old proofs that do not hold.",
