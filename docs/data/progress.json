@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-11",
-  "updated_at": "2026-10-11 19:18",
+  "updated_at": "2026-10-11 19:19",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 37255,
-    "rewritten": 19084,
-    "verified": 18915
+    "named": 37258,
+    "rewritten": 19081,
+    "verified": 18916
   },
   "structures": 340,
-  "symbols": 19018,
+  "symbols": 19019,
   "measured": [
     {
       "label": "Code section",
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 37255,
+      "value": 37258,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (28251); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (28254); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites of game functions that passed the checker in a lane",
@@ -117,15 +117,15 @@
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 37.7,
+      "value": 37.8,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2763170 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2765027 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
       "value": 28.6,
       "unit": "percent",
-      "source": "408 of 1347 such functions; they hold 38% of the game's code"
+      "source": "409 of 1347 such functions; they hold 38% of the game's code"
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
@@ -135,21 +135,21 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 19084,
+      "value": 19081,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 18915,
+      "value": 18916,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
     "lanes_running": 37,
-    "lanes_finished": 2418,
-    "lanes_incomplete": 777,
+    "lanes_finished": 2419,
+    "lanes_incomplete": 778,
     "devlog_entries": 577
   },
   "map": [
@@ -906,7 +906,7 @@
       "to": "0x005D4F04",
       "count": 82,
       "named": 82,
-      "rewritten": 9,
+      "rewritten": 2,
       "verified": 2
     },
     {
@@ -2508,7 +2508,7 @@
       "to": "0x009B485F",
       "count": 44,
       "named": 44,
-      "rewritten": 10,
+      "rewritten": 11,
       "verified": 1
     },
     {
@@ -3066,8 +3066,8 @@
       "to": "0x00B0DE82",
       "count": 56,
       "named": 56,
-      "rewritten": 31,
-      "verified": 31
+      "rewritten": 32,
+      "verified": 32
     },
     {
       "stage": "named",
@@ -4461,7 +4461,7 @@
       "to": "0x00E6D5D8",
       "count": 618,
       "named": 609,
-      "rewritten": 571,
+      "rewritten": 573,
       "verified": 525
     },
     {
@@ -4477,9 +4477,9 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2763170,
+    "verified": 2765027,
     "large_functions": 2801402,
-    "large_functions_verified": 800591
+    "large_functions_verified": 802448
   },
   "lifted": {
     "methods": 497,
