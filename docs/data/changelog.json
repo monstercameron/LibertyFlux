@@ -1,8 +1,30 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 15 more functions pass the checker (17275 in total)",
+    "title": "Lane rules: the limit of three checker workers is a lane's own",
     "commit": null,
+    "summary": "With sixty lanes running, lanes read the limit of three checker workers as a count of every worker on the machine and stopped running the checker. The rule now says whose workers it counts.",
+    "changes": [
+      "In two hours at least 44 functions were deferred with a finished rewrite and a finished contract and not one trial run: each lane saw twenty or thirty workers belonging to other lanes, judged the limit exceeded, and neither started its own nor waited. Their reason was recorded only as \"other\", which is how the hourly review found it.",
+      "The rule in the agent rules and in the lane briefs now says the limit is per lane: a lane counts the workers it started itself, and a crowded machine is never a reason to skip the checker or to defer. The production brief carries this as version b25.",
+      "The functions deferred this way go to a queue of their own, with their kits, since nothing blocks them."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 103 files from lanes (466 unverified rewrites, 0 in review)",
+    "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 466 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 0 Rust files from 0 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "34 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 15 more functions pass the checker (17275 in total)",
+    "commit": "c35c7deef935f367a93e0bb02e0751228a791589",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "15 rewrites added under rewrites/verified: 0 script native handlers and 15 other functions.",

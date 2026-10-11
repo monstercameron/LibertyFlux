@@ -110,7 +110,10 @@ Learned from the first 800 lanes (4 October 2026). Each line is here because its
   each spun a processor core for up to thirteen hours.
 - Do not build anything large in one piece. One build of a single crate holding 7,381 rewrites took
   commit headroom from 24 GB to under 1 GB and killed three other lanes. Split it. Never run more
-  than three checker workers at once.
+  than three checker workers of your own at once. The limit is per lane: other lanes' workers are
+  not yours to count, and a crowded machine is no reason to skip the checker. With sixty lanes
+  running, lanes that counted the whole machine's workers deferred 44 functions in two hours
+  without a single trial.
 - A list meant for a program is a data file. Never rebuild a work list from a report written for
   people: a survey's printout stopped at 40 names per lane and hid 34 contracts from a re-run.
 
