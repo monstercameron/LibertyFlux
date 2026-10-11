@@ -10,8 +10,10 @@
 /// that changed pointer value to its helpers. `task_index` is signed for the
 /// initial negative check; nonnegative values index the global task
 /// descriptor table. A descriptor's kind at `+0x90` selects the factory
-/// routine. `options` contributes its low byte to the optional transition
-/// call. The other stack words are accepted by the ABI and unused.
+/// routine. `extra_value` is forwarded unchanged to the selected factory.
+/// The low byte of `transition_requested` gates the transition sequence;
+/// the low byte of `options` selects its mode. The callee removes all five
+/// stack words.
 ///
 /// A successful factory result has bit 0 set in its flags at `+0x260`. The
 /// function may then run a transition check and dispatch the factory's
@@ -24,10 +26,10 @@
 lf_checker_rt::export!(thiscall, rw_005c3770(
     this: u32,
     input: u32,
-    _request_kind: u32,
     task_index: u32,
+    extra_value: u32,
+    transition_requested: u32,
     options: u32,
-    _unused: u32,
 ) -> u32 {
     unsafe {
         const TASK_TABLE_VA: u32 = 0x1295_CD8;
@@ -94,9 +96,9 @@ lf_checker_rt::export!(thiscall, rw_005c3770(
         }
 
         let mut created = if task_kind == KIND_SPECIAL {
-            lf_checker_rt::callee_thiscall!(4, u32, this, task_index, input_slot_value, resolved_task)
+            lf_checker_rt::callee_thiscall!(4, u32, this, task_index, extra_value, resolved_task)
         } else {
-            lf_checker_rt::callee_thiscall!(3, u32, this, task_index, input_slot_value, resolved_task)
+            lf_checker_rt::callee_thiscall!(3, u32, this, task_index, extra_value, resolved_task)
         };
         if created == 0 {
             return 0;
@@ -105,7 +107,7 @@ lf_checker_rt::export!(thiscall, rw_005c3770(
         let old_flags = read_u32(created.wrapping_add(CREATED_FLAGS));
         write_u32(created.wrapping_add(CREATED_FLAGS), old_flags | REQUIRED_FLAG);
 
-        if task_index as u8 != 0 {
+        if transition_requested as u8 != 0 {
             let may_transition = lf_checker_rt::callee_cdecl!(5, u32,) as u8 != 0;
             if may_transition {
                 let option_byte = options as u8;

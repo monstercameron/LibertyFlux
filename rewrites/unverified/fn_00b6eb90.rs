@@ -4,10 +4,10 @@
 /// and count checks, and selected B8 continuation and merge branches. It
 /// preserves the observed call order and state writes on those paths.
 ///
-/// The contract proves only its pinned input scenarios: non-default dispatch
-/// arms, deeper tail work, and null pointers outside the explicit early-exit
-/// cases are not covered. Those paths deliberately reach a marker return and
-/// must not be treated as implemented by this narrow proof.
+/// The contract proves only its pinned input scenarios. Non-default dispatch
+/// arms return an explicit marker and remain unimplemented. Deeper tail work
+/// is outside the contract, and null pointers beyond explicit early exits are
+/// not supplied or proved. Do not treat those paths as implemented here.
 ///
 /// Arguments use thiscall: `this` points to the task and `arg` to its context.
 /// Returns the selected helper result or child-task value, with the same task

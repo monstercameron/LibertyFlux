@@ -1,115 +1,150 @@
-// original: 0x00aff120 pool_master_pass
-/// Run the pool maintenance pass after its global and service gates allow it.
-/// The pass asks the manager to fill a local context, selects the fallback
-/// scale when the table index is negative, runs the update and pool checks,
-/// and clears the status word on the selected completion path.
+// original: 0x00AFF120 input_master_pass
+/// Runs the vehicle master pass after the session and mode gates permit it.
+/// It obtains the active position data, selects the mode's range, invokes the
+/// pool and placement passes, runs optional feature hooks, and clears the
+/// completion flag. The supplied global index selects a four-word data row;
+/// a negative index leaves the local position values at their initialized
+/// zero values.
 use lf_checker_rt::{callee_cdecl, export, global};
 
-const GATE_STATE: u32 = 0x011F_7060;
-const SERVICE_STATE: u32 = 0x0120_88B4;
-const REQUIRED_SERVICE: u32 = 0x00F1_C040;
-const PASS_MODE: u32 = 0x0103_7720;
-const TABLE_INDEX: u32 = 0x0160_031C;
-const CONTEXT_SCALE: u32 = 0x0103_FF50;
-const MODE_ONE_SCALE: u32 = 0x0103_FF54;
-const MODE_TWO_SCALE: u32 = 0x0103_FF58;
-const DEFAULT_SCALE: u32 = 0x00FE_88E8;
-const FLAG_BYTES: u32 = 0x0103_FF76;
-const STATUS_WORD: u32 = 0x012E_21F0;
+const SESSION_GATE: u32 = 0x011F_7060;
+const SESSION_VALUE: u32 = 0x0120_88B4;
+const GAME_MODE: u32 = 0x0103_7720;
+const DATA_INDEX: u32 = 0x0160_031C;
+const DATA_TABLE: u32 = 0x0160_0FD0;
+const DEFAULT_RANGE: u32 = 0x00FE_88E8;
+const RANGE_FACTOR: u32 = 0x0103_FF50;
+const RANGE_ONE: u32 = 0x0103_FF54;
+const RANGE_TWO: u32 = 0x0103_FF58;
+const DISTANCE_LIMIT: u32 = 0x00FE_8B34;
+const FEATURE_WORD: u32 = 0x0103_FF74;
+const COMPLETION_FLAG: u32 = 0x012E_21F0;
 
-#[inline(always)]
-unsafe fn load_u32(address: u32) -> u32 {
-    (address as *const u32).read_unaligned()
-}
-
-export!(cdecl, rw_afff120() -> u32 {
-    unsafe { body_afff120(false) }
+export!(cdecl, rw_aff120() -> u32 {
+    unsafe { input_master_pass(false) }
 });
 
-// Mutant: flip the final service answer after preserving the status update.
-export!(cdecl, mut_afff120() -> u32 {
-    unsafe { body_afff120(true) }
+// Wrong version for the proof contract: leaves the completion flag unchanged.
+export!(cdecl, mut_aff120() -> u32 {
+    unsafe { input_master_pass(true) }
 });
 
-// Mutant for the initial gate contract: clear the status word on an early
-// return where the original leaves it untouched.
-export!(cdecl, mut_afff120_gate() -> u32 {
-    unsafe {
-        if global::<u32>(GATE_STATE).read() == 1 {
-            global::<u32>(STATUS_WORD).write(0);
-            return 0;
+unsafe fn input_master_pass(mutant: bool) -> u32 {
+    if global::<u32>(SESSION_GATE).read() == 1 {
+        return 0;
+    }
+
+    let session_value = global::<u32>(SESSION_VALUE).read();
+    if session_value != u32::MAX || global::<u32>(GAME_MODE).read() == 0x12 {
+        return session_value;
+    }
+
+    let first_gate: u32 = callee_cdecl!(1, u32,);
+    if first_gate as u8 != 0 {
+        return first_gate;
+    }
+    let second_gate: u32 = callee_cdecl!(2, u32,);
+    if second_gate as u8 != 0 {
+        return second_gate;
+    }
+
+    let _: u32 = callee_cdecl!(3, u32,);
+    let _setup: u32 = callee_cdecl!(4, u32,);
+
+    let mut entity_values = [0u32; 6];
+    let mut position = [0.0f32; 2];
+    let mut auxiliary_values = [0u32; 3];
+    let mut position_valid = [0u8; 4];
+    let _query: u32 = callee_cdecl!(
+        5,
+        u32,
+        entity_values.as_mut_ptr().add(2) as u32,
+        entity_values.as_mut_ptr().add(1) as u32,
+        entity_values.as_mut_ptr() as u32,
+        position.as_mut_ptr() as u32,
+        auxiliary_values.as_mut_ptr() as u32,
+        position_valid.as_mut_ptr() as u32,
+    );
+
+    let data_index = global::<i32>(DATA_INDEX).read();
+    if data_index >= 0 {
+        let row = DATA_TABLE.wrapping_add((data_index as u32).wrapping_mul(0x30));
+        for word in 0..4usize {
+            entity_values[2 + word] =
+                global::<u32>(row.wrapping_add((word as u32).wrapping_mul(4))).read();
         }
-        body_afff120(false)
-    }
-});
-
-unsafe fn body_afff120(mutant: bool) -> u32 {
-    if global::<u32>(GATE_STATE).read() == 1 {
-        return 0;
-    }
-    if global::<u32>(SERVICE_STATE).read() != global::<u32>(REQUIRED_SERVICE).read() {
-        return 0;
-    }
-    if global::<u32>(PASS_MODE).read() == 0x12 {
-        return 0;
     }
 
-    if callee_cdecl!(1, u32,) as u8 != 0 {
-        return 0;
+    let mut base_range = global::<f32>(DEFAULT_RANGE).read();
+    if entity_values[0] != 0 {
+        if entity_values[0] == 1 {
+            base_range = global::<f32>(RANGE_ONE).read();
+        } else if entity_values[0] == 2 {
+            base_range = global::<f32>(RANGE_TWO).read();
+        }
     }
-    if callee_cdecl!(2, u32,) as u8 != 0 {
-        return 0;
-    }
-    let _ = callee_cdecl!(3, u32,);
-    let _ = callee_cdecl!(4, u32,);
+    let range_factor = global::<f32>(RANGE_FACTOR).read();
+    let range = core::hint::black_box(range_factor) * core::hint::black_box(base_range);
 
-    // These offsets mirror the local values handed to the manager. The
-    // contract snapshots the five word outputs; the single-byte marker is
-    // read here on the exercised zero-marker path.
-    let mut context = [0u8; 0x40];
-    let context_base = context.as_mut_ptr();
-    let out_marker = context_base.add(3) as u32;
-    let out_upper = context_base.add(0x30) as u32;
-    let out_mode = context_base.add(0x20) as u32;
-    let out_value = context_base.add(0x08) as u32;
-    let out_low = context_base.add(0x0C) as u32;
-    let out_radius = context_base.add(0x10) as u32;
-    let _ = callee_cdecl!(5, u32, out_radius, out_low, out_value, out_mode, out_upper, out_marker);
-
-    if global::<i32>(TABLE_INDEX).read() >= 0 {
-        return 0;
-    }
-
-    let mode = load_u32(context_base.add(0x08) as u32);
-    let default = global::<f32>(DEFAULT_SCALE).read();
-    let mode_scale = match mode {
-        1 => global::<f32>(MODE_ONE_SCALE).read(),
-        2 => global::<f32>(MODE_TWO_SCALE).read(),
-        _ => default,
+    let distant = if position_valid[0] == 0 {
+        0
+    } else {
+        let x = core::hint::black_box(position[0]);
+        let y = core::hint::black_box(position[1]);
+        let x_squared = core::hint::black_box(x * x);
+        let y_squared = core::hint::black_box(y * y);
+        let squared_distance = core::hint::black_box(y_squared + x_squared);
+        let distance = core::hint::black_box(squared_distance).sqrt();
+        (distance > global::<f32>(DISTANCE_LIMIT).read()) as u32
     };
-    let context_scale = global::<f32>(CONTEXT_SCALE).read();
-    let scale = core::hint::black_box(context_scale) * core::hint::black_box(mode_scale);
 
-    if context[3] != 0 {
-        return 0;
+    let _range_pass: u32 = callee_cdecl!(
+        6,
+        u32,
+        entity_values.as_mut_ptr().add(2) as u32,
+        range.to_bits(),
+        distant,
+    );
+    let _pool_pass: u32 = callee_cdecl!(7, u32,);
+    let _cull_pass: u32 = callee_cdecl!(8, u32,);
+    let _sort_pass: u32 = callee_cdecl!(9, u32,);
+
+    let feature_flags = global::<u32>(FEATURE_WORD).read();
+    if ((feature_flags >> 16) & 0xFF) != 0 {
+        let _optional_range: u32 = callee_cdecl!(10, u32, range.to_bits());
     }
-    let context_out = context_base.add(0x10) as u32;
-    let _ = callee_cdecl!(6, u32, context_out, scale.to_bits(), 0u32);
-    let _ = callee_cdecl!(7, u32,);
-    let _ = callee_cdecl!(8, u32,);
-    let _ = callee_cdecl!(9, u32,);
-
-    let first_optional_flag = global::<u8>(FLAG_BYTES).read();
-    let second_optional_flag = global::<u8>(FLAG_BYTES + 1).read();
-    if first_optional_flag != 0 || second_optional_flag != 0 {
-        return 0;
+    if ((feature_flags >> 24) & 0xFF) != 0 {
+        let _optional_data: u32 = callee_cdecl!(
+            11,
+            u32,
+            auxiliary_values.as_mut_ptr() as u32,
+            0,
+            range.to_bits(),
+        );
     }
 
-    let final_gate = callee_cdecl!(1, u32,);
-    if final_gate as u8 != 0 {
-        global::<u32>(STATUS_WORD).write(0);
-        return if mutant { final_gate ^ 1 } else { final_gate };
-    }
+    let final_gate: u32 = callee_cdecl!(1, u32,);
+    let result = if final_gate as u8 != 0 {
+        final_gate
+    } else {
+        let _placement: u32 = callee_cdecl!(
+            12,
+            u32,
+            entity_values.as_mut_ptr().add(2) as u32,
+            position.as_mut_ptr() as u32,
+            range.to_bits(),
+        );
+        callee_cdecl!(
+            13,
+            u32,
+            entity_values.as_mut_ptr().add(2) as u32,
+            auxiliary_values.as_mut_ptr() as u32,
+            range.to_bits(),
+        )
+    };
 
-    0
+    if !mutant {
+        global::<u32>(COMPLETION_FLAG).write(0);
+    }
+    result
 }

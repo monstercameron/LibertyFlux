@@ -17,7 +17,8 @@
 /// row offsets and leaf fields below are named from their observed use.
 /// Game pointers in this executable are 32-bit words, while the Rust pointer
 /// parameters use `usize` so the host type itself is pointer-width aware.
-///lf_checker_rt::export!(cdecl, rw_00c77430(index: u32, record_root: usize, dispatch_arg: usize, status_byte: usize) -> u32 {
+///#[unsafe(no_mangle)]
+pub extern "cdecl" fn rw_00c77430(index: u32, record_root: usize, dispatch_arg: usize, status_byte: usize) -> u32 {
     unsafe {
         const STREAMING_TABLE_FILE_VA: u32 = 0x016E_C774;
         const TABLE_ROW_BASE: usize = 0x00;
@@ -115,4 +116,4 @@
         }
         true_result(eax)
     }
-});
+}
