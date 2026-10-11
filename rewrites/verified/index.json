@@ -67113,6 +67113,33 @@
   "lane": "r-b278"
  },
  {
+  "address": "0x009CB3A0",
+  "name": "timer_value_in_half_open_range",
+  "kind": "function",
+  "file": "functions/fn_009cb3a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
+ },
+ {
+  "address": "0x009CB3D0",
+  "name": "select_timing_table_entry",
+  "kind": "function",
+  "file": "functions/fn_009cb3d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
+ },
+ {
+  "address": "0x009CB460",
+  "name": "store_timing_window_words",
+  "kind": "function",
+  "file": "functions/fn_009cb460.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
+ },
+ {
   "address": "0x009CB6C0",
   "name": "clock_field_store_normalize",
   "kind": "function",
@@ -68472,6 +68499,15 @@
   "lane": "a-Q03"
  },
  {
+  "address": "0x009CCD80",
+  "name": "NativeImpl_GET_PLAYER_HAS_TRACKS",
+  "kind": "function",
+  "file": "functions/fn_009ccd80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
+ },
+ {
   "address": "0x009CCEB0",
   "name": "NativeImpl_HIGH_FALL_SCREAM",
   "kind": "function",
@@ -68497,6 +68533,51 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s191"
+ },
+ {
+  "address": "0x009CD310",
+  "name": "NativeImpl_PLAY_FIRE_SOUND_FROM_POSITION",
+  "kind": "function",
+  "file": "functions/fn_009cd310.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
+ },
+ {
+  "address": "0x009CD3E0",
+  "name": "NativeImpl_PLAY_SOUND_FROM_POSITION",
+  "kind": "function",
+  "file": "functions/fn_009cd3e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
+ },
+ {
+  "address": "0x009CD570",
+  "name": "NativeImpl_REPORT_CRIME_2",
+  "kind": "function",
+  "file": "functions/fn_009cd570.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
+ },
+ {
+  "address": "0x009CD5B0",
+  "name": "NativeImpl_REPORT_DISPATCH_2",
+  "kind": "function",
+  "file": "functions/fn_009cd5b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
+ },
+ {
+  "address": "0x009CDA00",
+  "name": "NativeImpl_SET_SCRIPT_MIC_LOOK_AT",
+  "kind": "function",
+  "file": "functions/fn_009cda00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
  },
  {
   "address": "0x009CEA80",
@@ -107271,6 +107352,15 @@
   "lane": "a-05"
  },
  {
+  "address": "0x00BBA350",
+  "name": "TASK_PLAY_ANIM_SECONDARY_UPPER_BODY",
+  "kind": "function",
+  "file": "functions/fn_00bba350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
+ },
+ {
   "address": "0x00BBA390",
   "name": "TASK_PLAY_ANIM_UPPER_BODY",
   "kind": "native",
@@ -128527,6 +128617,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD9DF0",
+  "name": "CTaskSimpleNMBalance::CTaskSimpleNMBalance",
+  "kind": "function",
+  "file": "functions/fn_00cd9df0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U34"
  },
  {
   "address": "0x00CDCB60",
