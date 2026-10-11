@@ -2,7 +2,7 @@
   {
     "date": "2026-10-11",
     "title": "Devlog: the failed pipeline run, and 706 verified rewrites that do not build from their published file",
-    "commit": null,
+    "commit": "52039770874757370687649cc463f309d4b0cd99",
     "summary": "The afternoon's pipeline failure is written up as one entry: lost index rows, an assembler that blamed the wrong files, and what the corrected assembler's manifest shows about the verified set.",
     "changes": [
       "The entry gives each cause with its evidence and what was changed, and then the finding the repair uncovered: with the assembler corrected, 706 of 19,026 verified rewrites are left out of the assembled library, 472 because the published file does not compile on its own (helpers, constants and types that stayed in the proving lane's crate) and 234 refused before compiling (a lane's own runtime, no recognisable export, a wrong version left in the file).",
