@@ -53721,6 +53721,15 @@
   "lane": "a-G31"
  },
  {
+  "address": "0x008B1270",
+  "name": "biquad coefficient update",
+  "kind": "function",
+  "file": "functions/fn_008b1270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U114"
+ },
+ {
   "address": "0x008B1770",
   "name": "rage::audBiquadFilterEffectPc::vf0",
   "kind": "function",
@@ -138616,6 +138625,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "a-S06"
+ },
+ {
+  "address": "0x00CD4B00",
+  "name": "peds_task_steer_blend2",
+  "kind": "function",
+  "file": "functions/fn_00cd4b00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U114"
  },
  {
   "address": "0x00CD4E60",
