@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-10",
+    "title": "Rewrites: 1 more functions pass the checker (17085 in total)",
+    "commit": "eef55d0b923b76b2fa5e05567d767b378dbdb439",
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
+      "The tree now holds 17085 rewrites, 17082 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-10",
     "title": "Rewrites: 1 withdrawn because its old proof is vacuous on the current checker",
     "commit": "5f0d2bca00d6a6ccfccf067b048e18cbd4affd40",
     "summary": "The verified count goes down by one. A regression lane re-ran 312 proofs made on checker version 3, unchanged, on version 8: 291 hold and are now recorded on the current checker, one is vacuous, and 20 could not be run.",
