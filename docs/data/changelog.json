@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Lift: the seek-cover tasks, eleven methods of two classes",
+    "commit": null,
+    "summary": "With the leaf functions used up, lifting returns to classes whose methods call other code. The first of the evening: the two pedestrian tasks that take a character to cover.",
+    "changes": [
+      "crates/lf-peds-tasks gains a seek_cover module: the plain seek-cover task with all six of its verified methods (three constructors, the destructor, the router that chooses the next sub-task, and the allocator of its nodes) and the shooting variant with five of its six (the deleting destructor, the pursuit action, the builder of the firing node, the subject initialiser and the check of its type chain). 714 lines with unsafe code forbidden in the module; the pool, the cover table, the subject and every virtual call are behind trait methods, and nothing calls the operating system. The twelve verified rewrites they stand for are 452 lines with 16 unsafe blocks.",
+      "One new test crate runs each lifted method against its tracked verified rewrite on the 32-bit target, 1,500 generated trials each, comparing return values, every call to a callee in order, snapshots of the objects and the bytes written; eleven deliberately wrong lifts are each caught. The coordinator added the module line the lane had left out and the test-only allowance for unsafe code that the workspace's lints require to be explicit, then ran the 25 host tests and the 22 tests on the 32-bit target; none failed.",
+      "Not lifted: the shooting task's main update, verified, about two kilobytes with some 37 callees and state across four objects, which needs a memory model the lane did not have time to build; and three methods that are not verified yet.",
+      "A finding for the proof audits: the verified rewrite of the plain task's router says in its own comment that five of its eight routes leave a null result on which the original faults, and its contract draws those routes; so its proof covers three routes. It is recorded here and goes to the audit list.",
+      "Verified routines with a lifted counterpart proven in the pipeline: 1,283."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Devlog: the published files that do not build alone, 706 down to 218",
     "commit": "d1e891b5d0b66666ee24af8c416238d0b32a5a58",
     "summary": "The entry on the evening's pipeline failure gains its outcome: after 488 repaired files went in, the assembled library takes 19,414 of 19,632 verified rewrites and leaves out 218.",

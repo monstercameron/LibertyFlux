@@ -1,0 +1,15 @@
+// One module per verified rewrite: files share top-level helper names,
+// so they cannot live in one scope. Each module imports the checker's
+// macros and functions from the crate root. The include paths are relative
+// to this crate's manifest: three levels up to the repository root.
+pub mod fn_00d1d3d0 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d1d3d0.rs")); }
+pub mod fn_00d1d4c0 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d1d4c0.rs")); }
+pub mod fn_00d1d650 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d1d650.rs")); }
+pub mod fn_00d1d7a0 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d1d7a0.rs")); }
+pub mod fn_00d1e060 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d1e060.rs")); }
+pub mod fn_00d1f5b0 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d1f5b0.rs")); }
+pub mod fn_00d1d810 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d1d810.rs")); }
+pub mod fn_00d1efd0 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d1efd0.rs")); }
+pub mod fn_00d1f5f0 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d1f5f0.rs")); }
+pub mod fn_00d20580 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d20580.rs")); }
+pub mod fn_00d20800 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00d20800.rs")); }

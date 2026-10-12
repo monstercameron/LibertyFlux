@@ -18,5 +18,6 @@ pub mod event_handler;
 pub mod layout;
 pub mod ped_task;
 pub mod peds_task;
+pub mod seek_cover;
 pub mod task_ctor;
 pub mod tasks;
