@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 23 files from lanes (631 unverified rewrites, 327 in review)",
+    "title": "Lift: 229 more verified functions are the ratio routine already lifted",
     "commit": null,
+    "summary": "A list chosen by shape, every verified function of 25 bytes that calls nothing, turned out to be 229 further instances of the one quotient routine lifted on 6 October. No new lifted code was needed: the existing method is proved against all 229.",
+    "changes": [
+      "Four new test crates (58, 58, 58 and 55 rewrites, to stay under the limit for one crate) run the existing ratio-cell method of crates/lf-vehicles against each of 229 tracked verified rewrites on the 32-bit target, 1,000 cases per instance with the destination, both sources and the return compared bit for bit, including a zero divisor, zero over zero, infinities and not-a-number. Two deliberately wrong lifts per shape (operands swapped; wrong destination) are caught for every instance. The coordinator ran the host check and the 32-bit tests of all four crates before committing: 261 tests, none failing.",
+      "How the list was made: the earlier ratio lift took 113 functions that shared a name. This one took the verified functions with no callees and no portable counterpart, grouped by size: 265 are exactly 25 bytes long, under more than a dozen names given by different naming lanes. 229 are the same routine in three variants of what is returned (nothing, a dead zero, the quotient). The other 36 are listed and left: six setters that share a helper which is not itself a verified function, and thirty accessors, setters and copies of other shapes.",
+      "342 verified functions are now known to be one routine, about half of them outside the vehicles code: moving the type to a neutral module is noted and not done here. Verified routines with a lifted counterpart proven in the pipeline: 752, up from 523. The pipeline's 32-bit job runs the four new crates.",
+      "The lane took sixteen minutes. The previous lane on a group chosen by name lifted three routines in ninety. A second list of the same kind, 198 verified functions of 21 bytes, is next."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 23 files from lanes (631 unverified rewrites, 327 in review)",
+    "commit": "5a45d51af929fcf5f4072e3a0fc00c2ead1e97dc",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 631 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
