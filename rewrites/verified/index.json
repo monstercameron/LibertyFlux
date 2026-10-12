@@ -42597,6 +42597,15 @@
   "lane": "r-b589"
  },
  {
+  "address": "0x00683EC0",
+  "name": "gated_vec3_accumulate",
+  "kind": "function",
+  "file": "functions/fn_00683ec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U144"
+ },
+ {
   "address": "0x00683F30",
   "name": "quat_dof_apply_twist",
   "kind": "function",
@@ -44575,6 +44584,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b542"
+ },
+ {
+  "address": "0x00699B80",
+  "name": "rage::crAnimChannelQuantizeFloat::try_build_from_samples",
+  "kind": "function",
+  "file": "functions/fn_00699b80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U144"
  },
  {
   "address": "0x00699BB0",
@@ -46827,6 +46845,15 @@
   "lane": "a-G31"
  },
  {
+  "address": "0x0086F1D0",
+  "name": "SIN",
+  "kind": "function",
+  "file": "functions/fn_0086f1d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U144"
+ },
+ {
   "address": "0x0086F200",
   "name": "COS",
   "kind": "native",
@@ -46843,6 +46870,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-03"
+ },
+ {
+  "address": "0x0086F250",
+  "name": "POW",
+  "kind": "function",
+  "file": "functions/fn_0086f250.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U144"
  },
  {
   "address": "0x0086F280",
@@ -57528,6 +57564,15 @@
   "lane": "a-G02"
  },
  {
+  "address": "0x008D6270",
+  "name": "shaped_index_ratio",
+  "kind": "function",
+  "file": "functions/fn_008d6270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U144"
+ },
+ {
   "address": "0x008D6320",
   "name": "basis_from_dir_up",
   "kind": "function",
@@ -57571,6 +57616,24 @@
   "trials": 300,
   "checker": "version 8",
   "lane": "a-G05"
+ },
+ {
+  "address": "0x008D6810",
+  "name": "paired_polar_angles",
+  "kind": "function",
+  "file": "functions/fn_008d6810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U144"
+ },
+ {
+  "address": "0x008D6920",
+  "name": "paired_heading_blend",
+  "kind": "function",
+  "file": "functions/fn_008d6920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U144"
  },
  {
   "address": "0x008D69E0",
@@ -97261,6 +97324,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G01"
+ },
+ {
+  "address": "0x00B2CDA0",
+  "name": "garage_elevation_scaled",
+  "kind": "function",
+  "file": "functions/fn_00b2cda0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U144"
  },
  {
   "address": "0x00B2CE80",
@@ -147256,6 +147328,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G10"
+ },
+ {
+  "address": "0x00D21040",
+  "name": "angle_solver_atan2",
+  "kind": "function",
+  "file": "functions/fn_00d21040.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U144"
  },
  {
   "address": "0x00D210A0",
