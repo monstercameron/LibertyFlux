@@ -42,6 +42,14 @@ pub trait RouteTaskHost {
     /// constructor reads the task's flag word after this call.
     fn move_base_ctor(&mut self, task: &mut FollowPointRouteTask, speed_bits: u32) -> u32;
 
+    /// Releases the route table word the task owns, through the class's
+    /// shared release context (the host reads the context itself).
+    fn release_route(&mut self, table: u32) -> u32;
+
+    /// The move base's destructor, run after the task's own release.
+    /// Returns its answer, which the destructor returns in turn.
+    fn base_destroy(&mut self, task: u32) -> u32;
+
     /// Allocates the storage for a new task of this class. Returns the new
     /// task's handle, or 0 when the allocator has none to give.
     fn allocate_task(&mut self) -> u32;

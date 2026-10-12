@@ -250,3 +250,8 @@ pub mod fn_00DB19A0 {
     use lf_checker_rt::{export, global, relocated};
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db19a0.rs"));
 }
+/// Verified rewrite of the query that asks the frame for its records and answers whether both flags are set.
+pub mod fn_00DB1430 {
+    #![allow(unused_imports)]
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1430.rs"));
+}

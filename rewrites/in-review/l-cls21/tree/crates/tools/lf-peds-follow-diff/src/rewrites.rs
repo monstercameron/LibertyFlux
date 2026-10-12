@@ -86,3 +86,12 @@ pub mod fn_00caf2a0 {
         "/../../../../../../../rewrites/verified/functions/fn_00caf2a0.rs"
     ));
 }
+
+/// Verified rewrite: destructor (vtable words, release of the route table, base destructor).
+pub mod fn_00cace90 {
+    use lf_checker_rt::{callee_thiscall, export, global, relocated};
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00cace90.rs"
+    ));
+}

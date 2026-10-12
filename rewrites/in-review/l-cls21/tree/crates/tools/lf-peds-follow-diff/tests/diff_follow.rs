@@ -17,7 +17,8 @@ use core::cell::{Cell, RefCell};
 use std::sync::{Mutex, MutexGuard};
 
 use lf_peds_follow_diff::rewrites::{
-    fn_00caf2a0, fn_00cabc00, fn_00cabca0, fn_00cb2970, fn_00cb3b50, fn_00cb73a0, fn_00cb73d0, fn_00cbc9f0,
+    fn_00cace90, fn_00caf2a0, fn_00cabc00, fn_00cabca0, fn_00cb2970, fn_00cb3b50, fn_00cb73a0, fn_00cb73d0,
+    fn_00cbc9f0,
 };
 use lf_peds_tasks::follow_point_route::host::{PedView, RouteTaskHost};
 use lf_peds_tasks::follow_point_route::route::{RoutePoint, RouteTable};
@@ -169,6 +170,12 @@ fn ans_next(task: u32) -> u32 {
 fn ans_create(task: u32, id: u32, ped: u32) -> u32 {
     mix(task ^ 0x77, id, ped)
 }
+fn ans_release(ctx: u32, table: u32) -> u32 {
+    mix(ctx, table, 0x99)
+}
+fn ans_base_dtor(task: u32) -> u32 {
+    mix(task, 0x77, 0x88)
+}
 fn ans_plan(task: u32) -> u32 {
     mix(task, 0x33, 0x44)
 }
@@ -185,6 +192,8 @@ enum Ev {
     Base { task: u32, speed: u32 },
     RouteCtor { task: u32, target: u32, start: u32, end: u32, final_value: u32, id: u32 },
     Alloc { mgr: u32 },
+    Release { ctx: u32, table: u32 },
+    BaseDtor { task: u32 },
 }
 
 thread_local! {
@@ -235,6 +244,8 @@ struct RecHost {
     mgr: u32,
     /// The handle the allocation answers with (0 for none).
     new_handle: u32,
+    /// The release context the case reads from its global.
+    ctx: u32,
 }
 
 impl RouteTaskHost for RecHost {
@@ -275,6 +286,14 @@ impl RouteTaskHost for RecHost {
     fn allocate_task(&mut self) -> u32 {
         self.log.push(Ev::Alloc { mgr: self.mgr });
         self.new_handle
+    }
+    fn release_route(&mut self, table: u32) -> u32 {
+        self.log.push(Ev::Release { ctx: self.ctx, table });
+        ans_release(self.ctx, table)
+    }
+    fn base_destroy(&mut self, task: u32) -> u32 {
+        self.log.push(Ev::BaseDtor { task });
+        ans_base_dtor(task)
     }
 }
 
@@ -1270,6 +1289,12 @@ impl RouteTaskHost for SwapRouteArgs {
     fn allocate_task(&mut self) -> u32 {
         self.0.allocate_task()
     }
+    fn release_route(&mut self, table: u32) -> u32 {
+        self.0.release_route(table)
+    }
+    fn base_destroy(&mut self, task: u32) -> u32 {
+        self.0.base_destroy(task)
+    }
 }
 
 /// The constructor with the flag word read before the move base runs: a wrong lift.
@@ -1638,5 +1663,160 @@ fn clone_wrong_lift_is_caught() {
         }
         eprintln!("clone wrong lift {which}: caught in {caught} of {WRONG_TRIALS} trials");
         assert!(caught > 0, "wrong clone lift {which} was not caught");
+    }
+}
+
+
+// ---- Destructor (verified rewrite fn_00cace90). ----
+
+/// The shared release context the destructor reads from its global.
+const CTX_VALUE: u32 = 0x0C0F_FEE5;
+static mut CTX_CELL: u32 = CTX_VALUE;
+/// The file address of the release-context global the destructor reads.
+const CONTEXT_GLOBAL_VA: u32 = 0x0179_D114;
+
+/// The release callee: answers for the context and the table word.
+extern "thiscall" fn release_stub(ctx: u32, table: u32) -> u32 {
+    record(Ev::Release { ctx, table });
+    ans_release(ctx, table)
+}
+
+/// The move base's destructor callee.
+extern "thiscall" fn base_dtor_stub(this: u32) -> u32 {
+    record(Ev::BaseDtor { task: this });
+    ans_base_dtor(this)
+}
+
+/// Points the destructor's global read at the context cell.
+fn set_context_global() {
+    let cell = core::ptr::addr_of!(CTX_CELL) as usize as u32;
+    let xbase = cell.wrapping_sub(CONTEXT_GLOBAL_VA.wrapping_sub(0x40_0000));
+    // SAFETY: the relocation base is read only during a rewrite call; the lock serialises the cases.
+    unsafe { lf_checker_rt::CHECKER_XBASE = xbase };
+    // SAFETY: the cell is a plain static word, written before each call.
+    unsafe { core::ptr::addr_of_mut!(CTX_CELL).write(CTX_VALUE) };
+}
+
+fn dtor_rewrite(table_word: u32) -> (Outcome, u32) {
+    let mut obj = obj_words();
+    set_word(&mut obj, OFF_WAYPOINTS, table_word);
+    let before = obj.clone();
+    set_context_global();
+    install(&[
+        (CALLEE_1, base_dtor_stub as *const () as usize as u32),
+        (CALLEE_2, release_stub as *const () as usize as u32),
+    ]);
+    let _ = take_calls();
+    let this = addr(&obj);
+    let ret = fn_00cace90::rw_00cace90(this);
+    let calls = take_calls();
+    let written = [OFF_VTABLE / 4, OFF_BASE_VTABLE / 4];
+    let clobbered = obj
+        .iter()
+        .enumerate()
+        .any(|(i, w)| !written.contains(&i) && *w != before[i]);
+    assert_eq!(obj[OFF_VTABLE / 4], lf_checker_rt::relocated(TASK_VTABLE_VA));
+    assert_eq!(obj[OFF_BASE_VTABLE / 4], lf_checker_rt::relocated(BASE_VTABLE_VA));
+    (
+        Outcome {
+            ret,
+            calls,
+            index: 0,
+            flags: 0,
+            out: Vec::new(),
+            clobbered,
+        },
+        this,
+    )
+}
+
+fn dtor_lifted(table_word: u32, this: u32) -> Outcome {
+    let mut task = FollowPointRouteTask {
+        handle: this,
+        route_target: table_word,
+        ..Default::default()
+    };
+    let mut host = RecHost {
+        ctx: CTX_VALUE,
+        ..Default::default()
+    };
+    let ret = task.destroy(&mut host);
+    Outcome {
+        ret,
+        calls: host.calls(),
+        index: 0,
+        flags: 0,
+        out: Vec::new(),
+        clobbered: false,
+    }
+}
+
+/// Deliberately wrong destructors: the release runs even for a zero table
+/// word (0), or the base destructor runs before the release (1).
+fn dtor_wrong(table_word: u32, this: u32, which: u32) -> Outcome {
+    let task = FollowPointRouteTask {
+        handle: this,
+        route_target: table_word,
+        ..Default::default()
+    };
+    let mut host = RecHost {
+        ctx: CTX_VALUE,
+        ..Default::default()
+    };
+    let ret = if which == 0 {
+        host.release_route(task.route_target);
+        host.base_destroy(task.handle)
+    } else {
+        let r = host.base_destroy(task.handle);
+        if task.route_target != 0 {
+            host.release_route(task.route_target);
+        }
+        r
+    };
+    Outcome {
+        ret,
+        calls: host.calls(),
+        index: 0,
+        flags: 0,
+        out: Vec::new(),
+        clobbered: false,
+    }
+}
+
+#[test]
+fn destructor_matches_rewrite() {
+    let _g = guard();
+    let mut rng = Rng(0x5EED_0008);
+    let (mut released, mut kept) = (0usize, 0usize);
+    for _ in 0..TRIALS {
+        let table_word = if rng.chance(1, 4) { 0 } else { rng.u32() | 1 };
+        let (rw, this) = dtor_rewrite(table_word);
+        assert!(!rw.clobbered, "destructor wrote outside the vtable words");
+        let lf = dtor_lifted(table_word, this);
+        assert_eq!(rw, lf, "destructor differs for table word {table_word:#x}");
+        if table_word != 0 {
+            released += 1;
+        } else {
+            kept += 1;
+        }
+    }
+    eprintln!("destructor: {TRIALS} trials; {released} released a table, {kept} with none");
+}
+
+#[test]
+fn destructor_wrong_lift_is_caught() {
+    let _g = guard();
+    for which in 0..2u32 {
+        let mut rng = Rng(0x5EED_0108 + which as u64);
+        let mut caught = 0usize;
+        for _ in 0..WRONG_TRIALS {
+            let table_word = if rng.chance(1, 4) { 0 } else { rng.u32() | 1 };
+            let (rw, this) = dtor_rewrite(table_word);
+            if dtor_wrong(table_word, this, which) != rw {
+                caught += 1;
+            }
+        }
+        eprintln!("destructor wrong lift {which}: caught in {caught} of {WRONG_TRIALS} trials");
+        assert!(caught > 0, "wrong destructor lift {which} was not caught");
     }
 }

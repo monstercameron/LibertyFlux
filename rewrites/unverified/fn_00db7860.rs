@@ -5,7 +5,7 @@
 /// words (zero and the bit pattern for 5.0f). Its returned pointer supplies
 /// three packed pairs; the last pair is also forwarded in XMM0. The final
 /// cleanup receives a pointer into the caller frame; this function does not
-/// initialize the eight words observed there before the call. This is a
+/// initialize the six words in that record before the call. This is a
 /// 32-bit MSVC thiscall wrapper with three stack arguments and no result.
 lf_checker_rt::export!(thiscall, rw_00db7860(
     this_ptr: u32,
@@ -56,7 +56,7 @@ lf_checker_rt::export!(thiscall, rw_00db7860(
         PANEL_ENABLED,
     );
 
-    let mut temporary_record = [0u32; 8];
+    let mut temporary_record = [0u32; 6];
     let _ = lf_checker_rt::callee_thiscall!(
         3,
         u32,

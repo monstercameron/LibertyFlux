@@ -309,6 +309,17 @@ impl FollowPointRouteTask {
         task
     }
 
+    /// The destructor: releases the route table word the task owns when it
+    /// is not zero, then runs the move base's destructor and returns its
+    /// answer. The vtable words the original writes are the class identity
+    /// and are not represented here.
+    pub fn destroy<H: RouteTaskHost>(&mut self, host: &mut H) -> u32 {
+        if self.route_target != 0 {
+            host.release_route(self.route_target);
+        }
+        host.base_destroy(self.handle)
+    }
+
     /// The clone: allocates a new task through the host and constructs it
     /// from this task's words. The flag bits the constructor takes are read
     /// back from this task's flag word (bit 0 as the start include, bit 3 as

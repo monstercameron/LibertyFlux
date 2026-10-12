@@ -5,14 +5,14 @@
 /// the queued resource, its payload at offset `+0x0C`, and the pending count.
 /// The pending count is cleared after an enabled flush even when it is
 /// nonpositive; a disabled flush leaves all state untouched.
-lf_checker_rt::export!(cdecl, rw_00ad88d0() {
+lf_checker_rt::export!(cdecl, rw_00ad88d0() -> u32 {
     const ENABLE_BYTE: u32 = 0x0154E2B5;
     const QUEUED_RESOURCE: u32 = 0x01550EA0;
     const QUEUE_CONTEXT: u32 = 0x01550EA4;
     const PENDING_COUNT: u32 = 0x01550EA8;
 
     if unsafe { lf_checker_rt::global::<u8>(ENABLE_BYTE).read_volatile() } == 0 {
-        return;
+        return 0;
     }
 
     let pending_count = unsafe { lf_checker_rt::global::<i32>(PENDING_COUNT).read_volatile() };
@@ -33,4 +33,5 @@ lf_checker_rt::export!(cdecl, rw_00ad88d0() {
     }
 
     unsafe { lf_checker_rt::global::<u32>(PENDING_COUNT).write_volatile(0) };
+    0
 });

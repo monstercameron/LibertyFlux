@@ -6,9 +6,9 @@
 /// The routine obtains weapon animation metadata, selects a pair of animation
 /// keys from the task or weapon record, asks the ped's animation manager for
 /// an association, and updates that association's timing and flags. The task
-/// fields at `+0x40`, `+0x4c`, `+0x68`, `+0x70..+0x7c`, `+0x94`, and `+0x9c`
-/// hold the selected key, helper result, association, sampled track data, and
-/// playback settings. The animation association fields at `+0x04`, `+0x4c`,
+/// fields at `+0x40`, `+0x4c`, `+0x60`, `+0x68`, `+0x70..+0x7c`, `+0x94`,
+/// and `+0x9c` hold the selected key, helper result, requested blend amount,
+/// association, sampled track data, and playback settings. The animation association fields at `+0x04`, `+0x4c`,
 /// and `+0x54` hold flags, clip time, and blend speed. Callee calls are
 /// dispatched through the checker runtime; the virtual ped method is planted
 /// in the contract's vtable slot. Floating-point operations retain the
@@ -320,7 +320,7 @@ lf_checker_rt::export!(thiscall, rw_00dc68e0(task: u32, ped: u32) -> u32 {
             CALL_UPDATE_BLEND,
             u32,
             association,
-            0.0f32.to_bits(),
+            read_u32(task.wrapping_add(TASK_INITIAL_BLEND)),
         );
 
         let mut association_flags = read_u32(association.wrapping_add(ASSOCIATION_FLAGS));
