@@ -8,10 +8,19 @@
 /// clamps to +0. Upper comparisons are strict (`ja`); the lower one takes
 /// unordered (`jbe`).
 ///
-/// Float operation order is the original's, pinned through `black_box`;
-/// the truncation uses a cast, which matches `cvttss2si` for the
-/// in-range values this contract feeds it (see contract: inputs are
-/// bounded finite floats, counts small).
+/// Float operation order is the original's, pinned through `black_box`.
+///
+/// Two places must follow the original's instructions exactly. The lower
+/// interval mask is `cmpnless` (NOT less-or-equal), written as `!(d <= b)`;
+/// it is not the negation of `<`, which differs when the operands are equal
+/// (a whole-number index, +0 or -0). The index is `cvttss2si`: NaN and
+/// values outside the i32 range give the indefinite integer 0x80000000, not
+/// a saturated value, so the rewrite does the same explicitly.
+///
+/// Proof range (contract): COUNT is drawn from 0 to 46, inside the 48-word
+/// table. A negative COUNT of large magnitude makes the original read a
+/// word inside the code section (completed, not a fault), which the rewrite
+/// must not read, so that range is outside this proof.
 ///
 /// Original: 0x00c24860 (stdcall, one stack word; float result).
 lf_checker_rt::export!(stdcall, rw_00c24860(tv: u32) -> f32 {

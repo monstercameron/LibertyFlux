@@ -19,6 +19,13 @@
 /// the five opaque words in the order (a0, a4, a5, a3, a6). Returns
 /// nothing meaningful (the original leaves the last helper answer in eax,
 /// which is not behaviour).
+///
+/// Fault fixed here: the two additions were left to the compiler, which
+/// may commute them. When two operands are both not-a-number, SSE addss
+/// returns the first operand's payload, so a commuted sum carries the other
+/// payload. Both operands of both additions are now pinned with
+/// `black_box`, and the order is the original's: (adjusted + addend), then
+/// + a1 (`addss xmm0, [ADDEND]` then `addss xmm0, [esp+0x24]`).
 export!(thiscall, rw_00947820(
     obj: u32,
     a0: u32,

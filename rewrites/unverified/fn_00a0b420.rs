@@ -1,44 +1,47 @@
-// original: 0x00a0b420 cleanup_validated_reinit (proposed)
-/// Re-initialise both cleanup tables, validating every record first.
-///
-/// Builds an empty record on the stack, then for each of the 0x100 records
-/// at `this + 4` validates it strictly: live records are inspected as-is,
-/// dead ones are inspected via the empty record. Same for the 0xc8 records
-/// at `this + 0x2c04` with the flag clear. (Inspect/validate/create are
-/// stubs under the checker, so the proof is the call sequence plus the
-/// snapshot of each inspected record.) The stack-cookie check runs as a
-/// final no-argument call; its esp-derived register is not compared.
-/// Always answers 0. Thiscall, no stack words.
-lf_checker_rt::export!(thiscall, rw_00a0b420(this: u32) -> u32 {
+// original: 0x00a0b420 mission_cleanup_save
+/// Serialize the manager's 256 primary records and 200 secondary records in
+/// order. Each record is 44 bytes. The validity helper receives the manager,
+/// the record pointer, and a mode flag (one for primary records, zero for
+/// secondary records). A valid record is forwarded directly; an invalid one
+/// is replaced by the helper-initialized default record. The file writer is
+/// called once for every record. Thiscall with no stack arguments and no
+/// specified return value.
+lf_checker_rt::export!(thiscall, rw_00a0b420(this: u32) -> () {
     unsafe {
-        const EMPTY: u32 = 0;
-        const VALIDATE: u32 = 1;
-        const INSPECT: u32 = 2;
-        const COOKIE_CHECK: u32 = 3;
-        const COUNT_A: u32 = 0x100;
-        const COUNT_B: u32 = 0xc8;
-        const STRIDE: u32 = 0x2c;
-        const TABLE_B: u32 = 0x2c04;
-        let buf = [0u32; 11];
-        lf_checker_rt::callee_thiscall!(EMPTY, u32, buf.as_ptr() as u32);
-        let mut rec = this + 4;
-        let mut i = 0u32;
-        while i < COUNT_A {
-            let ok: u32 = lf_checker_rt::callee_thiscall!(VALIDATE, u32, this, rec, 1u32);
-            let src = if (ok & 0xff) != 0 { rec } else { buf.as_ptr() as u32 };
-            let _: u32 = lf_checker_rt::callee_cdecl!(INSPECT, u32, src, STRIDE);
-            i += 1;
-            rec += STRIDE;
+        const PRIMARY_BASE: u32 = 4;
+        const PRIMARY_COUNT: u32 = 256;
+        const SECONDARY_BASE: u32 = 0x2c04;
+        const SECONDARY_COUNT: u32 = 200;
+        const ENTRY_SIZE: u32 = 0x2c;
+        const INIT_DEFAULT: u32 = 0;
+        const IS_VALID: u32 = 1;
+        const WRITE_ENTRY: u32 = 2;
+        const CHECK_COOKIE: u32 = 3;
+        const SECURITY_COOKIE_VA: u32 = 0x01057fb4;
+
+        let mut default_record = [0u32, u32::MAX, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let default_ptr = default_record.as_mut_ptr() as u32;
+        let _ = lf_checker_rt::callee_thiscall!(INIT_DEFAULT, u32, default_ptr);
+
+        for index in 0..PRIMARY_COUNT {
+            let entry = this
+                .wrapping_add(PRIMARY_BASE)
+                .wrapping_add(index.wrapping_mul(ENTRY_SIZE));
+            let valid = lf_checker_rt::callee_thiscall!(IS_VALID, u32, this, entry, 1);
+            let data = if valid != 0 { entry } else { default_ptr };
+            let _ = lf_checker_rt::callee_cdecl!(WRITE_ENTRY, u32, data, ENTRY_SIZE);
         }
-        let mut rec = this + TABLE_B;
-        let mut i = 0u32;
-        while i < COUNT_B {
-            let ok: u32 = lf_checker_rt::callee_thiscall!(VALIDATE, u32, this, rec, 0u32);
-            let src = if (ok & 0xff) != 0 { rec } else { buf.as_ptr() as u32 };
-            let _: u32 = lf_checker_rt::callee_cdecl!(INSPECT, u32, src, STRIDE);
-            i += 1;
-            rec += STRIDE;
+
+        for index in 0..SECONDARY_COUNT {
+            let entry = this
+                .wrapping_add(SECONDARY_BASE)
+                .wrapping_add(index.wrapping_mul(ENTRY_SIZE));
+            let valid = lf_checker_rt::callee_thiscall!(IS_VALID, u32, this, entry, 0);
+            let data = if valid != 0 { entry } else { default_ptr };
+            let _ = lf_checker_rt::callee_cdecl!(WRITE_ENTRY, u32, data, ENTRY_SIZE);
         }
-        lf_checker_rt::callee_cdecl!(COOKIE_CHECK, u32,)
+
+        let cookie = lf_checker_rt::global::<u32>(SECURITY_COOKIE_VA).read();
+        let _ = lf_checker_rt::callee_thiscall!(CHECK_COOKIE, u32, cookie);
     }
 });
