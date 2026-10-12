@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 16 more functions pass the checker (19609 in total)",
+    "title": "Rewrites: 137 proofs re-run on the current checker and recorded on it",
     "commit": null,
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "137 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 16 more functions pass the checker (19609 in total)",
+    "commit": "d10c118e3f6f97e29d72425414943d1dd77c369e",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "16 rewrites added under rewrites/verified: 0 script native handlers and 16 other functions.",
