@@ -68841,6 +68841,159 @@
   "lane": "r-b559"
  },
  {
+  "address": "0x009B08E0",
+  "name": "audPoliceScanner::destructor",
+  "kind": "function",
+  "file": "functions/fn_009b08e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B0910",
+  "name": "audPoliceScanner::~audPoliceScanner__deleting",
+  "kind": "function",
+  "file": "functions/fn_009b0910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B0930",
+  "name": "audPoliceScanner::alloc_report_slot",
+  "kind": "function",
+  "file": "functions/fn_009b0930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B0960",
+  "name": "TimeShift_UpdateB",
+  "kind": "function",
+  "file": "functions/fn_009b0960.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B09E0",
+  "name": "audPoliceScanner::on_wanted_level_changed",
+  "kind": "function",
+  "file": "functions/fn_009b09e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B0A10",
+  "name": "audPoliceScanner::clear_slots_for_entity",
+  "kind": "function",
+  "file": "functions/fn_009b0a10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B0A40",
+  "name": "audPoliceScanner::clear_slots_for_id",
+  "kind": "function",
+  "file": "functions/fn_009b0a40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B0A80",
+  "name": "audPoliceScanner::pick_report_voices",
+  "kind": "function",
+  "file": "functions/fn_009b0a80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B0DD0",
+  "name": "audPoliceScanner::clear_report_slot",
+  "kind": "function",
+  "file": "functions/fn_009b0dd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B18B0",
+  "name": "audPoliceScanner::maybe_play_dispatch_update",
+  "kind": "function",
+  "file": "functions/fn_009b18b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B1B30",
+  "name": "audPoliceScanner::acquire_noise_loop",
+  "kind": "function",
+  "file": "functions/fn_009b1b30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B2090",
+  "name": "audPoliceScanner::start_slot_sound",
+  "kind": "function",
+  "file": "functions/fn_009b2090.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B3200",
+  "name": "audPoliceScanner::report_player_spotted",
+  "kind": "function",
+  "file": "functions/fn_009b3200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B38E0",
+  "name": "audPoliceScanner::tally_crime",
+  "kind": "function",
+  "file": "functions/fn_009b38e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B3CB0",
+  "name": "audPoliceScanner::tally_crime_detailed",
+  "kind": "function",
+  "file": "functions/fn_009b3cb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B3EB0",
+  "name": "NativeImpl_REPORT_CRIME",
+  "kind": "function",
+  "file": "functions/fn_009b3eb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
+  "address": "0x009B43D0",
+  "name": "audPoliceScanner::shutdown",
+  "kind": "function",
+  "file": "functions/fn_009b43d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s734"
+ },
+ {
   "address": "0x009B5950",
   "name": "script_state_refresh_flags",
   "kind": "function",
