@@ -640,6 +640,14 @@
   "reason": "indirect_call"
  },
  {
+  "address": "0x005D6C00",
+  "name": "html_page_release",
+  "file": "fn_005d6c00.rs",
+  "lane": "r-s822",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x005DA100",
   "name": "fn_005da100",
   "file": "fn_005da100.rs",
@@ -1872,14 +1880,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x006727E0",
-  "name": "init_async_file_request",
-  "file": "fn_006727e0.rs",
-  "lane": "r-s817",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0068A450",
   "name": "track_key_partition_0068A450 (proposed)",
   "file": "fn_0068a450.rs",
@@ -1904,9 +1904,9 @@
   "reason": "other"
  },
  {
-  "address": "0x00879890",
-  "name": "rage::crmtComposer::vf0",
-  "file": "fn_00879890.rs",
+  "address": "0x008798D0",
+  "name": "rage::crmtComposer::vf5",
+  "file": "fn_008798d0.rs",
   "lane": "r-s816",
   "outcome": "not_reached",
   "reason": null
@@ -2387,7 +2387,7 @@
   "address": "0x008B4090",
   "name": "stick_response_apply",
   "file": "fn_008b4090.rs",
-  "lane": "a-U156",
+  "lane": "a-U170",
   "outcome": "not yet run",
   "reason": ""
  },
@@ -2560,6 +2560,14 @@
   "reason": ""
  },
  {
+  "address": "0x008DAAD0",
+  "name": "CCreateRenderListGroupDC::CCreateRenderListGroupDC",
+  "file": "fn_008daad0.rs",
+  "lane": "r-s819",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x008DACA0",
   "name": "CDrawEntityDC::CDrawEntityDC",
   "file": "fn_008daca0.rs",
@@ -2708,6 +2716,14 @@
   "name": "audio_collision_voice_is_enabled",
   "file": "fn_00977430.rs",
   "lane": "r-s763",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0098B240",
+  "name": "audRadioEmitter::~audRadioEmitter__deleting",
+  "file": "fn_0098b240.rs",
+  "lane": "r-s827",
   "outcome": "not_reached",
   "reason": null
  },
@@ -3408,9 +3424,9 @@
   "reason": null
  },
  {
-  "address": "0x00A84B10",
-  "name": "CComplexGunTaskInfo::deserialize",
-  "file": "fn_00a84b10.rs",
+  "address": "0x00A84B60",
+  "name": "CComplexJumpTaskInfo::deserialize",
+  "file": "fn_00a84b60.rs",
   "lane": "r-s823",
   "outcome": "not_reached",
   "reason": null
@@ -3467,6 +3483,14 @@
   "address": "0x00A86630",
   "name": "CSimpleClimbTaskInfo::vf4",
   "file": "fn_00a86630.rs",
+  "lane": "r-s821",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A86680",
+  "name": "CSimpleMeleeActionResultTaskInfo::vf4",
+  "file": "fn_00a86680.rs",
   "lane": "r-s821",
   "outcome": "not_reached",
   "reason": null
@@ -4219,7 +4243,7 @@
   "address": "0x00B22D80",
   "name": "interior_id_tables_reset",
   "file": "fn_00b22d80.rs",
-  "lane": "a-U160",
+  "lane": "a-U168",
   "outcome": "not yet run",
   "reason": ""
  },
@@ -5344,9 +5368,9 @@
   "reason": null
  },
  {
-  "address": "0x00BDF2D0",
-  "name": "CTaskSimpleSayAudio::CTaskSimpleSayAudio",
-  "file": "fn_00bdf2d0.rs",
+  "address": "0x00BDF940",
+  "name": "CTaskSimpleSayAudio::~CTaskSimpleSayAudio",
+  "file": "fn_00bdf940.rs",
   "lane": "r-s815",
   "outcome": "not_reached",
   "reason": null
@@ -6112,6 +6136,14 @@
   "reason": null
  },
  {
+  "address": "0x00C5E6A0",
+  "name": "CTaskComplexDestroyCar::create_next_sub_task",
+  "file": "fn_00c5e6a0.rs",
+  "lane": "r-s814",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C5F920",
   "name": "is_active_driveby_sub_task",
   "file": "fn_00c5f920.rs",
@@ -6846,14 +6878,6 @@
   "lane": "r-b668",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00CCCE10",
-  "name": "ped_task_update",
-  "file": "fn_00ccce10.rs",
-  "lane": "a-U166",
-  "outcome": "not yet run",
-  "reason": ""
  },
  {
   "address": "0x00CCDA60",
@@ -7616,6 +7640,14 @@
   "reason": null
  },
  {
+  "address": "0x00D536A0",
+  "name": "fn_00D536A0",
+  "file": "fn_00d536a0.rs",
+  "lane": "r-s826",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00D68730",
   "name": "CRenderPhaseDeferredLighting_LightsToScreen::vf7",
   "file": "fn_00d68730.rs",
@@ -7704,9 +7736,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00DB1DC0",
-  "name": "UILayoutFrame::sync_cached_child_metrics",
-  "file": "fn_00db1dc0.rs",
+  "address": "0x00DB2440",
+  "name": "UITexture::UITexture_2",
+  "file": "fn_00db2440.rs",
   "lane": "r-s824",
   "outcome": "not_reached",
   "reason": null
@@ -7920,17 +7952,17 @@
   "reason": null
  },
  {
-  "address": "0x00DF2FB0",
-  "name": "function_00DF2FB0",
-  "file": "fn_00df2fb0.rs",
+  "address": "0x00DF3010",
+  "name": "function_00DF3010",
+  "file": "fn_00df3010.rs",
   "lane": "r-s818",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00DF3010",
-  "name": "function_00DF3010",
-  "file": "fn_00df3010.rs",
+  "address": "0x00DF3040",
+  "name": "function_00DF3040",
+  "file": "fn_00df3040.rs",
   "lane": "r-s818",
   "outcome": "not_reached",
   "reason": null
