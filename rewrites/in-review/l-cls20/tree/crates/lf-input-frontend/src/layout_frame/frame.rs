@@ -80,6 +80,11 @@ pub mod field {
     pub const FLAG_EA: usize = 0xEA;
     /// Flag byte stored by [`super::UILayoutFrame::set_flag_eb`].
     pub const FLAG_EB: usize = 0xEB;
+    /// Base address of the pointer list the list release walks, and the
+    /// owner's list field.
+    pub const LIST_BASE: usize = 0xBC;
+    /// Count of entries in that pointer list (an unsigned 16-bit value).
+    pub const LIST_COUNT: usize = 0xC0;
     /// Cache word filled once by [`super::UILayoutFrame::install_cache_if_empty`].
     pub const CACHE_EC: usize = 0xEC;
 }
@@ -143,6 +148,14 @@ impl UILayoutFrame {
     }
 
     /// The byte at t.
+    /// The unsigned 16-bit value at `at`, little-endian.
+    pub(super) fn half_at(&self, at: usize) -> u16 {
+        let mut half = [0u8; 2];
+        half.copy_from_slice(&self.bytes[at..at + 2]);
+        u16::from_le_bytes(half)
+    }
+
+    /// The byte at `at`.
     pub(super) fn byte_at(&self, at: usize) -> u8 {
         self.bytes[at]
     }

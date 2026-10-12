@@ -7,7 +7,9 @@
 
 use lf_core::Handle32;
 
-use super::world::{CamGameWorld, CamOwnerTag, CamTag, GateBlock, GateTag};
+use super::world::{
+    CamGameWorld, CamGlobal, CamOwnerTag, CamTag, GateBlock, GateTag, SingletonField, SingletonTag,
+};
 
 /// Mode word an idle camera holds (set by the idle reset).
 pub const IDLE_MODE: u32 = 3;
@@ -39,6 +41,9 @@ const RELEASE_TO_POOL: u32 = 1;
 /// is the only place an address appears; the lifted methods never see one.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct CCamGame {
+    /// Blend channel, as the bits of a float (offset 0x74). The blend step raises,
+    /// clamps and zeroes it. Stored as bits so that NaN payloads survive.
+    pub blend: u32,
     /// The owner the camera is attached to (offset 0x114). `None` for zero.
     pub owner: Option<Handle32<CamOwnerTag>>,
     /// Mode word (offset 0x140). The idle reset sets it to [`IDLE_MODE`].
@@ -262,5 +267,160 @@ impl CCamGame {
             let word = world.gate_word(block);
             world.notify_sink(self, this, word, block);
         }
+    }
+}
+/// Mask of the first flag byte that marks the camera as initialised.
+const FLAG_INITIALISED: u8 = 0x80;
+
+/// Mask of the first flag byte that forces the blend channel to zero.
+const FLAG_ZERO_BLEND: u8 = 0x04;
+
+/// Sum with the operands kept in order, each passed through an opaque
+/// barrier so the compiler cannot swap them: the payload of a NaN result
+/// follows the first operand.
+fn ordered_add(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}
+
+/// The packed counter step: `n` plus three times a quotient of `n` computed
+/// by the original's multiply-and-shift sequence, with the sign corrected
+/// the way the original does. Wrapping throughout, as the original's 32-bit
+/// registers wrap.
+fn counter_step(n: u32) -> u32 {
+    let product = 0x5555_5555_i64 * i64::from(n as i32);
+    let mut quotient = (product >> 32) as i32;
+    quotient = quotient.wrapping_sub(n as i32);
+    quotient >>= 1;
+    let correction = (((quotient as u32) >> 31) as i32).wrapping_add(quotient);
+    let step = correction as u32;
+    n.wrapping_add(step).wrapping_add(step.wrapping_mul(2))
+}
+
+/// The float a global holds, from its raw bits.
+fn float_global(world: &mut impl CamGameWorld, global: CamGlobal) -> f32 {
+    f32::from_bits(world.read_global(global))
+}
+
+impl CCamGame {
+    /// Camera update step: four update callees, then the initialised marker
+    /// (set on the first run, otherwise the watcher is notified). While the
+    /// singleton exists, the two blend channels advance; then two more
+    /// update callees run and the blend is zeroed when the zero flag is set.
+    /// The original always answers 1; that constant is not returned.
+    pub fn update_step(&mut self, world: &mut impl CamGameWorld, this: Handle32<CamTag>) {
+        world.update_1(self, this);
+        world.update_2(self, this);
+        world.update_3(self, this);
+        world.update_4(self, this);
+        if self.flags_1c4 & FLAG_INITIALISED == 0 {
+            self.flags_1c4 |= FLAG_INITIALISED;
+        } else {
+            world.watch_init(self, this);
+        }
+        if let Some(singleton) = world.singleton() {
+            self.blend_channel_one(world, singleton);
+            self.blend_channel_two(world, singleton);
+            world.update_9(self, this);
+        }
+        world.update_10(self, this);
+        world.update_11(self, this);
+        if self.flags_1c4 & FLAG_ZERO_BLEND != 0 {
+            self.blend = 0;
+        }
+    }
+
+    /// First blend channel: the step is added to the blend, the cap raises
+    /// it, and it is clamped to the ceiling on the upper side only when
+    /// positive; NaN passes through. The first accumulator then advances
+    /// unless it is cleared, and the counter moves when the accumulator is
+    /// exactly zero. An inhibited or inactive singleton clears the
+    /// accumulator instead, unless the fallback byte is set.
+    fn blend_channel_one(&mut self, world: &mut impl CamGameWorld, singleton: Handle32<SingletonTag>) {
+        let gate = world.blend_gate_one();
+        let ceiling = float_global(world, CamGlobal::Ceiling);
+        let inhibited = (gate as u8) != 0
+            || (world.read_global(CamGlobal::InhibitA) as u8) != 0
+            || (world.read_global(CamGlobal::InhibitB) as u8) != 0;
+        if inhibited {
+            world.write_global(CamGlobal::Accumulator1, 0);
+            world.write_global(CamGlobal::Done1, 0);
+            return;
+        }
+        let active = world.singleton_field(singleton, SingletonField::ActiveByte) as u8;
+        if active != 0 {
+            let mut x0 = ordered_add(
+                f32::from_bits(self.blend),
+                float_global(world, CamGlobal::Step1),
+            );
+            let cap = float_global(world, CamGlobal::Cap);
+            if cap > x0 {
+                x0 = cap;
+            }
+            if x0 < 0.0 {
+                x0 = 0.0;
+            } else if x0 > ceiling {
+                x0 = ceiling;
+            }
+            self.blend = x0.to_bits();
+            let accumulator = float_global(world, CamGlobal::Accumulator1);
+            if accumulator == 0.0 {
+                let n = world.read_global(CamGlobal::Count).wrapping_add(1);
+                world.write_global(CamGlobal::Count, counter_step(n));
+            }
+            let mut y0 = ordered_add(
+                float_global(world, CamGlobal::Accumulator1Step),
+                accumulator,
+            );
+            world.write_global(CamGlobal::Done1, 1);
+            if y0 > ceiling {
+                y0 = 1.0;
+            }
+            world.write_global(CamGlobal::Accumulator1, y0.to_bits());
+        } else if (world.read_global(CamGlobal::Fallback) as u8) == 0 {
+            world.write_global(CamGlobal::Accumulator1, 0);
+            world.write_global(CamGlobal::Done1, 0);
+        }
+    }
+
+    /// Second blend channel: the same shape as the first, with its own step
+    /// and accumulator, gated by the second gate answer, the inhibit bytes
+    /// and the singleton's mode word reading exactly 1.
+    fn blend_channel_two(&mut self, world: &mut impl CamGameWorld, singleton: Handle32<SingletonTag>) {
+        let gate = world.blend_gate_two();
+        let gated = (gate as u8) != 0
+            || (world.read_global(CamGlobal::InhibitA) as u8) != 0
+            || (world.read_global(CamGlobal::InhibitB) as u8) != 0
+            || world.singleton_field(singleton, SingletonField::ModeWord) != 1;
+        if gated {
+            world.write_global(CamGlobal::Accumulator2, 0);
+            world.write_global(CamGlobal::Done2, 0);
+            return;
+        }
+        let mut x0 = ordered_add(
+            f32::from_bits(self.blend),
+            float_global(world, CamGlobal::Step2),
+        );
+        let cap = float_global(world, CamGlobal::Cap);
+        if cap > x0 {
+            x0 = cap;
+        }
+        let ceiling = float_global(world, CamGlobal::Ceiling);
+        let blended = if x0 < 0.0 {
+            0.0
+        } else if x0 > ceiling {
+            ceiling
+        } else {
+            x0
+        };
+        self.blend = blended.to_bits();
+        let mut z0 = ordered_add(
+            float_global(world, CamGlobal::Accumulator2Step),
+            float_global(world, CamGlobal::Accumulator2),
+        );
+        world.write_global(CamGlobal::Done2, 1);
+        if z0 > ceiling {
+            z0 = 1.0;
+        }
+        world.write_global(CamGlobal::Accumulator2, z0.to_bits());
     }
 }

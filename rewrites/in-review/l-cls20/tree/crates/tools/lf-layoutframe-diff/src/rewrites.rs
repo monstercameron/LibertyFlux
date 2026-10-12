@@ -255,3 +255,9 @@ pub mod fn_00DB1430 {
     #![allow(unused_imports)]
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1430.rs"));
 }
+/// Verified rewrite of the pointer-list release: each live entry is released and freed, then the owner is told.
+pub mod fn_00DB18C0 {
+    #![allow(unused_imports)]
+    use lf_checker_rt::{callee_cdecl, callee_thiscall, export};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db18c0.rs"));
+}

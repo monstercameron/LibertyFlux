@@ -1,4 +1,4 @@
-//! The collaborators of the game camera class.
+﻿//! The collaborators of the game camera class.
 //!
 //! Every call a lifted camera method makes that is not lifted itself is one
 //! method here. Numbered callees keep the order the verified rewrites call
@@ -26,6 +26,52 @@ pub struct GateTag;
 pub struct TargetTag;
 /// Tag: the opaque identity of the tail object (read and written).
 pub struct TailTag;
+/// Tag: the opaque identity of the global singleton object the blend step
+/// reads.
+pub struct SingletonTag;
+
+/// A global the camera's blend step reads or writes. Values cross the
+/// boundary as raw bits: floats as their bit patterns, bytes zero-extended.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum CamGlobal {
+    /// Upper bound of the blend and of the first accumulator (a float).
+    Ceiling,
+    /// First inhibit byte.
+    InhibitA,
+    /// Second inhibit byte.
+    InhibitB,
+    /// Step added to the first blend channel (a float).
+    Step1,
+    /// Step added to the first accumulator (a float).
+    Accumulator1Step,
+    /// Step added to the second blend channel (a float).
+    Step2,
+    /// Step added to the second accumulator (a float).
+    Accumulator2Step,
+    /// Floor the blend channels are raised to (a float).
+    Cap,
+    /// First accumulator (a float).
+    Accumulator1,
+    /// Packed counter advanced when the first accumulator is zero.
+    Count,
+    /// Done flag of the first channel (a byte).
+    Done1,
+    /// Second accumulator (a float).
+    Accumulator2,
+    /// Done flag of the second channel (a byte).
+    Done2,
+    /// Fallback byte checked when the singleton is inactive.
+    Fallback,
+}
+
+/// A field of the singleton object the blend step reads.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SingletonField {
+    /// The active byte: nonzero when the singleton is active.
+    ActiveByte,
+    /// The mode word: the second channel runs only when it reads exactly 1.
+    ModeWord,
+}
 
 /// Which of the two gate blocks of the camera's event step runs. The two
 /// blocks have the same shape; they differ in the callees they call and in
@@ -152,4 +198,51 @@ pub trait CamGameWorld {
 
     /// Clears the global done flag at the end of the step.
     fn clear_done(&mut self);
+
+    /// Callees 1 to 4 of the blend update: the camera's four update steps,
+    /// run in order before the initialised marker is looked at.
+    fn update_1(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>);
+    /// See [`CamGameWorld::update_1`].
+    fn update_2(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>);
+    /// See [`CamGameWorld::update_1`].
+    fn update_3(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>);
+    /// See [`CamGameWorld::update_1`].
+    fn update_4(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>);
+
+    /// Callee 5 of the blend update: notifies a watcher when the camera was
+    /// already initialised.
+    fn watch_init(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>);
+
+    /// Callee 6 of the blend update: the global singleton, or `None` when it
+    /// does not exist. Its fields are read through [`CamGameWorld::singleton_field`].
+    fn singleton(&mut self) -> Option<Handle32<SingletonTag>>;
+
+    /// One field of the singleton object.
+    fn singleton_field(&mut self, singleton: Handle32<SingletonTag>, field: SingletonField) -> u32;
+
+    /// Callee 7 of the blend update: the first gate answer. Only its low
+    /// byte is tested.
+    fn blend_gate_one(&mut self) -> u32;
+
+    /// Callee 8 of the blend update: the second gate answer. Only its low
+    /// byte is tested.
+    fn blend_gate_two(&mut self) -> u32;
+
+    /// Reads a global the blend step uses, as raw bits.
+    fn read_global(&mut self, global: CamGlobal) -> u32;
+
+    /// Writes a global the blend step sets, as raw bits. A byte global takes
+    /// the low byte of the value.
+    fn write_global(&mut self, global: CamGlobal, bits: u32);
+
+    /// Callee 9 of the blend update: the camera's update step after the
+    /// singleton's blend channels.
+    fn update_9(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>);
+
+    /// Callee 10 of the blend update: the camera's update step after the
+    /// singleton block.
+    fn update_10(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>);
+
+    /// Callee 11 of the blend update: the camera's last update step.
+    fn update_11(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>);
 }

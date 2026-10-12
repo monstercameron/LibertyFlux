@@ -37,5 +37,6 @@ pub mod world;
 
 pub use game::{ACTIVE_MARKER, CCamGame, DEFAULT_ZOOM, IDLE_MARKER, IDLE_MODE, IDLE_TIMER};
 pub use world::{
-    CamGameWorld, CamOwnerTag, CamTag, GateBlock, GateTag, PoolTag, TailTag, TargetTag, WorkerTag,
+    CamGameWorld, CamGlobal, CamOwnerTag, CamTag, GateBlock, GateTag, PoolTag, SingletonField,
+    SingletonTag, TailTag, TargetTag, WorkerTag,
 };

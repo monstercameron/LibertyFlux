@@ -23,7 +23,8 @@ use lf_peds_follow_diff::rewrites::{
 use lf_peds_tasks::follow_point_route::host::{PedView, RouteTaskHost};
 use lf_peds_tasks::follow_point_route::route::{RoutePoint, RouteTable};
 use lf_peds_tasks::follow_point_route::task::{
-    FLAG_KEEP_MASK, FLAG_REPEAT, FollowPointRouteTask, PED_BLOCKED, RouteTaskInit,
+    FLAG_KEEP_MASK, FLAG_REPEAT, FLAG_ROUTE_SEARCH, FollowPointRouteTask, ORDER_LEG_DONE,
+    PED_BLOCKED, RouteTaskInit,
     SUBTASK_GO_TO_DONE, SUBTASK_LEG_DONE, SUBTASK_ROUTE, SUBTASK_TURN_DONE,
 };
 
@@ -369,10 +370,18 @@ fn gen_pick(rng: &mut Rng) -> PickCase {
             points.push(point(rng));
         }
     }
-    let pos = if n > 0 && rng.chance(1, 3) {
-        points[rng.below(n as u64) as usize]
-    } else {
-        point(rng)
+    // Three ways to place the ped: on a route point, beside the middle of a
+    // segment (so that a projection lands inside it), or anywhere.
+    let pos = match rng.below(3) {
+        0 if n > 0 => points[rng.below(n as u64) as usize],
+        1 if n > 1 => {
+            let i = rng.below((n - 1) as u64) as usize;
+            let a = points[i].map(f32::from_bits);
+            let b = points[i + 1].map(f32::from_bits);
+            let mid = [(a[0] + b[0]) * 0.5, (a[1] + b[1]) * 0.5 + 0.5, (a[2] + b[2]) * 0.5];
+            mid.map(f32::to_bits)
+        }
+        _ => point(rng),
     };
     let index = match rng.below(6) {
         0 => n as u32,
@@ -480,6 +489,38 @@ fn pick_lifted(c: &PickCase, this: u32, ped_addr: u32) -> Outcome {
 
 /// Deliberately wrong lifts of the pick. Each differs from the lifted method
 /// in one step; each must be caught.
+/// The pick without the segment projections: the nearest route point always wins.
+fn pick_nearest_only(task: &mut FollowPointRouteTask, ped: &PedView, host: &mut RecHost) -> u32 {
+    task.flags &= !FLAG_ROUTE_SEARCH;
+    let count = task.waypoints.len() as i32;
+    if count == task.waypoint_index as i32 {
+        return host.order_ped(task.handle, ORDER_LEG_DONE, ped.handle);
+    }
+    if ped.state_byte & PED_BLOCKED != 0 {
+        return 0;
+    }
+    if task.current_route.is_none() {
+        let next = host.next_order_id(task.handle);
+        return host.order_ped(task.handle, next, ped.handle);
+    }
+    let mut best_next: i32 = -1;
+    let mut best = f32::MAX;
+    for e in 0..count {
+        let p = task.waypoints.point(e as usize);
+        let dx = ped.position.x - p.x;
+        let dy = ped.position.y - p.y;
+        let dz = ped.position.z - p.z;
+        let d2 = (dy * dy + dx * dx) + dz * dz;
+        if best * best > d2 {
+            best_next = e;
+            best = d2;
+        }
+    }
+    task.waypoint_index = best_next as u32;
+    let next = host.next_order_id(task.handle);
+    host.order_ped(task.handle, next, ped.handle)
+}
+
 fn pick_wrong(c: &PickCase, this: u32, ped_addr: u32, which: u32) -> Outcome {
     let mut task = FollowPointRouteTask {
         handle: this,
@@ -504,11 +545,13 @@ fn pick_wrong(c: &PickCase, this: u32, ped_addr: u32, which: u32) -> Outcome {
             task.pick_waypoint(&ped, &mut host)
         }
         // Stores the picked index one too high.
-        _ => {
+        1 => {
             let r = task.pick_waypoint(&ped, &mut host);
             task.waypoint_index = task.waypoint_index.wrapping_add(1);
             r
         }
+        // Searches for the nearest route point only: no segment projection.
+        _ => pick_nearest_only(&mut task, &ped, &mut host),
     };
     Outcome {
         ret,
@@ -917,7 +960,7 @@ fn pick_waypoint_matches_rewrite() {
 #[test]
 fn pick_waypoint_wrong_lift_is_caught() {
     let _g = guard();
-    for which in 0..2u32 {
+    for which in 0..3u32 {
         let mut rng = Rng(0x5EED_0101 + which as u64);
         let mut caught = 0usize;
         for _ in 0..WRONG_TRIALS {

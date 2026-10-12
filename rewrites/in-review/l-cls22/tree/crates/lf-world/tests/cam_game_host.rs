@@ -9,8 +9,9 @@ use std::collections::HashMap;
 use lf_core::Handle32;
 use lf_world::cam_game::registry::{self, State};
 use lf_world::cam_game::{
-    ACTIVE_MARKER, CCamGame, CamGameWorld, CamOwnerTag, CamTag, DEFAULT_ZOOM, GateBlock, GateTag,
-    IDLE_MARKER, IDLE_MODE, IDLE_TIMER, PoolTag, TailTag, TargetTag, WorkerTag,
+    ACTIVE_MARKER, CCamGame, CamGameWorld, CamGlobal, CamOwnerTag, CamTag, DEFAULT_ZOOM, GateBlock,
+    GateTag, IDLE_MARKER, IDLE_MODE, IDLE_TIMER, PoolTag, SingletonField, SingletonTag, TailTag,
+    TargetTag, WorkerTag,
 };
 
 /// A world that records each call and answers from fixed values.
@@ -37,6 +38,10 @@ struct Recorder {
     tail_flags_value: u8,
     /// The value written to the matched byte, if the tail step ran.
     matched: Option<u8>,
+    singleton_handle: Option<Handle32<SingletonTag>>,
+    singleton_active: u8,
+    singleton_mode: u32,
+    globals: HashMap<CamGlobal, u32>,
 }
 
 impl CamGameWorld for Recorder {
@@ -181,6 +186,68 @@ impl CamGameWorld for Recorder {
 
     fn clear_done(&mut self) {
         self.calls.push("clear_done".to_string());
+    }
+
+    fn update_1(&mut self, _cam: &mut CCamGame, _this: Handle32<CamTag>) {
+        self.calls.push("update_1".to_string());
+    }
+
+    fn update_2(&mut self, _cam: &mut CCamGame, _this: Handle32<CamTag>) {
+        self.calls.push("update_2".to_string());
+    }
+
+    fn update_3(&mut self, _cam: &mut CCamGame, _this: Handle32<CamTag>) {
+        self.calls.push("update_3".to_string());
+    }
+
+    fn update_4(&mut self, _cam: &mut CCamGame, _this: Handle32<CamTag>) {
+        self.calls.push("update_4".to_string());
+    }
+
+    fn watch_init(&mut self, _cam: &mut CCamGame, _this: Handle32<CamTag>) {
+        self.calls.push("watch_init".to_string());
+    }
+
+    fn singleton(&mut self) -> Option<Handle32<SingletonTag>> {
+        self.calls.push("singleton".to_string());
+        self.singleton_handle
+    }
+
+    fn singleton_field(&mut self, _singleton: Handle32<SingletonTag>, field: SingletonField) -> u32 {
+        match field {
+            SingletonField::ActiveByte => u32::from(self.singleton_active),
+            SingletonField::ModeWord => self.singleton_mode,
+        }
+    }
+
+    fn blend_gate_one(&mut self) -> u32 {
+        self.calls.push("blend_gate_one".to_string());
+        0
+    }
+
+    fn blend_gate_two(&mut self) -> u32 {
+        self.calls.push("blend_gate_two".to_string());
+        0
+    }
+
+    fn read_global(&mut self, global: CamGlobal) -> u32 {
+        self.globals.get(&global).copied().unwrap_or(0)
+    }
+
+    fn write_global(&mut self, global: CamGlobal, bits: u32) {
+        self.globals.insert(global, bits);
+    }
+
+    fn update_9(&mut self, _cam: &mut CCamGame, _this: Handle32<CamTag>) {
+        self.calls.push("update_9".to_string());
+    }
+
+    fn update_10(&mut self, _cam: &mut CCamGame, _this: Handle32<CamTag>) {
+        self.calls.push("update_10".to_string());
+    }
+
+    fn update_11(&mut self, _cam: &mut CCamGame, _this: Handle32<CamTag>) {
+        self.calls.push("update_11".to_string());
     }
 }
 
@@ -339,12 +406,12 @@ fn this() -> Handle32<CamTag> {
 
 #[test]
 fn registry_counts_three_proven_methods() {
-    assert_eq!(registry::proven_count(), 4);
+    assert_eq!(registry::proven_count(), 5);
     let missing = registry::ROWS
         .iter()
         .filter(|r| r.state == State::Missing)
         .count();
-    assert_eq!(missing, 3);
+    assert_eq!(missing, 2);
 }
 
 #[test]

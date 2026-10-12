@@ -1,4 +1,4 @@
-//! What is lifted, what is proven, and what each proof leaves out.
+﻿//! What is lifted, what is proven, and what each proof leaves out.
 //!
 //! One row per verified 32-bit method of the game camera class, plus the
 //! methods of that class that have no verified rewrite yet. `Proven` means
@@ -106,11 +106,28 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         method: "vf5",
-        lifted_as: "",
-        state: State::Missing,
-        calls: &[],
+        lifted_as: "CCamGame::update_step",
+        state: State::Proven,
+        calls: &[
+            "update_1",
+            "update_2",
+            "update_3",
+            "update_4",
+            "watch_init",
+            "singleton",
+            "singleton_field",
+            "blend_gate_one",
+            "read_global",
+            "write_global",
+            "blend_gate_two",
+            "update_9",
+            "update_10",
+            "update_11",
+        ],
         narrows: &[
-            "verified, not lifted: eleven callees, a large body and many globals",
+            "the constant answer 1 is not returned",
+            "the globals and the singleton are read and written through the world; the lift owns no global state",
+            "the float results are restated as bits through the world; NaN payloads are preserved by the bit transfer",
         ],
     },
     Row {
