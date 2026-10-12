@@ -1,4 +1,4 @@
-// original: 0x00C5EB50 set_driveby_seat_door
+// original: 0x00C5EC10 set_grenade_throw_seat_door
 
 /// Selects a latched-door action from a character's vehicle, seat class,
 /// model flags, and current door value. A missing door returns zero. The
@@ -7,7 +7,7 @@
 /// remaining cases, a positive ordered door value uses the zero-valued
 /// action. A NaN does not take the positive action.
 #[unsafe(no_mangle)]
-pub extern "stdcall" fn rw_00c5eb50(_unused: u32, ped: u32) -> u32 {
+pub extern "thiscall" fn rw_00c5ec10(_this: u32, ped: u32) -> u32 {
     unsafe {
         const PED_VEHICLE_OFFSET: u32 = 0x0b30;
         const VEHICLE_MODEL_INDEX: u32 = 0x2e;
