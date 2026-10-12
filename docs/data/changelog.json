@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Rust in progress: 33 files from lanes (654 unverified rewrites, 1766 in review)",
+    "title": "Devlog: hourly review, 01:05 on 12 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "14,039 bytes an hour verified, level with the baseline; 41 routines lifted in five classes, to 1,352; the verified set passed 20,000 functions; a render method of two and a half kilobytes verified whole.",
+      "New lanes are Muse lanes on the owner's instruction; in stopping the Luna launcher the coordinator stopped thirty running Luna lanes, whose recorded work is being re-run and imported.",
+      "Three changelog entries of the hour overstate the count of lifts; the right figure is 1,352 and a correction entry follows."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Rust in progress: 33 files from lanes (654 unverified rewrites, 1766 in review)",
+    "commit": "29b686180e61f3848feef4a9011772f87a87e2cd",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 654 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
