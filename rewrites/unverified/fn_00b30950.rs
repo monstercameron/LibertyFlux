@@ -29,7 +29,6 @@ lf_checker_rt::export!(cdecl, rw_00b30950(ped_record: u32) -> u8 {
         const VTABLE_RUN_CHECK: u32 = 0x128;
         const POSITION_COMPONENTS: u32 = 3;
         const DISTANCE_LIMIT_GLOBAL_VA: u32 = 0x00fe8b20;
-        const DISTANCE_LIMIT: f32 = 15.0;
         const RUNNABLE_KIND_MIN: u32 = 3;
         const RUNNABLE_KIND_MAX: u32 = 11;
         const EVENT_KIND_A: u32 = 12;
@@ -100,7 +99,6 @@ lf_checker_rt::export!(cdecl, rw_00b30950(ped_record: u32) -> u8 {
                 let distance_squared = ordered_add(xy_squared, z_squared);
                 let max_distance_squared =
                     lf_checker_rt::global::<f32>(DISTANCE_LIMIT_GLOBAL_VA).read();
-                let _documented_limit = DISTANCE_LIMIT;
                 u8::from(distance_squared.is_nan() || distance_squared <= max_distance_squared)
             }
         }

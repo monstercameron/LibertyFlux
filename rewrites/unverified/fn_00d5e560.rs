@@ -19,7 +19,7 @@ lf_checker_rt::export!(thiscall, rw_streaming_pick_random_effect_entry(
 ) -> u32 {
     const CHOICES_PER_ROW: u32 = 42;
     const RECORD_STRIDE: u32 = 12;
-    const RECORD_TABLE_OFFSET: u32 = 8;
+    const RECORD_TABLE_OFFSET: u32 = 0;
     const RECORD_BASE_INDEX_OFFSET: u32 = 8;
     const RECORD_DIVISOR_OFFSET: u32 = 12;
     const RANDOM_STATE_LOW_VA: u32 = 0x011101A0;

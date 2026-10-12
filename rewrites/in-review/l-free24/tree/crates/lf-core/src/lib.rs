@@ -24,6 +24,7 @@ pub mod const_fill;
 pub mod constant_writes;
 pub mod field_predicate;
 pub mod field_pair_store;
+pub mod field_slot_copy;
 pub mod field_store;
 pub mod indexed_read;
 pub mod layout_assert;

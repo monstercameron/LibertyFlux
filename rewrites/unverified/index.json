@@ -456,9 +456,9 @@
   "reason": ""
  },
  {
-  "address": "0x0059C8A0",
-  "name": "CNetBlenderDummyPed::vf4",
-  "file": "fn_0059c8a0.rs",
+  "address": "0x0059CC30",
+  "name": "CNetBlenderBoat::vf10",
+  "file": "fn_0059cc30.rs",
   "lane": "r-s756",
   "outcome": "not_reached",
   "reason": null
@@ -1744,6 +1744,14 @@
   "reason": null
  },
  {
+  "address": "0x009322F0",
+  "name": "tree_imposter_cache_size",
+  "file": "fn_009322f0.rs",
+  "lane": "r-s763",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00933C80",
   "name": "detail_record_clear",
   "file": "fn_00933c80.rs",
@@ -2112,9 +2120,9 @@
   "reason": "other"
  },
  {
-  "address": "0x00A2FD00",
-  "name": "function_00a2fd00",
-  "file": "fn_00a2fd00.rs",
+  "address": "0x00A2FDE0",
+  "name": "CEntity::vf0",
+  "file": "fn_00a2fde0.rs",
   "lane": "r-s752",
   "outcome": "not_reached",
   "reason": null
@@ -2272,9 +2280,9 @@
   "reason": null
  },
  {
-  "address": "0x00A80580",
-  "name": "CSimpleNMExplosionTaskInfo::create_task",
-  "file": "fn_00a80580.rs",
+  "address": "0x00A805B0",
+  "name": "CSimpleNMFlinchTaskInfo::create_task",
+  "file": "fn_00a805b0.rs",
   "lane": "r-s762",
   "outcome": "not_reached",
   "reason": null
@@ -2971,6 +2979,14 @@
   "address": "0x00B51F70",
   "name": "euphoria_reset_all_slots",
   "file": "fn_00b51f70.rs",
+  "lane": "r-s754",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B52BC0",
+  "name": "euphoria_find_or_alloc_slot",
+  "file": "fn_00b52bc0.rs",
   "lane": "r-s754",
   "outcome": "not_reached",
   "reason": null
@@ -4568,6 +4584,14 @@
   "reason": "other"
  },
  {
+  "address": "0x00CF2050",
+  "name": "net_session_elapsed",
+  "file": "fn_00cf2050.rs",
+  "lane": "r-s757",
+  "outcome": "deferred",
+  "reason": "other"
+ },
+ {
   "address": "0x00CF72B0",
   "name": null,
   "file": "fn_00cf72b0.rs",
@@ -4684,13 +4708,13 @@
   "name": "CTaskComplexCombat::vf20",
   "file": "fn_00d020c0.rs",
   "lane": "a-U132",
-  "outcome": "not yet run",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "The original forwards its incoming EBP value to a later callee, while the rewrite passes zero and the shared runtime has no EBP accessor; the corrected non-null-target fixture faulted in the original before that call was reached."
  },
  {
-  "address": "0x00D16180",
-  "name": "CTaskComplexCombatAdvanceSubtask::select_sub_task_id",
-  "file": "fn_00d16180.rs",
+  "address": "0x00D16210",
+  "name": "CTaskComplexCombatBustPed::select_sub_task_id",
+  "file": "fn_00d16210.rs",
   "lane": "r-s751",
   "outcome": "not_reached",
   "reason": null
@@ -5014,6 +5038,14 @@
   "lane": "r-s590",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00DE6F30",
+  "name": null,
+  "file": "fn_00de6f30.rs",
+  "lane": "r-s759",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00DE71E0",

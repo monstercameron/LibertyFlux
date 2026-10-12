@@ -1,7 +1,6 @@
 //! The field-pair store instances the verified rewrites were checked against.
 //!
-//! Generated from the verified rewrites by `extract24.py`: every value below was read from the rewrite's own
-//! text, and the shape assertion in the generator holds for each entry. The differential test runs the
+//! Every value below is a parameter read from the verified rewrite's own text, not typed in by hand. The differential test runs the
 //! rewrite at index `i` and the lifted routine on the same generated inputs.
 
 use lf_core::field_pair_store::{FieldPairStore, PairResult};
