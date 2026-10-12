@@ -163737,6 +163737,159 @@
   "lane": "r-b289"
  },
  {
+  "address": "0x00DF1FD0",
+  "name": "UIMontageText::disable_text_controls",
+  "kind": "function",
+  "file": "functions/fn_00df1fd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF2080",
+  "name": "UIMontageText::enable_text_controls",
+  "kind": "function",
+  "file": "functions/fn_00df2080.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF2820",
+  "name": "UIMontageText::format_duration_label",
+  "kind": "function",
+  "file": "functions/fn_00df2820.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF2910",
+  "name": "UIMontageText::format_numeric_field_label",
+  "kind": "function",
+  "file": "functions/fn_00df2910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF2CF0",
+  "name": "UIMontageText::cycle_palette_forward",
+  "kind": "function",
+  "file": "functions/fn_00df2cf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF2D20",
+  "name": "UIMontageText::increase_text_scale",
+  "kind": "function",
+  "file": "functions/fn_00df2d20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF2F20",
+  "name": "UIMontageText::format_scale_value_label",
+  "kind": "function",
+  "file": "functions/fn_00df2f20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF2FB0",
+  "name": "UIMontageText::advance_valid_text_mode",
+  "kind": "function",
+  "file": "functions/fn_00df2fb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF3010",
+  "name": "UIMontageText::decrease_palette_index",
+  "kind": "function",
+  "file": "functions/fn_00df3010.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF3040",
+  "name": "UIMontageText::decrease_text_scale",
+  "kind": "function",
+  "file": "functions/fn_00df3040.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF3240",
+  "name": "UIMontageText::format_secondary_scale_label",
+  "kind": "function",
+  "file": "functions/fn_00df3240.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF32C0",
+  "name": "UIMontageText::advance_secondary_text_mode",
+  "kind": "function",
+  "file": "functions/fn_00df32c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF3320",
+  "name": "UIMontageText::refresh",
+  "kind": "function",
+  "file": "functions/fn_00df3320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF3340",
+  "name": "UITransitionViewer::UITransitionViewer",
+  "kind": "function",
+  "file": "functions/fn_00df3340.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF3360",
+  "name": "UITransitionViewer::UITransitionViewer_2",
+  "kind": "function",
+  "file": "functions/fn_00df3360.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF3380",
+  "name": "UITransitionViewer::~UITransitionViewer__deleting",
+  "kind": "function",
+  "file": "functions/fn_00df3380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
+  "address": "0x00DF33A0",
+  "name": "ui_dispatch::clear_and_enable_controls_if_unhandled",
+  "kind": "function",
+  "file": "functions/fn_00df33a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
   "address": "0x00DF3A90",
   "name": "UITransitionViewer::vf0",
   "kind": "function",
@@ -165735,6 +165888,15 @@
   "lane": "r-s773"
  },
  {
+  "address": "0x00E48880",
+  "name": "title_menu_update_episode_frame",
+  "kind": "function",
+  "file": "functions/fn_00e48880.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
+ },
+ {
   "address": "0x00E488A0",
   "name": "MO_QUI",
   "kind": "function",
@@ -165751,6 +165913,15 @@
   "trials": 1000,
   "checker": "version 7",
   "lane": "a-Q48"
+ },
+ {
+  "address": "0x00E49440",
+  "name": "UITitleMenu::initialize_control_selection",
+  "kind": "function",
+  "file": "functions/fn_00e49440.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s818"
  },
  {
   "address": "0x00E49670",
