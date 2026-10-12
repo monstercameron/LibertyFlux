@@ -2624,6 +2624,14 @@
   "reason": null
  },
  {
+  "address": "0x0098A0F0",
+  "name": "fire_audio_cooldown_gain",
+  "file": "fn_0098a0f0.rs",
+  "lane": "r-s827",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0098CD60",
   "name": "audVehicleAudioEntity::bind_vehicle",
   "file": "fn_0098cd60.rs",
@@ -3288,286 +3296,6 @@
   "reason": null
  },
  {
-  "address": "0x00A84E40",
-  "name": "CMeleeTaskInfo::deserialize",
-  "file": "fn_00a84e40.rs",
-  "lane": "r-s823",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86340",
-  "name": "CJackTaskInfo::vf4",
-  "file": "fn_00a86340.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86360",
-  "name": "CMedicTaskInfo::vf4",
-  "file": "fn_00a86360.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A863D0",
-  "name": "CMeleeTaskInfo::vf4",
-  "file": "fn_00a863d0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A864D0",
-  "name": "CScriptAnimTaskInfo::vf4",
-  "file": "fn_00a864d0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86530",
-  "name": "CSequenceTaskInfo::vf4",
-  "file": "fn_00a86530.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86580",
-  "name": "CPlayRandomAmbientsInfo::vf4",
-  "file": "fn_00a86580.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A865A0",
-  "name": "CSimpleCarDriveTaskInfo::vf4",
-  "file": "fn_00a865a0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86630",
-  "name": "CSimpleClimbTaskInfo::vf4",
-  "file": "fn_00a86630.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86680",
-  "name": "CSimpleMeleeActionResultTaskInfo::vf4",
-  "file": "fn_00a86680.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A866D0",
-  "name": "CSimpleNMBraceTaskInfo::vf4",
-  "file": "fn_00a866d0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86700",
-  "name": "CSimpleNMExplosionTaskInfo::vf4",
-  "file": "fn_00a86700.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86720",
-  "name": "CSimpleNMFlinchTaskInfo::vf4",
-  "file": "fn_00a86720.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86760",
-  "name": "CSimpleNMShotTaskInfo::vf4",
-  "file": "fn_00a86760.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A867B0",
-  "name": "CSimpleSidewaysDiveTaskInfo::vf4",
-  "file": "fn_00a867b0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A867E0",
-  "name": "CSimpleThrowProjectileInfo::vf4",
-  "file": "fn_00a867e0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86800",
-  "name": "CSitDownIdleThenStandTaskInfo::vf4",
-  "file": "fn_00a86800.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86880",
-  "name": "CSitIdleTaskInfo::vf4",
-  "file": "fn_00a86880.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A868C0",
-  "name": "CStandUpTaskInfo::vf4",
-  "file": "fn_00a868c0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A868F0",
-  "name": "CStatusAndTargetTaskInfo::vf4",
-  "file": "fn_00a868f0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86910",
-  "name": "CComplexOpenVehicleDoorTaskInfo::vf4",
-  "file": "fn_00a86910.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86940",
-  "name": "CTargetTaskInfo::vf4",
-  "file": "fn_00a86940.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86960",
-  "name": "CDieInfo::vf4",
-  "file": "fn_00a86960.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86980",
-  "name": "CVehicleTaskInfo::vf4",
-  "file": "fn_00a86980.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A869E0",
-  "name": "CCamTrans::vf0",
-  "file": "fn_00a869e0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86A10",
-  "name": "pending_00a86a10",
-  "file": "fn_00a86a10.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86A50",
-  "name": "pending_00a86a50",
-  "file": "fn_00a86a50.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86A80",
-  "name": "pending_00a86a80",
-  "file": "fn_00a86a80.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86AC0",
-  "name": "pending_00a86ac0",
-  "file": "fn_00a86ac0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86B50",
-  "name": "pending_00a86b50",
-  "file": "fn_00a86b50.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86B90",
-  "name": "pending_00a86b90",
-  "file": "fn_00a86b90.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86BB0",
-  "name": "pending_00a86bb0",
-  "file": "fn_00a86bb0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86BD0",
-  "name": "pending_00a86bd0",
-  "file": "fn_00a86bd0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A86BF0",
-  "name": "pending_00a86bf0",
-  "file": "fn_00a86bf0.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A87A40",
-  "name": "pending_00a87a40",
-  "file": "fn_00a87a40.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A8F910",
   "name": "interior_snap_verts_to_corners",
   "file": "fn_00a8f910.rs",
@@ -3701,22 +3429,6 @@
   "file": "fn_00aa0d10.rs",
   "lane": "r-s701",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00AAB990",
-  "name": "pending_00aab990",
-  "file": "fn_00aab990.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00AAC000",
-  "name": "pending_00aac000",
-  "file": "fn_00aac000.rs",
-  "lane": "r-s821",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -5720,28 +5432,12 @@
   "reason": null
  },
  {
-  "address": "0x00C0D1F0",
-  "name": "UILayoutFrame::vf38",
-  "file": "fn_00c0d1f0.rs",
-  "lane": "r-s815",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C0D710",
-  "name": "UILayoutFrame::vf35",
-  "file": "fn_00c0d710.rs",
-  "lane": "r-s815",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C0D720",
   "name": "UILayoutFrame::is_child_value_mismatched",
   "file": "fn_00c0d720.rs",
   "lane": "r-s815",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00C1DAD0",
@@ -6029,14 +5725,6 @@
   "file": "fn_00c5d570.rs",
   "lane": "r-b693",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5EC10",
-  "name": "proposed_00c5ec10",
-  "file": "fn_00c5ec10.rs",
-  "lane": "r-s814",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -7608,6 +7296,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00DB2B50",
+  "name": "UITexture::snapshot_active_slot_for_render",
+  "file": "fn_00db2b50.rs",
+  "lane": "r-s824",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DB7860",
   "name": "function_00db7860",
   "file": "fn_00db7860.rs",
@@ -7796,22 +7492,6 @@
   "name": "UIFileViewer::bind_controller_frame",
   "file": "fn_00df7b70.rs",
   "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E48880",
-  "name": "function_00E48880",
-  "file": "fn_00e48880.rs",
-  "lane": "r-s818",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E49440",
-  "name": "function_00E49440",
-  "file": "fn_00e49440.rs",
-  "lane": "r-s818",
   "outcome": "not_reached",
   "reason": null
  },
