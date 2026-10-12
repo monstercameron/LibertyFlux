@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 30 more functions pass the checker (19423 in total)",
+    "title": "Lift: 36 mid-size routines in three families",
     "commit": null,
+    "summary": "The fifth list chosen by shape, the verified functions of 37, 47, 57 and 62 bytes that call nothing, gives three families. Larger functions are less uniform: 105 of the 141 are left.",
+    "changes": [
+      "crates/lf-core gains two modules: a static row of four words written at a block (26 instances; a weak lift, four stores of two constants and two zeros) and a cookie seal on an object (4 instances; a real routine with its marker store kept in the original's order). Six more functions are proved against the constant-writes routine lifted an hour earlier, unchanged: the first family to land in an existing module.",
+      "Three new test crates run the lifted routines against 36 tracked verified rewrites on the 32-bit target, 1,000 cases per instance with the whole table of words compared, and three or four deliberately wrong versions per instance all caught. The coordinator read the two modules and ran the core crate's host tests (91) and the three crates' 39 tests on the 32-bit target before committing; none failed.",
+      "One of the test crates has the debug build's pointer-alignment check switched off, as one earlier test crate already has: a verified rewrite in it writes a 64-bit word at an address four bytes past an eight-byte boundary, which the 32-bit processor allows and the check aborts on. That is a property of the rewrite as verified, noted here because a portable version must not depend on it.",
+      "A finding for the proof audits: one function on the list reads a word of a local array it never initialises and stores it into a table. It is listed and not lifted, and its contract goes to the stack-fill audit.",
+      "Verified routines with a lifted counterpart proven in the pipeline: 1,099, up from 1,063."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 30 more functions pass the checker (19423 in total)",
+    "commit": "72d4f89256237d1aa498dfbf105d59ab77ecc5ca",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "30 rewrites added under rewrites/verified: 0 script native handlers and 30 other functions.",
