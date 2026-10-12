@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Checker: the driver refuses a contract that sets a value in code",
+    "title": "Rewrites: 86 proofs re-run on the current checker and recorded on it",
     "commit": null,
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "86 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Checker: the driver refuses a contract that sets a value in code",
+    "commit": "f0ac2192c5ab3c671e462ae3563f21bbdb95ceb0",
     "summary": "A proof was found today to have passed because its contract set two globals at addresses inside the code section. The driver now checks where every declared range and set value lands before it runs anything.",
     "changes": [
       "A contract whose declared range or set value starts in code, in a gap between sections or outside the image is refused: it is not run, and its verdict file says so with the reason. Nothing is ever meant to be set there. A placement in read-only data is a warning and not a refusal, because varying a constant the original loads from read-only data is a legitimate test; the worker maps the image writable and restores such words after each side. Two more conditions are reported as warnings for review: a value none of the function's instructions refers to, and a writable word the function refers to that the contract neither sets nor declares.",
