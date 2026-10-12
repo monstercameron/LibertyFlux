@@ -950,5 +950,15 @@ fn wrong_lift_of_construct_second_is_caught() {
 
 #[test]
 fn every_method_is_listed() {
-    assert_eq!(ALL.len(), 7);
+    assert_eq!(ALL.len(), 8);
+}
+
+#[test]
+fn attach_voice_matches_rewrite() {
+    run_proof(Method::Attach, 0x8008);
+}
+
+#[test]
+fn wrong_lift_of_attach_voice_is_caught() {
+    run_wrong_caught(Method::Attach, 0x8008);
 }
