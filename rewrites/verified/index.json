@@ -90342,6 +90342,33 @@
   "lane": "r-s437"
  },
  {
+  "address": "0x00AAC030",
+  "name": "list_pop_and_reset_node",
+  "kind": "function",
+  "file": "functions/fn_00aac030.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
+  "address": "0x00AAC350",
+  "name": "stream_packed_fields_unpack",
+  "kind": "function",
+  "file": "functions/fn_00aac350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
+  "address": "0x00AAC790",
+  "name": "stream_release_gate",
+  "kind": "function",
+  "file": "functions/fn_00aac790.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
   "address": "0x00AB17F0",
   "name": "stream_mark_cancelled",
   "kind": "function",
@@ -90828,6 +90855,24 @@
   "lane": "a-U41"
  },
  {
+  "address": "0x00AB9280",
+  "name": "variation_record_init_new",
+  "kind": "function",
+  "file": "functions/fn_00ab9280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
+  "address": "0x00AB9290",
+  "name": "slot_table_reset_all",
+  "kind": "function",
+  "file": "functions/fn_00ab9290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
   "address": "0x00AB95E0",
   "name": "input_ui_slot_table_build",
   "kind": "function",
@@ -91303,6 +91348,69 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s576"
+ },
+ {
+  "address": "0x00ABE0B0",
+  "name": "target_records_validate",
+  "kind": "function",
+  "file": "functions/fn_00abe0b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
+  "address": "0x00ABE2C0",
+  "name": "bounds_collector_init",
+  "kind": "function",
+  "file": "functions/fn_00abe2c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
+  "address": "0x00ABEC40",
+  "name": "T_CB_Generic_1Arg::invoke",
+  "kind": "function",
+  "file": "functions/fn_00abec40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
+  "address": "0x00ABEC60",
+  "name": "T_CB_Generic_2Args_CBox::invoke",
+  "kind": "function",
+  "file": "functions/fn_00abec60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
+  "address": "0x00ABEC80",
+  "name": "T_CB_Generic_2Args_Vec::invoke",
+  "kind": "function",
+  "file": "functions/fn_00abec80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
+  "address": "0x00ABEC90",
+  "name": "T_CB_Generic_6Args::invoke",
+  "kind": "function",
+  "file": "functions/fn_00abec90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
+ },
+ {
+  "address": "0x00ABED30",
+  "name": "CUseLightsInAreaDC::invoke",
+  "kind": "function",
+  "file": "functions/fn_00abed30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s767"
  },
  {
   "address": "0x00ABF0B0",
