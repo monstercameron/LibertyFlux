@@ -4,7 +4,7 @@
 /// leading byte and the four-byte word at offset 4, leaves all other bytes
 /// alone, returns the original object pointer in EAX, and consumes no stack
 /// arguments (thiscall).
-lf_checker_rt::export!(thiscall, rw_D3D3DDE0(this: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_D3DDE0(this: u32) -> u32 {
     const ACTIVE_BYTE: u32 = 0;
     const REQUEST_WORD: u32 = 4;
 

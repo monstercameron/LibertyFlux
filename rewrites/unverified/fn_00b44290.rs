@@ -3,7 +3,8 @@
 /// Expand a three-dimensional segment into two parallel XY-offset segments,
 /// then query each through the spatial box helper. The offset is formed from
 /// the normalized direction as `(dy, -dx, 0)`, with the original sequence of
-/// multiply-by-zero operations retained for unordered inputs. The first
+/// multiply-by-zero operations retained for unordered inputs. The positive
+/// endpoint's Z addition keeps the original offset-first operand order. The first
 /// query uses the negative offset; the second runs only when the first returns
 /// nonzero and uses the positive offset. Both helper calls receive four-word
 /// point records, with the fourth word supplied by the defined zero stack
@@ -145,7 +146,7 @@ lf_checker_rt::export!(stdcall, rw_00b44290(point_a: u32, point_b: u32, radius: 
         let mut end_plus = [
             add_f32(saved_end[0], saved_offset[0]),
             add_f32(saved_end[1], saved_offset[1]),
-            add_f32(saved_end[2], saved_offset[2]),
+            add_f32(saved_offset[2], saved_end[2]),
             ZERO,
         ];
         let second_hit = lf_checker_rt::callee_stdcall!(
