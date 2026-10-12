@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Lift tests: a constant the repaired rewrite now defines for itself",
+    "commit": null,
+    "summary": "The pipeline's 32-bit lift tests have failed since the 488 repaired published files went in. One older lift test crate supplied a constant that one of those files lacked; the repaired file now defines it, and the two definitions collide.",
+    "changes": [
+      "The test crate for the task classes included a verified rewrite that used a constant no file defined, and supplied the constant itself in front of the include. The repair carried the constant into the rewrite, where it belongs. The supplied definition is removed from the test crate. The coordinator built all 80 lift test crates for the 32-bit target to find every such collision: this was the only one. The crate's 17 tests pass again.",
+      "The coordinator reported the pipeline run that measured the repair's effect as passing. It had not looked at that run's conclusion, only at the manifest the run produced: the assembled-library job passed and gave the figures, and the lift-test job in the same run failed. The figures stand (19,414 of 19,632 rewrites assembled, 218 left out); the statement that the run passed was wrong, and the two lift commits made since were pushed onto a failing pipeline. Before a change to verified files is committed, every crate that includes verified files is now built first."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 151 files from lanes (662 unverified rewrites, 1272 in review)",
     "commit": "0ca999f64b621d3ea12bbb762b475c6bc3c872d5",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
