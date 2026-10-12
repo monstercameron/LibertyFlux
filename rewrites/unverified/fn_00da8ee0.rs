@@ -1,8 +1,9 @@
 // original: 0x00DA8EE0 CTaskComplexStuckInAir::vf18
 
 /// Choose the first task for a stuck-in-air task from the active subtask kind
-/// and request context. The virtual query supplies an unsigned task-kind ID.
-/// Kinds `0xCB`, `0xD0`, `0xD3`, and `0x38E` select helper requests; the
+/// and request context. The virtual query supplies a task-kind ID; its first
+/// threshold test is signed (`kind > 0xD3`). Kinds `0xCB`, `0xD0`, `0xD3`, and
+/// `0x38E` select helper requests; the
 /// context's 16-bit state at `+0x224 -> +0x244` and optional target at `+0x228`
 /// choose among them. Other kinds return null. The helper is stdcall with two
 /// stack arguments, pushed as `(kind, request)` in that order.
@@ -47,42 +48,48 @@ lf_checker_rt::export!(thiscall, rw_00DA8EE0(this: u32, request: u32) -> u32 {
         let query: unsafe extern "thiscall" fn(u32) -> u32 =
             core::mem::transmute(query_address as usize);
         let task_kind = query(subtask);
-        match task_kind {
-            KIND_D0 => {
+        let is_above_d3_signed = (task_kind as i32) > (KIND_D3 as i32);
+        if is_above_d3_signed {
+            if task_kind == KIND_38E {
                 let state_zero = state_is_zero(request);
                 request_task(if state_zero { 0x516 } else { KIND_CB }, request)
+            } else {
+                0
             }
-            KIND_CB => {
-                let state_zero = state_is_zero(request);
-                if state_zero {
-                    request_task(0x516, request)
-                } else {
-                    let target = read_u32(request.wrapping_add(OPTIONAL_TARGET));
-                    if target != 0 && target.wrapping_add(TARGET_FIELD) != 0 {
-                        request_task(KIND_CB, request)
-                    } else {
-                        request_task(KIND_D3, request)
-                    }
+        } else {
+            match task_kind {
+                KIND_D0 => {
+                    let state_zero = state_is_zero(request);
+                    request_task(if state_zero { 0x516 } else { KIND_CB }, request)
                 }
-            }
-            KIND_D3 => {
-                let state_zero = state_is_zero(request);
-                if !state_zero {
-                    request_task(KIND_CB, request)
-                } else {
-                    let target = read_u32(request.wrapping_add(OPTIONAL_TARGET));
-                    if target != 0 && target.wrapping_add(TARGET_FIELD) != 0 {
+                KIND_CB => {
+                    let state_zero = state_is_zero(request);
+                    if state_zero {
                         request_task(0x516, request)
                     } else {
-                        request_task(KIND_38E, request)
+                        let target = read_u32(request.wrapping_add(OPTIONAL_TARGET));
+                        if target != 0 && target.wrapping_add(TARGET_FIELD) != 0 {
+                            request_task(KIND_CB, request)
+                        } else {
+                            request_task(KIND_D3, request)
+                        }
                     }
                 }
+                KIND_D3 => {
+                    let state_zero = state_is_zero(request);
+                    if !state_zero {
+                        request_task(KIND_CB, request)
+                    } else {
+                        let target = read_u32(request.wrapping_add(OPTIONAL_TARGET));
+                        if target != 0 && target.wrapping_add(TARGET_FIELD) != 0 {
+                            request_task(0x516, request)
+                        } else {
+                            request_task(KIND_38E, request)
+                        }
+                    }
+                }
+                _ => 0,
             }
-            KIND_38E => {
-                let state_zero = state_is_zero(request);
-                request_task(if state_zero { 0x516 } else { KIND_CB }, request)
-            }
-            _ => 0,
         }
     }
 });
