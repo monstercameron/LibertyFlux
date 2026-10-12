@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 37258,
-    "rewritten": 19848,
-    "verified": 19642
+    "rewritten": 19856,
+    "verified": 19682
   },
   "structures": 340,
-  "symbols": 19746,
+  "symbols": 19786,
   "measured": [
     {
       "label": "Code section",
@@ -117,9 +117,9 @@
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 38.7,
+      "value": 38.8,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2837852 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2839008 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
@@ -135,13 +135,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 19848,
+      "value": 19856,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 19642,
+      "value": 19682,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
@@ -2796,7 +2796,7 @@
       "to": "0x00A66C92",
       "count": 130,
       "named": 130,
-      "rewritten": 59,
+      "rewritten": 62,
       "verified": 55
     },
     {
@@ -3246,7 +3246,7 @@
       "to": "0x00B7D521",
       "count": 175,
       "named": 175,
-      "rewritten": 67,
+      "rewritten": 68,
       "verified": 60
     },
     {
@@ -4173,7 +4173,7 @@
       "to": "0x00DBB1A5",
       "count": 89,
       "named": 89,
-      "rewritten": 40,
+      "rewritten": 41,
       "verified": 31
     },
     {
@@ -4453,7 +4453,7 @@
       "count": 666,
       "named": 657,
       "rewritten": 604,
-      "verified": 564
+      "verified": 604
     },
     {
       "stage": "verified",
@@ -4470,14 +4470,14 @@
       "to": "0x00E72EFA",
       "count": 598,
       "named": 566,
-      "rewritten": 195,
+      "rewritten": 198,
       "verified": 170
     }
   ],
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2837852,
+    "verified": 2839008,
     "large_functions": 2801402,
     "large_functions_verified": 816263
   },
