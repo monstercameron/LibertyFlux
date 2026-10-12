@@ -353,11 +353,11 @@ lf_checker_rt::export!(thiscall, rw_00dc68e0(task: u32, ped: u32) -> u32 {
                 let selected = minimum_signed.wrapping_add(offset) as u16;
                 write_u16(task.wrapping_add(TASK_SELECTED_KEY), selected);
             } else {
-                let ped_weapon_key = read_u32(ped.wrapping_add(MANAGER_INFO_KEY));
+                let fallback_weapon_key = read_u32(task.wrapping_add(MANAGER_INFO_KEY));
                 let fallback_info = lf_checker_rt::callee_cdecl!(
                     CALL_WEAPON_INFO,
                     u32,
-                    ped_weapon_key,
+                    fallback_weapon_key,
                 );
                 let fallback_count = read_u16(fallback_info.wrapping_add(INFO_ANIMATION_COUNT));
                 write_u16(task.wrapping_add(TASK_SELECTED_KEY), fallback_count);
