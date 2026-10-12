@@ -82647,6 +82647,204 @@
   "lane": "r-s717"
  },
  {
+  "address": "0x00A58E80",
+  "name": "bound_item_init_merge_box",
+  "kind": "function",
+  "file": "functions/fn_00a58e80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A58EC0",
+  "name": "bound_item_init_axes",
+  "kind": "function",
+  "file": "functions/fn_00a58ec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A58F10",
+  "name": "bound_item_init_center_radius",
+  "kind": "function",
+  "file": "functions/fn_00a58f10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A5A240",
+  "name": "composite_bound_merge_item_masks",
+  "kind": "function",
+  "file": "functions/fn_00a5a240.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A5A430",
+  "name": "placement_setup_forward",
+  "kind": "function",
+  "file": "functions/fn_00a5a430.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A5A480",
+  "name": "slot_list_append",
+  "kind": "function",
+  "file": "functions/fn_00a5a480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A5A530",
+  "name": "entity_within_range_in_front",
+  "kind": "function",
+  "file": "functions/fn_00a5a530.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A5B020",
+  "name": "timing_nodes_detach_both",
+  "kind": "function",
+  "file": "functions/fn_00a5b020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A5B6F0",
+  "name": "average_four_corners",
+  "kind": "function",
+  "file": "functions/fn_00a5b6f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A5B790",
+  "name": "copy_record16",
+  "kind": "function",
+  "file": "functions/fn_00a5b790.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A60F60",
+  "name": "copy_record64",
+  "kind": "function",
+  "file": "functions/fn_00a60f60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A61370",
+  "name": "copy_record20",
+  "kind": "function",
+  "file": "functions/fn_00a61370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A614E0",
+  "name": "entity_type4_flag_test",
+  "kind": "function",
+  "file": "functions/fn_00a614e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A619A0",
+  "name": "entity_link_active_check",
+  "kind": "function",
+  "file": "functions/fn_00a619a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A61BF0",
+  "name": "record_key_equals",
+  "kind": "function",
+  "file": "functions/fn_00a61bf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A61D50",
+  "name": "slot_list_remove_at",
+  "kind": "function",
+  "file": "functions/fn_00a61d50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A61FD0",
+  "name": "slot_record_zero",
+  "kind": "function",
+  "file": "functions/fn_00a61fd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A622F0",
+  "name": "cobject_scanner_deleting_destructor",
+  "kind": "function",
+  "file": "functions/fn_00a622f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A62350",
+  "name": "intel_table_set_slot2",
+  "kind": "function",
+  "file": "functions/fn_00a62350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A62370",
+  "name": "intel_table_set_slot1",
+  "kind": "function",
+  "file": "functions/fn_00a62370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A62390",
+  "name": "intel_table_set_slot0",
+  "kind": "function",
+  "file": "functions/fn_00a62390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
+  "address": "0x00A623B0",
+  "name": "ped_group_match_either",
+  "kind": "function",
+  "file": "functions/fn_00a623b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s742"
+ },
+ {
   "address": "0x00A625B0",
   "name": "ped_task_cleanup",
   "kind": "function",
