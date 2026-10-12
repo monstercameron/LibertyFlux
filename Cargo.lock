@@ -600,6 +600,14 @@ name = "lf-hook"
 version = "0.1.0"
 
 [[package]]
+name = "lf-hostsessdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+ "lf-network",
+]
+
+[[package]]
 name = "lf-indexdiff"
 version = "0.1.0"
 dependencies = [

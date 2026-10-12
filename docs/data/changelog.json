@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Devlog: two thousand proofs run again with the stack not zeroed",
+    "title": "Lift: the session-hosting task, four methods",
     "commit": null,
+    "summary": "All four verified methods of the network session layer's hosting task are lifted into portable Rust in the network crate and proven against their 32-bit rewrites.",
+    "changes": [
+      "The lifted module owns the task's state and reaches the network's open and poll calls and the timer through a world trait; those stay boundaries, and operating-system adapters belong in the platform crate. The module forbids unsafe code.",
+      "Proof: eight tests on the 32-bit target, each method with a wrong lift that is caught; four edge tests pass on the 64-bit host.",
+      "What the proofs do not cover: the setup and start contracts of record run with part of the data comparison switched off, and two methods' call logs leave out pointer arguments.",
+      "Found while lifting: the setup rewrite's comment says a count is clamped to 32, where its signed arithmetic takes one pair of inputs to a total of 44. The lift keeps the rewrite's behaviour; whether the original does the same is not established and goes to the proof audit list.",
+      "The lane was begun by a Muse lane that was cut sixteen minutes in and finished by a Luna lane from its files; the second lane found and fixed a pointer-stride defect in the test runtime it inherited. The count of lifted routines is 1,378."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Devlog: two thousand proofs run again with the stack not zeroed",
+    "commit": "27f5e6ac677d9d9bfc0f77eb097a98e07d2ca9ef",
     "summary": "The audit of every verified function whose contract of record zeroes the stack has finished. An entry gives its result: of 2,085 proofs, 1,310 pass only with the zero.",
     "changes": [
       "684 proofs pass with the checker's changing pattern as well, and can drop the zero. 1,110 fail with the pattern only in what the function hands to a callee. 200 fail in what the function returns or stores: 139 involve the heap, 61 a global, 5 the return value, and 104 fail on every trial.",
