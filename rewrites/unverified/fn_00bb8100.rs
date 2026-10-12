@@ -9,7 +9,7 @@
 lf_checker_rt::export!(cdecl, rw_00bb8100(x: u32, y: u32, z: u32) -> u32 {
     const RECEIVER_VA: u32 = 0x0117_374C;
     const VECTOR_WORDS: usize = 3;
-    let position = [x, y, z];
+    let position: [u32; VECTOR_WORDS] = [x, y, z];
     let position_ptr = position.as_ptr() as usize as u32;
     let receiver = lf_checker_rt::relocated(RECEIVER_VA);
     lf_checker_rt::callee_thiscall!(1, u32, receiver, position_ptr)

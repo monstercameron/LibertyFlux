@@ -1672,9 +1672,9 @@
   "reason": null
  },
  {
-  "address": "0x00A33DD0",
-  "name": "pending_00a33dd0",
-  "file": "fn_00a33dd0.rs",
+  "address": "0x00A33E00",
+  "name": "pending_00a33e00",
+  "file": "fn_00a33e00.rs",
   "lane": "r-s743",
   "outcome": "not_reached",
   "reason": null
@@ -2405,7 +2405,7 @@
   "file": "fn_00b27ef0.rs",
   "lane": "a-U126",
   "outcome": "not yet run",
-  "reason": null
+  "reason": "60-trial probe did not pass: heap: n orig=1 rw=0 orig_first=[(4176, 0)] rw_first=[]"
  },
  {
   "address": "0x00B28050",
@@ -2654,6 +2654,14 @@
   "lane": "r-s407",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00B52C40",
+  "name": null,
+  "file": "fn_00b52c40.rs",
+  "lane": "r-s754",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00B53320",
@@ -3664,6 +3672,14 @@
   "reason": "frame_pointer_args"
  },
  {
+  "address": "0x00C84F90",
+  "name": "scrollbar_table_add_entity",
+  "file": "fn_00c84f90.rs",
+  "lane": "r-s746",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C91890",
   "name": null,
   "file": "fn_00c91890.rs",
@@ -4190,6 +4206,78 @@
   "lane": "r-s625",
   "outcome": "deferred",
   "reason": "out_of_time"
+ },
+ {
+  "address": "0x00CF0F90",
+  "name": "stat_ms_to_millis",
+  "file": "fn_00cf0f90.rs",
+  "lane": "r-s757",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CF1930",
+  "name": "StatGroup_GetList",
+  "file": "fn_00cf1930.rs",
+  "lane": "r-s757",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CF19A0",
+  "name": "StatGroup_GetCount",
+  "file": "fn_00cf19a0.rs",
+  "lane": "r-s757",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CF1C60",
+  "name": "stat_is_best_tracked",
+  "file": "fn_00cf1c60.rs",
+  "lane": "r-s757",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CF1F20",
+  "name": "CPlayStatBase::CPlayStatBase",
+  "file": "fn_00cf1f20.rs",
+  "lane": "r-s757",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CF1F50",
+  "name": "CPlayStatBase::CPlayStatBase_2",
+  "file": "fn_00cf1f50.rs",
+  "lane": "r-s757",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CF1F80",
+  "name": "net_session_record_init",
+  "file": "fn_00cf1f80.rs",
+  "lane": "r-s757",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CF2940",
+  "name": "phMaterialMgrGta::phMaterialMgrGta",
+  "file": "fn_00cf2940.rs",
+  "lane": "r-s757",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CF4210",
+  "name": "ped_task_test_control_input",
+  "file": "fn_00cf4210.rs",
+  "lane": "r-b703",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00CF72B0",
@@ -4776,14 +4864,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x00E62600",
-  "name": "initialize_network_state_object_a",
-  "file": "fn_00e62600.rs",
-  "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00E62620",
   "name": "register_network_buffer_cleanup",
   "file": "fn_00e62620.rs",
@@ -4800,14 +4880,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x00E62B30",
-  "name": "initialize_audio_link_head_and_register_cleanup_c",
-  "file": "fn_00e62b30.rs",
-  "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00E62B50",
   "name": "initialize_audio_link_head_and_register_cleanup_d",
   "file": "fn_00e62b50.rs",
@@ -4822,14 +4894,6 @@
   "lane": "r-s745",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00E62C90",
-  "name": "initialize_network_state_object_a",
-  "file": "fn_00e62c90.rs",
-  "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E62CB0",

@@ -30,7 +30,7 @@ lf_checker_rt::export!(thiscall, rw_00b12960(table: u32, hash_entry: u32, payloa
 
         let hash = (hash_entry as *const u32).read_volatile();
         let bucket_index = hash % capacity;
-        let buckets = (table as *const u32).read_volatile();
+        let buckets = (table.wrapping_add(BUCKETS_POINTER) as *const u32).read_volatile();
         let bucket_slot = buckets.wrapping_add(bucket_index.wrapping_mul(BUCKET_STRIDE));
         let previous_head = (bucket_slot as *const u32).read_volatile();
         let record = lf_checker_rt::callee_cdecl!(1, u32, RECORD_BYTES);
