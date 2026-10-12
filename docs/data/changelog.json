@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Devlog: eight operating faults in one evening, all the coordinator's",
+    "title": "Rust in progress: 44 files from lanes (610 unverified rewrites, 1572 in review)",
     "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 610 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 1572 Rust files from 24 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "60 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Devlog: eight operating faults in one evening, all the coordinator's",
+    "commit": "755854cab1fc9b9912c675bccfd51857bdffaaea",
     "summary": "An entry lists together the mistakes the coordinator made on the evening of 11 October while changing the brief, the checker's driver, the importer and 488 published files, with what each cost, how it was found and the rules adopted.",
     "changes": [
       "The eight: brief paragraphs whose backslashes became control characters for three hours; a driver change without its pinned hash; the same change importing libraries the pipeline does not install; a workspace-wide format that reached verified rewrites; a repair of published files that broke a lift test crate; a failing pipeline run reported to the owner as passing; a hold written by hand that let an unchecked function into the index for under two minutes; two scripts patched in place and broken for seconds.",

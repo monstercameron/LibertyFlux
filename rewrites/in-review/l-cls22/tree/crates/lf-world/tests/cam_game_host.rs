@@ -4,11 +4,13 @@
 //! reader of the lifted code would ask about. The differential proof against
 //! the verified 32-bit rewrites is in the `lf-camgame-diff` test crate.
 
+use std::collections::HashMap;
+
 use lf_core::Handle32;
 use lf_world::cam_game::registry::{self, State};
 use lf_world::cam_game::{
-    ACTIVE_MARKER, CCamGame, CamGameWorld, CamOwnerTag, CamTag, DEFAULT_ZOOM, IDLE_MARKER,
-    IDLE_MODE, IDLE_TIMER, PoolTag, WorkerTag,
+    ACTIVE_MARKER, CCamGame, CamGameWorld, CamOwnerTag, CamTag, DEFAULT_ZOOM, GateBlock, GateTag,
+    IDLE_MARKER, IDLE_MODE, IDLE_TIMER, PoolTag, TailTag, TargetTag, WorkerTag,
 };
 
 /// A world that records each call and answers from fixed values.
@@ -20,6 +22,21 @@ struct Recorder {
     default_word: u32,
     /// Byte value the reset step writes into the first flag byte.
     reset_flags: Option<u8>,
+    inhibit: u8,
+    gate: Option<Handle32<GateTag>>,
+    /// Whether the second block also gets a gate status object.
+    gate_second: bool,
+    /// Bytes of the gate status object, by offset; absent offsets read zero.
+    gate_bytes: HashMap<u32, u8>,
+    target: Option<Handle32<TargetTag>>,
+    word_first: u16,
+    word_second: u16,
+    singleton: bool,
+    tail: Option<Handle32<TailTag>>,
+    tail_state_value: u8,
+    tail_flags_value: u8,
+    /// The value written to the matched byte, if the tail step ran.
+    matched: Option<u8>,
 }
 
 impl CamGameWorld for Recorder {
@@ -80,6 +97,240 @@ impl CamGameWorld for Recorder {
         self.calls.push("shared_default_word".to_string());
         self.default_word
     }
+
+    fn inhibit_flag(&mut self) -> u8 {
+        self.inhibit
+    }
+
+    fn gate_status(&mut self, block: GateBlock) -> Option<Handle32<GateTag>> {
+        self.calls.push(format!("gate_status {block:?}"));
+        self.gate.filter(|_| block == GateBlock::First || self.gate_second)
+    }
+
+    fn gate_byte(&mut self, gate: Handle32<GateTag>, offset: u32) -> u8 {
+        let _ = gate;
+        self.gate_bytes.get(&offset).copied().unwrap_or(0)
+    }
+
+    fn find_target(
+        &mut self,
+        _cam: &mut CCamGame,
+        this: Handle32<CamTag>,
+        block: GateBlock,
+    ) -> Option<Handle32<TargetTag>> {
+        self.calls
+            .push(format!("find_target {block:?} {}", this.get()));
+        self.target
+    }
+
+    fn gate_word(&mut self, block: GateBlock) -> u16 {
+        match block {
+            GateBlock::First => self.word_first,
+            GateBlock::Second => self.word_second,
+        }
+    }
+
+    fn notify_sink(
+        &mut self,
+        _cam: &mut CCamGame,
+        this: Handle32<CamTag>,
+        word: u16,
+        block: GateBlock,
+    ) {
+        self.calls
+            .push(format!("notify_sink {block:?} {} {word}", this.get()));
+    }
+
+    fn sync_target(&mut self, _cam: &mut CCamGame, this: Handle32<CamTag>) {
+        self.calls.push(format!("sync_target {}", this.get()));
+    }
+
+    fn singleton_present(&mut self) -> bool {
+        self.calls.push("singleton_present".to_string());
+        self.singleton
+    }
+
+    fn middle_update(&mut self, _cam: &mut CCamGame, _this: Handle32<CamTag>, step: u32) {
+        self.calls.push(format!("middle_update {step}"));
+    }
+
+    fn tail(&mut self, _cam: &mut CCamGame, this: Handle32<CamTag>) -> Option<Handle32<TailTag>> {
+        self.calls.push(format!("tail {}", this.get()));
+        self.tail
+    }
+
+    fn tail_state(&mut self, _tail: Handle32<TailTag>) -> u8 {
+        self.tail_state_value
+    }
+
+    fn tail_flags(&mut self, _tail: Handle32<TailTag>) -> u8 {
+        self.tail_flags_value
+    }
+
+    fn set_tail_flags(&mut self, _tail: Handle32<TailTag>, flags: u8) {
+        self.tail_flags_value = flags;
+    }
+
+    fn set_tail_state(&mut self, _tail: Handle32<TailTag>, state: u8) {
+        self.tail_state_value = state;
+    }
+
+    fn set_matched(&mut self, matched: u8) {
+        self.matched = Some(matched);
+    }
+
+    fn clear_done(&mut self) {
+        self.calls.push("clear_done".to_string());
+    }
+}
+
+#[test]
+fn gate_update_without_gates_runs_sync_chain_and_done() {
+    let mut cam = CCamGame::default();
+    let mut w = Recorder::default();
+    cam.gate_update(&mut w, this());
+    assert_eq!(
+        w.calls,
+        vec![
+            "gate_status First",
+            "sync_target 4096",
+            "singleton_present",
+            "gate_status Second",
+            "tail 4096",
+            "clear_done",
+        ]
+    );
+    assert_eq!(w.matched, None, "no tail, so the matched byte is not written");
+}
+
+#[test]
+fn gate_update_runs_middle_chain_in_order_only_with_singleton() {
+    let mut cam = CCamGame::default();
+    let mut w = Recorder {
+        singleton: true,
+        ..Recorder::default()
+    };
+    cam.gate_update(&mut w, this());
+    let steps: Vec<&String> = w
+        .calls
+        .iter()
+        .filter(|c| c.starts_with("middle_update"))
+        .collect();
+    assert_eq!(steps.len(), 7);
+    assert_eq!(steps.first().map(|s| s.as_str()), Some("middle_update 6"));
+    assert_eq!(steps.last().map(|s| s.as_str()), Some("middle_update 12"));
+}
+
+#[test]
+fn gate_update_tail_clears_busy_bit_and_records_match() {
+    let mut cam = CCamGame::default();
+    let mut w = Recorder {
+        tail: Handle32::new(0x300),
+        tail_state_value: 3,
+        tail_flags_value: 0xFF,
+        ..Recorder::default()
+    };
+    cam.gate_update(&mut w, this());
+    assert_eq!(w.matched, Some(1));
+    assert_eq!(w.tail_flags_value, 0xFF & !0x20);
+    assert_eq!(w.tail_state_value, 0);
+}
+
+#[test]
+fn gate_update_tail_leaves_flags_alone_when_not_busy() {
+    let mut cam = CCamGame::default();
+    let mut w = Recorder {
+        tail: Handle32::new(0x300),
+        tail_state_value: 2,
+        tail_flags_value: 0xDF,
+        ..Recorder::default()
+    };
+    cam.gate_update(&mut w, this());
+    assert_eq!(w.matched, Some(0));
+    assert_eq!(w.tail_flags_value, 0xDF, "busy bit already clear: no write needed");
+    assert_eq!(w.tail_state_value, 0);
+}
+
+#[test]
+fn gate_block_stops_before_the_target_when_pair_test_is_low() {
+    // Verdict set (selector nonzero, first folded pair high, second low),
+    // but the pair test is low: the target is never asked for.
+    let mut cam = CCamGame::default();
+    let mut w = Recorder {
+        gate: Handle32::new(0x500),
+        gate_bytes: [
+            (0x328D, 1),
+            (0x269C, 0x00),
+            (0x269E, 0x80),
+            (0x269F, 0x00),
+            (0x29BC, 0x00),
+            (0x29BE, 0x00),
+        ]
+        .into_iter()
+        .collect(),
+        ..Recorder::default()
+    };
+    cam.gate_update(&mut w, this());
+    assert!(!w.calls.iter().any(|c| c.starts_with("find_target")));
+}
+
+#[test]
+fn gate_block_with_verdict_and_pair_asks_target_and_notifies_with_block_word() {
+    let mut cam = CCamGame::default();
+    let mut w = Recorder {
+        gate: Handle32::new(0x500),
+        gate_bytes: [
+            (0x328D, 1),
+            (0x269C, 0x00),
+            (0x269E, 0x80),
+            (0x269F, 0x00),
+            (0x29BC, 0x00),
+            (0x29BE, 0xFF),
+        ]
+        .into_iter()
+        .collect(),
+        target: Handle32::new(0x600),
+        word_first: 0x1111,
+        word_second: 0x2222,
+        ..Recorder::default()
+    };
+    cam.gate_update(&mut w, this());
+    assert!(w.calls.iter().any(|c| c == "notify_sink First 4096 4369"));
+}
+
+#[test]
+fn inhibit_flag_blocks_the_zero_selector_verdict() {
+    // Selector zero: the verdict needs the inhibit flag clear.
+    let mut cam = CCamGame::default();
+    let bytes: std::collections::HashMap<u32, u8> = [
+        (0x328D, 0),
+        (0x269C, 0x00),
+        (0x269E, 0x80),
+        (0x269F, 0x00),
+        (0x29BC, 0x00),
+        (0x29BE, 0xFF),
+    ]
+    .into_iter()
+    .collect();
+    let mut open = Recorder {
+        gate: Handle32::new(0x500),
+        gate_bytes: bytes.clone(),
+        target: Handle32::new(0x600),
+        inhibit: 0,
+        ..Recorder::default()
+    };
+    cam.gate_update(&mut open, this());
+    assert!(open.calls.iter().any(|c| c.starts_with("find_target")));
+
+    let mut shut = Recorder {
+        gate: Handle32::new(0x500),
+        gate_bytes: bytes,
+        target: Handle32::new(0x600),
+        inhibit: 1,
+        ..Recorder::default()
+    };
+    cam.gate_update(&mut shut, this());
+    assert!(!shut.calls.iter().any(|c| c.starts_with("find_target")));
 }
 
 fn this() -> Handle32<CamTag> {

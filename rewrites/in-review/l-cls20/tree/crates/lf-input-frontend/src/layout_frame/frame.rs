@@ -131,7 +131,7 @@ impl UILayoutFrame {
 
     /// The little-endian word at `at`. Every caller passes an offset from
     /// [`field`] with four bytes below [`SPAN`].
-    fn word_at(&self, at: usize) -> u32 {
+    pub(super) fn word_at(&self, at: usize) -> u32 {
         let mut word = [0u8; 4];
         word.copy_from_slice(&self.bytes[at..at + 4]);
         u32::from_le_bytes(word)
@@ -140,6 +140,11 @@ impl UILayoutFrame {
     /// Stores a little-endian word at `at`.
     fn set_word_at(&mut self, at: usize, value: u32) {
         self.bytes[at..at + 4].copy_from_slice(&value.to_le_bytes());
+    }
+
+    /// The byte at t.
+    pub(super) fn byte_at(&self, at: usize) -> u8 {
+        self.bytes[at]
     }
 
     /// Stores the low byte of `value` at `at` and answers that byte as a

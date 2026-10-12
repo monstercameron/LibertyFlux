@@ -3,7 +3,9 @@
 /// Select behavior from the NUL-terminated inline name at `this + 0x128`.
 /// The sprite name calls its copy helper and returns that helper's EAX; the
 /// model name resets the rule, changes the object's vtable, runs two model
-/// helpers and returns the final helper's EAX. Any other name returns one.
+/// helpers and returns the final helper's EAX. An unrecognized name returns
+/// the signed result of an unsigned bytewise comparison with the model name
+/// (-1 if it sorts before the model name, otherwise 1).
 /// `this` arrives in ECX and the secondary input arrives in EDX; the function
 /// has no stack arguments. Its image strings and the written vtable are loaded
 /// through relocated image references.
@@ -19,32 +21,35 @@ lf_checker_rt::export!(fastcall, rw_00639DC0(this: u32, secondary_input: u32) ->
     const LOAD_MODEL_PROPERTIES: u32 = 3;
     const PARSE_MODEL_PROPERTIES: u32 = 4;
 
-    let matches_image_name = |image_address: u32| {
+    let compare_image_name = |image_address: u32| -> i32 {
         let mut object_byte = this.wrapping_add(INLINE_NAME);
         let mut image_byte = lf_checker_rt::relocated(image_address);
-        loop {
-            let object_value = unsafe { (object_byte as *const u8).read() };
-            let image_value = unsafe { (image_byte as *const u8).read() };
-            if object_value != image_value {
-                break false;
+        'compare: loop {
+            for _ in 0..2 {
+                let object_value = unsafe { (object_byte as *const u8).read() };
+                let image_value = unsafe { (image_byte as *const u8).read() };
+                if object_value != image_value {
+                    break 'compare if object_value < image_value { -1 } else { 1 };
+                }
+                if object_value == 0 {
+                    break 'compare 0;
+                }
+                object_byte = object_byte.wrapping_add(1);
+                image_byte = image_byte.wrapping_add(1);
             }
-            if object_value == 0 {
-                break true;
-            }
-            object_byte = object_byte.wrapping_add(1);
-            image_byte = image_byte.wrapping_add(1);
         }
     };
 
-    if matches_image_name(SPRITE_NAME) {
+    if compare_image_name(SPRITE_NAME) == 0 {
         if this != 0 {
             return lf_checker_rt::callee_thiscall!(COPY_SPRITE, u32, this, secondary_input);
         }
         return 0;
     }
 
-    if !matches_image_name(MODEL_NAME) {
-        return 1;
+    let model_name_order = compare_image_name(MODEL_NAME);
+    if model_name_order != 0 {
+        return model_name_order as u32;
     }
     if this == 0 {
         return 0;

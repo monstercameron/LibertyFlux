@@ -3,8 +3,10 @@
 //! Every call a lifted camera method makes that is not lifted itself is one
 //! method here. Numbered callees keep the order the verified rewrites call
 //! them in; the virtual calls are the object's own dispatched slot and the
-//! worker's release slot. Global reads are methods too, because a lifted
-//! method owns no global state.
+//! worker's release slot. Global reads and writes are methods too, because a
+//! lifted method owns no global state. Reads of objects the camera does not
+//! own (gate status objects, the tail object) are methods on the world,
+//! reached through an opaque handle.
 
 use lf_core::Handle32;
 
@@ -18,6 +20,23 @@ pub struct CamOwnerTag;
 pub struct WorkerTag;
 /// Tag: the opaque identity of the object pool manager.
 pub struct PoolTag;
+/// Tag: the opaque identity of a gate status object (read, never written).
+pub struct GateTag;
+/// Tag: the opaque identity of a camera target found by a gate check.
+pub struct TargetTag;
+/// Tag: the opaque identity of the tail object (read and written).
+pub struct TailTag;
+
+/// Which of the two gate blocks of the camera's event step runs. The two
+/// blocks have the same shape; they differ in the callees they call and in
+/// the global word they pass on.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GateBlock {
+    /// The first block: callees 1 to 3 and the first global word.
+    First,
+    /// The second block: callees 13 to 15 and the second global word.
+    Second,
+}
 
 /// Everything a game camera method reaches outside its own fields.
 ///
@@ -68,4 +87,69 @@ pub trait CamGameWorld {
     /// The shared default word, read from a global and copied into the
     /// camera by the idle reset.
     fn shared_default_word(&mut self) -> u32;
+
+    /// The inhibit byte, read from a global before the gate blocks run.
+    fn inhibit_flag(&mut self) -> u8;
+
+    /// Callee 1 (for the first block) or callee 13 (for the second): asks
+    /// the provider for a gate status object. `None` for zero.
+    fn gate_status(&mut self, block: GateBlock) -> Option<Handle32<GateTag>>;
+
+    /// One byte of a gate status object, at `offset` within it. A read only.
+    fn gate_byte(&mut self, gate: Handle32<GateTag>, offset: u32) -> u8;
+
+    /// Callee 2 (first block) or callee 14 (second): asks the watcher for a
+    /// target of the given type, with the camera as the subject.
+    fn find_target(
+        &mut self,
+        cam: &mut CCamGame,
+        this: Handle32<CamTag>,
+        block: GateBlock,
+    ) -> Option<Handle32<TargetTag>>;
+
+    /// The global word a gate block passes on: the first word for the first
+    /// block, the second for the second.
+    fn gate_word(&mut self, block: GateBlock) -> u16;
+
+    /// Callee 3 (first block) or callee 15 (second): notifies the sink with
+    /// the camera's sub-object, the global word and the two constant
+    /// flags, which the original passes as one. The sub-object is the
+    /// camera's own address plus a fixed offset, computed by the host.
+    fn notify_sink(
+        &mut self,
+        cam: &mut CCamGame,
+        this: Handle32<CamTag>,
+        word: u16,
+        block: GateBlock,
+    );
+
+    /// Callee 4: the camera's step that syncs its target.
+    fn sync_target(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>);
+
+    /// Callee 5: whether the global singleton exists.
+    fn singleton_present(&mut self) -> bool;
+
+    /// Callees 6 to 12, one per `step`: the camera's middle update chain.
+    fn middle_update(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>, step: u32);
+
+    /// Callee 16: the watcher's answer for the tail, a second selector.
+    fn tail(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) -> Option<Handle32<TailTag>>;
+
+    /// The state byte of the tail object (offset 0x22E).
+    fn tail_state(&mut self, tail: Handle32<TailTag>) -> u8;
+
+    /// The flag byte of the tail object (offset 0x18C).
+    fn tail_flags(&mut self, tail: Handle32<TailTag>) -> u8;
+
+    /// Writes the flag byte of the tail object.
+    fn set_tail_flags(&mut self, tail: Handle32<TailTag>, flags: u8);
+
+    /// Writes the state byte of the tail object.
+    fn set_tail_state(&mut self, tail: Handle32<TailTag>, state: u8);
+
+    /// Writes the matched byte of the global the tail step records into.
+    fn set_matched(&mut self, matched: u8);
+
+    /// Clears the global done flag at the end of the step.
+    fn clear_done(&mut self);
 }

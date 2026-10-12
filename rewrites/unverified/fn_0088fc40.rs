@@ -217,16 +217,17 @@ export!(thiscall, rw_0088FC40(this_ptr: *mut u8) -> u32 {
         let angle_out = load_u16(this, 0x20).wrapping_add(angle_b as u16);
         store_u16(this_ptr, 0x36, angle_out);
 
-        let mut min_value = min_seed;
+        let mut min_candidate = if entity_b.is_some() { min_seed } else { 0x5D5C };
         if let Some(entity) = entity_b {
-            min_value = min_value.min(
+            min_candidate = min_candidate.min(
                 load_u16(entity, metadata_base.wrapping_add(0x58) as usize) as u32,
             );
         }
         let pointer_18 = load_u32(this, 0x18);
         if pointer_18 != 0 {
-            min_value = min_value.min(fistp_qword_low_u32(load_f32(pointer_18 as *const u8, 0)));
+            min_candidate = min_candidate.min(fistp_qword_low_u32(load_f32(pointer_18 as *const u8, 0)));
         }
+        let min_value = min_seed.min(min_candidate);
         store_u16(this_ptr, 0x30, min_value as u16);
 
         let mut max_value = max_seed;
@@ -240,7 +241,7 @@ export!(thiscall, rw_0088FC40(this_ptr: *mut u8) -> u32 {
         let return_value = if let Some(entity) = entity_b {
             load_u16(entity, metadata_base.wrapping_add(0x5A) as usize) as u32
         } else {
-            ((min_value as u16 as u32) & 0xFFFF_FF00) | 0xFF
+            ((min_candidate as u16 as u32) & 0xFFFF_FF00) | 0xFF
         };
         return_value
     }

@@ -1,4 +1,4 @@
-//! Lifted game camera class: the deleting destructor, the restart and the
+﻿//! Lifted game camera class: the deleting destructor, the restart and the
 //! idle reset.
 //!
 //! The original keeps one camera object per active camera. Its header
@@ -36,4 +36,6 @@ pub mod registry;
 pub mod world;
 
 pub use game::{ACTIVE_MARKER, CCamGame, DEFAULT_ZOOM, IDLE_MARKER, IDLE_MODE, IDLE_TIMER};
-pub use world::{CamGameWorld, CamOwnerTag, CamTag, PoolTag, WorkerTag};
+pub use world::{
+    CamGameWorld, CamOwnerTag, CamTag, GateBlock, GateTag, PoolTag, TailTag, TargetTag, WorkerTag,
+};

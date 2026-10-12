@@ -197,3 +197,24 @@ pub mod fn_00DB1AA0 {
     use lf_checker_rt::export;
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1aa0.rs"));
 }
+
+/// Verified rewrite of the token follow-up that enables the frame twice (token at 0xD4).
+pub mod fn_00DB16B0 {
+    #![allow(unused_imports)]
+    use lf_checker_rt::{callee_cdecl, export};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db16b0.rs"));
+}
+
+/// Verified rewrite of the token follow-up that resets the frame (token at 0xD4).
+pub mod fn_00DB1700 {
+    #![allow(unused_imports)]
+    use lf_checker_rt::{callee_cdecl, export};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1700.rs"));
+}
+
+/// Verified rewrite of the token follow-up that answers the target's step (token at 0xD8).
+pub mod fn_00DB1890 {
+    #![allow(unused_imports)]
+    use lf_checker_rt::{callee_cdecl, export};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1890.rs"));
+}

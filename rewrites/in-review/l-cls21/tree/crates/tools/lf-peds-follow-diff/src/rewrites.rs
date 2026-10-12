@@ -1,12 +1,11 @@
-//! The verified rewrites under test, compiled from their tracked files.
+﻿//! The verified rewrites under test, compiled from their tracked files.
 //!
 //! Each file is included unchanged, as a module of its own (the files share
 //! top-level helper names). The include paths are relative to this crate's
 //! manifest: three levels up to the repository root, then
 //! `rewrites/verified/functions/`.
 
-// Byte-identical verified files; their style and their raw-address code are
-// not linted here.
+// Byte-identical verified files; their style is not linted here.
 #![allow(
     unsafe_code,
     missing_docs,
@@ -22,7 +21,6 @@
 
 /// Verified rewrite: route cursor copied into an output record.
 pub mod fn_00cbc9f0 {
-    #![allow(unused_imports)]
     include!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/../../../../../../../rewrites/verified/functions/fn_00cbc9f0.rs"
@@ -31,7 +29,6 @@ pub mod fn_00cbc9f0 {
 
 /// Verified rewrite: current route point copied out (twelve bytes).
 pub mod fn_00cb73d0 {
-    #![allow(unused_imports)]
     use lf_checker_rt::export;
     include!(concat!(
         env!("CARGO_MANIFEST_DIR"),
@@ -41,7 +38,6 @@ pub mod fn_00cb73d0 {
 
 /// Verified rewrite: waypoint at an index copied out (twelve bytes).
 pub mod fn_00cb73a0 {
-    #![allow(unused_imports)]
     use lf_checker_rt::export;
     include!(concat!(
         env!("CARGO_MANIFEST_DIR"),
@@ -51,7 +47,6 @@ pub mod fn_00cb73a0 {
 
 /// Verified rewrite: waypoint pick and order.
 pub mod fn_00cb2970 {
-    #![allow(unused_imports)]
     include!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/../../../../../../../rewrites/verified/functions/fn_00cb2970.rs"
@@ -60,9 +55,10 @@ pub mod fn_00cb2970 {
 
 /// Verified rewrite: advance after a finished sub-task.
 pub mod fn_00cb3b50 {
-    #![allow(unused_imports)]
     include!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/../../../../../../../rewrites/verified/functions/fn_00cb3b50.rs"
     ));
 }
+
+

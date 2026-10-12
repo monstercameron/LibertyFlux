@@ -4,7 +4,7 @@
 /// candidate is forwarded to the base event predicate. For a live candidate,
 /// mode values 1 and 2, a null reference at +0x224, or a nonzero flag at
 /// +0x211 make it special only when its +0x210 flag is set for the mode case.
-/// A special candidate is rejected when this event's byte at +0x14 is set.
+/// A special candidate is rejected when this event's byte at +0x14 is clear.
 /// Other field tests are unsigned equality tests; the return is a zero-extended
 /// boolean. The one stack argument is caller-cleaned by thiscall's callee.
 lf_checker_rt::export!(thiscall, rw_00b4b390(this_event: u32, candidate: u32) -> u32 {
@@ -34,7 +34,7 @@ lf_checker_rt::export!(thiscall, rw_00b4b390(this_event: u32, candidate: u32) ->
     let reference_is_missing = unsafe { read_u32(candidate.wrapping_add(CANDIDATE_REFERENCE)) } == 0;
     let flag_is_set = unsafe { read_u8(candidate.wrapping_add(CANDIDATE_FLAG)) } != 0;
     let candidate_is_special = mode_is_special || reference_is_missing || flag_is_set;
-    if candidate_is_special && unsafe { read_u8(this_event.wrapping_add(SELF_VETO)) } != 0 {
+    if candidate_is_special && unsafe { read_u8(this_event.wrapping_add(SELF_VETO)) } == 0 {
         return 0;
     }
     1u32
