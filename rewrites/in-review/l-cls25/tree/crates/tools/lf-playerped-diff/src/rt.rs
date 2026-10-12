@@ -43,8 +43,12 @@ pub enum Kind {
     T3,
     /// `extern "thiscall" fn(u32, u32, u32, u32) -> u32`.
     T4,
+    /// `extern "thiscall" fn(u32 x 6) -> u32`.
+    T6,
     /// `extern "thiscall" fn(u32 x 7) -> u32`.
     T7,
+    /// `extern "cdecl" fn() -> u32`.
+    C0,
     /// `extern "cdecl" fn(u32) -> u32`.
     C1,
     /// `extern "cdecl" fn(u32, u32) -> u32`.
@@ -97,6 +101,12 @@ static PLAYER_CONTEXT_CELL: AtomicU32 = AtomicU32::new(0);
 
 /// The shared model table: one pointer per model number.
 static MODEL_TABLE: [AtomicU32; 8] = [const { AtomicU32::new(0) }; 8];
+
+/// The shared aim state word the aim acquisition reads.
+static AIM_STATE_CELL: AtomicU32 = AtomicU32::new(0);
+
+/// File address of the aim state word.
+pub const AIM_STATE_VA: u32 = 0x011D_6FD4;
 
 /// File address of the player context global.
 pub const PLAYER_CONTEXT_VA: u32 = 0x018B_62DC;
@@ -198,8 +208,16 @@ extern "thiscall" fn stub_t4(a: u32, b: u32, c: u32, d: u32) -> u32 {
     numbered(vec![a, b, c, d])
 }
 
+extern "thiscall" fn stub_t6(a: u32, b: u32, c: u32, d: u32, e: u32, f: u32) -> u32 {
+    numbered(vec![a, b, c, d, e, f])
+}
+
 extern "thiscall" fn stub_t7(a: u32, b: u32, c: u32, d: u32, e: u32, f: u32, g: u32) -> u32 {
     numbered(vec![a, b, c, d, e, f, g])
+}
+
+extern "cdecl" fn stub_c0() -> u32 {
+    numbered(Vec::new())
 }
 
 extern "cdecl" fn stub_c1(a: u32) -> u32 {
@@ -262,7 +280,9 @@ pub fn callee_addr(id: u32) -> u32 {
         Kind::T2 => stub_t2 as *const () as usize as u32,
         Kind::T3 => stub_t3 as *const () as usize as u32,
         Kind::T4 => stub_t4 as *const () as usize as u32,
+        Kind::T6 => stub_t6 as *const () as usize as u32,
         Kind::T7 => stub_t7 as *const () as usize as u32,
+        Kind::C0 => stub_c0 as *const () as usize as u32,
         Kind::C1 => stub_c1 as *const () as usize as u32,
         Kind::C2 => stub_c2 as *const () as usize as u32,
         Kind::C3 => stub_c3 as *const () as usize as u32,
@@ -289,6 +309,33 @@ pub fn set_model_entry(model_id: usize, record: u32) {
     MODEL_TABLE[model_id].store(record, Ordering::SeqCst);
 }
 
+/// Sets the aim state word the aim acquisition reads.
+pub fn set_aim_state(bits: u32) {
+    AIM_STATE_CELL.store(bits, Ordering::SeqCst);
+}
+
+/// The aim state word, as the lifted side reads it.
+#[must_use]
+pub fn aim_state() -> u32 {
+    AIM_STATE_CELL.load(Ordering::SeqCst)
+}
+
+/// Reads one word of a record the case built, at an address the record
+/// holds: the lifted side's read of memory outside the pedestrian.
+#[must_use]
+pub fn read_u32(addr: u32) -> u32 {
+    // SAFETY: every address the lifted side reads names a record the case
+    // built, with the word inside it.
+    unsafe { (addr as *const u32).read_unaligned() }
+}
+
+/// Writes one byte of a record the case built, at an address the record
+/// holds: the lifted side's write to memory outside the pedestrian.
+pub fn write_u8(addr: u32, value: u8) {
+    // SAFETY: as for [`read_u32`], for the byte written.
+    unsafe { (addr as *mut u8).write(value) };
+}
+
 /// The state byte of a model entry, read from the entry's record: the lifted
 /// side's answer for the table read.
 ///
@@ -313,6 +360,9 @@ pub fn model_state_byte(model_id: u32) -> u8 {
 pub fn global<T>(file_va: u32) -> *mut T {
     if file_va == PLAYER_CONTEXT_VA {
         return PLAYER_CONTEXT_CELL.as_ptr().cast::<T>();
+    }
+    if file_va == AIM_STATE_VA {
+        return AIM_STATE_CELL.as_ptr().cast::<T>();
     }
     let end = MODEL_TABLE_VA + 4 * MODEL_TABLE.len() as u32;
     if (MODEL_TABLE_VA..end).contains(&file_va) && (file_va - MODEL_TABLE_VA) % 4 == 0 {

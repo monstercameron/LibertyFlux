@@ -45,7 +45,22 @@ pub mod offsets {
     /// The pointer to the sub-object whose entry chain runs; the chain
     /// works on the address this word names plus a fixed offset.
     pub const CHAIN_BASE: u32 = 0x224;
+    /// The aim context the pedestrian holds: a pointer, zero when absent.
+    pub const AIM_CONTEXT: u32 = 0x228;
 }
+
+/// The offset of the targeting component inside the pedestrian.
+const TARGETING_OFFSET: u32 = 0x2B0;
+/// The offset of the target-creation component inside the pedestrian.
+const TARGET_OFFSET: u32 = 0xE6C;
+/// The aim state word value that enables the aim scaling.
+const AIM_STATE_SCALED: u32 = 2;
+/// The helper code used when the helper flag's low byte is zero.
+const HELPER_CODE_PLAIN: u32 = 0x22E8;
+/// The helper code used when the helper flag's low byte is set.
+const HELPER_CODE_ALT: u32 = 0x22E4;
+/// The quiet-not-a-number bit, set on a not-a-number threshold.
+const QUIET_BIT: u32 = 0x0040_0000;
 
 /// The bias added to the job word before the first job runs.
 const JOB_BIAS: u32 = 0x80;
@@ -83,6 +98,8 @@ pub struct CPlayerPed {
     /// The pointer word the entry chain offsets; zero is a value the chain
     /// runs on, not an absent object.
     pub chain_base: u32,
+    /// The aim context pointer; zero when there is none.
+    pub aim_context: u32,
 }
 
 impl CPlayerPed {

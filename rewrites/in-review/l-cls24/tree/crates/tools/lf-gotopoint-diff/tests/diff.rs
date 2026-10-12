@@ -538,7 +538,12 @@ fn run_rewrite(m: Method, inp: &Input) -> Outcome {
         }
         Method::Refresh => Some(fn_00CB8AC0::rw_00cb8ac0(addr, inp.word1, inp.word2, 0x5A5A_5A5A)),
         Method::Clone => Some(fn_00CAF720::rw_00caf720(addr)),
-        Method::Advance => Some(fn_00CAFC10::rw_00CAFC10(addr, ped_addr, target_addr))
+        Method::Advance => {
+            // The return register is not defined on every path of the
+            // original (the rewrite's comment says so): not compared.
+            fn_00CAFC10::rw_00CAFC10(addr, ped_addr, target_addr);
+            None
+        }
     };
     let out = if m == Method::Copy3 { Some(*outbuf) } else { None };
     let cache = if m == Method::Advance { Some(read_cache()) } else { None };
