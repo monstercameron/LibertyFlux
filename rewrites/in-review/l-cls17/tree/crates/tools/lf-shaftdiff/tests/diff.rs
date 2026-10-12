@@ -38,9 +38,9 @@ mod x86 {
     /// Pending byte, cleared by every step.
     const PENDING: usize = 0x2C0;
     /// Number of generated objects in the main case set.
-    const CASES: u32 = 3000;
+    const CASES: u32 = 20000;
     /// Number of generated objects per channel in the fault set.
-    const FAULT_CASES: u32 = 400;
+    const FAULT_CASES: u32 = 1500;
 
     /// Offset of a channel's stored step length.
     fn input_at(ch: usize) -> usize {

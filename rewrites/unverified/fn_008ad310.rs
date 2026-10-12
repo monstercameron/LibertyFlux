@@ -39,7 +39,8 @@ lf_checker_rt::export!(thiscall, rw_008ad310(this_: u32, arg_bits: u32) -> f32 {
         }
 
         let scaled = fmul(value, scale);
-        let sine = lf_checker_rt::callee_cdecl!(1, f32, scaled.to_bits());
+        let sine_bits = lf_checker_rt::callee_cdecl!(1, u32, scaled.to_bits());
+        let sine = f32::from_bits(sine_bits);
         if return_gate.is_nan() || zero.is_nan() || return_gate < zero {
             fsub(one, sine)
         } else {

@@ -166,7 +166,7 @@ fn check(addr: u32, len: u32) {
     let end = base + ARENA_LEN as u32;
     assert!(
         addr >= base && addr.checked_add(len).is_some_and(|e| e <= end),
-        "access {addr:#x} outside the test arena"
+        "access {addr:#x} outside the test arena [{base:#x}, {end:#x})"
     );
 }
 

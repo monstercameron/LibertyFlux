@@ -33,7 +33,7 @@ lf_checker_rt::export!(thiscall, rw_00b7b030(this: u32) -> u32 {
             return 0;
         }
         
-        let copy = lf_checker_rt::callee_thiscall!(CONSTRUCTOR, u32, allocated, read_u32(this.wrapping_add(0x14)), read_u32(this.wrapping_add(0x24)));
+        let copy = lf_checker_rt::callee_thiscall!(CONSTRUCTOR, u32, allocated, read_u32(this.wrapping_add(0x24)), read_u32(this.wrapping_add(0x14)));
         copy
     }
 });

@@ -20,8 +20,8 @@ lf_checker_rt::export!(thiscall, rw_006349F0(this: u32, input: u32) -> u32 {
 
     unsafe {
         let interface = (input.wrapping_add(INPUT_OBJECT) as *const u32).read_unaligned();
-        let mut record = core::mem::MaybeUninit::<[u32; 128]>::uninit();
-        let record_pointer = core::ptr::addr_of_mut!(record).cast::<u32>() as u32;
+        let mut record = [0u32; 128];
+        let record_pointer = record.as_mut_ptr() as u32;
 
         let _read_count = lf_checker_rt::callee_thiscall!(
             READ_RECORD,

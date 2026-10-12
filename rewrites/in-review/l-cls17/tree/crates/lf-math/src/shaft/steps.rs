@@ -9,9 +9,9 @@
 //!   quantities of the channel's pattern (see each head) are divided by
 //!   the root of the sum of their squares, or are all zero when that sum is
 //!   exactly zero;
-//! - the residual is `u` times the first seed, plus the second seed times
-//!   zero, plus the third seed times the negated gain (for channels 2 and 3
-//!   the same form in their own seed order);
+//! - the residual is the offset times one seed (the first seed for channels
+//!   0 and 1, the second for channels 2 and 3), plus the other of the first
+//!   two seeds times zero, plus the third seed times the negated gain;
 //! - the mix multiplies the residual into the seeds and combines the table's
 //!   columns with them, and the total combines the three mixed values with
 //!   three weighted column sums.
@@ -33,7 +33,7 @@ const HALF: f32 = 0.5;
 const ONE: f32 = 1.0;
 /// The constant minus one.
 const NEG_ONE: f32 = -1.0;
-/// Positive zero, the value the original's zero registers hold.
+/// Positive zero.
 const ZERO: f32 = 0.0;
 
 #[inline(always)]

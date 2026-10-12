@@ -2856,14 +2856,6 @@
   "reason": null
  },
  {
-  "address": "0x00B15360",
-  "name": "load_packed_audio_record",
-  "file": "fn_00b15360.rs",
-  "lane": "a-U142",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
   "address": "0x00B25FB0",
   "name": "entity_replace_physics_reference",
   "file": "fn_00b25fb0.rs",
@@ -4400,6 +4392,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00CDBB80",
+  "name": "CTaskSimpleNMScriptControl::vf22",
+  "file": "fn_00cdbb80.rs",
+  "lane": "r-s776",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00CF1D70",
   "name": "stat_passes_mode_check",
   "file": "fn_00cf1d70.rs",
@@ -5254,5 +5254,13 @@
   "lane": "r-s589",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00E70AE0",
+  "name": "timing_manager_cleanup_single",
+  "file": "fn_00e70ae0.rs",
+  "lane": "r-s769",
+  "outcome": "not_reached",
+  "reason": ""
  }
 ]
