@@ -42,7 +42,7 @@ lf_checker_rt::export!(thiscall, rw_00b4b640(this_event: u32, other_event: u32) 
         let other_entity = unsafe { read_u32(other_event.wrapping_add(ENTITY_POINTER)) };
         let other_hates = other_entity != 0
             && unsafe { read_u8(other_entity.wrapping_add(HATE_FLAG)) } != 0;
-        let accepted = this_hates && (other_flag == 0);
+        let accepted = this_hates && (!other_hates);
         return (this_entity & !0xFF) | u32::from(accepted);
     }
     let other_priority = unsafe { call_event_method(other_event, PRIORITY_SLOT) };

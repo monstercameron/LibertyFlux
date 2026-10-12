@@ -11,6 +11,7 @@ lf_checker_rt::export!(thiscall, rw_00d00ee0(this: u32) -> u32 {
     let arg_1 = unsafe { (this.wrapping_add(SOURCE_ARG_1_OFFSET) as *const u32).read_unaligned() };
     const SOURCE_ARG_2_OFFSET: u32 = 0x38;
     let arg_2 = unsafe { (this.wrapping_add(SOURCE_ARG_2_OFFSET) as *const u32).read_unaligned() };
-    let _ = lf_checker_rt::callee_thiscall!(2, u32, destination, arg_0, arg_1, arg_2);
+    let arg_3 = 0u32;
+    let _ = lf_checker_rt::callee_thiscall!(2, u32, destination, arg_0, arg_1, arg_2, arg_3);
     destination
 });

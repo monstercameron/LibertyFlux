@@ -656,28 +656,12 @@
   "reason": null
  },
  {
-  "address": "0x005EB050",
-  "name": "CTaskComplexCop::vf6",
-  "file": "fn_005eb050.rs",
-  "lane": "r-s784",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
   "address": "0x005EB1A0",
   "name": "CTaskComplexSearchForPedOnFoot::CTaskComplexSearchForPedOnFoot_3",
   "file": "fn_005eb1a0.rs",
   "lane": "r-s784",
   "outcome": "not_reached",
   "reason": null
- },
- {
-  "address": "0x005EB200",
-  "name": "CTaskComplexSearchForPedOnFoot::~CTaskComplexSearchForPedOnFoot__deleting",
-  "file": "fn_005eb200.rs",
-  "lane": "r-s784",
-  "outcome": "deferred",
-  "reason": "partly_proven"
  },
  {
   "address": "0x005EBB30",
@@ -982,6 +966,14 @@
   "lane": "r-b314",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00628FD0",
+  "name": null,
+  "file": "fn_00628fd0.rs",
+  "lane": "r-s791",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00635E60",
@@ -1416,68 +1408,12 @@
   "reason": null
  },
  {
-  "address": "0x00880B70",
-  "name": "audio_mixer_buffer_create",
-  "file": "fn_00880b70.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00880BA0",
-  "name": "audio_format_keys_equal",
-  "file": "fn_00880ba0.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00880F10",
-  "name": "rage::audVoicePcAdpcm::get_sample_count",
-  "file": "fn_00880f10.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00881010",
-  "name": "audio_channel_index_from_pointer",
-  "file": "fn_00881010.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x008834A0",
   "name": "stream_req_drain_spin",
   "file": "fn_008834a0.rs",
   "lane": "r-s438",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x008857F0",
-  "name": "rage::CWMStreamReader::get_sample_rate",
-  "file": "fn_008857f0.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00885810",
-  "name": "rage::CWMStreamReader::get_media_duration",
-  "file": "fn_00885810.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00886000",
-  "name": "rage::audQTStreamReader::get_position_ms",
-  "file": "fn_00886000.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x0088FC40",
@@ -1870,14 +1806,6 @@
   "lane": "r-s631",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00A33C50",
-  "name": "CEntity::detach_pool_link",
-  "file": "fn_00a33c50.rs",
-  "lane": "a-U151",
-  "outcome": "failed_v8",
-  "reason": null
  },
  {
   "address": "0x00A3ECB0",
@@ -2728,22 +2656,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00B6DBF0",
-  "name": "CTaskSimpleStartCar::~CTaskSimpleStartCar",
-  "file": "fn_00b6dbf0.rs",
-  "lane": "r-s785",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B6DC20",
-  "name": "CTaskSimpleWaitUntilPedIsOutCar::~CTaskSimpleWaitUntilPedIsOutCar",
-  "file": "fn_00b6dc20.rs",
-  "lane": "r-s785",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B6E2A0",
   "name": "CTaskComplexGoToCarDoorAndStandStill::vf1",
   "file": "fn_00b6e2a0.rs",
@@ -3435,6 +3347,46 @@
   "address": "0x00C25370",
   "name": "cam_interp_style_config_c",
   "file": "fn_00c25370.rs",
+  "lane": "r-s788",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C253C0",
+  "name": "cam_interp_reset",
+  "file": "fn_00c253c0.rs",
+  "lane": "r-s788",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C25400",
+  "name": "CCamInterp::vf2",
+  "file": "fn_00c25400.rs",
+  "lane": "r-s788",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C257C0",
+  "name": "CPortalInst::vf27",
+  "file": "fn_00c257c0.rs",
+  "lane": "r-s788",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C25820",
+  "name": "CPortalInst::vf21",
+  "file": "fn_00c25820.rs",
+  "lane": "r-s788",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C25850",
+  "name": "CPortalInst::vf20",
+  "file": "fn_00c25850.rs",
   "lane": "r-s788",
   "outcome": "not_reached",
   "reason": null
@@ -4220,8 +4172,8 @@
   "name": "select_shot_response_by_weapon",
   "file": "fn_00cdc6b0.rs",
   "lane": "r-s776",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00CF1D70",
@@ -4632,6 +4584,46 @@
   "reason": null
  },
  {
+  "address": "0x00D68730",
+  "name": "CRenderPhaseDeferredLighting_LightsToScreen::vf7",
+  "file": "fn_00d68730.rs",
+  "lane": "r-s787",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D69A80",
+  "name": "",
+  "file": "fn_00d69a80.rs",
+  "lane": "r-s787",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D6AEF0",
+  "name": "",
+  "file": "fn_00d6aef0.rs",
+  "lane": "r-s787",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D6EFB0",
+  "name": "",
+  "file": "fn_00d6efb0.rs",
+  "lane": "r-s787",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D723E0",
+  "name": "",
+  "file": "fn_00d723e0.rs",
+  "lane": "r-s787",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00D82CD0",
   "name": null,
   "file": "fn_00d82cd0.rs",
@@ -4888,27 +4880,11 @@
   "reason": null
  },
  {
-  "address": "0x00DF7B30",
-  "name": "UIGalleryFileViewer::vf108",
-  "file": "fn_00df7b30.rs",
-  "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DF7B70",
   "name": "UIFileViewer::bind_controller_frame",
   "file": "fn_00df7b70.rs",
   "lane": "r-s780",
   "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DFB980",
-  "name": "sse_float_unary_tables_a",
-  "file": "fn_00dfb980.rs",
-  "lane": "a-U148",
-  "outcome": "not yet run",
   "reason": null
  },
  {
