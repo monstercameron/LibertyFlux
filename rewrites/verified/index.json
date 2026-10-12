@@ -51300,6 +51300,24 @@
   "lane": "r-b13"
  },
  {
+  "address": "0x0089A480",
+  "name": "rage::audLoopingSound::vf7",
+  "kind": "function",
+  "file": "functions/fn_0089a480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s761"
+ },
+ {
+  "address": "0x0089A570",
+  "name": "audio_stop_child_or_null",
+  "kind": "function",
+  "file": "functions/fn_0089a570.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s761"
+ },
+ {
   "address": "0x0089A5D0",
   "name": "aud_thunk_to_00899f20",
   "kind": "function",
@@ -51363,6 +51381,33 @@
   "lane": "a-G01"
  },
  {
+  "address": "0x0089A770",
+  "name": "rage::audEnvelopeSound::audEnvelopeSound_2",
+  "kind": "function",
+  "file": "functions/fn_0089a770.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s761"
+ },
+ {
+  "address": "0x0089A7E0",
+  "name": "rage::audEnvelopeSound::~audEnvelopeSound__deleting",
+  "kind": "function",
+  "file": "functions/fn_0089a7e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s761"
+ },
+ {
+  "address": "0x0089A8A0",
+  "name": "rage::audEnvelopeSound::drive_state",
+  "kind": "function",
+  "file": "functions/fn_0089a8a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s761"
+ },
+ {
   "address": "0x0089A920",
   "name": "audio_voice_commit",
   "kind": "function",
@@ -51397,6 +51442,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G01"
+ },
+ {
+  "address": "0x0089AE00",
+  "name": "rage::audEnvelopeSound::blend_child",
+  "kind": "function",
+  "file": "functions/fn_0089ae00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s761"
  },
  {
   "address": "0x0089AF70",
