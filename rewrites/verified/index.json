@@ -78921,6 +78921,15 @@
   "lane": "r-s465"
  },
  {
+  "address": "0x00A096D0",
+  "name": "mission_cleanup_add_entry",
+  "kind": "function",
+  "file": "functions/fn_00a096d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s738"
+ },
+ {
   "address": "0x00A09750",
   "name": "mission_cleanup_intern",
   "kind": "function",
@@ -78937,6 +78946,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s465"
+ },
+ {
+  "address": "0x00A09E20",
+  "name": "mission_cleanup_release_flagged",
+  "kind": "function",
+  "file": "functions/fn_00a09e20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s738"
  },
  {
   "address": "0x00A09F20",
@@ -78993,6 +79011,15 @@
   "lane": "r-s465"
  },
  {
+  "address": "0x00A0A330",
+  "name": "cleanup_entry_apply_interior",
+  "kind": "function",
+  "file": "functions/fn_00a0a330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s738"
+ },
+ {
   "address": "0x00A0A400",
   "name": "mission_cleanup_contains",
   "kind": "function",
@@ -79000,6 +79027,42 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s465"
+ },
+ {
+  "address": "0x00A0A420",
+  "name": "mission_cleanup_load",
+  "kind": "function",
+  "file": "functions/fn_00a0a420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s738"
+ },
+ {
+  "address": "0x00A0B1A0",
+  "name": "RadarBlipMgr_FlushMissionBlips",
+  "kind": "function",
+  "file": "functions/fn_00a0b1a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s738"
+ },
+ {
+  "address": "0x00A0B390",
+  "name": "ScriptHandle_CheckOwned",
+  "kind": "function",
+  "file": "functions/fn_00a0b390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s738"
+ },
+ {
+  "address": "0x00A0B4B0",
+  "name": "entity_apply_room_key",
+  "kind": "function",
+  "file": "functions/fn_00a0b4b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s738"
  },
  {
   "address": "0x00A0B6B0",
@@ -79018,6 +79081,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s465"
+ },
+ {
+  "address": "0x00A0B720",
+  "name": "mission_cleanup_contains_live_handle",
+  "kind": "function",
+  "file": "functions/fn_00a0b720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s738"
  },
  {
   "address": "0x00A0B770",
