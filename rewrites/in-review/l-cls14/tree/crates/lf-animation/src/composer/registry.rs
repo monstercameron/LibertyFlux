@@ -347,19 +347,27 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "ComposerOptimized",
         method: "vf30",
-        lifted_as: "not lifted",
-        state: State::Missing,
+        lifted_as: "ComposerOptimized::drain_pending",
+        state: State::Proven,
         narrows: &[
-            "drains the pending list back into the free-node pool: needs the list and pool model",
+            "the link words of the pool nodes are held by the caller in a map keyed by node identity; the lift reads and writes no other node word",
+            "the sync (slot 0x74) and the handler slot are trait methods, scripted to write none of the composer's words; the handler's effects are the implementer's",
+            "the original returns zero; the lift returns nothing, and the proof checks the rewrite's zero",
+            "a node the walk reaches that the caller did not record panics: the original would read memory the caller did not describe",
+            "the walk's free-node cache is the lift's own field; a null composer faults in the original and is outside the proof",
         ],
     },
     Row {
         class: "ComposerOptimized",
         method: "vf31",
-        lifted_as: "not lifted",
-        state: State::Missing,
+        lifted_as: "ComposerOptimized::gate_pending",
+        state: State::Proven,
         narrows: &[
-            "runs a gate over the pending list, freeing accepted nodes: needs the list and pool model",
+            "the gate's word argument is passed through as a plain word; the gate's own effects on the nodes are the implementer's",
+            "the link words are held by the caller in a map keyed by node identity, as for the drain",
+            "the sync (slot 0x74) is scripted to write none of the composer's words; the gate is scripted to write none of the words the lift holds",
+            "a node the pass reaches that the caller did not record panics",
+            "the original's return is the low byte of its flag; the lift returns a boolean and the proof checks the one and zero",
         ],
     },
     Row {
@@ -401,7 +409,7 @@ mod tests {
     #[test]
     fn the_rows_cover_the_verified_methods_of_the_three_classes() {
         assert_eq!(ROWS.len(), 31);
-        assert_eq!(proven_count(), 16);
-        assert_eq!(missing_count(), 15);
+        assert_eq!(proven_count(), 18);
+        assert_eq!(missing_count(), 13);
     }
 }

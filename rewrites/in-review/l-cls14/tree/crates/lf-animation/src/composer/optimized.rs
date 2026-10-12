@@ -43,11 +43,68 @@ pub struct OutWord;
 /// Identity of an out-word.
 pub type OutId = Handle32<OutWord>;
 
-/// Identity of a pending node.
-pub struct PendingNode;
+/// Identity of one node of the composer's pool or pending list.
+pub type NodeId = Handle32<PoolNode>;
 
-/// Identity of one pending node.
-pub type NodeId = Handle32<PendingNode>;
+/// The link word of each pool node: the node that follows it in whichever
+/// list it is on. The original keeps this word at offset 4 of the node; the
+/// lift holds only that word and the caller maps each node to its memory.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct NodeLinks {
+    next: std::collections::HashMap<NodeId, Option<NodeId>>,
+}
+
+impl NodeLinks {
+    /// An empty set of nodes.
+    #[must_use]
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Records a node and its link word.
+    pub fn insert(&mut self, node: NodeId, next: Option<NodeId>) {
+        self.next.insert(node, next);
+    }
+
+    /// Number of recorded nodes.
+    #[must_use]
+    pub fn len(&self) -> usize {
+        self.next.len()
+    }
+
+    /// Whether no node is recorded.
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.next.is_empty()
+    }
+
+    /// The link word of `node`.
+    ///
+    /// # Panics
+    ///
+    /// When the node was never recorded: the original would read its memory,
+    /// which the caller did not describe.
+    #[must_use]
+    pub fn next(&self, node: NodeId) -> Option<NodeId> {
+        *self
+            .next
+            .get(&node)
+            .expect("the node's link word was not recorded")
+    }
+
+    /// Writes the link word of `node`.
+    ///
+    /// # Panics
+    ///
+    /// When the node was never recorded.
+    pub fn set_next(&mut self, node: NodeId, next: Option<NodeId>) {
+        let slot = self
+            .next
+            .get_mut(&node)
+            .expect("the node's link word was not recorded");
+        *slot = next;
+    }
+}
 
 /// Step by which the table dispatch advances the sequence counter. The
 /// sequence methods above advance by [`SEQUENCE_STEP`]; this one is not the
@@ -95,6 +152,15 @@ pub trait ComposerCallees {
         a1: u32,
         last: Option<ComposerId>,
     );
+
+    /// The composer's slot at offset 0x74, called first by the pending-list
+    /// drain, always (immediate mode does not stop it).
+    fn sync_pending(&mut self, composer: Option<ComposerId>);
+
+    /// The composer's gate slot at offset 0x84, called once per node by the
+    /// gate pass with the composer, the node and a word the caller passes
+    /// through. Returns the gate's answer; only its low byte is a verdict.
+    fn gate_node(&mut self, composer: Option<ComposerId>, node: Option<NodeId>, arg: u32) -> u32;
 
     /// The composer's gate slot at offset 0x7C, called with the composer and
     /// the out-word's identity (the original passes the out-word's address
@@ -146,6 +212,16 @@ pub struct ComposerOptimized {
     inner: Option<InnerId>,
     /// Word at offset 0x70, which the table dispatch passes on as a 16-bit value.
     word_70: u16,
+    /// Head of the pending list at offset 0x80.
+    pending_head: Option<NodeId>,
+    /// Tail of the pending list at offset 0x84.
+    pending_tail: Option<NodeId>,
+    /// Counter at offset 0x90, cleared by the drain.
+    count_90: u32,
+    /// Counter at offset 0x94, cleared by the drain.
+    count_94: u32,
+    /// Staging word at offset 0x8C: the part of the pending list the gate pass is working through.
+    stage: Option<NodeId>,
 }
 
 impl ComposerOptimized {
@@ -167,7 +243,65 @@ impl ComposerOptimized {
             free_node,
             inner,
             word_70: 0,
+            pending_head: None,
+            pending_tail: None,
+            count_90: 0,
+            count_94: 0,
+            stage: None,
         }
+    }
+
+    /// Sets the pending list's head and tail (offsets 0x80 and 0x84).
+    #[must_use]
+    pub fn with_pending(mut self, head: Option<NodeId>, tail: Option<NodeId>) -> Self {
+        self.pending_head = head;
+        self.pending_tail = tail;
+        self
+    }
+
+    /// Sets the staging word (offset 0x8C).
+    #[must_use]
+    pub fn with_stage(mut self, stage: Option<NodeId>) -> Self {
+        self.stage = stage;
+        self
+    }
+
+    /// The staging word.
+    #[must_use]
+    pub fn stage(&self) -> Option<NodeId> {
+        self.stage
+    }
+
+    /// Sets the two counters (offsets 0x90 and 0x94).
+    #[must_use]
+    pub fn with_counts(mut self, count_90: u32, count_94: u32) -> Self {
+        self.count_90 = count_90;
+        self.count_94 = count_94;
+        self
+    }
+
+    /// The pending list's head.
+    #[must_use]
+    pub fn pending_head(&self) -> Option<NodeId> {
+        self.pending_head
+    }
+
+    /// The pending list's tail.
+    #[must_use]
+    pub fn pending_tail(&self) -> Option<NodeId> {
+        self.pending_tail
+    }
+
+    /// The counter at offset 0x90.
+    #[must_use]
+    pub fn count_90(&self) -> u32 {
+        self.count_90
+    }
+
+    /// The counter at offset 0x94.
+    #[must_use]
+    pub fn count_94(&self) -> u32 {
+        self.count_94
     }
 
     /// The immediate-mode flag.
@@ -324,6 +458,96 @@ impl ComposerOptimized {
         self.free_node = None;
         let inner = self.inner.expect("drain and forward needs an inner object");
         callees.forward_inner(Some(inner))
+    }
+
+    /// Drains the pending list back into the pool. The sync runs first,
+    /// always. Then the list is detached (head and tail cleared) and walked
+    /// from its head: each node is handed to the handler slot, and is pushed
+    /// onto the free-node cache, whose old head it takes as its link. Both
+    /// counters are cleared last. The original returns zero.
+    ///
+    /// The nodes' link words are the caller's: `links` holds each node the
+    /// walk reads, and receives the new links the walk writes.
+    ///
+    /// # Panics
+    ///
+    /// When the walk reaches a node that `links` does not record, or the list
+    /// is longer than the recorded nodes (a cycle): the original would read
+    /// memory the caller did not describe, or never finish.
+    pub fn drain_pending<C: ComposerCallees + ?Sized>(
+        &mut self,
+        composer: Option<ComposerId>,
+        links: &mut NodeLinks,
+        callees: &mut C,
+    ) {
+        callees.sync_pending(composer);
+        let mut node = self.pending_head.take();
+        self.pending_tail = None;
+        let mut steps = 0usize;
+        while let Some(current) = node {
+            steps += 1;
+            assert!(steps <= links.len(), "the pending list is longer than the recorded nodes: it has a cycle");
+            let next = links.next(current);
+            callees.handle_node(composer, Some(current));
+            links.set_next(current, self.free_node);
+            self.free_node = Some(current);
+            node = next;
+        }
+        self.count_94 = 0;
+        self.count_90 = 0;
+    }
+
+    /// Gate pass over the pending list. When nothing is staged, the sync
+    /// runs, the pending list moves to the staging word and is detached;
+    /// an empty list clears the counters and finishes at once. Then, node
+    /// by node from the staging word, the gate is asked with the node and
+    /// `arg`. A rejection stops the pass and leaves the staging word at that
+    /// node. An acceptance moves the staging word to the node's successor,
+    /// pushes the node onto the free-node cache, and finishes, clearing the
+    /// counters, when nothing is left staged.
+    ///
+    /// Returns `true` when the pass finished and `false` when a gate
+    /// rejected a node.
+    ///
+    /// # Panics
+    ///
+    /// When a node the pass reaches is not recorded in `links`.
+    pub fn gate_pending<C: ComposerCallees + ?Sized>(
+        &mut self,
+        composer: Option<ComposerId>,
+        arg: u32,
+        links: &mut NodeLinks,
+        callees: &mut C,
+    ) -> bool {
+        if self.stage.is_none() {
+            callees.sync_pending(composer);
+            self.stage = self.pending_head.take();
+            self.pending_tail = None;
+            if self.stage.is_none() {
+                self.count_94 = 0;
+                self.count_90 = 0;
+                return true;
+            }
+        }
+        let mut steps = 0usize;
+        loop {
+            steps += 1;
+            assert!(steps <= links.len(), "the staged list is longer than the recorded nodes: it has a cycle");
+            let node = self.stage;
+            let verdict = (callees.gate_node(composer, node, arg) as u8) != 0;
+            if !verdict {
+                return false;
+            }
+            let node = node.expect("the gate pass always has a staged node here");
+            self.stage = links.next(node);
+            links.set_next(node, self.free_node);
+            self.free_node = Some(node);
+            if self.stage.is_none() {
+                self.count_94 = 0;
+                self.count_90 = 0;
+                return true;
+            }
+        }
     }
 
     /// Gate, then drain and forward: the gate is asked first, with the

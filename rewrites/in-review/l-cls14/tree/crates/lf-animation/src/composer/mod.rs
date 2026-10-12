@@ -30,6 +30,6 @@ pub use optimized_data::{
     BlockId, ComposerDataCallees, ComposerOptimizedData, ObjectManager, TableEntry, ValueEntry,
 };
 pub use optimized::{
-    ComposerCallees, ComposerId, ComposerOptimized, HandlerId, InnerId, ItemStack, PoolNode,
-    NodeId, OutId, OutWord, PendingNode, TableHandler,
+    ComposerCallees, ComposerId, ComposerOptimized, HandlerId, InnerId, ItemStack,
+    NodeId, NodeLinks, OutId, OutWord, PoolNode, TableHandler,
 };

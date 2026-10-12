@@ -18,11 +18,14 @@ use std::rc::Rc;
 
 use lf_animation::composer::optimized::SEQUENCE_STEP;
 use lf_animation::composer::{
-    ComposerCallees, ComposerId, ComposerOptimized, HandlerId, InnerId, ItemStack, NodeId, OutId,
+    ComposerCallees, ComposerId, ComposerOptimized, HandlerId, InnerId, ItemStack, NodeId, NodeLinks,
+    OutId,
 };
 use lf_composerdiff::harness::{self, Call, Rng, addr_of};
 use lf_composerdiff::rewrites::{
-    fn_00877860, fn_00877890, fn_00878180, fn_00878200, fn_00878250, fn_00879030, fn_008781B0,
+    fn_00877860, fn_00877890, fn_00878180, fn_00878200, fn_00878250, fn_00878D90, fn_00878E00,
+    fn_00879030,
+    fn_008781B0,
     fn_008781D0, fn_00878290,
     fn_008782C0,
     fn_008782E0,
@@ -81,6 +84,17 @@ fn raw_out(id: Option<OutId>) -> u32 {
 impl ComposerCallees for FakeCallees {
     fn sync(&mut self, composer: Option<ComposerId>) {
         self.log.borrow_mut().push(("sync", vec![raw(composer)]));
+    }
+
+    fn sync_pending(&mut self, composer: Option<ComposerId>) {
+        self.log.borrow_mut().push(("sync", vec![raw(composer)]));
+    }
+
+    fn gate_node(&mut self, composer: Option<ComposerId>, node: Option<NodeId>, arg: u32) -> u32 {
+        self.log
+            .borrow_mut()
+            .push(("gate_node", vec![raw(composer), Handle32::raw_or_zero(node), arg]));
+        self.answer
     }
 
     fn check(&mut self, composer: Option<ComposerId>, token: Option<OutId>) -> u32 {
@@ -878,6 +892,352 @@ fn handle_pending_node_wrong_copies_are_caught() {
         assert!(
             (0..TRIALS).any(|_| handler_trial(&mut rng, mutant).is_err()),
             "wrong handler copy {mutant} was not caught"
+        );
+    }
+}
+
+/// Pool nodes the drain trials build. Each node's link word is at offset 4.
+const POOL_NODES: usize = 6;
+/// Offsets of the composer words the drain reads and writes.
+const HEAD: usize = 0x80;
+const TAIL: usize = 0x84;
+const FREE: usize = 0x88;
+const COUNT_90: usize = 0x90;
+const COUNT_94: usize = 0x94;
+const STAGE: usize = 0x8C;
+
+/// Builds a chain through `order` (node indices) in node memory: each
+/// node's link word names the next, and the last names nothing. Returns the
+/// head's address, or zero for an empty chain.
+fn link_chain(nodes: &mut [Box<[u32; 4]>], order: &[usize]) -> u32 {
+    for (i, &n) in order.iter().enumerate() {
+        let next = order.get(i + 1).map_or(0, |&m| addr_of(&nodes[m][0]));
+        nodes[n][1] = next;
+    }
+    order.first().map_or(0, |&n| addr_of(&nodes[n][0]))
+}
+
+/// One trial of the pending-list drain (slot 31 of the class). `mutant` 1
+/// leaves the link words as they were; 2 leaves the counters; 3 skips the
+/// handler slot.
+fn drain_pending_trial(rng: &mut Rng, mutant: u8) -> Result<(), String> {
+    let vt = harness::composer_vtable();
+    let mut buf = fresh_composer(rng, &vt);
+    let mut nodes: Vec<Box<[u32; 4]>> = (0..POOL_NODES)
+        .map(|_| Box::new([rng.word(), rng.word(), rng.word(), rng.word()]))
+        .collect();
+
+    // A random order of the nodes; the pending chain takes the first part,
+    // the free chain the next part. Chains never share a node or repeat one.
+    let mut order: Vec<usize> = (0..POOL_NODES).collect();
+    for i in (1..POOL_NODES).rev() {
+        order.swap(i, rng.u32() as usize % (i + 1));
+    }
+    let pending_len = rng.u32() as usize % (POOL_NODES + 1);
+    let free_len = rng.u32() as usize % (POOL_NODES - pending_len + 1);
+    let pending: Vec<usize> = order[..pending_len].to_vec();
+    let free: Vec<usize> = order[pending_len..pending_len + free_len].to_vec();
+
+    let pending_head = link_chain(&mut nodes, &pending);
+    let free_head = link_chain(&mut nodes, &free);
+    let pending_last = pending.last().map_or(0, |&n| addr_of(&nodes[n][0]));
+    put_u32(&mut *buf, HEAD, pending_head);
+    put_u32(&mut *buf, TAIL, if pending_len == 0 { rng.word() } else { pending_last });
+    put_u32(&mut *buf, FREE, free_head);
+    put_u32(&mut *buf, COUNT_90, rng.word());
+    put_u32(&mut *buf, COUNT_94, rng.word());
+
+    let before = *buf;
+    let nodes_before: Vec<[u32; 4]> = nodes.iter().map(|n| **n).collect();
+    let this = addr_of(&buf[0]);
+
+    harness::install(0, 0);
+    harness::begin_forward(0, "unused", "unused");
+    let ret = fn_00878D90::rw_00878D90(this);
+    let rewrite_log = harness::take_log();
+    let after = *buf;
+
+    // The rewrite writes only the head, tail, free, counter and link words.
+    let written = [HEAD, TAIL, FREE, COUNT_90, COUNT_94];
+    for (i, (now, was)) in after.iter().zip(before.iter()).enumerate() {
+        let inside = written.iter().any(|&w| (w..w + 4).contains(&i));
+        if now != was && !inside {
+            return Err(format!("drain wrote composer byte {i:#x}"));
+        }
+    }
+
+    // The lift's view: the composer's words, and each node's link word.
+    let mut links = NodeLinks::new();
+    for (node, words) in nodes.iter().zip(nodes_before.iter()) {
+        links.insert(
+            Handle32::new(addr_of(&node[0])).unwrap(),
+            Handle32::new(words[1]),
+        );
+    }
+    let lift_links_before = links.clone();
+    let mut comp = lift_from(&before)
+        .with_pending(Handle32::new(read_u32(&before, HEAD)), Handle32::new(read_u32(&before, TAIL)))
+        .with_counts(read_u32(&before, COUNT_90), read_u32(&before, COUNT_94));
+    let log = new_log();
+    let mut callees = FakeCallees {
+        log: log.clone(),
+        answer: 0,
+    };
+    comp.drain_pending(Handle32::new(this), &mut links, &mut callees);
+    let mut lift_log = log.borrow().clone();
+    if mutant == 3 {
+        lift_log.retain(|(name, _)| *name != "handle_node");
+    }
+
+    // The lift's end state, in the rewrite's terms.
+    let head_ok = Handle32::raw_or_zero(comp.pending_head()) == read_u32(&after, HEAD);
+    let tail_ok = Handle32::raw_or_zero(comp.pending_tail()) == read_u32(&after, TAIL);
+    let free_ok = Handle32::raw_or_zero(comp.free_node()) == read_u32(&after, FREE);
+    let counts_ok = comp.count_90() == read_u32(&after, COUNT_90)
+        && comp.count_94() == read_u32(&after, COUNT_94)
+        && (mutant != 2 || comp.count_90() == read_u32(&before, COUNT_90));
+    let mut links_ok = true;
+    for node in &nodes {
+        let id = Handle32::new(addr_of(&node[0])).unwrap();
+        let end = if mutant == 1 {
+            lift_links_before.next(id)
+        } else {
+            links.next(id)
+        };
+        links_ok &= Handle32::raw_or_zero(end) == node[1];
+    }
+    let ret_ok = ret == 0;
+    if ret_ok && lift_log == rewrite_log && head_ok && tail_ok && free_ok && counts_ok && links_ok {
+        Ok(())
+    } else {
+        Err(format!(
+            "pending drain {pending_len} pending, {free_len} free: rewrite {rewrite_log:?}, lift {lift_log:?}, ok {head_ok} {tail_ok} {free_ok} {counts_ok} {links_ok}"
+        ))
+    }
+}
+
+#[test]
+fn pending_drain_matches_rewrite() {
+    let _guard = harness::lock();
+    let mut rng = Rng(0x1A17_0070);
+    for _ in 0..TRIALS {
+        drain_pending_trial(&mut rng, 0).unwrap();
+    }
+}
+
+#[test]
+fn pending_drain_wrong_copies_are_caught() {
+    let _guard = harness::lock();
+    for mutant in 1..=3u8 {
+        let mut rng = Rng(0x1A17_0070);
+        assert!(
+            (0..TRIALS).any(|_| drain_pending_trial(&mut rng, mutant).is_err()),
+            "wrong pending-drain copy {mutant} was not caught"
+        );
+    }
+}
+
+/// The test's callees with the per-node gate answering from a table of
+/// verdicts keyed by node: every other callee goes to the plain fake.
+struct PerNodeGate<'a> {
+    inner: &'a mut FakeCallees,
+    verdicts: std::collections::HashMap<u32, u32>,
+    /// Answers every node accepted when set: the wrong copy in the test.
+    accept_all: bool,
+}
+
+impl ComposerCallees for PerNodeGate<'_> {
+    fn sync(&mut self, composer: Option<ComposerId>) {
+        self.inner.sync(composer);
+    }
+    fn drain(&mut self, composer: Option<ComposerId>) {
+        self.inner.drain(composer);
+    }
+    fn forward_inner(&mut self, inner: Option<InnerId>) -> u32 {
+        self.inner.forward_inner(inner)
+    }
+    fn apply_pose_direct(&mut self, c: Option<ComposerId>, a0: u32, a1: u32, l: Option<ComposerId>) {
+        self.inner.apply_pose_direct(c, a0, a1, l);
+    }
+    fn apply_static_tracks_to_pose(&mut self, c: Option<ComposerId>, a0: u32, a1: u32, l: Option<ComposerId>) {
+        self.inner.apply_static_tracks_to_pose(c, a0, a1, l);
+    }
+    fn copy_dof_pair(&mut self, c: Option<ComposerId>, a0: u32, a1: u32, l: Option<ComposerId>) {
+        self.inner.copy_dof_pair(c, a0, a1, l);
+    }
+    fn setup_identity_frame(&mut self, c: Option<ComposerId>, a0: u32, a1: u32, l: Option<ComposerId>) {
+        self.inner.setup_identity_frame(c, a0, a1, l);
+    }
+    fn handle_table_entry(&mut self, e: Option<HandlerId>, a: u32, b: u32, c: u32, d: u32, f: u32) {
+        self.inner.handle_table_entry(e, a, b, c, d, f);
+    }
+    fn handle_node(&mut self, composer: Option<ComposerId>, node: Option<NodeId>) {
+        self.inner.handle_node(composer, node);
+    }
+    fn sync_pending(&mut self, composer: Option<ComposerId>) {
+        self.inner.sync_pending(composer);
+    }
+    fn check(&mut self, composer: Option<ComposerId>, token: Option<OutId>) -> u32 {
+        self.inner.check(composer, token)
+    }
+    fn gate_node(&mut self, composer: Option<ComposerId>, node: Option<NodeId>, arg: u32) -> u32 {
+        let verdict = if self.accept_all {
+            1
+        } else {
+            self.verdicts
+                .get(&Handle32::raw_or_zero(node))
+                .copied()
+                .unwrap_or(0)
+        };
+        self.inner
+            .log
+            .borrow_mut()
+            .push(("gate_node", vec![raw(composer), Handle32::raw_or_zero(node), arg]));
+        verdict
+    }
+}
+
+/// One trial of the gate pass over the pending list (slot 31 of the class).
+/// Half the trials start with nothing staged and half resume a staged list.
+/// `mutant` 1 passes zero where the gate's word belongs; 2 accepts every node.
+fn gate_pending_trial(rng: &mut Rng, mutant: u8) -> Result<(), String> {
+    let vt = harness::composer_vtable();
+    let mut buf = fresh_composer(rng, &vt);
+    let mut nodes: Vec<Box<[u32; 4]>> = (0..POOL_NODES)
+        .map(|_| Box::new([0, rng.word(), 0, rng.word()]))
+        .collect();
+    let mut order: Vec<usize> = (0..POOL_NODES).collect();
+    for i in (1..POOL_NODES).rev() {
+        order.swap(i, rng.u32() as usize % (i + 1));
+    }
+    let staged = rng.u32() % 2 == 0;
+    let chain_len = 1 + rng.u32() as usize % POOL_NODES;
+    let chain: Vec<usize> = order[..chain_len].to_vec();
+    let free: Vec<usize> = order[chain_len..]
+        .iter()
+        .copied()
+        .take(rng.u32() as usize % 3)
+        .collect();
+    let chain_head = link_chain(&mut nodes, &chain);
+    let free_head = link_chain(&mut nodes, &free);
+    // Verdict words: a rejection has a zero low byte, an acceptance a one.
+    let mut verdicts = std::collections::HashMap::new();
+    for &n in &chain {
+        let v = if rng.u32() % 3 == 0 {
+            rng.answer()
+        } else {
+            rng.u32() | 1
+        };
+        nodes[n][2] = v;
+        verdicts.insert(addr_of(&nodes[n][0]), v);
+    }
+    let chain_last = addr_of(&nodes[*chain.last().unwrap()][0]);
+    if staged {
+        put_u32(&mut *buf, STAGE, chain_head);
+        put_u32(&mut *buf, HEAD, rng.word());
+        put_u32(&mut *buf, TAIL, rng.word());
+    } else {
+        put_u32(&mut *buf, STAGE, 0);
+        put_u32(&mut *buf, HEAD, chain_head);
+        put_u32(&mut *buf, TAIL, chain_last);
+    }
+    put_u32(&mut *buf, FREE, free_head);
+    put_u32(&mut *buf, COUNT_90, rng.word());
+    put_u32(&mut *buf, COUNT_94, rng.word());
+    let a0 = rng.word();
+
+    let before = *buf;
+    let nodes_before: Vec<[u32; 4]> = nodes.iter().map(|n| **n).collect();
+    let this = addr_of(&buf[0]);
+
+    harness::install(0, 0);
+    harness::begin_forward(0, "unused", "unused");
+    let ret = fn_00878E00::rw_00878E00(this, a0);
+    let rewrite_log = harness::take_log();
+    let after = *buf;
+
+    let written = [HEAD, TAIL, FREE, STAGE, COUNT_90, COUNT_94];
+    for (i, (now, was)) in after.iter().zip(before.iter()).enumerate() {
+        let inside = written.iter().any(|&w| (w..w + 4).contains(&i));
+        if now != was && !inside {
+            return Err(format!("gate pass wrote composer byte {i:#x}"));
+        }
+    }
+
+    let mut links = NodeLinks::new();
+    for (node, words) in nodes.iter().zip(nodes_before.iter()) {
+        links.insert(
+            Handle32::new(addr_of(&node[0])).unwrap(),
+            Handle32::new(words[1]),
+        );
+    }
+    let mut comp = lift_from(&before)
+        .with_pending(
+            Handle32::new(read_u32(&before, HEAD)),
+            Handle32::new(read_u32(&before, TAIL)),
+        )
+        .with_stage(Handle32::new(read_u32(&before, STAGE)))
+        .with_counts(read_u32(&before, COUNT_90), read_u32(&before, COUNT_94));
+    let log = new_log();
+    let mut inner = FakeCallees {
+        log: log.clone(),
+        answer: 0,
+    };
+    let mut callees = PerNodeGate {
+        inner: &mut inner,
+        verdicts,
+        accept_all: mutant == 2,
+    };
+    let lift_a0 = if mutant == 1 { 0 } else { a0 };
+    let got = comp.gate_pending(Handle32::new(this), lift_a0, &mut links, &mut callees);
+    let lift_log = log.borrow().clone();
+
+    let stage_ok = Handle32::raw_or_zero(comp.stage()) == read_u32(&after, STAGE);
+    let head_ok = Handle32::raw_or_zero(comp.pending_head()) == read_u32(&after, HEAD);
+    let tail_ok = Handle32::raw_or_zero(comp.pending_tail()) == read_u32(&after, TAIL);
+    let free_ok = Handle32::raw_or_zero(comp.free_node()) == read_u32(&after, FREE);
+    let counts_ok = comp.count_90() == read_u32(&after, COUNT_90)
+        && comp.count_94() == read_u32(&after, COUNT_94);
+    let mut links_ok = true;
+    for node in &nodes {
+        let id = Handle32::new(addr_of(&node[0])).unwrap();
+        links_ok &= Handle32::raw_or_zero(links.next(id)) == node[1];
+    }
+    let ret_ok = ret == u32::from(got);
+    if ret_ok
+        && lift_log == rewrite_log
+        && stage_ok
+        && head_ok
+        && tail_ok
+        && free_ok
+        && counts_ok
+        && links_ok
+    {
+        Ok(())
+    } else {
+        Err(format!(
+            "gate pass staged {staged}: rewrite {ret} {rewrite_log:?}, lift {got} {lift_log:?}, ok {stage_ok} {head_ok} {tail_ok} {free_ok} {counts_ok} {links_ok}"
+        ))
+    }
+}
+
+#[test]
+fn gate_pending_matches_rewrite() {
+    let _guard = harness::lock();
+    let mut rng = Rng(0x1A17_0080);
+    for _ in 0..TRIALS {
+        gate_pending_trial(&mut rng, 0).unwrap();
+    }
+}
+
+#[test]
+fn gate_pending_wrong_copies_are_caught() {
+    let _guard = harness::lock();
+    for mutant in 1..=2u8 {
+        let mut rng = Rng(0x1A17_0080);
+        assert!(
+            (0..TRIALS).any(|_| gate_pending_trial(&mut rng, mutant).is_err()),
+            "wrong gate-pass copy {mutant} was not caught"
         );
     }
 }

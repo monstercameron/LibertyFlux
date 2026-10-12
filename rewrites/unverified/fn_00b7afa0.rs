@@ -34,7 +34,7 @@ lf_checker_rt::export!(thiscall, rw_00b7afa0(this: u32) -> u32 {
             return 0;
         }
         
-        let calc_result = lf_checker_rt::callee_thiscall!(CALCULATION, u32, this.wrapping_add(0x14), read_i8(this.wrapping_add(0x3a)) as u32, read_i8(this.wrapping_add(0x3c)) as u32, read_u8(this.wrapping_add(0x3b)) as u32, read_u32(this.wrapping_add(0x18)), read_u32(this.wrapping_add(0x1c)), read_u32(this.wrapping_add(0x20)), read_u32(this.wrapping_add(0x50)), read_u32(this.wrapping_add(0x4c)), read_u32(this.wrapping_add(0x44)), (read_u8(this.wrapping_add(0x3f)) & 1) as u32, read_u8(this.wrapping_add(0x3d)) as u32, read_i16(this.wrapping_add(0x34)) as u32, read_i16(this.wrapping_add(0x36)) as u32);
+        let calc_result = lf_checker_rt::callee_thiscall!(CALCULATION, u32, this.wrapping_add(0x14), read_i8(this.wrapping_add(0x3a)) as u32, read_i8(this.wrapping_add(0x3c)) as u32, read_u8(this.wrapping_add(0x3b)) as u32, read_u32(this.wrapping_add(0x18)), read_u32(this.wrapping_add(0x1c)), read_u32(this.wrapping_add(0x20)), (read_u8(this.wrapping_add(0x3f)) & 1) as u32, read_u8(this.wrapping_add(0x3d)) as u32, read_u16(this.wrapping_add(0x38)) as u32, read_u32(this.wrapping_add(0x2c)), read_i16(this.wrapping_add(0x34)) as u32, read_i16(this.wrapping_add(0x36)) as u32, 1);
         let copy = lf_checker_rt::callee_thiscall!(CONSTRUCTOR, u32, allocated, read_u32(this.wrapping_add(0x40)), calc_result);
         copy
     }

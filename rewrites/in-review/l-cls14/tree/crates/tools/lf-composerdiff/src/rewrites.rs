@@ -71,3 +71,11 @@ pub mod fn_00877890 {
 pub mod fn_00879030 {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00879030.rs"));
 }
+
+pub mod fn_00878D90 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00878d90.rs"));
+}
+
+pub mod fn_00878E00 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00878e00.rs"));
+}

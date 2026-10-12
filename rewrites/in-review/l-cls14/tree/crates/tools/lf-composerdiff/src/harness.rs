@@ -135,6 +135,7 @@ pub fn composer_vtable() -> Box<[u32; 40]> {
     vt[0x78 / 4] = sync_stub as *const () as usize as u32;
     vt[0x7C / 4] = check_stub as *const () as usize as u32;
     vt[0x80 / 4] = handler_stub as *const () as usize as u32;
+    vt[0x84 / 4] = gate_node_stub as *const () as usize as u32;
     vt
 }
 
@@ -302,4 +303,15 @@ extern "thiscall" fn inner_forward_stub(this: u32) -> u32 {
 #[must_use]
 pub fn inner_vtable() -> Box<[u32; 4]> {
     Box::new([0, 0, inner_forward_stub as *const () as usize as u32, 0])
+}
+
+/// The composer's per-node gate (offset 0x84): records the composer, the
+/// node and the passed word, and answers with the verdict word the node
+/// holds at offset 8.
+pub extern "thiscall" fn gate_node_stub(this: u32, node: u32, arg: u32) -> u32 {
+    // SAFETY: `node` is a pool-node record the running case built; its
+    // verdict word is at offset 8.
+    let verdict = unsafe { ((node as usize + 8) as *const u32).read_unaligned() };
+    script().log.push(("gate_node", vec![this, node, arg]));
+    verdict
 }

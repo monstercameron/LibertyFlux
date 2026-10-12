@@ -19,7 +19,8 @@ use lf_animation::composer::registry::{self, State};
 use lf_animation::composer::{
     BaseFilterCallees, BlockId, CombiningFilter, ComposerCallees, ComposerDataCallees, ComposerId,
     ComposerOptimized, ComposerOptimizedData,
-    FilterOwner, HandlerId, InnerId, ItemStack, NodeId, ObjectManager, OutId, PollChild, TableEntry,
+    FilterOwner, HandlerId, InnerId, ItemStack, NodeId, NodeLinks, ObjectManager, OutId, PollChild,
+    TableEntry,
     ValueEntry,
 };
 use lf_core::boundary::Handle32;
@@ -303,6 +304,12 @@ impl ComposerCallees for NoCallees {
     fn handle_table_entry(&mut self, _e: Option<HandlerId>, _a: u32, _b: u32, _c: u32, _d: u32, _e2: u32) {
         panic!("this run must not dispatch");
     }
+    fn sync_pending(&mut self, _composer: Option<ComposerId>) {
+        panic!("this run must not sync the pending list");
+    }
+    fn gate_node(&mut self, _composer: Option<ComposerId>, _node: Option<NodeId>, _arg: u32) -> u32 {
+        panic!("this run must not gate nodes");
+    }
     fn check(&mut self, _composer: Option<ComposerId>, _token: Option<OutId>) -> u32 {
         panic!("this run must not gate");
     }
@@ -341,6 +348,13 @@ impl ComposerCallees for OrderLog {
     }
     fn handle_table_entry(&mut self, _e: Option<HandlerId>, _a: u32, _b: u32, _c: u32, _d: u32, _e2: u32) {
         self.calls.push("dispatch");
+    }
+    fn sync_pending(&mut self, _composer: Option<ComposerId>) {
+        self.calls.push("sync_pending");
+    }
+    fn gate_node(&mut self, _composer: Option<ComposerId>, _node: Option<NodeId>, _arg: u32) -> u32 {
+        self.calls.push("gate");
+        1
     }
     fn check(&mut self, _composer: Option<ComposerId>, _token: Option<OutId>) -> u32 {
         self.calls.push("check");
@@ -438,7 +452,7 @@ fn stack_read_pops_from_zero_to_the_wrapped_index() {
 
 #[test]
 fn registry_counts_match_the_rows() {
-    assert_eq!(registry::proven_count(), 16);
+    assert_eq!(registry::proven_count(), 18);
     assert_eq!(
         registry::ROWS.iter().filter(|r| r.state == State::Proven).count(),
         registry::proven_count()
@@ -474,4 +488,49 @@ fn table_dispatch_syncs_only_while_immediate_mode_is_off() {
     let mut calls = OrderLog::default();
     c.dispatch_table_entry(Handle32::new(0x100), 0, &stack, &mut calls);
     assert_eq!(calls.calls, vec!["sync", "dispatch"]);
+}
+
+#[test]
+fn pending_drain_walks_the_list_and_pushes_each_node_onto_the_cache() {
+    let (a, b) = (Handle32::new(0x10).unwrap(), Handle32::new(0x20).unwrap());
+    let old_free = Handle32::new(0x90).unwrap();
+    let mut links = NodeLinks::new();
+    links.insert(a, Some(b));
+    links.insert(b, None);
+    links.insert(old_free, None);
+    let mut c = ComposerOptimized::new(false, false, 0, 0, Some(old_free), None)
+        .with_pending(Some(a), Some(b))
+        .with_counts(3, 4);
+    let mut calls = OrderLog::default();
+    c.drain_pending(None, &mut links, &mut calls);
+
+    assert_eq!(calls.calls, vec!["sync_pending", "handle", "handle"]);
+    assert_eq!(c.pending_head(), None);
+    assert_eq!(c.pending_tail(), None);
+    assert_eq!(c.count_90(), 0);
+    assert_eq!(c.count_94(), 0);
+    // The last node visited is the new free head; each node links to the
+    // one visited before it, and the first links to the old free head.
+    assert_eq!(c.free_node(), Some(b));
+    assert_eq!(links.next(b), Some(a));
+    assert_eq!(links.next(a), Some(old_free));
+}
+
+#[test]
+fn pending_drain_with_an_empty_list_still_syncs() {
+    let mut links = NodeLinks::new();
+    let mut c = ComposerOptimized::new(true, false, 0, 0, None, None);
+    let mut calls = OrderLog::default();
+    c.drain_pending(None, &mut links, &mut calls);
+    assert_eq!(calls.calls, vec!["sync_pending"]);
+    assert_eq!(c.free_node(), None);
+}
+
+#[test]
+#[should_panic(expected = "the node's link word was not recorded")]
+fn pending_drain_panics_on_an_unrecorded_node() {
+    let mut links = NodeLinks::new();
+    let mut c = ComposerOptimized::new(true, false, 0, 0, None, None)
+        .with_pending(Handle32::new(0x30), None);
+    c.drain_pending(None, &mut links, &mut OrderLog::default());
 }
