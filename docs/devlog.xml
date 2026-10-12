@@ -9,6 +9,74 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Static-row, constant-write and cookie-seal families: 36 instances proven, two new lifted methods</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free25"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free25</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>From lane l-free25.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-free25.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift a group of 141 verified call-free functions of four small sizes, by finding the data structure they share and lifting each routine once, and prove every instance against its verified rewrite.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Found.&lt;/strong&gt; The group is not one class. Three families account for 36 members. Twenty-six routines write a four-word block in the image's data: a relocated constant, two zeros, and a second relocated constant, returning zero or nothing. Six routines write constants at fixed offsets into their object and return zero, one or the object's address; the existing constant-write lift already has this shape. Four routines stamp an object with a cookie derived from a global counter. The other 105 members are in groups of at most four that differ in shape on reading, or are single.&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Meaning&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Static-row members&lt;/td&gt;&lt;td data-label="Value"&gt;26&lt;/td&gt;&lt;td data-label="Meaning"&gt;Two source forms of one four-word write: four 32-bit stores, or two 64-bit stores of the same words&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Constant-write members&lt;/td&gt;&lt;td data-label="Value"&gt;6&lt;/td&gt;&lt;td data-label="Meaning"&gt;Constant stores into an object, returning zero, one or the object's address; proven against the existing lifted routine&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Cookie-seal members&lt;/td&gt;&lt;td data-label="Value"&gt;4&lt;/td&gt;&lt;td data-label="Meaning"&gt;The four bodies differ only in the vtable constant and the width of one store; after normalising those two places they are identical&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Lifted code added&lt;/td&gt;&lt;td data-label="Value"&gt;two modules&lt;/td&gt;&lt;td data-label="Meaning"&gt;A row writer and a cookie seal, with no unsafe code and no addresses&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Proof&lt;/td&gt;&lt;td data-label="Value"&gt;36 instances, 1,000 cases each&lt;/td&gt;&lt;td data-label="Meaning"&gt;Every word of the table, or every byte of the object, and the counter where the routine has one, are compared&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Wrong versions&lt;/td&gt;&lt;td data-label="Value"&gt;three to four per instance&lt;/td&gt;&lt;td data-label="Meaning"&gt;A changed constant, a store left out, a zero word written as one, a shifted offset, a changed return, a counter not advanced; each caught by every instance&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Verified.&lt;/strong&gt; The three test crates pass on the 32-bit target: 26 row instances, 6 constant-write instances and 4 cookie instances, none failing. The host check of the whole lane tree passes, and the lifted modules' host tests pass.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; The row family is lifted as a small parameter type with one method. It is a weak lift: four stores of two constants and zeros. It is counted as such. The cookie seal is a real lift: it mixes an old word with a counter under a mask, advances the counter, and stores in the original's order. The constant-write family is proven against the existing method without changing it.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Process finding.&lt;/strong&gt; The first grouping by a hash of the normalised text split one routine into many groups, because the same routine appears in two source styles. Grouping by role, from a script that extracts each function's writes, reads, branches and return, and asserts the shape of every member, put the members together. A member that fails the assertion is listed with its reason and left out.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Process finding.&lt;/strong&gt; The 64-bit stores of one row form are not 8-byte aligned in some members. A debug build's alignment check aborts on them, so that test crate switches the check off, as an existing crate does for the same reason.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Still open.&lt;/strong&gt; One member of the band reads a word of an uninitialised local array and stores it into the table; it is listed, and its contract should be checked. The 105 other functions have no family of four members of one shape, and are listed.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Sixteen verified rewrites withdrawn in a day and all sixteen proven again: what the causes were, and what a proof with ordinary inputs cannot see</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#sixteen-withdrawn-2026-10-11"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#sixteen-withdrawn-2026-10-11</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>This closes the account opened in the entry "Widening a proof's inputs" earlier today, which stood at seven. Over the day sixteen rewrites that had passed their proofs were shown to differ from the original, were withdrawn, had their causes located, and were proven again on contracts that would have caught the fault. Not one of the sixteen was caught by its contract of record: in every case where it was tried, the contract of record passes the faulty form as well.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;This closes the account opened in the entry "Widening a proof's inputs" earlier today, which stood at seven. Over the day sixteen rewrites that had passed their proofs were shown to differ from the original, were withdrawn, had their causes located, and were proven again on contracts that would have caught the fault. Not one of the sixteen was caught by its contract of record: in every case where it was tried, the contract of record passes the faulty form as well.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;If a proof is a thousand random trials inside the ranges its contract declares, what kinds of fault survive it, how are they found, and what does it take to prove the corrected form properly?&lt;/p&gt;
+&lt;h3&gt;The causes&lt;/h3&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Cause&lt;/th&gt;&lt;th role="columnheader"&gt;Rewrites&lt;/th&gt;&lt;th role="columnheader"&gt;Why ordinary trials passed&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A float converted to an integer with a cast, where the original's instruction gives a fixed result for not-a-number and for values that do not fit&lt;/td&gt;&lt;td role="cell" data-label="Rewrites"&gt;Eight, as the first or a later fault&lt;/td&gt;&lt;td role="cell" data-label="Why ordinary trials passed"&gt;Contracts draw small floats. The two forms agree everywhere but at the ends of the range and for not-a-number.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A float comparison written with the neighbouring predicate: "not less than" for the original's "not less than or equal"&lt;/td&gt;&lt;td role="cell" data-label="Rewrites"&gt;Four&lt;/td&gt;&lt;td role="cell" data-label="Why ordinary trials passed"&gt;The two differ only when the operands are equal, and random floats are never equal. In one of the four the code was also unreachable under its contract.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;An integer comparison with the wrong signedness&lt;/td&gt;&lt;td role="cell" data-label="Rewrites"&gt;Two&lt;/td&gt;&lt;td role="cell" data-label="Why ordinary trials passed"&gt;The values drawn never had the top bit set.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A read taken from the wrong place on the stack: the neighbouring frame slot, two slots merged into one, a key read from the caller's row where the original reloads the table's&lt;/td&gt;&lt;td role="cell" data-label="Rewrites"&gt;Two&lt;/td&gt;&lt;td role="cell" data-label="Why ordinary trials passed"&gt;The contract filled the two places with the same value, or with zero.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A read made earlier than the original makes it, or once where the original repeats it&lt;/td&gt;&lt;td role="cell" data-label="Rewrites"&gt;One, twice over&lt;/td&gt;&lt;td role="cell" data-label="Why ordinary trials passed"&gt;No trial put a null where the early read would fault, and no callee changed the table between the repeated reads.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Two arguments of a call in the wrong order&lt;/td&gt;&lt;td role="cell" data-label="Rewrites"&gt;One&lt;/td&gt;&lt;td role="cell" data-label="Why ordinary trials passed"&gt;The contract's inputs made the two interchangeable.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A float sum whose operand order was not pinned&lt;/td&gt;&lt;td role="cell" data-label="Rewrites"&gt;One&lt;/td&gt;&lt;td role="cell" data-label="Why ordinary trials passed"&gt;The order shows only in the payload of the result when both operands are not-a-number.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Logic: an early return that skips a final check, a missing test of a flag bit, a missing branch, AND where the original has OR, an index that the original wraps&lt;/td&gt;&lt;td role="cell" data-label="Rewrites"&gt;Four, with five such faults between them, each behind another fault&lt;/td&gt;&lt;td role="cell" data-label="Why ordinary trials passed"&gt;The inputs never took the path: an empty range with a negative limit, a flag bit never set, an index never negative.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A constant written into the rewrite where the original loads it from the image&lt;/td&gt;&lt;td role="cell" data-label="Rewrites"&gt;One&lt;/td&gt;&lt;td role="cell" data-label="Why ordinary trials passed"&gt;The contract never varied the image's value.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The counts add to more than sixteen because most rewrites had more than one fault. At least eight of the sixteen showed a second, third or fourth fault only after the first was corrected and every input was widened; one had four that all had to be corrected before any widened run passed.&lt;/p&gt;
+&lt;h3&gt;What was learned about proofs&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;A proof covers the inputs its contract draws and the memory its contract compares, and nothing else. Three further gaps of that kind were measured the same day, apart from input ranges: 54 contracts of record set a value at an address inside the code section, where the function never reads it; 148 leave a write to data uncompared; 2,081 set the stack fill to zero, and in a sample of forty about one in six of those proofs depends on the zero in what the function stores.&lt;/li&gt;
+&lt;li&gt;Reading is not enough to withdraw, and not enough to clear. An audit read the original's instruction behind three float comparisons and found the predicate wrong in each. One was then shown on the checker and withdrawn; one was shown once its contract's addresses were corrected; the third has the wrong predicate and no observable difference, because what the comparison selects is added to a zero, and it stayed verified. Nothing was withdrawn on a reading alone, and for one of the three that restraint was right.&lt;/li&gt;
+&lt;li&gt;A widened contract can itself be wrong. Two rewrites that failed widened contracts were cleared: in one the contract widened a word in memory without the scripted callee answer that holds the same word, and in the other the only failing trials were ones on which the original itself faults.&lt;/li&gt;
+&lt;li&gt;Three functions read a frame word they never wrote. For two the proof now holds only for a zero in that word and says so as its first narrowing; for the third the original turned out to overwrite the word before any read, which the lane established from the instructions.&lt;/li&gt;
+&lt;li&gt;The method that located the hardest case, four faults in one function's use of its stack, was a map: every access through the stack pointer resolved to its real frame slot, accounting for pushes and for callees that clean their own arguments, set side by side with the rewrite's variables. The script takes any function.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Withdraw on a difference shown on the stock checker on trials the original completes, the same hour; prove again only with every input the function reads widened, the special values counted on completed trials with an instrumented copy, and the withdrawn form run as a wrong version that must fail.&lt;/li&gt;
+&lt;li&gt;The production brief carries the rules as versions b27 and b28: predicates and signedness from the original's instruction, arguments against the pushes, operand order pinned, memory read where and as often as the original reads it, values loaded from the image, addresses checked against the function's own operands, no zero stack fill to make a proof pass, and what a contract must reach to see each.&lt;/li&gt;
+&lt;li&gt;The checker's driver refuses a contract that sets a value in code. The audits of the three measured gaps continue as unattended runs; each ends in a list to withdraw and a list of contracts to strengthen.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Each rewrite's strengthening lane left, beside its corrected rewrite: the contract of record, the widened contract, a contract per wrong version identical to its partner but for the library, the verdicts, and the counts of special values that reached the corrected code on completed trials. The coordinator ran each set again on the stock checker before importing it. The changelog entries titled "Rewrites: … withdrawn" give each withdrawal's evidence, and the entries "… more functions pass the checker" that follow them give the re-imports.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Seven small free-function families lifted: 58 instances proven against their verified rewrites</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free23"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free23</id>
@@ -1149,62 +1217,5 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;p&gt;Run the dashboard and status scripts with fresh explicit native lane registry entries. Open each lane card, inspect its log and prompt, then make the registry stale and confirm that running state disappears. Run the dashboard and registry tests in the coordinator test directory.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The dashboard was initially opened before its rendered lane display was checked. Its empty running filter concealed active native work. The continuation rules now require visual inspection before reporting that the dashboard works.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A stack leak hiding in an event-handler update</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b653"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b653</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>One of this lane's two verified functions leaks four bytes of stack every time it takes its numeric-entry path, because it calls a caller-cleanup helper without the cleanup. Verified The leak shifts the function's own frame, so its epilogue restores the wrong registers and returns with the stack pointer low; in the game that path presumably never fires with a nonzero entry, since the cookie check would then fail.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One of this lane's two verified functions leaks four bytes of stack every time it takes its numeric-entry path, because it calls a caller-cleanup helper without the cleanup. &lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The leak shifts the function's own frame, so its epilogue restores the wrong registers and returns with the stack pointer low; in the game that path presumably never fires with a nonzero entry, since the cookie check would then fail.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite two medium-to-large input-event functions in Rust and prove each rewrite identical to the original with the checker, spending most of the effort on the proof contract.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Both functions verified at one thousand trials each with all mutants caught. The smaller one refreshes a timer and then programs event-handler objects down one of three paths; the larger one appends about thirty input events and tags each object. Its register-indirect calls go through the import slot for the thread-id function, whose on-disk value is a placeholder the loader patches at startup, so the contract plants the stub there.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The smaller function's numeric path parses a string, scales it, and passes it on, but never cleans the parser's argument off the stack. Each numeric entry in its four-entry loop costs four more bytes. The proof leaves the stack-pointer check off and says so; the leaked slots hold only values already observed as call arguments.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The larger function is three bytes longer than the inventory says: the listed size ends mid-instruction, before the final store and return.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Both rewrites were accepted with the leak documented in the proof record rather than reproduced. A useful follow-up for the lint tool: warn when a contract's global address looks like a full address instead of an image offset, which cost this lane its first probe. The checker's manual also describes per-call answer steps as pairs where the driver accepts only single values; the pair form is what the worker receives after resolving.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run this lane's two contracts from its scratch folder with the stock checker driver and worker; each passes one thousand trials with its deliberately wrong version failing. The leak is visible by auditing every push and cleanup in the smaller function: all balance except the single parser call on the numeric path.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first rewrite of the smaller function fell through from the parked branch into the second object's code, adding two extra calls per trial; aligning the two call logs showed the exact divergence and the original's jump over that code. Small aligned value cycles also locked the string path out entirely until they were replaced with incommensurate periods. One store global was missing from the larger contract's declared ranges and the undeclared-write check caught it on the first probe.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Lifting the replay bar: one prefix, four shapes, and a backend that commutes</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free12"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free12</id>
-    <published>2026-10-06T00:00:00Z</published>
-    <updated>2026-10-06T00:00:00Z</updated>
-    <summary>6 October 2026 — lane l-free12 (Muse)</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;time datetime="2026-10-06"&gt;6 October 2026&lt;/time&gt; — lane l-free12 (Muse)&lt;/p&gt;
-&lt;p&gt;Asked: lift the eighteen verified free routines named &lt;code&gt;replay_bar_*&lt;/code&gt; to portable
-Rust, working out from the rewrites which data they share and what the group is. Found: a
-playback timeline scrubber — a time range, a slot total, a table of stamped slot entries,
-selection state, marker bounds, hit rectangles, a cursor, a clock link and bar geometry —
-plus three more shapes under the same prefix: a notifier control, a clock-blend free function
-with no &lt;code&gt;this&lt;/code&gt;, and a deferred layout cell. Seventeen routines lifted and proven
-against their rewrites (about 110,000 comparisons, every wrong lift caught); the layout cell
-is a different object with seventeen callees and waits for its own lane.&lt;/p&gt;
-&lt;h3&gt;What the session taught&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Triage by descriptor shape earns its keep again: one word offset is the bar's seconds
-float to one routine and a different object's inner pointer to another. One offset with two
-meanings means two types.&lt;/li&gt;
-&lt;li&gt;Neighbour runs are not instances until the hashes say so: all eighteen normalised bodies
-differ, so each routine stands alone — including two pairs that read like one routine
-twice.&lt;/li&gt;
-&lt;li&gt;The code generator commutes spilled float multiplies, and NaN payloads observe the
-destination lane. The differential test caught it; the fix pins both multiply sides with
-&lt;code&gt;black_box&lt;/code&gt; in the lift. Random-bit floats are too weak a guard for this class —
-geometry fields now cycle the edge corpus.&lt;/li&gt;
-&lt;li&gt;Routines that call through pointers they read from memory need genuine stub addresses
-planted into fake virtual tables; call order across all callees then compares through one
-unified log per side.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;No routine in the group reaches the operating system: every callee is game-internal, so
-no platform trait was needed. Full detail, with per-routine evidence, is in the lane report
-under &lt;code&gt;.artifacts/scratch/l-free12/report.md&lt;/code&gt;.&lt;/p&gt;</content>
   </entry>
 </feed>
