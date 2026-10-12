@@ -142,11 +142,11 @@ pub struct RouteArgs {
 /// The fields of a small task node that the allocator fills in.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct SmallNode {
-    /// The argument word, stored at the node's word fourteen.
+    /// The argument word of the node.
     pub arg: u32,
-    /// The flag byte, stored at the node's byte twenty-four.
+    /// The flag byte of the node.
     pub flag: u8,
-    /// The tail word, stored at the node's word twenty-eight.
+    /// The tail word of the node.
     pub tail: u32,
 }
 

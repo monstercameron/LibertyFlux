@@ -2,8 +2,8 @@
 
 /// Refresh the live-slot owner, then process each slot whose present and
 /// active flags are set and whose mode byte is not the empty marker. For each
-/// eligible record, pass a temporary 28-word work area through the scripted
-/// helpers using a 16-word scratch snapshot, publish its id byte to the shared
+/// eligible record, pass a temporary 16-word work area through the scripted
+/// helpers, publish its id byte to the shared
 /// worker global, and run the streaming reset helper. The 16-bit slot count is zero-extended; the return
 /// value is that count. The receiver is a thiscall object pointer.
 lf_checker_rt::export!(thiscall, rw_00934480(this: *mut u8) -> u32 {
@@ -39,30 +39,33 @@ lf_checker_rt::export!(thiscall, rw_00934480(this: *mut u8) -> u32 {
         while index < count {
             let record = slots.wrapping_add(index.wrapping_mul(SLOT_STRIDE));
             let active = (record.wrapping_add(ACTIVE_FLAG_OFFSET) as *const u8).read() != 0;
-            let present = (record.wrapping_add(PRESENT_FLAG_OFFSET) as *const u8).read() != 0;
-            let mode = (record.wrapping_add(MODE_OFFSET) as *const u8).read();
+            if active {
+                let present = (record.wrapping_add(PRESENT_FLAG_OFFSET) as *const u8).read() != 0;
+                if present {
+                    let mode = (record.wrapping_add(MODE_OFFSET) as *const u8).read();
+                    if mode != EMPTY_MODE {
+                        lf_checker_rt::callee_thiscall!(RESOLVE_WORK_CALLEE, u32, work_pointer);
+                        let record_id = (record.wrapping_add(ID_OFFSET) as *const u8).read();
+                        lf_checker_rt::callee_thiscall!(
+                            BUILD_WORK_CALLEE,
+                            u32,
+                            work_pointer,
+                            0u32,
+                            u32::from(mode),
+                            1u32,
+                            0x20u32,
+                            0u32,
+                            u32::from(record_id),
+                            0u32,
+                            0u32
+                        );
+                        lf_checker_rt::callee_cdecl!(SUBMIT_WORK_CALLEE, u32, work_pointer);
 
-            if active && present && mode != EMPTY_MODE {
-                let record_id = (record.wrapping_add(ID_OFFSET) as *const u8).read();
-                lf_checker_rt::callee_thiscall!(RESOLVE_WORK_CALLEE, u32, work_pointer);
-                lf_checker_rt::callee_thiscall!(
-                    BUILD_WORK_CALLEE,
-                    u32,
-                    work_pointer,
-                    0u32,
-                    u32::from(record_id),
-                    1u32,
-                    0x20u32,
-                    0u32,
-                    u32::from(mode),
-                    0u32,
-                    0u32
-                );
-                lf_checker_rt::callee_cdecl!(SUBMIT_WORK_CALLEE, u32, work_pointer);
-
-                lf_checker_rt::global::<u32>(SHARED_WORKER_VA)
-                    .write_unaligned(u32::from(record_id));
-                lf_checker_rt::callee_cdecl!(RESET_STREAMING_CALLEE, u32,);
+                        lf_checker_rt::global::<u32>(SHARED_WORKER_VA)
+                            .write_unaligned(u32::from(record_id));
+                        lf_checker_rt::callee_cdecl!(RESET_STREAMING_CALLEE, u32,);
+                    }
+                }
             }
             index = index.wrapping_add(1);
         }

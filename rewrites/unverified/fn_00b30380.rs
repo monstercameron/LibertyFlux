@@ -1,5 +1,4 @@
 // original: 0x00B30380 recording_category
-
 /// Convert a recording identifier into its internal category. Zero and
 /// signed IDs above 47 return three without a call. Other values, including
 /// negative IDs, reach the helper. Read its record's tag at +4; tags 1 through 8

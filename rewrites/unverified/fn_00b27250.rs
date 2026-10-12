@@ -1,14 +1,12 @@
 // original: 0x00B27250 conditionally_copy_nearby_blend_component
-
 /// Require a nonzero presence word, flag bit 0x20, and a clear exclusion bit
 /// 0x08000000. Measure the squared three dimensional distance from the linked
 /// position at +0x30 or the inline position at +0x10 to the target vector. The
 /// ordered single precision sum is y² + x² + z². Call the clone helper only
-/// when the distance is strictly below the image-provided limit; unordered
-/// comparisons skip it.
+/// when the distance is strictly below 6400.0; unordered comparisons skip it.
 /// This cdecl helper takes receiver and target pointers and has no defined
 /// return value.
-const NEAR_BLEND_LIMIT_FILE_VA: u32 = 0x00FE8CA4;
+const NEAR_BLEND_LIMIT_SQUARED: f32 = 6400.0;
 const BLEND_PRESENT_OFFSET: u32 = 0x70;
 const BLEND_FLAGS_OFFSET: u32 = 0x24;
 const BLEND_SOURCE_OFFSET: u32 = 0x20;
@@ -45,8 +43,7 @@ lf_checker_rt::export!(cdecl, rw_b27250(receiver: u32, target: u32) -> u32 {
         let x_square = multiply(x_delta, x_delta);
         let z_square = multiply(z_delta, z_delta);
         let distance_squared = add(add(y_square, x_square), z_square);
-        let near_blend_limit = unsafe { lf_checker_rt::global::<f32>(NEAR_BLEND_LIMIT_FILE_VA).read_unaligned() };
-        if near_blend_limit > distance_squared {
+        if NEAR_BLEND_LIMIT_SQUARED > distance_squared {
             let _ = lf_checker_rt::callee_cdecl!(1, u32, receiver);
         }
         0

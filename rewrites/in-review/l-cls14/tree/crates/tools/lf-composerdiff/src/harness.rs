@@ -174,3 +174,41 @@ pub type ThreadBlock = Box<[u32; 4]>;
 pub fn word(buf: &[u32], byte_off: u32) -> u32 {
     buf[(byte_off / 4) as usize]
 }
+
+/// Small deterministic generator (splitmix64): the same inputs on every run.
+pub struct Rng(pub u64);
+
+impl Rng {
+    /// Next 64 bits of the sequence.
+    pub fn next_u64(&mut self) -> u64 {
+        self.0 = self.0.wrapping_add(0x9E37_79B9_7F4A_7C15);
+        let mut z = self.0;
+        z = (z ^ (z >> 30)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
+        z = (z ^ (z >> 27)).wrapping_mul(0x94D0_49BB_1331_11EB);
+        z ^ (z >> 31)
+    }
+
+    /// Next 32 bits of the sequence.
+    pub fn u32(&mut self) -> u32 {
+        (self.next_u64() >> 32) as u32
+    }
+
+    /// A word that is zero, all ones, a sign boundary or random, so that
+    /// each comparison sees the edges as well as the ordinary values.
+    pub fn word(&mut self) -> u32 {
+        match self.u32() % 8 {
+            0 => 0,
+            1 => 0xFFFF_FFFF,
+            2 => 0x8000_0000,
+            3 => 0x7FFF_FFFF,
+            4 => 1,
+            _ => self.u32(),
+        }
+    }
+
+    /// A word whose low byte is zero and whose high bits are not: an answer
+    /// that is nonzero as a word and zero as a verdict.
+    pub fn answer(&mut self) -> u32 {
+        (self.u32() | 0x0100) & !0xFF
+    }
+}

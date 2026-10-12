@@ -54,11 +54,6 @@ lf_checker_rt::export!(stdcall, rw_00DA8FF0(task_kind: u32, owner: u32) -> u32 {
         }
 
         #[inline(always)]
-        unsafe fn read_u16(address: u32) -> u16 {
-            unsafe { (address as *const u16).read_unaligned() }
-        }
-
-        #[inline(always)]
         unsafe fn write_u32(address: u32, value: u32) {
             unsafe { (address as *mut u32).write_unaligned(value) }
         }
@@ -112,7 +107,7 @@ lf_checker_rt::export!(stdcall, rw_00DA8FF0(task_kind: u32, owner: u32) -> u32 {
                 subtract(read_f32(position_for_delta.wrapping_add(0x38)), scaled)
             };
 
-            let random_word = lf_checker_rt::callee_cdecl!(DIRECTION_RANDOM, u32);
+            let random_word = lf_checker_rt::callee_cdecl!(DIRECTION_RANDOM, u32,);
             let scale_after_random = unsafe { read_f32(lf_checker_rt::relocated(VECTOR_SCALE_VA)) };
             let position_after_random = unsafe { read_u32(owner.wrapping_add(OWNER_POSITION)) };
             let (position_x, position_y, position_z) = if random_word & 1 != 0 {

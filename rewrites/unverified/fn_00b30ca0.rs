@@ -1,5 +1,4 @@
 // original: 0x00B30CA0 read_blend_position
-
 /// Copy three position words to the caller's output. When the resource link is
 /// present and the byte flag is clear, use the child's position at +0x30;
 /// otherwise use the receiver's inline position at +0x10. The four-byte words

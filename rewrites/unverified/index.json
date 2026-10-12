@@ -472,6 +472,14 @@
   "reason": "indirect_call"
  },
  {
+  "address": "0x005C0990",
+  "name": null,
+  "file": "fn_005c0990.rs",
+  "lane": "r-s774",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x005CDD40",
   "name": null,
   "file": "fn_005cdd40.rs",
@@ -960,41 +968,9 @@
   "reason": "other"
  },
  {
-  "address": "0x0065BC30",
-  "name": "rage::EnviromentDomeLighting::vf5",
-  "file": "fn_0065bc30.rs",
-  "lane": "r-s765",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065DED0",
-  "name": "create_water_fog_control",
-  "file": "fn_0065ded0.rs",
-  "lane": "r-s765",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065DF80",
-  "name": "rage::VerletWaterSimulation::VerletWaterSimulation",
-  "file": "fn_0065df80.rs",
-  "lane": "r-s765",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0065DFF0",
   "name": "rage::VerletWaterPerturbation::VerletWaterPerturbation",
   "file": "fn_0065dff0.rs",
-  "lane": "r-s765",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065E040",
-  "name": "rage::VerletWaterSurface::VerletWaterSurface",
-  "file": "fn_0065e040.rs",
   "lane": "r-s765",
   "outcome": "not_reached",
   "reason": null
@@ -1012,6 +988,14 @@
   "name": "create_day_lighting",
   "file": "fn_0065e130.rs",
   "lane": "r-s765",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065F900",
+  "name": "pack_sn_msg_session_attrs_changed",
+  "file": "fn_0065f900.rs",
+  "lane": "r-s764",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1408,12 +1392,20 @@
   "reason": "other"
  },
  {
+  "address": "0x00884770",
+  "name": null,
+  "file": "fn_00884770.rs",
+  "lane": "a-U140",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x0088FC40",
   "name": "audio_compute_voice_mix",
   "file": "fn_0088fc40.rs",
   "lane": "a-U136",
-  "outcome": "failed_v8",
-  "reason": "The 60-trial probe did not pass non-vacuously; see the probe verdict."
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00895A00",
@@ -1483,6 +1475,22 @@
   "address": "0x00934480",
   "name": "content_live_slots_activate",
   "file": "fn_00934480.rs",
+  "lane": "r-s763",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00934CB0",
+  "name": "content_live_slots_teardown",
+  "file": "fn_00934cb0.rs",
+  "lane": "r-s763",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00934DF0",
+  "name": "content_live_slots_teardown_payload",
+  "file": "fn_00934df0.rs",
   "lane": "r-s763",
   "outcome": "not_reached",
   "reason": null
@@ -1580,6 +1588,14 @@
   "name": "clear_stale_task_entries",
   "file": "fn_0095b9e0.rs",
   "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00967420",
+  "name": "timing_subsystem_dispatch",
+  "file": "fn_00967420.rs",
+  "lane": "a-U143",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1920,14 +1936,6 @@
   "reason": null
  },
  {
-  "address": "0x00A661E0",
-  "name": "fn_00A661E0",
-  "file": "fn_00a661e0.rs",
-  "lane": "r-s770",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A668D0",
   "name": "fn_00A668D0",
   "file": "fn_00a668d0.rs",
@@ -2020,6 +2028,22 @@
   "name": "CSimpleNMHighFallTaskInfo::vf9",
   "file": "fn_00a7f6a0.rs",
   "lane": "r-s596",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A81F70",
+  "name": "CSimpleNMBraceTaskInfo::get_brace_entity",
+  "file": "fn_00a81f70.rs",
+  "lane": "r-s762",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A82160",
+  "name": "TaskList_FindByStage",
+  "file": "fn_00a82160.rs",
+  "lane": "r-s762",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2555,7 +2579,7 @@
   "address": "0x00B27250",
   "name": "conditionally_copy_nearby_blend_component",
   "file": "fn_00b27250.rs",
-  "lane": "a-U137",
+  "lane": "a-U126",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2563,7 +2587,7 @@
   "address": "0x00B27BB0",
   "name": "find_first_available_task_id",
   "file": "fn_00b27bb0.rs",
-  "lane": "a-U137",
+  "lane": "a-U126",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2571,7 +2595,7 @@
   "address": "0x00B27E10",
   "name": "update_blend_timing_state",
   "file": "fn_00b27e10.rs",
-  "lane": "a-U137",
+  "lane": "a-U126",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2603,7 +2627,7 @@
   "address": "0x00B30380",
   "name": "recording_category",
   "file": "fn_00b30380.rs",
-  "lane": "a-U137",
+  "lane": "a-U126",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2611,7 +2635,7 @@
   "address": "0x00B30CA0",
   "name": "read_blend_position",
   "file": "fn_00b30ca0.rs",
-  "lane": "a-U137",
+  "lane": "a-U126",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2792,51 +2816,123 @@
   "reason": "needs_encrypted_code"
  },
  {
-  "address": "0x00B79C10",
-  "name": null,
-  "file": "fn_00b79c10.rs",
+  "address": "0x00B7AF10",
+  "name": "CTaskComplexCarDrive::clone",
+  "file": "fn_00b7af10.rs",
   "lane": "r-s771",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00B79C60",
-  "name": null,
-  "file": "fn_00b79c60.rs",
+  "address": "0x00B7AF60",
+  "name": "CTaskComplexCarDriveBasic::clone",
+  "file": "fn_00b7af60.rs",
   "lane": "r-s771",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00B79C90",
-  "name": null,
-  "file": "fn_00b79c90.rs",
+  "address": "0x00B7AFA0",
+  "name": "CTaskComplexCarDriveMission::clone",
+  "file": "fn_00b7afa0.rs",
   "lane": "r-s771",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00B79CE0",
-  "name": null,
-  "file": "fn_00b79ce0.rs",
+  "address": "0x00B7B030",
+  "name": "CTaskComplexCarDriveTimed::clone",
+  "file": "fn_00b7b030.rs",
   "lane": "r-s771",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00B79D10",
-  "name": null,
-  "file": "fn_00b79d10.rs",
+  "address": "0x00B7B060",
+  "name": "CTaskComplexCarDriveWander::clone",
+  "file": "fn_00b7b060.rs",
   "lane": "r-s771",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00B7E9A0",
-  "name": null,
-  "file": "fn_00b7e9a0.rs",
+  "address": "0x00B7B0A0",
+  "name": "CTaskComplexCarSetTempAction::clone",
+  "file": "fn_00b7b0a0.rs",
   "lane": "r-s771",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B7B0D0",
+  "name": "CTaskComplexDrivePointRoute::clone",
+  "file": "fn_00b7b0d0.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B7B110",
+  "name": "CTaskComplexDriveToPoint::clone",
+  "file": "fn_00b7b110.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B7B190",
+  "name": "CTaskComplexEnterAnyCarAsDriver::clone",
+  "file": "fn_00b7b190.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B7B1B0",
+  "name": "CTaskComplexGetOffBoat::clone",
+  "file": "fn_00b7b1b0.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B7B1D0",
+  "name": "CTaskComplexLeaveCarAndFlee::clone",
+  "file": "fn_00b7b1d0.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B7B200",
+  "name": "CTaskComplexLeaveCarAndWander::clone",
+  "file": "fn_00b7b200.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B7B230",
+  "name": "CTaskComplexPlayerDrive::clone",
+  "file": "fn_00b7b230.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B7B260",
+  "name": "CTaskComplexReactToRanPedOver::clone",
+  "file": "fn_00b7b260.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B7B2A0",
+  "name": "CTaskComplexScreamInCarThenLeave::clone",
+  "file": "fn_00b7b2a0.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4496,6 +4592,22 @@
   "reason": null
  },
  {
+  "address": "0x00D5AEF0",
+  "name": null,
+  "file": "fn_00d5aef0.rs",
+  "lane": "a-U140",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00D5B2F0",
+  "name": null,
+  "file": "fn_00d5b2f0.rs",
+  "lane": "a-U140",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00D82CD0",
   "name": null,
   "file": "fn_00d82cd0.rs",
@@ -4635,30 +4747,6 @@
   "address": "0x00DB3CE0",
   "name": "UIGalleryFileViewer::vf28",
   "file": "fn_00db3ce0.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DB3F30",
-  "name": "UIMouseCursor::UIMouseCursor",
-  "file": "fn_00db3f30.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DB3F90",
-  "name": "UIMouseCursor::UIMouseCursor_2",
-  "file": "fn_00db3f90.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DB3FB0",
-  "name": "UIMouseCursor::vf2",
-  "file": "fn_00db3fb0.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
   "reason": null
