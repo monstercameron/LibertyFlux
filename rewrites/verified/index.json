@@ -95238,6 +95238,42 @@
   "lane": "r-b457"
  },
  {
+  "address": "0x00B30D80",
+  "name": "ped_task_record_field_4",
+  "kind": "function",
+  "file": "functions/fn_00b30d80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00B30DA0",
+  "name": "ped_task_record_field_0",
+  "kind": "function",
+  "file": "functions/fn_00b30da0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00B31420",
+  "name": "classify_ped_task_state",
+  "kind": "function",
+  "file": "functions/fn_00b31420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00B31450",
+  "name": "is_signed_value_greater",
+  "kind": "function",
+  "file": "functions/fn_00b31450.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
   "address": "0x00B314B0",
   "name": "task_event_forward",
   "kind": "function",
@@ -96973,6 +97009,78 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G09"
+ },
+ {
+  "address": "0x00B46320",
+  "name": "CEvent::vf0",
+  "kind": "function",
+  "file": "functions/fn_00b46320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00B46350",
+  "name": "CEventAcquaintancePed::vf0",
+  "kind": "function",
+  "file": "functions/fn_00b46350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00B46380",
+  "name": "CEventAttractor::vf0",
+  "kind": "function",
+  "file": "functions/fn_00b46380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00B463B0",
+  "name": "CEventBuildingCollision::vf0",
+  "kind": "function",
+  "file": "functions/fn_00b463b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00B463E0",
+  "name": "CEventCarUndriveable::vf0",
+  "kind": "function",
+  "file": "functions/fn_00b463e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00B46410",
+  "name": "CEventClimbLadderOnRoute::vf0",
+  "kind": "function",
+  "file": "functions/fn_00b46410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00B46440",
+  "name": "CEventClimbNavMeshOnRoute::vf0",
+  "kind": "function",
+  "file": "functions/fn_00b46440.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00B46470",
+  "name": "CEventCommunicateEvent::vf0",
+  "kind": "function",
+  "file": "functions/fn_00b46470.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
  },
  {
   "address": "0x00B46550",
@@ -142308,6 +142416,24 @@
   "lane": "r-b515"
  },
  {
+  "address": "0x00CF9BA0",
+  "name": "climb_task_has_unit_height_subtask_88_8a",
+  "kind": "function",
+  "file": "functions/fn_00cf9ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00CF9C10",
+  "name": "climb_task_has_unit_height_subtask_87_89",
+  "kind": "function",
+  "file": "functions/fn_00cf9c10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
   "address": "0x00CF9C80",
   "name": "ladder_ray_submit",
   "kind": "function",
@@ -142315,6 +142441,33 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b515"
+ },
+ {
+  "address": "0x00CF9DE0",
+  "name": "CTaskComplexClimbLadder::make_abortable",
+  "kind": "function",
+  "file": "functions/fn_00cf9de0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00CF9E40",
+  "name": "CTaskSimpleClimbLadder::make_abortable",
+  "kind": "function",
+  "file": "functions/fn_00cf9e40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00CF9EB0",
+  "name": "call_task_a80_with_zero",
+  "kind": "function",
+  "file": "functions/fn_00cf9eb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
  },
  {
   "address": "0x00CFAEC0",
@@ -142335,6 +142488,15 @@
   "lane": "a-G34"
  },
  {
+  "address": "0x00CFB300",
+  "name": "select_task_slot_and_forward",
+  "kind": "function",
+  "file": "functions/fn_00cfb300.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
   "address": "0x00CFB910",
   "name": "climb_ladder_check_state",
   "kind": "function",
@@ -142344,6 +142506,24 @@
   "lane": "a-G34"
  },
  {
+  "address": "0x00CFBB60",
+  "name": "create_timed_task_effect",
+  "kind": "function",
+  "file": "functions/fn_00cfbb60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00CFBBD0",
+  "name": "clear_task_effect",
+  "kind": "function",
+  "file": "functions/fn_00cfbbd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
   "address": "0x00CFBC10",
   "name": "climb_ladder_reset_state",
   "kind": "function",
@@ -142351,6 +142531,60 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G34"
+ },
+ {
+  "address": "0x00CFBEF0",
+  "name": "CEventCallForCover::CEventCallForCover",
+  "kind": "function",
+  "file": "functions/fn_00cfbef0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00CFBF20",
+  "name": "CTaskComplexArrestedAIPedAndDriveAway::CTaskComplexArrestedAIPedAndDriveAway",
+  "kind": "function",
+  "file": "functions/fn_00cfbf20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00CFBF70",
+  "name": "CTaskComplexBackOff::CTaskComplexBackOff",
+  "kind": "function",
+  "file": "functions/fn_00cfbf70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00CFBFA0",
+  "name": "CTaskComplexBeArrestedAndDrivenAway::CTaskComplexBeArrestedAndDrivenAway",
+  "kind": "function",
+  "file": "functions/fn_00cfbfa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00CFC120",
+  "name": "CTaskComplexCombatAdditionalTask::CTaskComplexCombatAdditionalTask",
+  "kind": "function",
+  "file": "functions/fn_00cfc120.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00CFC1A0",
+  "name": "CTaskComplexCombatAdvanceSubtask::CTaskComplexCombatAdvanceSubtask",
+  "kind": "function",
+  "file": "functions/fn_00cfc1a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
  },
  {
   "address": "0x00CFC220",
@@ -152649,6 +152883,15 @@
   "lane": "r-s616"
  },
  {
+  "address": "0x00DC0980",
+  "name": "task_flag_compatibility",
+  "kind": "function",
+  "file": "functions/fn_00dc0980.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
   "address": "0x00DC12B0",
   "name": "peds_task_normalize",
   "kind": "function",
@@ -152665,6 +152908,24 @@
   "trials": 33000,
   "checker": "version 8",
   "lane": "a-H30"
+ },
+ {
+  "address": "0x00DC2E20",
+  "name": "task_tuning_defaults",
+  "kind": "function",
+  "file": "functions/fn_00dc2e20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
+ },
+ {
+  "address": "0x00DC2E80",
+  "name": "task_profile_from_owner",
+  "kind": "function",
+  "file": "functions/fn_00dc2e80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
  },
  {
   "address": "0x00DC2F10",
@@ -152728,6 +152989,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s616"
+ },
+ {
+  "address": "0x00DC4BE0",
+  "name": "task_slot_occupancy_count",
+  "kind": "function",
+  "file": "functions/fn_00dc4be0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U129"
  },
  {
   "address": "0x00DC4C50",
