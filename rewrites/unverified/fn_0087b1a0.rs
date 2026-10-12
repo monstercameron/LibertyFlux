@@ -1,4 +1,4 @@
-// original: 0x0087B1A0 rage::crmtNodeAddSubtract::~crmtNodeAddSubtract__deleting
+// original: 0x0087B1A0 rage::crmtNodeAddSubtract::vf0
 
 /// Run the add/subtract node's deleting destructor.
 ///

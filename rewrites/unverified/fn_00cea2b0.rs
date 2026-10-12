@@ -335,35 +335,33 @@ unsafe fn update_stage_two(task: u32, ped: u32, sub_object: u32, second_vector: 
     }
 }
 
-// Advances a ped's natural-motion task (peds subsystem) by one update.
-//
-// `this` is the task, `owner` the ped, `vector` and `second_vector` pointers
-// to three-float vectors, and `scalar` a float passed as its bit pattern.
-//
-// Part one runs for any task stage other than zero. When the ped's bit 18
-// flag is clear it sends one message to the ped's message target: the full
-// main message when the task is not yet ready and the running time has
-// reached the task's low threshold (the send then sets the ready byte), and
-// otherwise a vector fallback message that leaves the ready byte alone.
-// When the bit is set, part one is skipped.
-//
-// Part two runs only for stage two. It is skipped when the running time is
-// below the task's next-time word (unsigned), when the ped's owner-info
-// pointer is null, when the ped's block byte is set, or when the info
-// object's block word is non-zero. Otherwise it runs the stage-two update
-// above. The owner-info pointer is read before any call.
-//
-// The callees are the game's own message, random, vector, trajectory and
-// timer routines, reached through the checker's interception table. The
-// stack cookie check at exit belongs to the original's own code.
-lf_checker_rt::export!(thiscall, rw_00cea2b0(this: u32, owner: u32, vector: u32, second_vector: u32, scalar: u32) -> u32 {
+/// Advances a ped's natural-motion task (peds subsystem) by one update.
+///
+/// `task` is the task, `ped` the ped, `vector` and `second_vector` pointers to
+/// three-float vectors, and `scalar` a float passed as its bit pattern.
+///
+/// Part one runs for any task stage other than zero. When the ped's bit 18
+/// flag is clear it sends one message to the ped's message target: the full
+/// main message when the task is not yet ready and the running time has
+/// reached the task's low threshold (the send then sets the ready byte), and
+/// otherwise a vector fallback message that leaves the ready byte alone.
+/// When the bit is set, part one is skipped.
+///
+/// Part two runs only for stage two. It is skipped when the running time is
+/// below the task's next-time word (unsigned), when the ped's owner-info
+/// pointer is null, when the ped's block byte is set, or when the info
+/// object's block word is non-zero. Otherwise it runs the stage-two update.
+/// The owner-info pointer is read before any call.
+///
+/// The callees are the game's own message, random, vector, trajectory and
+/// timer routines, reached through the checker's interception table. The
+/// stack cookie check at exit belongs to the original's own code.
+unsafe fn update_task(task: u32, ped: u32, vector: u32, second_vector: u32, scalar: u32) {
     unsafe {
-        let task = this;
-        let ped = owner;
         let sub_object = read_u32(ped.wrapping_add(PED_SUB_OBJECT));
         let stage = read_u32(task.wrapping_add(TASK_STAGE));
         if stage == 0 {
-            return 0;
+            return;
         }
 
         if read_u32(ped.wrapping_add(PED_FLAGS)) & PED_BIT18 == 0 {
@@ -377,23 +375,27 @@ lf_checker_rt::export!(thiscall, rw_00cea2b0(this: u32, owner: u32, vector: u32,
         }
 
         if stage != 2 {
-            return 0;
+            return;
         }
         let running = read_u32(lf_checker_rt::relocated(RUNNING_TIME_VA));
         if running < read_u32(task.wrapping_add(TASK_NEXT_TIME)) {
-            return 0;
+            return;
         }
         if sub_object == 0 {
-            return 0;
+            return;
         }
         if read_u8(ped.wrapping_add(PED_BLOCK_BYTE)) != 0 {
-            return 0;
+            return;
         }
         let info = read_u32(sub_object.wrapping_add(SUB_INFO));
         if read_u32(info.wrapping_add(INFO_BLOCK)) != 0 {
-            return 0;
+            return;
         }
         update_stage_two(task, ped, sub_object, second_vector);
     }
+}
+
+lf_checker_rt::export!(thiscall, rw_00cea2b0(this: u32, owner: u32, vector: u32, second_vector: u32, scalar: u32) -> u32 {
+    unsafe { update_task(this, owner, vector, second_vector, scalar) }
     0
 });

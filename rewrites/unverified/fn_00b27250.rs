@@ -8,7 +8,7 @@
 /// comparisons skip it.
 /// This cdecl helper takes receiver and target pointers and has no defined
 /// return value.
-const NEAR_BLEND_LIMIT_RVA: u32 = 0x00BE8CA4;
+const NEAR_BLEND_LIMIT_FILE_VA: u32 = 0x00FE8CA4;
 const BLEND_PRESENT_OFFSET: u32 = 0x70;
 const BLEND_FLAGS_OFFSET: u32 = 0x24;
 const BLEND_SOURCE_OFFSET: u32 = 0x20;
@@ -45,7 +45,7 @@ lf_checker_rt::export!(cdecl, rw_b27250(receiver: u32, target: u32) -> u32 {
         let x_square = multiply(x_delta, x_delta);
         let z_square = multiply(z_delta, z_delta);
         let distance_squared = add(add(y_square, x_square), z_square);
-        let near_blend_limit = unsafe { lf_checker_rt::global::<f32>(NEAR_BLEND_LIMIT_RVA).read_unaligned() };
+        let near_blend_limit = unsafe { lf_checker_rt::global::<f32>(NEAR_BLEND_LIMIT_FILE_VA).read_unaligned() };
         if near_blend_limit > distance_squared {
             let _ = lf_checker_rt::callee_cdecl!(1, u32, receiver);
         }

@@ -42,6 +42,7 @@ impl FloatIfChanged {
     /// # Panics
     ///
     /// When the field does not lie inside the object.
+    #[allow(clippy::float_cmp)] // The exact IEEE comparison is the behaviour; a tolerance would change it.
     pub fn set(&self, object: &mut ObjectBytes, incoming: u32) {
         let stored = f32::from_bits(object.word(self.offset));
         if stored != f32::from_bits(incoming) {

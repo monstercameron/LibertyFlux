@@ -43,8 +43,20 @@ lf_checker_rt::export!(thiscall, rw_0089a810(
             unsafe { (address as *mut u32).write_unaligned(value) }
         }
 
-        let mut output_words = core::mem::MaybeUninit::<[u32; 5]>::uninit();
-        let output_ptr = output_words.as_mut_ptr().cast::<u32>();
+        #[repr(C)]
+        struct ResolverFrame {
+            node: u32,
+            start: u32,
+            outputs: [core::mem::MaybeUninit<u32>; 5],
+        }
+        let mut resolver_frame = core::mem::MaybeUninit::<ResolverFrame>::uninit();
+        unsafe {
+            core::ptr::addr_of_mut!((*resolver_frame.as_mut_ptr()).node).write_volatile(this);
+            core::ptr::addr_of_mut!((*resolver_frame.as_mut_ptr()).start).write_volatile(start_time);
+        }
+        let output_ptr = unsafe {
+            core::ptr::addr_of_mut!((*resolver_frame.as_mut_ptr()).outputs).cast::<u32>()
+        };
         let _ = lf_checker_rt::callee_thiscall!(
             1,
             u32,
@@ -56,31 +68,33 @@ lf_checker_rt::export!(thiscall, rw_0089a810(
             output_ptr as u32,
         );
 
-        let mode = read_u32(this.wrapping_add(START_MODE)) as i32;
+        let node = unsafe { core::ptr::addr_of!((*resolver_frame.as_ptr()).node).read_volatile() };
+        let input_start = unsafe { core::ptr::addr_of!((*resolver_frame.as_ptr()).start).read_volatile() };
+        let mode = read_u32(node.wrapping_add(START_MODE)) as i32;
         let elapsed = if mode >= 0 {
-            start_time.wrapping_sub(mode as u32)
+            input_start.wrapping_sub(mode as u32)
         } else {
             0
         };
         let duration = output_ptr.read_unaligned();
 
-        let ready_flags = read_u8(this.wrapping_add(NODE_FLAGS)) | 0x40;
-        write_u8(this.wrapping_add(NODE_FLAGS), ready_flags);
+        let ready_flags = read_u8(node.wrapping_add(NODE_FLAGS)) | 0x40;
+        write_u8(node.wrapping_add(NODE_FLAGS), ready_flags);
         if (duration as i32) < 0 {
-            let _ = lf_checker_rt::callee_thiscall!(2, u32, this);
-            let error_flags = read_u8(this.wrapping_add(NODE_ERROR)) | 8;
-            write_u8(this.wrapping_add(NODE_ERROR), error_flags);
-            let pending = read_u8(this.wrapping_add(PENDING_FLAGS)) & !2;
-            write_u8(this.wrapping_add(PENDING_FLAGS), pending);
+            let _ = lf_checker_rt::callee_thiscall!(2, u32, node);
+            let error_flags = read_u8(node.wrapping_add(NODE_ERROR)) | 8;
+            write_u8(node.wrapping_add(NODE_ERROR), error_flags);
+            let pending = read_u8(node.wrapping_add(PENDING_FLAGS)) & !2;
+            write_u8(node.wrapping_add(PENDING_FLAGS), pending);
             return 0;
         }
 
-        let pending = read_u8(this.wrapping_add(PENDING_FLAGS)) | 2;
-        write_u8(this.wrapping_add(PENDING_FLAGS), pending);
-        if read_u8(this.wrapping_add(COMMIT_STATE)) != COMMITTED_STATE {
-            write_u32(this.wrapping_add(ELAPSED_TIME), elapsed);
-            write_u8(this.wrapping_add(COMMIT_STATE), COMMITTED_STATE);
-            write_u32(this.wrapping_add(END_TIME), elapsed.wrapping_add(duration));
+        let pending = read_u8(node.wrapping_add(PENDING_FLAGS)) | 2;
+        write_u8(node.wrapping_add(PENDING_FLAGS), pending);
+        if read_u8(node.wrapping_add(COMMIT_STATE)) != COMMITTED_STATE {
+            write_u32(node.wrapping_add(ELAPSED_TIME), elapsed);
+            write_u8(node.wrapping_add(COMMIT_STATE), COMMITTED_STATE);
+            write_u32(node.wrapping_add(END_TIME), elapsed.wrapping_add(duration));
         }
         0
     }
