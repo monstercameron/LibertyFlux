@@ -15,7 +15,7 @@
 use lf_core::Handle32;
 use lf_playerped_diff::rt::{self, Call, Effect, Kind};
 use lf_world::player_ped::offsets;
-use lf_world::player_ped::{ByteGlobal, CPlayerPed, GateWorld, ObjRef, ObjTag, PedTag, PlayerPedWorld, WordGlobal};
+use lf_world::player_ped::{ByteGlobal, CPlayerPed, GateWorld, ObjRef, ObjTag, PedTag, PlayerPedWorld, TaskWorld, WordGlobal};
 
 /// Words in a pedestrian image: four kilobytes, past the last field the
 /// rewrites touch.
@@ -121,6 +121,8 @@ pub fn encode(ped: &CPlayerPed, img: &mut [u32]) {
     put32(img, offsets::OUTER, ped.outer);
     put32(img, offsets::FVAL, ped.fval_bits);
     put32(img, offsets::STATUS_29C, ped.status_29c);
+    put32(img, offsets::BUDGET, ped.budget);
+    put32(img, offsets::BUDGET_PREV, ped.budget_prev);
     for (k, off) in offsets::RELINK_BLOCK.iter().enumerate() {
         put32(img, *off, ped.relink_block[k]);
     }
@@ -150,6 +152,8 @@ pub fn decode(img: &[u32]) -> CPlayerPed {
         outer: get32(img, offsets::OUTER),
         fval_bits: get32(img, offsets::FVAL),
         status_29c: get32(img, offsets::STATUS_29C),
+        budget: get32(img, offsets::BUDGET),
+        budget_prev: get32(img, offsets::BUDGET_PREV),
         ..CPlayerPed::default()
     };
     for k in 0..2u32 {
@@ -658,5 +662,44 @@ impl GateWorld for TestWorld {
 
     fn tail_virtual(&mut self, _ped: &mut CPlayerPed, this: Handle32<PedTag>) {
         rt::script_call(rt::TAIL_ID, vec![this.get()]);
+    }
+}
+
+impl TaskWorld for TestWorld {
+    fn base_step(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>) -> u32 {
+        Self::call(ped, 0, vec![this.get()])
+    }
+
+    fn current_item(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>) -> u32 {
+        Self::call(ped, 1, vec![this.get()])
+    }
+
+    fn classify_task(&mut self, _ped: &mut CPlayerPed, task: u32) -> (u32, u32) {
+        let (answer, out, _tag) = rt::script_classify(2, task);
+        (answer, out)
+    }
+
+    fn task_present(&mut self, ped: &mut CPlayerPed, list: u32, task: u32, zero: u32) -> u32 {
+        Self::call(ped, 3, vec![list, task, zero])
+    }
+
+    fn award(&mut self, ped: &mut CPlayerPed) -> u32 {
+        Self::call(ped, 4, Vec::new())
+    }
+
+    fn frame_delta_bits(&mut self) -> u32 {
+        rt::cell_value(12)
+    }
+
+    fn cost_scale_bits(&mut self) -> u32 {
+        rt::cell_value(13)
+    }
+
+    fn heat_limit(&mut self) -> u8 {
+        rt::cell_value(14) as u8
+    }
+
+    fn read_byte(&mut self, address: u32) -> u8 {
+        rt::read_u8(address)
     }
 }

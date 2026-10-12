@@ -9,7 +9,7 @@ use core::hint::black_box;
 
 use lf_core::Handle32;
 
-use super::world::{ByteGlobal, GateWorld, ObjTag, PedTag, PlayerPedWorld, WordGlobal};
+use super::world::{ByteGlobal, GateWorld, ObjTag, PedTag, PlayerPedWorld, TaskWorld, WordGlobal};
 
 /// An object identity the pedestrian stores: a pointer in the original.
 /// `None` stands for the original's zero.
@@ -67,6 +67,10 @@ pub mod offsets {
     pub const FVAL: u32 = 0xBF8;
     /// The status word the gate block arms.
     pub const STATUS_29C: u32 = 0x29C;
+    /// The budget the task step settles.
+    pub const BUDGET: u32 = 0xEA0;
+    /// The budget the task step copies to on its last step.
+    pub const BUDGET_PREV: u32 = 0xEA4;
 }
 
 /// The offset of the targeting component inside the pedestrian.
@@ -141,6 +145,10 @@ pub struct CPlayerPed {
     pub fval_bits: u32,
     /// The status word the gate block arms.
     pub status_29c: u32,
+    /// The budget the task step settles.
+    pub budget: u32,
+    /// The budget the task step copied on its last run.
+    pub budget_prev: u32,
 }
 
 /// The scaled aim threshold: the aim factor times the property threshold.
@@ -603,5 +611,152 @@ impl CPlayerPed {
     /// of this method.
     pub fn set_descriptor(&mut self, source: [u32; 4]) {
         self.descriptor = source;
+    }
+}
+/// The task-list link offset inside the task record.
+const TASK_LIST: u32 = 0x2E0;
+/// The task tag the first walk looks for.
+const TAG_FIRST: u32 = 0x410;
+/// The task tag the second walk looks for.
+const TAG_SECOND: u32 = 0x41E;
+/// The task kind whose presence decides the budget's cost step.
+const TASK_BUDGET: u32 = 0x413;
+/// The largest budget the award step allows.
+const BUDGET_MAX: u32 = 10_000;
+/// The heat byte's floor: a heat at or below it is refused.
+const HEAT_FLOOR: u8 = 0x64;
+/// The offsets of the two heat bytes inside the item.
+const HEAT_FIRST: u32 = 0x26DC;
+const HEAT_SECOND: u32 = 0x26DE;
+/// The output words that set the classified flag, and the one that also holds.
+const OUT_FLAG: u32 = 5;
+const OUT_HOLD: u32 = 8;
+/// The bound of the cost conversion: the 64-bit range, as floating-point values.
+const COST_LIMIT: f64 = 9_223_372_036_854_775_808.0;
+
+/// Walks the task chain for a node with the given tag. Returns whether the
+/// tag was found and the priority of the node the walk stopped on. The walk
+/// aborts, reporting the node it stopped on, when the previous node's
+/// priority is at least two and strictly below the current one.
+///
+/// The chain is walked as the original walks it: the first node compares with
+/// itself, every later node with the one before it. The walk ends at a null
+/// link, so a cyclic chain would not end; the chains the proof generates are
+/// finite.
+fn task_walk<W: TaskWorld + ?Sized>(world: &mut W, mut node: u32, tag: u32) -> (bool, u32) {
+    let mut previous: Option<u32> = None;
+    let mut stopped = 0;
+    while node != 0 {
+        let priority = (world.read_word(node.wrapping_add(8)) >> 1) & 7;
+        let compared = previous.unwrap_or(priority);
+        if compared < priority && compared >= 2 {
+            return (false, priority);
+        }
+        if world.read_word(node.wrapping_add(4)) == tag {
+            return (true, priority);
+        }
+        previous = Some(priority);
+        stopped = priority;
+        node = world.read_word(node.wrapping_add(0x0C));
+    }
+    (false, stopped)
+}
+
+impl CPlayerPed {
+    /// Settles the pedestrian's wanted-heat budget from its active task list,
+    /// after running the base step, and returns the budget the step settled.
+    ///
+    /// The base step runs first. When the marker byte is clear, its answer is
+    /// the method's answer. Otherwise the task list is walked twice, first for
+    /// the first tag and then for the second; when neither walk finds its tag,
+    /// the second walk's priority is the answer. A null item answers zero.
+    /// The item's classification sets a flag and possibly a hold, and the task
+    /// budget query decides the budget: when the task is present the frame
+    /// cost is subtracted and clamped at zero; when it is absent and the hold
+    /// is clear, the award is added and clamped at the maximum.
+    ///
+    /// The heat bytes of the item decide whether the item is accepted: the flag
+    /// must be set; a hold accepts; otherwise the heat must be above the floor
+    /// and below the heat limit. The budget is then copied to the previous
+    /// slot, zeroed when the item is refused, and the copied value is returned.
+    ///
+    /// The cost is the frame delta times the cost constant, truncated toward
+    /// zero. A not-a-number and any value at or beyond either end of the 64-bit
+    /// range give the integer indefinite, zero in the low word, as the original
+    /// does; the cast below is only reached inside that range.
+    pub fn settle_budget<W: TaskWorld + ?Sized>(
+        &mut self,
+        this: Handle32<PedTag>,
+        world: &mut W,
+    ) -> u32 {
+        let base = world.base_step(self, this);
+        if self.marker_219 == 0 {
+            return base;
+        }
+        let task = self.chain_base;
+        let head = world.read_word(task.wrapping_add(TASK_LIST));
+        if head == 0 {
+            return task;
+        }
+        let (found_first, _) = task_walk(world, head, TAG_FIRST);
+        if !found_first {
+            let (found_second, priority) = task_walk(world, head, TAG_SECOND);
+            if !found_second {
+                return priority;
+            }
+        }
+        let item = world.current_item(self, this);
+        if item == 0 {
+            return 0;
+        }
+        let (answer, out) = world.classify_task(self, task);
+        let mut flag = true;
+        let mut hold = false;
+        if (answer & 0xFF) != 0 {
+            flag = false;
+            if out == OUT_FLAG || out == OUT_HOLD {
+                flag = true;
+                hold = out == OUT_HOLD;
+            }
+        }
+        if (world.task_present(self, task.wrapping_add(TASK_LIST), TASK_BUDGET, 0) & 0xFF) != 0 {
+            let delta = f32::from_bits(world.frame_delta_bits());
+            let scale = f32::from_bits(world.cost_scale_bits());
+            let cost_float = f64::from((black_box(delta) * black_box(scale)).trunc());
+            // The bounds keep the conversion inside the 64-bit range; a value
+            // outside it, or not a number, takes the integer indefinite.
+            let cost64: i64 = if cost_float.is_nan() || cost_float >= COST_LIMIT || cost_float < -COST_LIMIT {
+                i64::MIN
+            } else {
+                cost_float as i64
+            };
+            let cost = cost64 as i32 as u32;
+            let next = self.budget.wrapping_sub(cost);
+            self.budget = if (next as i32) >= 0 { next } else { 0 };
+        } else if !hold {
+            let award = world.award(self);
+            let mut next = self.budget.wrapping_add(award);
+            if (next as i32) > (BUDGET_MAX as i32) {
+                next = BUDGET_MAX;
+            }
+            self.budget = next;
+        }
+        let heat = world.read_byte(item.wrapping_add(HEAT_SECOND))
+            ^ world.read_byte(item.wrapping_add(HEAT_FIRST));
+        let accepted = if !flag {
+            false
+        } else if hold {
+            true
+        } else if heat <= HEAT_FLOOR {
+            false
+        } else {
+            heat < world.heat_limit()
+        };
+        let old = self.budget;
+        if !accepted {
+            self.budget = 0;
+        }
+        self.budget_prev = old;
+        old
     }
 }

@@ -293,3 +293,43 @@ pub trait GateWorld: PlayerPedWorld {
     /// The pedestrian's tail slot, called with the pedestrian.
     fn tail_virtual(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>);
 }
+
+/// The collaborators of the task-budget step: the base step, the item lookup,
+/// the task classifier, the budget task query, the award, the frame cost
+/// globals and the heat limit, and one byte read from the item.
+pub trait TaskWorld: PlayerPedWorld {
+    /// Callee 0 of the budget step: the base class's step, which may change
+    /// the pedestrian.
+    fn base_step(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>) -> u32;
+
+    /// Callee 1 of the budget step: the pedestrian's current item. Zero when
+    /// there is none.
+    fn current_item(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>) -> u32;
+
+    /// Callee 2 of the budget step: classifies the task record. Returns the
+    /// answer word and the output word the callee writes; the tag byte the
+    /// callee also writes is not read by the step.
+    fn classify_task(&mut self, ped: &mut CPlayerPed, task: u32) -> (u32, u32);
+
+    /// Callee 3 of the budget step: whether a task of the given kind is in the
+    /// list (called with the list, the kind and the constant zero).
+    fn task_present(&mut self, ped: &mut CPlayerPed, list: u32, task: u32, zero: u32) -> u32;
+
+    /// Callee 4 of the budget step: the award added to the budget when no
+    /// task is present and the hold is clear.
+    fn award(&mut self, ped: &mut CPlayerPed) -> u32;
+
+    /// The frame delta time, as the bits of a float, read from a shared
+    /// global.
+    fn frame_delta_bits(&mut self) -> u32;
+
+    /// The cost scale constant, as the bits of a float, read from a shared
+    /// global.
+    fn cost_scale_bits(&mut self) -> u32;
+
+    /// The heat limit byte, read from a shared global.
+    fn heat_limit(&mut self) -> u8;
+
+    /// One byte of the item at an address (a read only).
+    fn read_byte(&mut self, address: u32) -> u8;
+}

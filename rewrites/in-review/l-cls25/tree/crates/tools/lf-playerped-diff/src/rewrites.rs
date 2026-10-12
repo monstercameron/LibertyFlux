@@ -150,3 +150,13 @@ pub mod fn_009ebed0 {
         "/../../../../../../../rewrites/verified/functions/fn_009ebed0.rs"
     ));
 }
+
+pub mod fn_00a2bcc0 {
+    #![allow(unused_imports)]
+    use super::{callee_addr, global};
+    use crate::{callee_cdecl, callee_thiscall, export};
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00a2bcc0.rs"
+    ));
+}

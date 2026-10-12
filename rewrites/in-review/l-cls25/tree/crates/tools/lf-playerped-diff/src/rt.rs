@@ -45,6 +45,8 @@ pub enum Kind {
     T4,
     /// `extern "thiscall" fn(u32 x 6) -> u32`.
     T6,
+    /// `extern "thiscall" fn(u32, u32, u32) -> u32` with two pointer arguments the stub fills.
+    T3Out,
     /// `extern "thiscall" fn(u32 x 7) -> u32`.
     T7,
     /// `extern "cdecl" fn() -> u32`.
@@ -287,6 +289,7 @@ pub fn callee_addr(id: u32) -> u32 {
         Kind::T3 => stub_t3 as *const () as usize as u32,
         Kind::T4 => stub_t4 as *const () as usize as u32,
         Kind::T6 => stub_t6 as *const () as usize as u32,
+        Kind::T3Out => stub_classify as *const () as usize as u32,
         Kind::T7 => stub_t7 as *const () as usize as u32,
         Kind::C0 => stub_c0 as *const () as usize as u32,
         Kind::C1 => stub_c1 as *const () as usize as u32,
@@ -373,6 +376,9 @@ pub fn global<T>(file_va: u32) -> *mut T {
     if file_va == AIM_STATE_VA {
         return AIM_STATE_CELL.as_ptr().cast::<T>();
     }
+    if let Some(index) = cell_index(file_va) {
+        return CELLS[index].as_ptr().cast::<T>();
+    }
     let end = MODEL_TABLE_VA + 4 * MODEL_TABLE.len() as u32;
     if (MODEL_TABLE_VA..end).contains(&file_va) && (file_va - MODEL_TABLE_VA) % 4 == 0 {
         let index = ((file_va - MODEL_TABLE_VA) / 4) as usize;
@@ -451,7 +457,7 @@ pub const TAIL_ID: u32 = 0x112;
 pub const VSUB_ID: u32 = 0x113;
 
 /// Number of global cells the gate block reads.
-pub const CELL_COUNT: usize = 12;
+pub const CELL_COUNT: usize = 15;
 
 /// The global cells, by index: the hook argument, the hook slot (the address
 /// of the hook stub), two flag bytes, two or-bytes, the guard byte, the state
@@ -483,6 +489,9 @@ fn cell_index(file_va: u32) -> Option<usize> {
         0x00F1_C040 => 9,
         0x0103_7720 => 10,
         0x00FE_8628 => 11,
+        0x0117_35BC => 12,
+        0x00FE_8C58 => 13,
+        0x0103_CE48 => 14,
         _ => return None,
     })
 }
@@ -604,4 +613,52 @@ pub fn vsub_stub_addr() -> u32 {
 #[must_use]
 pub fn trap_one_addr() -> u32 {
     trap_one as *const () as usize as u32
+}
+
+// ---------------------------------------------------------------------------
+// The task-budget step's classifier: a callee that writes two words through
+// pointer arguments, scripted per call.
+// ---------------------------------------------------------------------------
+
+/// The value a pointer argument is logged as: the log compares the shape of a
+/// call, not the address of the caller's locals.
+pub const POINTER_ARG: u32 = 0xFFFF_FFF0;
+
+/// Records a classifier call and pops its three scripted answers: the return
+/// word, the output word and the tag byte. The pointer arguments are logged
+/// as [`POINTER_ARG`].
+pub fn script_classify(id: u32, task: u32) -> (u32, u32, u32) {
+    let mut s = script();
+    s.calls
+        .push((format!("#{id}"), vec![task, POINTER_ARG, POINTER_ARG]));
+    let mut pop = || {
+        s.answers
+            .get_mut(&id)
+            .and_then(VecDeque::pop_front)
+            .unwrap_or(0)
+    };
+    let answer = pop();
+    let out = pop();
+    let tag = pop();
+    (answer, out, tag)
+}
+
+/// The classifier stub: a thiscall with two pointer arguments, which it fills
+/// with the scripted output word and tag byte.
+extern "thiscall" fn stub_classify(task: u32, out_ptr: u32, tag_ptr: u32) -> u32 {
+    let id = CURRENT_ID.with(Cell::get);
+    let (answer, out, tag) = script_classify(id, task);
+    // SAFETY: the rewrite passes the addresses of its own two locals, sized
+    // for the words written here.
+    unsafe {
+        (out_ptr as *mut u32).write_unaligned(out);
+        (tag_ptr as *mut u8).write(tag as u8);
+    }
+    answer
+}
+
+/// Address of the classifier stub, for a numbered callee of its shape.
+#[must_use]
+pub fn classify_stub_addr() -> u32 {
+    stub_classify as *const () as usize as u32
 }

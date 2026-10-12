@@ -843,12 +843,12 @@ fn trial_vf33(rng: &mut Rng, variant: Variant) -> Result<(), String> {
 
     let answers = vec![
         (3, vec![rng.next_u32()]),
-        (5, vec![rng.next_u32()]),
-        (6, vec![rng.next_u32()]),
-        (7, vec![rng.next_u32()]),
+        (5, vec![low_byte_answer(rng, 1)]),
+        (6, vec![low_byte_answer(rng, 2)]),
+        (7, vec![low_byte_answer(rng, 2)]),
         (8, vec![rng.next_u32()]),
-        (10, vec![rng.next_u32()]),
-        (rt::HOOK_ID, vec![rng.next_u32()]),
+        (10, vec![zero_or_word(rng)]),
+        (rt::HOOK_ID, vec![zero_or_word(rng)]),
         (rt::REFRESH_ID, vec![rng.next_u32()]),
         (rt::ATTACH_ID, vec![rng.next_u32()]),
         (rt::TAIL_ID, vec![rng.next_u32()]),
@@ -872,6 +872,7 @@ fn trial_vf33(rng: &mut Rng, variant: Variant) -> Result<(), String> {
             Variant::Wrong => wrong_vf33(ped, this, world),
         },
     );
+    count_vf33(&rw);
     compare("vf33", &rw, &lf)
 }
 
@@ -1028,4 +1029,60 @@ fn vf33_lift_matches_rewrite() {
 #[test]
 fn vf33_wrong_lift_is_caught() {
     expect_wrong_caught("vf33", trial_vf33, 0x33);
+}
+
+/// Branch counters for the gate block's generated cases: the ready answer
+/// was set, the attachment ran, the deep refresh ran, the sub-object step ran,
+/// the tail ran, and the second probe answered zero.
+static VF33_COUNTS: [std::sync::atomic::AtomicU32; 6] =
+    [const { std::sync::atomic::AtomicU32::new(0) }; 6];
+
+/// Adds one rewrite outcome to the gate block's branch counters.
+fn count_vf33(rw: &support::Outcome) {
+    use std::sync::atomic::Ordering;
+    let has = |id: u32| rw.calls.iter().any(|(n, _)| *n == format!("#{id}"));
+    let flags = [
+        rw.ret != 0,
+        has(lf_playerped_diff::rt::ATTACH_ID),
+        has(8),
+        has(lf_playerped_diff::rt::VSUB_ID),
+        has(lf_playerped_diff::rt::TAIL_ID),
+        has(6) && rw.ret == 0,
+    ];
+    for (counter, hit) in VF33_COUNTS.iter().zip(flags) {
+        if hit {
+            counter.fetch_add(1, Ordering::SeqCst);
+        }
+    }
+}
+
+#[test]
+fn vf33_generated_cases_reach_every_branch() {
+    let (failures, first) = run_trials(TRIALS, 0x33, trial_vf33, Variant::Lifted);
+    assert_eq!(failures, 0, "vf33: {first:?}");
+    let counts: Vec<u32> = VF33_COUNTS
+        .iter()
+        .map(|c| c.load(std::sync::atomic::Ordering::SeqCst))
+        .collect();
+    eprintln!("vf33 branch counts (ready, attach, deep, sub, tail, second-probe-zero): {counts:?}");
+    assert!(counts.iter().all(|&n| n > 0), "a gate branch is never generated: {counts:?}");
+}
+
+/// An answer whose low byte is zero one time in two, so both outcomes of a
+/// probe's test come up.
+fn low_byte_answer(rng: &mut Rng, _which: u32) -> u32 {
+    if rng.coin() {
+        rng.next_u32() & 0xFFFF_FF00
+    } else {
+        rng.next_u32() | 1
+    }
+}
+
+/// An answer that is zero one time in two.
+fn zero_or_word(rng: &mut Rng) -> u32 {
+    if rng.coin() {
+        0
+    } else {
+        rng.next_u32()
+    }
 }

@@ -26,6 +26,7 @@ lf_checker_rt::export!(fastcall, rw_00628700(src_start: u32, src_end: u32, dst_e
             s = s.sub(RECORD as usize);
             d = d.sub(RECORD as usize);
             core::ptr::copy_nonoverlapping(s, d, 24);
+            (d.add(24) as *mut u16).write(((s.add(24)) as *const u16).read_unaligned());
             (d.add(28) as *mut u32).write(((s.add(28)) as *const u32).read_unaligned());
             (d.add(32) as *mut u16).write(((s.add(32)) as *const u16).read_unaligned());
             (d.add(36) as *mut u32).write(((s.add(36)) as *const u32).read_unaligned());

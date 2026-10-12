@@ -5,9 +5,8 @@
 //! fields used here are plain words, floats and pointers; several of its
 //! virtual slots call into collaborators (the sub-objects it notifies, the
 //! job and model services, the context lookup) and read or write the
-//! pedestrian itself while doing so. Ten of its virtual slots have verified
-//! 32-bit rewrites with behaviour in them, and [`CPlayerPed`] restates
-//! those ten:
+//! pedestrian itself while doing so. Thirteen of its verified rewrites have
+//! behaviour in them, and [`CPlayerPed`] restates those thirteen:
 //!
 //! - the ready-gated job pair ([`CPlayerPed::run_jobs_if_ready`]);
 //! - the linked notification ([`CPlayerPed::notify_while_linked`]);
@@ -17,6 +16,9 @@
 //! - the setup-and-store step ([`CPlayerPed::setup_and_store`]);
 //! - the model change ([`CPlayerPed::change_model`]);
 //! - the sub-object entry chain ([`CPlayerPed::run_entry_chain`]);
+//! - the relink on movement ([`CPlayerPed::relink_on_move`]);
+//! - the aim target acquisition ([`CPlayerPed::acquire_aim_target`]);
+//! - the state refresh gate ([`CPlayerPed::refresh_gate`]);
 //! - two copies of four-word blocks ([`CPlayerPed::set_transform`] and
 //!   [`CPlayerPed::set_descriptor`]).
 //!
@@ -42,4 +44,4 @@ pub mod registry;
 pub mod world;
 
 pub use ped::{CPlayerPed, ObjRef, offsets};
-pub use world::{ByteGlobal, GateWorld, ObjTag, PedTag, PlayerPedWorld, WordGlobal};
+pub use world::{ByteGlobal, GateWorld, ObjTag, PedTag, PlayerPedWorld, TaskWorld, WordGlobal};
