@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: 170 small list and store routines become two methods",
+    "title": "Devlog: the lift lane's entry on the static list family",
     "commit": null,
+    "summary": "The lane's own account of lifting 170 small list and store routines is added to the devlog.",
+    "changes": [
+      "The entry gives the two families and their lifted forms, why grouping by extracted roles worked where a hash of the text split one routine into eleven groups, why a wrong version that only reorders stores to distinct words is equivalent and cannot be required to fail, and the 28 members left."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: 170 small list and store routines become two methods",
+    "commit": "d88a10501b109693c6e6558dfd43d9cb289e98f8",
     "summary": "The second list chosen by shape, every verified function of 21 bytes that calls nothing, is mostly one routine: a static node put at the head of a list. It is lifted once and proved against 162 verified rewrites; eight more are a store of two constants.",
     "changes": [
       "crates/lf-core gains a static_list module with two small owning types. One holds the link words of the game's static lists by index and has a single method that puts a node at a list's head, saving the old head and returning it. The other holds plain words and stores a pair of constants. No unsafe code, no addresses, nothing that depends on pointer width; the 162 verified rewrites it replaces are 2,713 lines with 162 unsafe blocks.",
