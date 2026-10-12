@@ -1,4 +1,4 @@
-// original: 0x008857F0 cwm_stream_reader_get_sample_rate (proposed)
+// original: 0x008857F0 rage::CWMStreamReader::get_sample_rate
 
 /// Return the sample-rate field when the stream reader's ready byte is set.
 ///

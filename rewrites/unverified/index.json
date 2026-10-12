@@ -648,6 +648,30 @@
   "reason": null
  },
  {
+  "address": "0x005ECA60",
+  "name": null,
+  "file": "fn_005eca60.rs",
+  "lane": "r-s784",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005ECA80",
+  "name": null,
+  "file": "fn_005eca80.rs",
+  "lane": "r-s784",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005EE5B0",
+  "name": null,
+  "file": "fn_005ee5b0.rs",
+  "lane": "r-s784",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x005EE990",
   "name": "CHtmlTextFormat::~CHtmlTextFormat_2",
   "file": "fn_005ee990.rs",
@@ -1000,14 +1024,6 @@
   "reason": "The original stores the returned count byte at params+0x1e3; the earlier rewrite omitted it, causing the heap mismatch at 0x33E0. After adding the byte store, a 60-trial zero-count diagnostic passes 60/60 with all originals complete. The required 1,000-trial correct and wrong-version runs were started but stopped before completion at the 95-minute lane cap."
  },
  {
-  "address": "0x006397A0",
-  "name": "rage::ptxRule::set_name",
-  "file": "fn_006397a0.rs",
-  "lane": "r-s777",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00639810",
   "name": "rage::ptxRule::~ptxRule",
   "file": "fn_00639810.rs",
@@ -1016,9 +1032,9 @@
   "reason": null
  },
  {
-  "address": "0x00642950",
-  "name": "rage::ptxDomain::vf4",
-  "file": "fn_00642950.rs",
+  "address": "0x0063AA40",
+  "name": "blend_bits_by_mask",
+  "file": "fn_0063aa40.rs",
   "lane": "r-s779",
   "outcome": "not_reached",
   "reason": null
@@ -1352,9 +1368,17 @@
   "reason": null
  },
  {
-  "address": "0x0087F770",
-  "name": "rage::miniheapAllocator::contains",
-  "file": "fn_0087f770.rs",
+  "address": "0x00880260",
+  "name": "append_utf16_range",
+  "file": "fn_00880260.rs",
+  "lane": "r-s775",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00880310",
+  "name": "allocate_utf16_buffer",
+  "file": "fn_00880310.rs",
   "lane": "r-s775",
   "outcome": "not_reached",
   "reason": null
@@ -1430,30 +1454,6 @@
   "lane": "a-U105",
   "outcome": "deferred",
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
- },
- {
-  "address": "0x008AD3D0",
-  "name": "audio_shape_call_blend",
-  "file": "fn_008ad3d0.rs",
-  "lane": "a-U146",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x008D6810",
-  "name": "paired_polar_angles",
-  "file": "fn_008d6810.rs",
-  "lane": "a-U144",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x008D6920",
-  "name": "paired_heading_blend",
-  "file": "fn_008d6920.rs",
-  "lane": "a-U144",
-  "outcome": "failed_v8",
-  "reason": "The prior passing proof repeated the same wrapped-helper answer for all three calls and did not compare the function ST0 result; that contract allowed the rewrite to store the third helper result in the second output. The return channel and per-call sequence have been corrected; fresh proof pending."
  },
  {
   "address": "0x008DBF60",
@@ -1896,84 +1896,12 @@
   "reason": null
  },
  {
-  "address": "0x00A66D10",
-  "name": "phInstBehaviorExplosionGta::~phInstBehaviorExplosionGta",
-  "file": "fn_00a66d10.rs",
-  "lane": "r-s770",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A66D70",
-  "name": "CEventOnFire::~CEventOnFire__deleting",
-  "file": "fn_00a66d70.rs",
-  "lane": "r-s770",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A67740",
-  "name": "CEventOnFire::~CEventOnFire",
-  "file": "fn_00a67740.rs",
-  "lane": "r-s770",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A75A40",
   "name": "ped_task_update_dispatch",
   "file": "fn_00a75a40.rs",
   "lane": "r-b446",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00A7D710",
-  "name": "CMeleeTaskInfo::CMeleeTaskInfo_2",
-  "file": "fn_00a7d710.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D730",
-  "name": "CPlayRandomAmbientsInfo::CPlayRandomAmbientsInfo",
-  "file": "fn_00a7d730.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D750",
-  "name": "timing_record_init",
-  "file": "fn_00a7d750.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D980",
-  "name": "CScenarioTaskInfo::CScenarioTaskInfo_2",
-  "file": "fn_00a7d980.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D9D0",
-  "name": "CScriptAnimTaskInfo::CScriptAnimTaskInfo_2",
-  "file": "fn_00a7d9d0.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7DA60",
-  "name": "CScriptAnimTaskInfo::CScriptAnimTaskInfo",
-  "file": "fn_00a7da60.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00A7E3B0",
@@ -2392,6 +2320,38 @@
   "reason": "other"
  },
  {
+  "address": "0x00AE4E00",
+  "name": "T_CB_Generic_2Args<void(*)(bool, bool), bool, bool>::invoke",
+  "file": "fn_00ae4e00.rs",
+  "lane": "r-s781",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AE4E20",
+  "name": "T_CB_Generic_3Args<void(*)(int, const rage::Matrix34&, unsigned char), int, rage::Matrix34, unsigned char>::invoke",
+  "file": "fn_00ae4e20.rs",
+  "lane": "r-s781",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AE4E40",
+  "name": "T_CB_Generic_4Args<void(*)(int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode), int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode>::invoke",
+  "file": "fn_00ae4e40.rs",
+  "lane": "r-s781",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AE4E60",
+  "name": "T_CB_Generic_5Args<void(*)(int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode, int), int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode, int>::invoke",
+  "file": "fn_00ae4e60.rs",
+  "lane": "r-s781",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00AE5C10",
   "name": null,
   "file": "fn_00ae5c10.rs",
@@ -2464,9 +2424,25 @@
   "reason": "partly_proven"
  },
  {
+  "address": "0x00AF5540",
+  "name": "select_flagged_global",
+  "file": "fn_00af5540.rs",
+  "lane": "r-s781",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00AF5560",
   "name": "pad_has_active_input",
   "file": "fn_00af5560.rs",
+  "lane": "r-s781",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF55F0",
+  "name": "pad_is_device_enabled",
+  "file": "fn_00af55f0.rs",
   "lane": "r-s781",
   "outcome": "not_reached",
   "reason": null
@@ -4256,17 +4232,17 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00CDBCB0",
-  "name": "CTaskSimpleNMBrace::vf21",
-  "file": "fn_00cdbcb0.rs",
+  "address": "0x00CDBCE0",
+  "name": "CTaskSimpleNMFlinch::vf21",
+  "file": "fn_00cdbce0.rs",
   "lane": "r-s776",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00CDBCE0",
-  "name": "CTaskSimpleNMFlinch::vf21",
-  "file": "fn_00cdbce0.rs",
+  "address": "0x00CDBD40",
+  "name": "CTaskSimpleNMHighFall::vf21",
+  "file": "fn_00cdbd40.rs",
   "lane": "r-s776",
   "outcome": "not_reached",
   "reason": null
@@ -4445,14 +4421,6 @@
   "file": "fn_00d26a90.rs",
   "lane": "r-b349",
   "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D27850",
-  "name": "targeting_bulk_update",
-  "file": "fn_00d27850.rs",
-  "lane": "a-U143",
-  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -4640,6 +4608,22 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00DB7840",
+  "name": "UIMusicViewer::vf2",
+  "file": "fn_00db7840.rs",
+  "lane": "r-s782",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DC1760",
+  "name": "peds_task_path_solve",
+  "file": "fn_00dc1760.rs",
+  "lane": "r-b709",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DCB980",
   "name": "vehicle_collision_response_is_allowed",
   "file": "fn_00dcb980.rs",
@@ -4824,41 +4808,17 @@
   "reason": null
  },
  {
-  "address": "0x00DF3B60",
-  "name": "UIFileViewer::UIFileViewer",
-  "file": "fn_00df3b60.rs",
-  "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DF3BF0",
-  "name": "UIFileViewer::UIFileViewer_2",
-  "file": "fn_00df3bf0.rs",
-  "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DF3C10",
-  "name": "UIFileViewer::vf2",
-  "file": "fn_00df3c10.rs",
-  "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DF3C40",
-  "name": "UIFileViewer::apply_state_to_child_objects",
-  "file": "fn_00df3c40.rs",
-  "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DF3C90",
   "name": "UIFileViewer::clear_file_list_state",
   "file": "fn_00df3c90.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DF68A0",
+  "name": "UIFileViewer::class_name_hash",
+  "file": "fn_00df68a0.rs",
   "lane": "r-s780",
   "outcome": "not_reached",
   "reason": null
@@ -4869,6 +4829,14 @@
   "file": "fn_00dfbf26.rs",
   "lane": "a-U148",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00E38F40",
+  "name": "rage::audEntity::audEntity",
+  "file": "fn_00e38f40.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4904,14 +4872,6 @@
   "reason": null
  },
  {
-  "address": "0x00E465B0",
-  "name": "UIScreen::~UIScreen__deleting",
-  "file": "fn_00e465b0.rs",
-  "lane": "r-s773",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00E465D0",
   "name": "UIScreen::type_name_hash",
   "file": "fn_00e465d0.rs",
@@ -4920,41 +4880,9 @@
   "reason": null
  },
  {
-  "address": "0x00E466F0",
-  "name": "UIBenchMark::UIBenchMark_2",
-  "file": "fn_00e466f0.rs",
-  "lane": "r-s773",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E46710",
-  "name": "UIBenchMark::~UIBenchMark__deleting",
-  "file": "fn_00e46710.rs",
-  "lane": "r-s773",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00E47DB0",
   "name": "UIBenchMark::type_name_hash",
   "file": "fn_00e47db0.rs",
-  "lane": "r-s773",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E48770",
-  "name": "UITitleMenu::UITitleMenu_2",
-  "file": "fn_00e48770.rs",
-  "lane": "r-s773",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E48790",
-  "name": "UITitleMenu::~UITitleMenu__deleting",
-  "file": "fn_00e48790.rs",
   "lane": "r-s773",
   "outcome": "not_reached",
   "reason": null
@@ -5157,38 +5085,6 @@
   "file": "fn_00e6e980.rs",
   "lane": "r-s589",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00E6F060",
-  "name": "register_image_table_range",
-  "file": "fn_00e6f060.rs",
-  "lane": "r-s769",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00E713E0",
-  "name": "release_audio_object_array_resources",
-  "file": "fn_00e713e0.rs",
-  "lane": "r-s778",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E71470",
-  "name": "notify_code_pointer_3",
-  "file": "fn_00e71470.rs",
-  "lane": "r-s778",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E71490",
-  "name": "drain_notification_table",
-  "file": "fn_00e71490.rs",
-  "lane": "r-s778",
-  "outcome": "not_reached",
   "reason": null
  },
  {

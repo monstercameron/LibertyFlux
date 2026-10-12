@@ -1,4 +1,4 @@
-// original: 0x00886000 audqt_stream_reader_get_position_ms (proposed)
+// original: 0x00886000 rage::audQTStreamReader::get_position_ms
 
 /// Return the position in milliseconds while the reader is active.
 ///

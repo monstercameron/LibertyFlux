@@ -1,4 +1,4 @@
-// original: 0x00885810 cwm_stream_reader_get_media_duration (proposed)
+// original: 0x00885810 rage::CWMStreamReader::get_media_duration
 
 /// Return the media-duration field when the stream reader is ready.
 ///

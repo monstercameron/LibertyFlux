@@ -6,7 +6,7 @@
 /// finite magnitudes at or above the reduction limit saturate to infinity for
 /// positive inputs and zero for negative inputs. Infinities use their stored
 /// results, while NaNs are quieted by the original's self-addition path.
-use core::arch::x86::{_mm_cvtss_si32, _mm_set_ps, _mm_set_ss, __m128};
+use core::arch::x86::{_mm_cvtss_si32, _mm_cvtpd_ps, _mm_set_pd, _mm_set_ps, _mm_set_ss, __m128};
 
 const SCALE_F32_BITS: u32 = 0x46B8_AA3B;
 const SCALE_F64_VA: u32 = 0x00F0_85D8;
@@ -121,7 +121,28 @@ lf_checker_rt::export!(cdecl, rw_00dfbf26() -> __m128 {
                 .wrapping_add((exponent_adjustment >> 32) as u32) as u64)
                 << 32;
         let exponent = f64::from_bits(adjusted_bits);
-        let output = (reduced * exponent) as f32;
-        vector_result(output, [0; 3])
+        let raw_bits = input_bits;
+        if magnitude_bits > 0x42AE_AC4F && raw_bits >= 0x42B1_7218 {
+            // The source takes a scalar-conversion branch for the high positive
+            // range and for large negative inputs. It preserves the reduction
+            // table's upper word and the incoming upper 64 bits of XMM0.
+            let special_sum = core::hint::black_box(correction) + core::hint::black_box(reduction);
+            let special_product = core::hint::black_box(special_sum) * core::hint::black_box(exponent);
+            let special_output = special_product as f32;
+            vector_result(
+                special_output,
+                [
+                    (reduction.to_bits() >> 32) as u32,
+                    lf_checker_rt::xmm_word(0, 2),
+                    lf_checker_rt::xmm_word(0, 3),
+                ],
+            )
+        } else {
+            let output = core::hint::black_box(reduced) * core::hint::black_box(exponent);
+            let upper_input_bits = ((lf_checker_rt::xmm_word(0, 3) as u64) << 32)
+                | lf_checker_rt::xmm_word(0, 2) as u64;
+            let upper_input = f64::from_bits(upper_input_bits);
+            _mm_cvtpd_ps(_mm_set_pd(upper_input, output))
+        }
     }
 });

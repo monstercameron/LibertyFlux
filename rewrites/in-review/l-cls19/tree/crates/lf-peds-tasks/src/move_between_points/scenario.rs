@@ -1,4 +1,4 @@
-//! The move-between-points scenario task: the scenario's own methods.
+﻿//! The move-between-points scenario task: the scenario's own methods.
 //!
 //! A pedestrian walks a route between scenario points. The scenario task holds
 //! a status word, an activity byte, a guard word, a state word and a payload
@@ -25,7 +25,7 @@ pub const IDLE_WEIGHT: f32 = -1.0;
 /// Only the words the lifted methods touch are here. The sub-task is not a
 /// field: the methods that run it take it as an argument (see
 /// [`MoveBetweenPointsScenario::run_tick`]).
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct MoveBetweenPointsScenario {
     /// Status bits. Bit 0 is sticky, bit 1 is done.
     pub status: u32,
@@ -43,8 +43,15 @@ pub struct MoveBetweenPointsScenario {
     /// through them as it commits a destination and a leg.
     pub state: u32,
     /// The payload handle held while the scenario is in its move state. Zero
-    /// when nothing is held.
+    /// when nothing is held. The main tick (	ick) keeps the leg handle in this
+    /// same word: the rewrites name it payload or leg.
     pub payload: u32,
+    /// The sub-task handle the tick returns when it has no other answer.
+    pub sub_task: u32,
+    /// The wait timer, counted down each tick by the frame step.
+    pub wait_timer: f32,
+    /// The destination point the tick commits, four words.
+    pub point: [u32; 4],
 }
 
 impl MoveBetweenPointsScenario {

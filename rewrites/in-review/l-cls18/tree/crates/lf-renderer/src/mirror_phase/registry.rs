@@ -1,4 +1,4 @@
-//! What each lifted method covers, and what it narrows.
+﻿//! What each lifted method covers, and what it narrows.
 //!
 //! One row per verified method of the mirror-reflection render phase. A row
 //! says whether the method is lifted and proven, names the virtual slot it
@@ -45,10 +45,10 @@ pub const METHODS: &[MethodRecord] = &[
         state: LiftState::Proven,
         narrowed: &[
             "the parameter block must be non-null on the gated path; the original faults on a null one",
-            "the early returns answer zero; the original answers its accumulator there (no direct caller reads it)",
+            "the early returns answer zero; the original answers its accumulator there. The inventory lists no direct caller (reached only through the virtual table), so the answer is unchecked, not read",
             "the phase's own words are held in the struct for the call; the host is assumed not to write them",
             "the remembered word is named as the identity with its low byte replaced, not computed from the address",
-            "the parameter table is a slice; an entry outside it panics rather than reading the image",
+            "the parameter table is a slice; an entry outside it panics rather than reading the image; the proof draws swap indices 0 to 20 of a 64-word table",
         ],
     },
     MethodRecord {
@@ -70,7 +70,7 @@ pub const METHODS: &[MethodRecord] = &[
         narrowed: &[
             "returns nothing; the original returns zero",
             "the phase's own words are held in the struct for the call; the host is assumed not to write them",
-            "the staged float is the one word the original's probe selects; its high bytes are compared, not the address",
+            "the staged float is chosen by the probe's low byte; its high bytes are compared as values",
         ],
     },
 ];
@@ -83,3 +83,4 @@ pub fn proven_count() -> usize {
         .filter(|m| m.state == LiftState::Proven)
         .count()
 }
+

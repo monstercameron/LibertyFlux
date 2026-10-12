@@ -56,3 +56,12 @@ pub mod fn_00c819e0 {
         "/../../../../../../../rewrites/verified/functions/fn_00c819e0.rs"
     ));
 }
+
+/// Move-between-points tick of the scenario (the scenario's twentieth virtual method).
+pub mod fn_00c7bc70 {
+    #![allow(unused_imports)]
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00c7bc70.rs"
+    ));
+}

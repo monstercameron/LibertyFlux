@@ -8,8 +8,9 @@
 /// is unchanged and EAX is the end value. Otherwise the method compares the
 /// key pointer stored in the image with the text at the second stack
 /// argument's `+0x0c`. A match ORs bit `0x04` into the status byte at
-/// `this + 0x14`; EAX is zero for a match and one for a mismatch. This is an
-/// x86 thiscall method with two stack arguments.
+/// `this + 0x14`; EAX is zero for a match, minus one when the first differing
+/// key byte is below the input byte, and one when it is above. This x86
+/// thiscall method has two stack arguments and callee cleanup of eight bytes.
 lf_checker_rt::export!(thiscall, rw_00cdbce0(this: u32, _unused: u32, params: u32) -> u32 {
     unsafe {
         const START_TICK: u32 = 0x20;
@@ -30,14 +31,14 @@ lf_checker_rt::export!(thiscall, rw_00cdbce0(this: u32, _unused: u32, params: u3
         let key = lf_checker_rt::global::<u32>(KEY_SLOT).read_unaligned();
         let text = params.wrapping_add(INPUT_TEXT);
         let mut byte_offset = 0u32;
-        let matched = loop {
+        let (matched, key_precedes_input) = loop {
             let key_byte = (key.wrapping_add(byte_offset) as *const u8).read();
             let text_byte = (text.wrapping_add(byte_offset) as *const u8).read();
             if key_byte != text_byte {
-                break false;
+                break (false, key_byte < text_byte);
             }
             if key_byte == 0 {
-                break true;
+                break (true, false);
             }
             byte_offset = byte_offset.wrapping_add(1);
         };
@@ -46,6 +47,8 @@ lf_checker_rt::export!(thiscall, rw_00cdbce0(this: u32, _unused: u32, params: u3
             let status = this.wrapping_add(STATUS) as *mut u8;
             status.write(status.read() | 4);
             0
+        } else if key_precedes_input {
+            u32::MAX
         } else {
             1
         }

@@ -1,4 +1,4 @@
-//! The move-between-points scenario family, lifted from its verified rewrites.
+﻿//! The move-between-points scenario family, lifted from its verified rewrites.
 //!
 //! The scenario task walks a pedestrian between scenario points. This module
 //! holds the scenario's own data ([`MoveBetweenPointsScenario`]), the
@@ -10,8 +10,10 @@
 
 mod host;
 mod scenario;
+mod tick;
 
 pub mod registry;
 
 pub use host::{MoveBetweenPointsHost, SubTask};
+pub use tick::{AUX_CHAT, AUX_NARROW, RouteFirst, RouteSecond, TickHost, WorldQuery};
 pub use scenario::{ACTIVE_WEIGHT, IDLE_WEIGHT, MoveBetweenPointsScenario, STATUS_DONE, STATUS_STICKY};

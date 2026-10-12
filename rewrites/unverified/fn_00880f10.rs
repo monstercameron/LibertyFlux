@@ -1,4 +1,4 @@
-// original: 0x00880F10 aud_voice_pc_adpcm_get_sample_count (proposed)
+// original: 0x00880F10 rage::audVoicePcAdpcm::get_sample_count
 
 /// Return the configured sample count for one channel plus one frame.
 ///

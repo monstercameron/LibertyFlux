@@ -1,4 +1,4 @@
-//! The 32-bit differential runtime: the checker macros and the scripted globals
+﻿//! The 32-bit differential runtime: the checker macros and the scripted globals
 //! and callees the scenario rewrites run against.
 //!
 //! Mirrors the surface the checker builds verified rewrites against (`export!`,
@@ -14,7 +14,7 @@ use std::sync::atomic::{AtomicU32, Ordering};
 static GLOBALS: Mutex<Vec<(u32, u32)>> = Mutex::new(Vec::new());
 
 /// Number of callee ids the rewrites use (ids are small integers in each rewrite).
-const CALLEE_IDS: usize = 8;
+const CALLEE_IDS: usize = 32;
 
 /// Stub address per callee id; zero when none is registered.
 static CALLEES: [AtomicU32; CALLEE_IDS] = [const { AtomicU32::new(0) }; CALLEE_IDS];

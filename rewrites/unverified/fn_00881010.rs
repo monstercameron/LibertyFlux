@@ -1,4 +1,4 @@
-// original: 0x00881010 audio_channel_index_from_pointer (proposed)
+// original: 0x00881010 audio_channel_index_from_pointer
 
 /// Return the signed element index for an address in a 100-byte channel array.
 ///

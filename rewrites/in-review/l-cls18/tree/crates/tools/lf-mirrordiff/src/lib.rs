@@ -32,3 +32,7 @@ pub mod rewrites;
 
 #[cfg(target_arch = "x86")]
 pub mod harness;
+
+#[cfg(target_arch = "x86")]
+pub mod mutants;
+

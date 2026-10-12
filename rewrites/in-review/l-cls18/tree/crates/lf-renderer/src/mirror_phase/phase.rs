@@ -141,7 +141,8 @@ impl MirrorReflectionPhase {
 
     /// Renders the phase: gates, probes, a float block and a toggle, four
     /// query blocks (two stamped), a player call, a selector, and a final
-    /// gated toggle. The original returns zero; so does the lift.
+    /// gated toggle. The verified rewrite returns zero; the lift returns
+    /// nothing, since the zero carries no meaning of the original's.
     pub fn render<H: MirrorHost>(&self, host: &mut H, g: &mut MirrorGlobals) {
         if g.render_enabled == 0 || g.render_skipped != 0 {
             return;
@@ -251,8 +252,10 @@ impl MirrorReflectionPhase {
     /// Refreshes the reflection target: gates and two parameter checks, a
     /// fetch and rebuild of the target, a hook on the current target object,
     /// a temporary swap of the parameter block from the global table around
-    /// a commit, the second hook, then the footer's answer. The original's
-    /// early returns answer its accumulator; the lift answers zero there.
+    /// a commit, the second hook, then the footer's answer. On the early
+    /// returns the verified rewrite answers zero, where the original answers
+    /// whatever its caller left in the accumulator; the lift answers zero
+    /// there too, and the registry records that the answer is unchecked.
     pub fn refresh<H: MirrorHost>(&mut self, host: &mut H, g: &MirrorGlobals) -> u32 {
         if g.render_enabled == 0 || g.render_skipped != 0 {
             return 0;

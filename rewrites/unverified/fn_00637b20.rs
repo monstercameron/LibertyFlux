@@ -10,7 +10,8 @@ lf_checker_rt::export!(thiscall, rw_00637B20(this: u32, flags: u32) -> u32 {
     const TLS_REGISTRY_SLOT: usize = 0;
     const REGISTRY_INTERFACE: u32 = 8;
 
-    let _ = lf_checker_rt::callee_thiscall!(DESTROY_OBJECT, u32, this);
+    unsafe {
+        let _ = lf_checker_rt::callee_thiscall!(DESTROY_OBJECT, u32, this);
 
         if flags & 1 != 0 && this != 0 {
             let registry = lf_checker_rt::tls_slot(TLS_REGISTRY_SLOT);
@@ -19,5 +20,6 @@ lf_checker_rt::export!(thiscall, rw_00637B20(this: u32, flags: u32) -> u32 {
             let _ = lf_checker_rt::callee_thiscall!(REMOVE_REFERENCE, u32, interface, this);
         }
 
-    this
+        this
+    }
 });

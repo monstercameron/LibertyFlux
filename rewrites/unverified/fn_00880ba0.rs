@@ -1,4 +1,4 @@
-// original: 0x00880BA0 audio_format_keys_equal (proposed)
+// original: 0x00880BA0 audio_format_keys_equal
 
 /// Compare the four 32-bit words of the left and right audio-format keys.
 ///
