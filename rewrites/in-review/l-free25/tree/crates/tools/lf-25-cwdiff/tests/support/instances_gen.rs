@@ -8,6 +8,7 @@ use lf_25_cwdiff::rewrites;
 use lf_core::constant_writes::{ConstantWrite, ConstantWrites, Returns, WriteWidth};
 
 /// One verified rewrite of the batch and the lifted routine's data for it.
+#[allow(dead_code)]
 pub struct NamedWrites {
     /// The export name of the rewrite.
     pub name: &'static str,

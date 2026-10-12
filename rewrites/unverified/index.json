@@ -456,22 +456,6 @@
   "reason": ""
  },
  {
-  "address": "0x0059CC70",
-  "name": "fn_0059cc70",
-  "file": "fn_0059cc70.rs",
-  "lane": "r-s756",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0059CC90",
-  "name": "fn_0059cc90",
-  "file": "fn_0059cc90.rs",
-  "lane": "r-s756",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0059E530",
   "name": "timing_tables_calibrate",
   "file": "fn_0059e530.rs",
@@ -968,6 +952,14 @@
   "reason": "other"
  },
  {
+  "address": "0x0064F7D0",
+  "name": null,
+  "file": "fn_0064f7d0.rs",
+  "lane": "a-U133",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x0065FFE0",
   "name": "rage::snConnectToPeerTask::~snConnectToPeerTask__deleting",
   "file": "fn_0065ffe0.rs",
@@ -1264,6 +1256,14 @@
   "reason": "other"
  },
  {
+  "address": "0x006954F0",
+  "name": "id_table_init",
+  "file": "fn_006954f0.rs",
+  "lane": "r-s750",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x006F7F10",
   "name": "mainloop_timer_mode_guard",
   "file": "fn_006f7f10.rs",
@@ -1328,6 +1328,14 @@
   "reason": null
  },
  {
+  "address": "0x0087B2C0",
+  "name": null,
+  "file": "fn_0087b2c0.rs",
+  "lane": "r-s755",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x0087B310",
   "name": null,
   "file": "fn_0087b310.rs",
@@ -1385,10 +1393,18 @@
  },
  {
   "address": "0x0089A480",
-  "name": "rage::audLoopingSound::vf7",
+  "name": null,
   "file": "fn_0089a480.rs",
   "lane": "r-s761",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x0089A570",
+  "name": null,
+  "file": "fn_0089a570.rs",
+  "lane": "r-s761",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -1446,6 +1462,30 @@
   "lane": "r-b211",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00932190",
+  "name": "fn_00932190",
+  "file": "fn_00932190.rs",
+  "lane": "r-s763",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009321C0",
+  "name": "fn_009321c0",
+  "file": "fn_009321c0.rs",
+  "lane": "r-s763",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00933C80",
+  "name": "fn_00933c80",
+  "file": "fn_00933c80.rs",
+  "lane": "r-s763",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x009359E0",
@@ -1542,6 +1582,14 @@
   "lane": "a-U136",
   "outcome": "not yet run",
   "reason": ""
+ },
+ {
+  "address": "0x00977430",
+  "name": "fn_00977430",
+  "file": "fn_00977430.rs",
+  "lane": "r-s763",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x0098CD60",
@@ -1728,14 +1776,6 @@
   "reason": null
  },
  {
-  "address": "0x009E39F0",
-  "name": null,
-  "file": "fn_009e39f0.rs",
-  "lane": "a-U134",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x009EF350",
   "name": "CPlayerPed::vf58",
   "file": "fn_009ef350.rs",
@@ -1808,17 +1848,17 @@
   "reason": "other"
  },
  {
-  "address": "0x00A2F200",
-  "name": "rage::sysEmergencyAllocator::vf6",
-  "file": "fn_00a2f200.rs",
+  "address": "0x00A2FC10",
+  "name": "function_00a2fc10",
+  "file": "fn_00a2fc10.rs",
   "lane": "r-s752",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00A2F220",
-  "name": "rage::sysEmergencyAllocator::vf18",
-  "file": "fn_00a2f220.rs",
+  "address": "0x00A2FD00",
+  "name": "function_00a2fd00",
+  "file": "fn_00a2fd00.rs",
   "lane": "r-s752",
   "outcome": "not_reached",
   "reason": null
@@ -1976,11 +2016,11 @@
   "reason": null
  },
  {
-  "address": "0x00A7F740",
-  "name": null,
-  "file": "fn_00a7f740.rs",
+  "address": "0x00A804D0",
+  "name": "CSimpleMeleeActionResultTaskInfo::create_task",
+  "file": "fn_00a804d0.rs",
   "lane": "r-s762",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2654,6 +2694,14 @@
   "lane": "r-s407",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00B51ED0",
+  "name": "euphoria_slot_rebind",
+  "file": "fn_00b51ed0.rs",
+  "lane": "r-s754",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00B51F70",
@@ -4248,12 +4296,12 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00CF0E50",
-  "name": "Stat_RegisterBest_2",
-  "file": "fn_00cf0e50.rs",
+  "address": "0x00CF1D70",
+  "name": "stat_passes_mode_check",
+  "file": "fn_00cf1d70.rs",
   "lane": "r-s757",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00CF72B0",
@@ -4440,22 +4488,6 @@
   "reason": ""
  },
  {
-  "address": "0x00D158F0",
-  "name": "CTaskSimpleLoadAnimPlayAnim::make_abortable",
-  "file": "fn_00d158f0.rs",
-  "lane": "r-s751",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D15920",
-  "name": "CTaskSimplePlayUpperCombatAnim::make_abortable",
-  "file": "fn_00d15920.rs",
-  "lane": "r-s751",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00D254D0",
   "name": "CCustomShaderEffectVehicleFX::vf6",
   "file": "fn_00d254d0.rs",
@@ -4604,16 +4636,8 @@
   "name": "classify_seat_position",
   "file": "fn_00d38680.rs",
   "lane": "r-s751",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D3DDB0",
-  "name": "anim_request_manager_init",
-  "file": "fn_00d3ddb0.rs",
-  "lane": "r-s751",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00D3DDC0",
@@ -4632,22 +4656,6 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00D42370",
-  "name": "task_node_a8_reset",
-  "file": "fn_00d42370.rs",
-  "lane": "r-s751",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
-  "address": "0x00D423B0",
-  "name": "task_node_676_reset",
-  "file": "fn_00d423b0.rs",
-  "lane": "r-s751",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
   "address": "0x00D44890",
   "name": null,
   "file": "fn_00d44890.rs",
@@ -4656,9 +4664,9 @@
   "reason": null
  },
  {
-  "address": "0x00D5DE80",
-  "name": "CPrtSysEntity::vf27",
-  "file": "fn_00d5de80.rs",
+  "address": "0x00D5E560",
+  "name": "pending descriptive name",
+  "file": "fn_00d5e560.rs",
   "lane": "r-s753",
   "outcome": "not_reached",
   "reason": null
@@ -4787,6 +4795,14 @@
   "address": "0x00DE35B0",
   "name": null,
   "file": "fn_00de35b0.rs",
+  "lane": "r-s759",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00DE3E60",
+  "name": null,
+  "file": "fn_00de3e60.rs",
   "lane": "r-s759",
   "outcome": "not yet run",
   "reason": null

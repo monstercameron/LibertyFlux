@@ -15,13 +15,14 @@ lf_checker_rt::export!(cdecl, rw_D38680(position_class: u32, direction: u32) -> 
     const SPECIAL_DIRECTION_A: u32 = 1;
     const SPECIAL_DIRECTION_B: u32 = 3;
     const SECOND_BOUND: u32 = 4;
-    const CLASS_LOOKUP: [u8; 11] = [0, 1, 0, 2, 3, 5, 5, 4, 4, 4, 4];
+    const CLASS_LOOKUP_TABLE: u32 = 0x00D38700;
 
     let table_index = position_class.wrapping_add(7);
     let matches_pair = if table_index > TABLE_LIMIT {
         false
     } else {
-        let selector = CLASS_LOOKUP[table_index as usize];
+        let table_base = lf_checker_rt::relocated(CLASS_LOOKUP_TABLE);
+        let selector = unsafe { core::ptr::read((table_base + table_index) as *const u8) };
         match selector {
             0 => direction == ZERO_DIRECTION,
             1 => true,

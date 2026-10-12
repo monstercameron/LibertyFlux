@@ -25,6 +25,7 @@ pub mod field_predicate;
 pub mod field_store;
 pub mod indexed_read;
 pub mod layout_assert;
+pub mod object_cookie;
 pub mod object_rows;
 pub mod ptr32;
 pub mod slot_store;
