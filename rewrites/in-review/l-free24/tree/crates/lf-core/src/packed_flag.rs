@@ -152,12 +152,16 @@ mod tests {
 
     #[test]
     fn the_upper_bits_are_kept_and_only_the_low_byte_changes() {
-        let flag = PackedFlag {
+        let never = PackedFlag {
             source: Source::Parameter,
             base: 0,
             condition: Condition::AtMost(0),
         };
-        assert_eq!(flag.apply(0xABCD_EF55), 0xABCD_EF00);
-        assert_eq!(flag.apply(0xABCD_EF00), 0xABCD_EF01);
+        assert_eq!(never.apply(0xABCD_EF55), 0xABCD_EF00);
+        let always = PackedFlag {
+            condition: Condition::AtMost(u32::MAX),
+            ..never
+        };
+        assert_eq!(always.apply(0xABCD_EF55), 0xABCD_EF01);
     }
 }

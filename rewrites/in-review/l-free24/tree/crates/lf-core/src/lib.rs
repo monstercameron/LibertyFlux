@@ -1,4 +1,4 @@
-//! `lf-core`: shared types for every engine crate.
+﻿//! `lf-core`: shared types for every engine crate.
 //!
 //! README for future lanes:
 //! - Fixed-layout helpers live here: [`Ptr32`] (a 32-bit typed pointer that
@@ -18,14 +18,17 @@
 //!   original game code, only new Rust.
 
 pub mod arena;
+pub mod byte_flag_test;
 pub mod boundary;
 pub mod const_fill;
 pub mod constant_writes;
 pub mod field_predicate;
+pub mod field_pair_store;
 pub mod field_store;
 pub mod indexed_read;
 pub mod layout_assert;
 pub mod object_rows;
+pub mod packed_flag;
 pub mod ptr32;
 pub mod slot_store;
 pub mod static_list;

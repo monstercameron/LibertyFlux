@@ -456,6 +456,14 @@
   "reason": ""
  },
  {
+  "address": "0x0059C8A0",
+  "name": "CNetBlenderDummyPed::vf4",
+  "file": "fn_0059c8a0.rs",
+  "lane": "r-s756",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0059E530",
   "name": "timing_tables_calibrate",
   "file": "fn_0059e530.rs",
@@ -1264,6 +1272,14 @@
   "reason": null
  },
  {
+  "address": "0x006A1CE0",
+  "name": "gtaDrawable::vf7",
+  "file": "fn_006a1ce0.rs",
+  "lane": "r-s760",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x006F7F10",
   "name": "mainloop_timer_mode_guard",
   "file": "fn_006f7f10.rs",
@@ -1465,7 +1481,7 @@
  },
  {
   "address": "0x00932190",
-  "name": "fn_00932190",
+  "name": "imposter_cache_find_free_slot",
   "file": "fn_00932190.rs",
   "lane": "r-s763",
   "outcome": "not_reached",
@@ -1473,7 +1489,7 @@
  },
  {
   "address": "0x009321C0",
-  "name": "fn_009321c0",
+  "name": "imposter_cache_slot_value",
   "file": "fn_009321c0.rs",
   "lane": "r-s763",
   "outcome": "not_reached",
@@ -1481,7 +1497,7 @@
  },
  {
   "address": "0x00933C80",
-  "name": "fn_00933c80",
+  "name": "detail_record_clear",
   "file": "fn_00933c80.rs",
   "lane": "r-s763",
   "outcome": "not_reached",
@@ -1585,7 +1601,7 @@
  },
  {
   "address": "0x00977430",
-  "name": "fn_00977430",
+  "name": "audio_collision_voice_is_enabled",
   "file": "fn_00977430.rs",
   "lane": "r-s763",
   "outcome": "not_reached",
@@ -1848,14 +1864,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00A2FC10",
-  "name": "function_00a2fc10",
-  "file": "fn_00a2fc10.rs",
-  "lane": "r-s752",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A2FD00",
   "name": "function_00a2fd00",
   "file": "fn_00a2fd00.rs",
@@ -2019,6 +2027,14 @@
   "address": "0x00A804D0",
   "name": "CSimpleMeleeActionResultTaskInfo::create_task",
   "file": "fn_00a804d0.rs",
+  "lane": "r-s762",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A80550",
+  "name": "CSimpleNMBraceTaskInfo::create_task",
+  "file": "fn_00a80550.rs",
   "lane": "r-s762",
   "outcome": "not_reached",
   "reason": null
@@ -4296,6 +4312,14 @@
   "reason": "out_of_time"
  },
  {
+  "address": "0x00CF1BF0",
+  "name": "stat_entry_is_displayable",
+  "file": "fn_00cf1bf0.rs",
+  "lane": "r-s757",
+  "outcome": "deferred",
+  "reason": "other"
+ },
+ {
   "address": "0x00CF1D70",
   "name": "stat_passes_mode_check",
   "file": "fn_00cf1d70.rs",
@@ -4819,6 +4843,14 @@
   "address": "0x00DE3EC0",
   "name": null,
   "file": "fn_00de3ec0.rs",
+  "lane": "r-s759",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00DE3FE0",
+  "name": null,
+  "file": "fn_00de3fe0.rs",
   "lane": "r-s759",
   "outcome": "not yet run",
   "reason": null

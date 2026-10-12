@@ -1,4 +1,4 @@
-﻿//! The indexed-read instances the verified rewrites were checked against.
+//! The indexed-read instances the verified rewrites were checked against.
 //!
 //! Generated from the verified rewrites by `extract24.py`: every value below was read from the rewrite's own
 //! text, and the shape assertion in the generator holds for each entry. The differential test runs the

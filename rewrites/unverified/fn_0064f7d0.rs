@@ -135,7 +135,7 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
         f32::from_bits(bits)
     }
 
-    fn write_sample_pair(output: &mut [u32; 2], channel: u32, key: f32, node_field: u32) {
+    fn write_sample_pair(output: &mut [u32; 4], channel: u32, key: f32, node_field: u32) {
         let output_address = local_address(output);
         lf_checker_rt::callee_stdcall!(
             CAL_SAMPLE,
@@ -253,7 +253,7 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
                 u32,
                 node.wrapping_add(NODE_TANGENT),
                 record,
-                input_threshold.to_bits(),
+                move_scale_bits,
                 local_address(&mut key_vector),
                 local_address(&mut workspace),
                 local_address(&mut scratch_vector),
@@ -272,16 +272,6 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
                 unsafe { read_f32(node.wrapping_add(NODE_TANGENT + 8)) },
             ];
             let mut key_vector = [key_x, key_y, key_z];
-            let extrapolated = [
-                add_f32(base_vector[0], mul_f32(f32::from_bits(position_x.to_bits() ^ sign_mask), movement_scale)),
-                add_f32(base_vector[1], mul_f32(f32::from_bits(position_y.to_bits() ^ sign_mask), movement_scale)),
-                add_f32(base_vector[2], mul_f32(f32::from_bits(position_z.to_bits() ^ sign_mask), movement_scale)),
-            ];
-            let delta_vector = [
-                sub_f32(base_vector[0], extrapolated[0]),
-                sub_f32(base_vector[1], extrapolated[1]),
-                sub_f32(base_vector[2], extrapolated[2]),
-            ];
             let mut face_workspace = [0u32; 3];
             let mut hit_time = 0.0f32;
             let mut auxiliary_workspace = [0u32; 3];
@@ -294,8 +284,6 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
             let intersection = lf_checker_rt::callee_fastcall!(
                 CAL_INTERSECT,
                 u32,
-                local_address(&mut extrapolated),
-                local_address(&mut delta_vector),
                 local_address(&mut base_vector),
                 local_address(&mut key_vector),
                 record,
@@ -314,7 +302,7 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
 
         applied_any = true;
 
-        let mut sample_a = [0u32; 2];
+        let mut sample_a = [0u32; 4];
         let threshold_value = unsafe { read_f32(node.wrapping_add(NODE_KEY)) };
         write_sample_pair(
             &mut sample_a,
@@ -337,7 +325,7 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
             ),
         );
 
-        let mut sample_b = [0u32; 2];
+        let mut sample_b = [0u32; 4];
         write_sample_pair(
             &mut sample_b,
             manager.wrapping_add(MANAGER_SAMPLER_B),
