@@ -480,6 +480,14 @@
   "reason": null
  },
  {
+  "address": "0x005D2050",
+  "name": "fn_005d2050",
+  "file": "fn_005d2050.rs",
+  "lane": "r-s774",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x005D2E90",
   "name": "blip_slot_alloc",
   "file": "fn_005d2e90.rs",
@@ -872,6 +880,14 @@
   "reason": null
  },
  {
+  "address": "0x00607910",
+  "name": null,
+  "file": "fn_00607910.rs",
+  "lane": "a-U147",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x0061B150",
   "name": "net_session_desc_init",
   "file": "fn_0061b150.rs",
@@ -904,9 +920,9 @@
   "reason": "other"
  },
  {
-  "address": "0x006341E0",
-  "name": "frag_parse_bonetag_all",
-  "file": "fn_006341e0.rs",
+  "address": "0x006349F0",
+  "name": "frag_parse_skeletontype_all",
+  "file": "fn_006349f0.rs",
   "lane": "r-s777",
   "outcome": "not_reached",
   "reason": null
@@ -1448,6 +1464,14 @@
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
  },
  {
+  "address": "0x008AD310",
+  "name": "audio_clamp_call_select",
+  "file": "fn_008ad310.rs",
+  "lane": "a-U146",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x008DBF60",
   "name": "task_ctor_update_thread_range",
   "file": "fn_008dbf60.rs",
@@ -1889,7 +1913,7 @@
  },
  {
   "address": "0x00A66910",
-  "name": "fn_00A66910",
+  "name": "heap_pop_frag_pairs",
   "file": "fn_00a66910.rs",
   "lane": "r-s770",
   "outcome": "not_reached",
@@ -1897,7 +1921,7 @@
  },
  {
   "address": "0x00A66950",
-  "name": "fn_00A66950",
+  "name": "sort_frag_pairs",
   "file": "fn_00a66950.rs",
   "lane": "r-s770",
   "outcome": "not_reached",
@@ -1905,7 +1929,7 @@
  },
  {
   "address": "0x00A66C40",
-  "name": "fn_00A66C40",
+  "name": "physics_state_reset",
   "file": "fn_00a66c40.rs",
   "lane": "r-s770",
   "outcome": "not_reached",
@@ -1913,7 +1937,7 @@
  },
  {
   "address": "0x00A66D10",
-  "name": "phInstBehaviorExplosionGta::vf0",
+  "name": "phInstBehaviorExplosionGta::~phInstBehaviorExplosionGta",
   "file": "fn_00a66d10.rs",
   "lane": "r-s770",
   "outcome": "not_reached",
@@ -1921,15 +1945,23 @@
  },
  {
   "address": "0x00A66D70",
-  "name": "CEventOnFire::vf0",
+  "name": "CEventOnFire::~CEventOnFire__deleting",
   "file": "fn_00a66d70.rs",
   "lane": "r-s770",
   "outcome": "not_reached",
   "reason": null
  },
  {
+  "address": "0x00A67720",
+  "name": "teardown_all_active_explosions",
+  "file": "fn_00a67720.rs",
+  "lane": "r-s770",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A67740",
-  "name": "CEventOnFire::vf4",
+  "name": "CEventOnFire::~CEventOnFire",
   "file": "fn_00a67740.rs",
   "lane": "r-s770",
   "outcome": "not_reached",
@@ -2476,8 +2508,8 @@
   "name": "stream_pose_point_transform",
   "file": "fn_00aac7c0.rs",
   "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00AB5350",
@@ -4408,14 +4440,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00CDBB10",
-  "name": "match_balance_and_enable",
-  "file": "fn_00cdbb10.rs",
-  "lane": "r-s776",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00CF1D70",
   "name": "stat_passes_mode_check",
   "file": "fn_00cf1d70.rs",
@@ -4552,14 +4576,6 @@
   "reason": "The original forwards its incoming EBP value to a later callee, while the rewrite passes zero and the shared runtime has no EBP accessor; the corrected non-null-target fixture faulted in the original before that call was reached."
  },
  {
-  "address": "0x00D21040",
-  "name": "angle_solver_atan2",
-  "file": "fn_00d21040.rs",
-  "lane": "a-U144",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00D254D0",
   "name": "CCustomShaderEffectVehicleFX::vf6",
   "file": "fn_00d254d0.rs",
@@ -4597,6 +4613,14 @@
   "file": "fn_00d26a90.rs",
   "lane": "r-b349",
   "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D27850",
+  "name": "targeting_bulk_update",
+  "file": "fn_00d27850.rs",
+  "lane": "a-U143",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -4792,25 +4816,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00DB4830",
-  "name": "UITexture::set_mapping_parameter_and_refresh_extent",
-  "file": "fn_00db4830.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DB63C0",
   "name": "input_get_button_state_mask",
   "file": "fn_00db63c0.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DB6470",
-  "name": "input_get_action_mapping_flags",
-  "file": "fn_00db6470.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
   "reason": null
@@ -5001,16 +5009,32 @@
  },
  {
   "address": "0x00DF3A90",
-  "name": "UITransitionViewer::vf0",
+  "name": null,
   "file": "fn_00df3a90.rs",
   "lane": "r-s780",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00DF3AA0",
+  "name": null,
+  "file": "fn_00df3aa0.rs",
+  "lane": "r-s780",
+  "outcome": "not yet run",
   "reason": null
  },
  {
   "address": "0x00E39EC0",
   "name": "UIMontageMoviePlayer::configure_texture_source_and_hud_colour",
   "file": "fn_00e39ec0.rs",
+  "lane": "r-s773",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E39F70",
+  "name": "ui_input_name_copy_with_tag_suffix",
+  "file": "fn_00e39f70.rs",
   "lane": "r-s773",
   "outcome": "not_reached",
   "reason": null

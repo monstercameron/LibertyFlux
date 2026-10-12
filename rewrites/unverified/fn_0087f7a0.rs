@@ -9,7 +9,7 @@ lf_checker_rt::export!(thiscall, rw_0087f7a0(_this: u32, size: u32, alignment: u
     unsafe {
         const CURSOR_OFFSET: u32 = 0x30;
         const CAPACITY_OFFSET: u32 = 0x4C;
-        const OVERFLOW_FORMAT: u32 = 0x00FC8C44;
+        const OVERFLOW_FORMAT_VA: u32 = 0x00FC8C44;
         const OVERFLOW_CALLEE: u32 = 1;
 
         let allocator = lf_checker_rt::tls_slot(0);
@@ -28,7 +28,8 @@ lf_checker_rt::export!(thiscall, rw_0087f7a0(_this: u32, size: u32, alignment: u
         cursor_ptr.write_unaligned(next_cursor);
 
         if next_cursor > capacity {
-            let _ = lf_checker_rt::callee_cdecl!(OVERFLOW_CALLEE, u32, OVERFLOW_FORMAT, 0, 0);
+            let overflow_format = lf_checker_rt::relocated(OVERFLOW_FORMAT_VA);
+            let _ = lf_checker_rt::callee_cdecl!(OVERFLOW_CALLEE, u32, overflow_format, 0, 0);
         }
         aligned_start
     }

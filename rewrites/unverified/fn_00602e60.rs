@@ -9,6 +9,7 @@
 /// in the proof contract.
 
 const MANAGER_PENDING_FIELD: u32 = 0x4BC;
+const MANAGER_SLOT_ARRAY_FIELD: u32 = 0x26C;
 const RESOURCE_STATE_GLOBAL: u32 = 0x0110_ED00;
 const RESOURCE_SENTINEL_GLOBAL: u32 = 0x0110_ED10;
 const RESOURCE_SOURCE_CONSTANT: u32 = 0x00FE_8FB0;
@@ -50,6 +51,9 @@ fn process_manager_resources(manager: u32, leave_pending: bool) {
         write_u32(resource_state, (index as u32).wrapping_mul(4), word);
     }
     write_u32(resource_sentinels, 0, u32::MAX);
+    write_u32(resource_sentinels, 4, manager.wrapping_add(MANAGER_SLOT_ARRAY_FIELD));
+    write_u32(resource_sentinels, 8, 0);
+    write_u32(resource_sentinels, 12, 0);
 
     let pending_pointer = manager.wrapping_add(MANAGER_PENDING_FIELD);
     let _ = lf_checker_rt::callee_cdecl!(CALLEE_RELEASE_PENDING, u32, pending_pointer);
