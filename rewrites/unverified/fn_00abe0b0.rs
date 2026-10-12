@@ -20,7 +20,11 @@ lf_checker_rt::export!(cdecl, rw_00abe0b0(owner_address: u32) -> u8 {
         let collection_address = owner.add(COLLECTION_FIELD).cast::<u32>().read_unaligned();
         let collection = collection_address as *const u8;
         let count = collection.add(RECORD_COUNT).cast::<u16>().read_unaligned();
-        let records = collection.add(RECORDS_POINTER).cast::<u32>();
+        let record_array_address = collection
+            .add(RECORDS_POINTER)
+            .cast::<u32>()
+            .read_unaligned();
+        let records = record_array_address as *const u32;
 
         for index in 0..usize::from(count) {
             let record_address = records.add(index).read_unaligned();

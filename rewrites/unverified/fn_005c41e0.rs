@@ -22,6 +22,7 @@ lf_checker_rt::export!(thiscall, rw_005c41e0(this: u32, _arg0: u32, _arg1: u32, 
         const LARGE_ALLOCATION: u32 = 0x22920;
         const TAG_ARRAY_ALLOCATION: u32 = 0x96;
         const DESCRIPTOR_TAG_LENGTH: u32 = 0x96;
+        const DESCRIPTOR_SLOT_CAPACITY: u32 = 0x3b0;
         const POOL_ALIGNMENT: u32 = 0x10;
         const TAG_MASK: u8 = 0x81;
 
@@ -59,7 +60,7 @@ lf_checker_rt::export!(thiscall, rw_005c41e0(this: u32, _arg0: u32, _arg1: u32, 
         write_word(this + DESCRIPTOR_TAG_ARRAY, tag_array);
         write_word(this + DESCRIPTOR_TAG_BYTES, DESCRIPTOR_TAG_LENGTH);
         write_byte(this + DESCRIPTOR_ACTIVE, 1);
-        write_word(this + DESCRIPTOR_TAG_CAPACITY, DESCRIPTOR_TAG_LENGTH);
+        write_word(this + DESCRIPTOR_TAG_CAPACITY, DESCRIPTOR_SLOT_CAPACITY);
         write_word(this + DESCRIPTOR_SENTINEL, u32::MAX);
         write_word(this + DESCRIPTOR_COUNT, 0);
 

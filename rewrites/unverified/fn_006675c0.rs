@@ -52,7 +52,7 @@ lf_checker_rt::export!(thiscall, rw_006675c0(this: u32, parameter: u32) -> u32 {
                     let adjustment = lf_checker_rt::callee_thiscall!(
                         VALUE_ADJUST_CALLEE,
                         u32,
-                        service_this,
+                        service_object,
                         value
                     );
                     write_word(timeline_value, value.wrapping_add(adjustment));

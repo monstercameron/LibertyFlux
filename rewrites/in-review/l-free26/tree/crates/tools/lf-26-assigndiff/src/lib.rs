@@ -14,3 +14,6 @@ pub mod rt;
 
 #[cfg(target_arch = "x86")]
 pub mod rewrites;
+
+#[cfg(target_arch = "x86")]
+pub use rt::global;

@@ -30,10 +30,10 @@ lf_checker_rt::export!(cdecl, rw_005c34b0(index: u32) -> u32 {
 
         let category = lf_checker_rt::global::<u32>(CATEGORY_GLOBAL).read_unaligned();
         let should_dispatch: u32 =
-            lf_checker_rt::callee_cdecl!(PREDICATE_CALLEE, u32, category, index);
+            lf_checker_rt::callee_cdecl!(PREDICATE_CALLEE, u32, index, category);
         if should_dispatch as u8 != 0 {
             let _: u32 =
-                lf_checker_rt::callee_cdecl!(CATEGORY_ACTION_CALLEE, u32, category, index);
+                lf_checker_rt::callee_cdecl!(CATEGORY_ACTION_CALLEE, u32, index, category);
             return 0;
         }
 

@@ -2,7 +2,7 @@
 //!
 //! Generated from the verified rewrites: each offset is the float field read from that rewrite's body.
 
-use crate::rewrites::{m_00cbc070, m_00cbc090, m_00cbc0b0, m_00cbc0d0};
+use lf_26_floatdiff::rewrites::{m_00cbc070, m_00cbc090, m_00cbc0b0, m_00cbc0d0};
 
 /// One rewrite instance: its symbol name, the offset of its float field, and the rewrite.
 pub struct Instance {

@@ -6,7 +6,7 @@
 /// offset four to be set to the all-bits-set sentinel. The thiscall function
 /// returns the prior value unchanged.
 lf_checker_rt::export!(thiscall, rw_0065f330(object: *mut u8) -> u32 {
-    const OBJECT: u32 = object as u32;
+    let object_address: u32 = object as u32;
     const SLOT_OFFSET: u32 = 4;
     const EXCHANGE_VALUE: u32 = 4;
     const COMPARE_VALUE: u32 = 1;
@@ -15,12 +15,12 @@ lf_checker_rt::export!(thiscall, rw_0065f330(object: *mut u8) -> u32 {
     let previous_value = lf_checker_rt::callee_stdcall!(
         1,
         u32,
-        OBJECT,
+        object_address,
         EXCHANGE_VALUE,
         COMPARE_VALUE,
     );
     if previous_value == COMPARE_VALUE {
-        unsafe { *((OBJECT + SLOT_OFFSET) as *mut u32) = EMPTY_SLOT; }
+        unsafe { *((object_address + SLOT_OFFSET) as *mut u32) = EMPTY_SLOT; }
     }
     previous_value
 });

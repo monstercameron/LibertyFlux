@@ -119,8 +119,8 @@ unsafe fn collect_group_secondary(
 lf_checker_rt::export!(cdecl, fn_0088b0c0(
     first_group: *const u8,
     primary_head: *const u8,
-    mut capacity: u32,
-    mut quota: u32,
+    capacity: u32,
+    quota: u32,
     counts: *mut u8,
 ) -> () {
     unsafe {
@@ -130,6 +130,8 @@ lf_checker_rt::export!(cdecl, fn_0088b0c0(
             .read_unaligned() as *mut u16;
 
         write_u16(counts, PRIMARY_COUNT_OFFSET, 0);
+        let mut capacity = capacity;
+        let mut quota = quota;
         let mut primary_count = 0u16;
         let mut secondary_count = read_u16(counts, SECONDARY_COUNT_OFFSET);
         let mut group = first_group;

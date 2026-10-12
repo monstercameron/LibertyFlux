@@ -1,12 +1,12 @@
 // original: 0x0065bc30 rage::EnviromentDomeLighting::vf5
-use lf_checker_rt::{export, tls_slot};
+use lf_checker_rt::{export, relocated, tls_slot};
 
 /// Allocate a twelve-byte environment dome record through the current thread's
 /// allocator vtable, tag a successful allocation, and return it. The allocator
 /// receives size, alignment, and zero-fill arguments in that stack order.
 export!(cdecl, rw_0065bc30() -> *mut u8 {
     const ALLOCATOR_TABLE_SLOT: usize = 2;
-    const OBJECT_TAG: u32 = 0x00FE_303C;
+    const OBJECT_VTABLE_VA: u32 = 0x00FE_303C;
     const ALLOCATION_SIZE: u32 = 12;
     const ALLOCATION_ALIGNMENT: u32 = 16;
 
@@ -24,7 +24,9 @@ export!(cdecl, rw_0065bc30() -> *mut u8 {
             0,
         );
         if !object.is_null() {
-            object.cast::<u32>().write_unaligned(OBJECT_TAG);
+            object
+                .cast::<u32>()
+                .write_unaligned(relocated(OBJECT_VTABLE_VA));
         }
         object
     }

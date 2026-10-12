@@ -3,7 +3,7 @@
 //! Generated from the verified rewrites. The two forms differ only in the type of the object argument
 //! (an address, or a byte pointer); both are called with the object's address.
 
-use crate::rewrites::{m_00bebdb0, m_00bebdd0, m_00bf4110, m_00bf4130};
+use lf_26_u24diff::rewrites::{m_00bebdb0, m_00bebdd0, m_00bf4110, m_00bf4130};
 
 /// The two argument forms of the verified rewrites.
 pub enum Form {

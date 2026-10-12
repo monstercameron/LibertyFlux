@@ -115,7 +115,8 @@ enum Scan {
 /// Reads the 32-bit little-endian word at `offset`, or reports truncation.
 fn word_at(object: &[u8], offset: u32) -> Result<u32, Truncated> {
     let start = offset as usize;
-    let bytes = object.get(start..start + 4).ok_or(Truncated)?;
+    let end = start.checked_add(4).ok_or(Truncated)?;
+    let bytes = object.get(start..end).ok_or(Truncated)?;
     Ok(u32::from_le_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]))
 }
 

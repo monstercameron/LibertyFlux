@@ -51,7 +51,7 @@ lf_checker_rt::export!(cdecl, rw_005c33e0(mode: u32) -> u32 {
                         false
                     } else {
                         let category_result: u32 =
-                            lf_checker_rt::callee_cdecl!(CATEGORY_CALLEE, u32, category, index);
+                            lf_checker_rt::callee_cdecl!(CATEGORY_CALLEE, u32, index, category);
                         category_result as u8 & CATEGORY_RESULT_MASK == 0
                     };
                     if needs_cleanup {

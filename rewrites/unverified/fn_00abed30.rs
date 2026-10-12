@@ -2,8 +2,8 @@
 
 /// Submit this light-area command to its six argument callback.
 ///
-/// The receiver arrives in ECX. The callback receives the word at receiver
-/// offset 48, a pointer to inline data at offset 16, the word at offset 52,
+/// The receiver arrives in ECX. The callback receives a pointer to the
+/// receiver's inline data at offset 16, the word at offset 48, the word at offset 52,
 /// the byte at offset 56 zero-extended to a word, the fixed command tag
 /// `LIGHT_AREA_TAG`, and a final zero. It uses the C calling convention.
 lf_checker_rt::export!(thiscall, rw_00abed30(this: u32) -> () {
@@ -21,8 +21,8 @@ lf_checker_rt::export!(thiscall, rw_00abed30(this: u32) -> () {
     let _: u32 = lf_checker_rt::callee_cdecl!(
         CALLBACK_SITE_ID,
         u32,
-        first_word,
         this.wrapping_add(INLINE_DATA),
+        first_word,
         second_word,
         u32::from(area),
         LIGHT_AREA_TAG,

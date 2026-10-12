@@ -2,7 +2,7 @@
 //!
 //! Generated from the verified rewrites: each offset is the parameter read from that rewrite's body.
 
-use crate::rewrites::{m_008e5390, m_008e53b0, m_008e5440, m_008e5460};
+use lf_26_assigndiff::rewrites::{m_008e5390, m_008e53b0, m_008e5440, m_008e5460};
 
 /// One rewrite instance: its symbol name, its two field offsets, and the rewrite itself.
 pub struct Instance {
