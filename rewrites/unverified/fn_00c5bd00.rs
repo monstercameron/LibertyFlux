@@ -32,7 +32,6 @@
 lf_checker_rt::export!(thiscall, rw_00c5bd00(this: u32, obj: u32) -> u32 {
     unsafe {
         const HELPER: u32 = 1;
-        const RESULT_SLOT: u32 = 2;
         const EVENT: u32 = 3;
         const SLOT_TABLE: u32 = 0x012B_60A0;
         const SLOT_DIVIDEND: u32 = 0x012B_41D4;
