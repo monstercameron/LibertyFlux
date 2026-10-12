@@ -152082,6 +152082,15 @@
   "lane": "a-G11"
  },
  {
+  "address": "0x00D68C60",
+  "name": "store_sign_extended_byte",
+  "kind": "function",
+  "file": "functions/fn_00d68c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s787"
+ },
+ {
   "address": "0x00D69590",
   "name": "bind_aux_and_combine",
   "kind": "function",
@@ -152154,6 +152163,15 @@
   "lane": "a-G01"
  },
  {
+  "address": "0x00D696C0",
+  "name": "get_replay_bar_time_factor",
+  "kind": "function",
+  "file": "functions/fn_00d696c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s787"
+ },
+ {
   "address": "0x00D696D0",
   "name": "status_byte_or_zero",
   "kind": "function",
@@ -152161,6 +152179,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G01"
+ },
+ {
+  "address": "0x00D69840",
+  "name": "get_replay_montage_open_flag",
+  "kind": "function",
+  "file": "functions/fn_00d69840.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s787"
  },
  {
   "address": "0x00D69850",
@@ -152172,6 +152199,24 @@
   "lane": "a-G01"
  },
  {
+  "address": "0x00D69880",
+  "name": "replay_widget_read_child_status",
+  "kind": "function",
+  "file": "functions/fn_00d69880.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s787"
+ },
+ {
+  "address": "0x00D69890",
+  "name": "replay_widget_child_is_active",
+  "kind": "function",
+  "file": "functions/fn_00d69890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s787"
+ },
+ {
   "address": "0x00D698A0",
   "name": "checked_fetch",
   "kind": "function",
@@ -152179,6 +152224,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "a-Q06"
+ },
+ {
+  "address": "0x00D698B0",
+  "name": "replay_montage_get_open_state",
+  "kind": "function",
+  "file": "functions/fn_00d698b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s787"
  },
  {
   "address": "0x00D698C0",
@@ -152260,6 +152314,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G01"
+ },
+ {
+  "address": "0x00D699E0",
+  "name": "replay_tool_overlay_set_child_state",
+  "kind": "function",
+  "file": "functions/fn_00d699e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s787"
+ },
+ {
+  "address": "0x00D69A50",
+  "name": "toggle_replay_montage_state",
+  "kind": "function",
+  "file": "functions/fn_00d69a50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s787"
  },
  {
   "address": "0x00D69B80",
@@ -152800,6 +152872,24 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b224"
+ },
+ {
+  "address": "0x00D72AC0",
+  "name": "replay_marker_mode_is_10_or_11",
+  "kind": "function",
+  "file": "functions/fn_00d72ac0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s787"
+ },
+ {
+  "address": "0x00D72AE0",
+  "name": "replay_marker_mode_is_listed_mode",
+  "kind": "function",
+  "file": "functions/fn_00d72ae0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s787"
  },
  {
   "address": "0x00D72B90",
