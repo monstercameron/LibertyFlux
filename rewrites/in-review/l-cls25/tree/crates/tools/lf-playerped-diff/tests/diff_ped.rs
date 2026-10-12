@@ -17,10 +17,10 @@ use core::hint::black_box;
 use lf_core::Handle32;
 use lf_playerped_diff::rewrites::{
     fn_009e54c0, fn_009e5940, fn_009eaee0, fn_009f0fc0, fn_00a2a620, fn_00a2d300, fn_00a2d3a0,
-    fn_00a2d3e0, fn_00a29e40, fn_009edb70, fn_00a2a870, fn_009f0e20, fn_009ebed0,
+    fn_00a2d3e0, fn_00a29e40, fn_009edb70, fn_00a2a870, fn_009f0e20, fn_009ebed0, fn_00a2bcc0,
 };
 use lf_playerped_diff::rt::{self, Effect, Kind, SLOT8_ID};
-use lf_world::player_ped::{ByteGlobal, GateWorld, WordGlobal};
+use lf_world::player_ped::{ByteGlobal, GateWorld, TaskWorld, WordGlobal};
 use lf_world::player_ped::offsets;
 use lf_world::player_ped::offsets::{
     CURRENT_SLOT, JOB_WORD, LINK, MODE, MOTION_VALUE, SETUP_RESULT, SUB_A, SUB_B,
@@ -876,6 +876,170 @@ fn trial_vf33(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     compare("vf33", &rw, &lf)
 }
 
+/// Wrong: the award's clamp compares the budget as an unsigned word.
+fn wrong_vf73(ped: &mut CPlayerPed, this: Handle32<PedTag>, world: &mut TestWorld) -> u32 {
+    let base = world.base_step(ped, this);
+    if ped.marker_219 == 0 {
+        return base;
+    }
+    let task = ped.chain_base;
+    let head = world.read_word(task.wrapping_add(0x2E0));
+    if head == 0 {
+        return task;
+    }
+    let walk = |world: &mut TestWorld, mut node: u32, tag: u32| -> (bool, u32) {
+        let mut previous: Option<u32> = None;
+        let mut stopped = 0;
+        while node != 0 {
+            let priority = (world.read_word(node.wrapping_add(8)) >> 1) & 7;
+            let compared = previous.unwrap_or(priority);
+            if compared < priority && compared >= 2 {
+                return (false, priority);
+            }
+            if world.read_word(node.wrapping_add(4)) == tag {
+                return (true, priority);
+            }
+            previous = Some(priority);
+            stopped = priority;
+            node = world.read_word(node.wrapping_add(0x0C));
+        }
+        (false, stopped)
+    };
+    let (found_first, _) = walk(world, head, 0x410);
+    if !found_first {
+        let (found_second, priority) = walk(world, head, 0x41E);
+        if !found_second {
+            return priority;
+        }
+    }
+    let item = world.current_item(ped, this);
+    if item == 0 {
+        return 0;
+    }
+    let (answer, out) = world.classify_task(ped, task);
+    let mut flag = true;
+    let mut hold = false;
+    if (answer & 0xFF) != 0 {
+        flag = false;
+        if out == 5 || out == 8 {
+            flag = true;
+            hold = out == 8;
+        }
+    }
+    if (world.task_present(ped, task.wrapping_add(0x2E0), 0x413, 0) & 0xFF) != 0 {
+        let delta = f32::from_bits(world.frame_delta_bits());
+        let scale = f32::from_bits(world.cost_scale_bits());
+        let cost_float = f64::from((black_box(delta) * black_box(scale)).trunc());
+        let cost64: i64 = if cost_float.is_nan() || cost_float >= 9_223_372_036_854_775_808.0 || cost_float < -9_223_372_036_854_775_808.0 {
+            i64::MIN
+        } else {
+            cost_float as i64
+        };
+        let cost = cost64 as i32 as u32;
+        let next = ped.budget.wrapping_sub(cost);
+        ped.budget = if (next as i32) >= 0 { next } else { 0 };
+    } else if !hold {
+        let award = world.award(ped);
+        let mut next = ped.budget.wrapping_add(award);
+        if next > 10_000 {
+            next = 10_000;
+        }
+        ped.budget = next;
+    }
+    let heat = world.read_byte(item.wrapping_add(0x26DE)) ^ world.read_byte(item.wrapping_add(0x26DC));
+    let accepted = if !flag {
+        false
+    } else if hold {
+        true
+    } else if heat <= 0x64 {
+        false
+    } else {
+        heat < world.heat_limit()
+    };
+    let old = ped.budget;
+    if !accepted {
+        ped.budget = 0;
+    }
+    ped.budget_prev = old;
+    old
+}
+
+fn trial_vf73(rng: &mut Rng, variant: Variant) -> Result<(), String> {
+    // The task record: the list head word at the list offset. Its nodes are
+    // kept records, a chain of up to three, with the tag, the flags and the
+    // link at their offsets.
+    let mut task = vec![0u32; 0xC0];
+    let node_count = rng.below(4) as usize;
+    let mut nodes: Vec<Vec<u32>> = Vec::new();
+    for _ in 0..node_count {
+        let tag = match rng.below(4) {
+            0 => 0x410,
+            1 => 0x41E,
+            _ => rng.next_u32(),
+        };
+        let mut node = vec![0u32; 4];
+        node[1] = tag;
+        node[2] = rng.next_u32();
+        nodes.push(node);
+    }
+    let addrs: Vec<u32> = nodes.iter().map(|n| n.as_ptr() as usize as u32).collect();
+    for i in 0..node_count {
+        nodes[i][3] = if i + 1 < node_count { addrs[i + 1] } else { 0 };
+    }
+    task[0x2E0 / 4] = addrs.first().copied().unwrap_or(0);
+    let task_addr = task.as_ptr() as usize as u32;
+
+    // The item: its two heat bytes at their offsets.
+    let mut item = vec![0u32; 0x9C0];
+    put8(&mut item, 0x26DC, rng.next_u32() as u8);
+    put8(&mut item, 0x26DE, rng.next_u32() as u8);
+    let item_addr = item.as_ptr() as usize as u32;
+
+    let mut init = random_image(rng);
+    let marker = if rng.below(4) == 0 { 0 } else { 1 + rng.below(255) as u8 };
+    put8(&mut init, offsets::MARKER_219, marker);
+    put32(&mut init, offsets::CHAIN_BASE, task_addr);
+    put32(&mut init, offsets::BUDGET, rng.next_u32());
+    put32(&mut init, offsets::BUDGET_PREV, rng.next_u32());
+
+    let item_answer = if rng.below(5) == 0 { 0 } else { item_addr };
+    let out = match rng.below(4) {
+        0 => 5,
+        1 => 8,
+        _ => rng.next_u32(),
+    };
+    let answers = vec![
+        (0, vec![rng.next_u32()]),
+        (1, vec![item_answer]),
+        (2, vec![zero_or_word(rng), out, rng.next_u32()]),
+        (3, vec![zero_or_word(rng)]),
+        (4, vec![rng.next_u32()]),
+    ];
+    let mut cells = [0u32; rt::CELL_COUNT];
+    cells[12] = float_bits(rng);
+    cells[13] = float_bits(rng);
+    cells[14] = rng.below(256);
+    let mut c = case(
+        init,
+        &[(0, Kind::T1), (1, Kind::T1), (2, Kind::T3Out), (3, Kind::T3), (4, Kind::C0)],
+        answers,
+        None,
+    );
+    c.cells = cells;
+    c.keep = vec![task];
+    c.keep.extend(nodes);
+    c.keep.push(item);
+    let (rw, lf) = run_both(
+        &mut c,
+        fn_00a2bcc0::rw_00a2bcc0,
+        |ped, this, world| match variant {
+            Variant::Lifted => ped.settle_budget(this, world),
+            Variant::Wrong => wrong_vf73(ped, this, world),
+        },
+    );
+    compare("vf73", &rw, &lf)
+}
+
 /// The slot-8 stub's address, as a word.
 fn rt_slot8() -> u32 {
     lf_playerped_diff::rt::slot8_stub_addr()
@@ -1085,4 +1249,14 @@ fn zero_or_word(rng: &mut Rng) -> u32 {
     } else {
         rng.next_u32()
     }
+}
+
+#[test]
+fn vf73_lift_matches_rewrite() {
+    expect_agreement("vf73", trial_vf73, 0x73);
+}
+
+#[test]
+fn vf73_wrong_lift_is_caught() {
+    expect_wrong_caught("vf73", trial_vf73, 0x73);
 }
