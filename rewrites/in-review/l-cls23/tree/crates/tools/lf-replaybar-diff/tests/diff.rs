@@ -1,4 +1,4 @@
-﻿//! Differential cases: each lifted method against its verified 32-bit rewrite.
+//! Differential cases: each lifted method against its verified 32-bit rewrite.
 //!
 //! Every case generates trials from a seeded generator. A trial sets the
 //! object's words, the inner object's flag byte, the owned slots, the
@@ -351,7 +351,7 @@ fn update_table() -> Vec<(CallSpec, Kind)> {
 
 /// Runs the verified teardown on the object; returns the record and the
 /// object's words afterwards.
-fn run_teardown_rewrite(scene: &mut Scene, trial: &Trial, ctx: &Ctx) -> Vec<String> {
+fn run_teardown_rewrite(scene: &Scene, trial: &Trial, ctx: &Ctx) -> Vec<String> {
     rt::install(0, &teardown_table(), &trial.script);
     rt::begin(0);
     let _ = rewrites::rw_00d6bcf0(scene.bar_addr());
@@ -368,9 +368,9 @@ fn teardown_matches_its_rewrite() {
     let mut torn_with_owned = 0usize;
     for index in 0..TRIALS {
         let trial = make_trial(&mut rng);
-        let mut scene = Scene::new(&trial);
+        let scene = Scene::new(&trial);
         let ctx = scene.ctx(&trial);
-        let rewrite_events = run_teardown_rewrite(&mut scene, &trial, &ctx);
+        let rewrite_events = run_teardown_rewrite(&scene, &trial, &ctx);
 
         let mut lifted = scene.initial.clone();
         let mut bar = decode(&lifted, scene.bar_addr(), scene.inner_addr());
@@ -394,7 +394,7 @@ fn deleting_destructor_matches_its_rewrite() {
     let mut freed = 0usize;
     for index in 0..TRIALS {
         let trial = make_trial(&mut rng);
-        let mut scene = Scene::new(&trial);
+        let scene = Scene::new(&trial);
         let ctx = scene.ctx(&trial);
         let nested = CallSpec {
             id: 1,
@@ -443,7 +443,7 @@ fn update_matches_its_rewrite() {
     let mut coverage = [0usize; 6];
     for index in 0..TRIALS {
         let trial = make_trial(&mut rng);
-        let mut scene = Scene::new(&trial);
+        let scene = Scene::new(&trial);
         let ctx = scene.ctx(&trial);
         rt::install(0, &update_table(), &trial.script);
         rt::begin(0);
@@ -519,9 +519,9 @@ fn teardown_mutant_failures(mutant: TeardownMutant) -> usize {
     let mut failures = 0;
     for _ in 0..TRIALS {
         let trial = make_trial(&mut rng);
-        let mut scene = Scene::new(&trial);
+        let scene = Scene::new(&trial);
         let ctx = scene.ctx(&trial);
-        let rewrite_events = run_teardown_rewrite(&mut scene, &trial, &ctx);
+        let rewrite_events = run_teardown_rewrite(&scene, &trial, &ctx);
         let mut lifted = scene.initial.clone();
         let mut bar = decode(&lifted, scene.bar_addr(), scene.inner_addr());
         let mut world = FakeWorld::new(ctx, trial.inner_flag, trial.script.clone());
@@ -539,7 +539,7 @@ fn deleting_mutant_failures(mutant: DeletingMutant) -> usize {
     let mut failures = 0;
     for _ in 0..TRIALS {
         let trial = make_trial(&mut rng);
-        let mut scene = Scene::new(&trial);
+        let scene = Scene::new(&trial);
         let ctx = scene.ctx(&trial);
         let nested = CallSpec {
             id: 1,
@@ -580,7 +580,7 @@ fn update_mutant_failures(mutant: UpdateMutant) -> usize {
     let mut failures = 0;
     for _ in 0..TRIALS {
         let trial = make_trial(&mut rng);
-        let mut scene = Scene::new(&trial);
+        let scene = Scene::new(&trial);
         let ctx = scene.ctx(&trial);
         rt::install(0, &update_table(), &trial.script);
         rt::begin(0);

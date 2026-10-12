@@ -102,6 +102,25 @@ pub struct CPlayerPed {
     pub aim_context: u32,
 }
 
+/// The scaled aim threshold: the aim factor times the property threshold.
+///
+/// When either operand is not-a-number the result is that operand's payload
+/// with the quiet bit set, the aim factor's when both are, as the original
+/// keeps it; otherwise the product. The product's operands are pinned with
+/// `black_box` so a finite product keeps the operand order.
+fn scaled_threshold(initial: f32, aim: f32) -> f32 {
+    let product = black_box(aim) * black_box(initial);
+    if initial.is_nan() && aim.is_nan() {
+        f32::from_bits(aim.to_bits() | QUIET_BIT)
+    } else if initial.is_nan() {
+        f32::from_bits(initial.to_bits() | QUIET_BIT)
+    } else if aim.is_nan() {
+        f32::from_bits(aim.to_bits() | QUIET_BIT)
+    } else {
+        product
+    }
+}
+
 impl CPlayerPed {
     /// Adds a single-precision amount to the motion value, stores the sum
     /// and hands its bit pattern to the motion helper, whose answer is the
@@ -255,6 +274,71 @@ impl CPlayerPed {
         world.revive(self, this, revive_flag);
         let bundle = self.job_word;
         world.load_bundle(self, this, bundle)
+    }
+
+    /// Acquires an aim target from the pedestrian's targeting context and
+    /// reports whether one was acquired.
+    ///
+    /// The context the targeting component returns is asked for its property
+    /// argument, the property is looked up, and its threshold is the first
+    /// value. When the aim state word is the scaled value and the state gate
+    /// passes, and the pedestrian holds an aim context, the threshold is
+    /// scaled by that context's aim factor (see [`scaled_threshold`]). A
+    /// target is then created with the threshold and the property key and
+    /// attached to the targeting component, and the aim context is marked
+    /// selected. A null context, a null target or a missing aim context end
+    /// the method early with no mark.
+    ///
+    /// The aim state word is read before the gate runs; the aim context is
+    /// read only on the scaled path and again after the target is attached.
+    pub fn acquire_aim_target<W: PlayerPedWorld + ?Sized>(
+        &mut self,
+        this: Handle32<PedTag>,
+        property_key: u32,
+        helper_flag: u32,
+        world: &mut W,
+    ) -> bool {
+        let targeting = this.get().wrapping_add(TARGETING_OFFSET);
+        let context = world.get_context(targeting);
+        if context == 0 {
+            return false;
+        }
+        let property_argument = world.context_property_argument(context);
+        let property = world.get_property(property_argument);
+        let initial = f32::from_bits(world.property_threshold_bits(property));
+        let state = world.aim_state();
+        let threshold = if state == AIM_STATE_SCALED && (world.state_gate() as u8) != 0 {
+            if self.aim_context == 0 {
+                initial
+            } else {
+                let aim = f32::from_bits(world.aim_factor_bits(self.aim_context));
+                scaled_threshold(initial, aim)
+            }
+        } else {
+            initial
+        };
+        let helper_code = if (helper_flag as u8) == 0 {
+            HELPER_CODE_PLAIN
+        } else {
+            HELPER_CODE_ALT
+        };
+        let target = world.create_target(
+            this.get().wrapping_add(TARGET_OFFSET),
+            helper_code,
+            threshold.to_bits(),
+            property_key,
+            0,
+            0,
+        );
+        if target == 0 {
+            return false;
+        }
+        world.attach_target(targeting, target);
+        if self.aim_context == 0 {
+            return false;
+        }
+        world.mark_selected(self.aim_context);
+        true
     }
 
     /// Runs the entry chain of the sub-object the chain base names: the

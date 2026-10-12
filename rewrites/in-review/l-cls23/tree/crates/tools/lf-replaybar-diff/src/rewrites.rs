@@ -3,8 +3,7 @@
 //! Each file is included unchanged and sees this crate as `lf_checker_rt`
 //! (32-bit target only). The include paths are relative to this file: from
 //! this crate's directory, three levels up to the repository root, then
-//! `rewrites/verified/functions/`. In the scratch tree they climb further,
-//! because the tree sits deeper than the repository.
+//! rewrites/verified/functions/.
 
 // Byte-identical verified files; their style is not linted here.
 #![allow(

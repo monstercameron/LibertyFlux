@@ -73,8 +73,8 @@ pub const METHODS: &[MethodRecord] = &[
         lifted: false,
         rewrite: "verified rewrite (replay progress draw)",
         test: "",
-        narrowing: "deferred in this lane: the function is 4,095 bytes with about twenty calls, \
-                    float compares and a draw path; the lane did not reach it",
+        narrowing: "not lifted yet: the function is 4,095 bytes with about twenty calls, float \
+                    compares, several globals and a draw path",
     },
     MethodRecord {
         name: "CReplayProgressBar::vf1",
@@ -86,7 +86,7 @@ pub const METHODS: &[MethodRecord] = &[
                     lift takes the words the collaborator returns instead, which is the same when the \
                     collaborator writes both words, as the proof's scripts do. The verified contract \
                     scripts only the second word of the first fill call (the first word stays zero \
-                    there), so a nonzero first word is exercised only by this lane's own cases. The \
+                    there), so a nonzero first word is exercised only by the lift's own differential cases. The \
                     inner object's flag byte is read through the collaborator, not from memory the \
                     lift owns. The inner pointer is assumed non-null (the original faults on null).",
     },

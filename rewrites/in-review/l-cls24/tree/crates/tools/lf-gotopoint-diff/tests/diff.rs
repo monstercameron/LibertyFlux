@@ -909,6 +909,7 @@ fn check_wrong_caught(m: Method, seed: u64) {
     let _guard = CASE_LOCK.lock().unwrap_or_else(|e| e.into_inner());
     install(m);
     let (bad, _) = compare(m, Variant::Wrong, seed);
+    println!("{m:?} wrong version: {bad} of {CASES} cases differ");
     assert!(bad > 0, "{m:?}: the deliberately wrong lift was not caught");
 }
 

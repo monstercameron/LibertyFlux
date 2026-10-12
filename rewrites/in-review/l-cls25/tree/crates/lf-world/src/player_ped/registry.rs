@@ -167,11 +167,24 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         method: "acquire_aim_target",
-        lifted_as: "",
-        state: State::NotLifted,
-        calls: &[],
+        lifted_as: "CPlayerPed::acquire_aim_target",
+        state: State::Proven,
+        calls: &[
+            "get_context",
+            "context_property_argument",
+            "get_property",
+            "property_threshold_bits",
+            "aim_state",
+            "state_gate",
+            "aim_factor_bits",
+            "create_target",
+            "attach_target",
+            "mark_selected",
+        ],
         narrows: &[
-            "verified: the not-a-number selection is pinned by hand and it reads a global state word; not lifted in this pass",
+            "the context, property and aim records are read and written through the world; the proof builds them as test-owned records and both sides read the same bytes",
+            "the rewrite's result is 0 or 1 in full; the lift returns a bool and the test widens it",
+            "the state gate's answer is compared in its low byte, as the original tests it",
         ],
     },
     Row {

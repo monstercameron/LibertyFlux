@@ -45,7 +45,7 @@ pub const METHODS: &[Method] = &[
     Method {
         name: "second table slot 1 (speed clamp)",
         state: State::Proven,
-        note: "The rewrite returns nothing meaningful; the lift returns nothing. The clamp constant 3.0 is a literal here and in the rewrite; the original loads the same value from the executable's data (rule 6 is not met by either side, and the proof cannot see a change to that data word).",
+        note: "The rewrite returns nothing the lift reproduces; the lift returns nothing. The upper bound 3.0 is a literal in the rewrite and in the lift; the original reads the same value from the executable's data, so the proof cannot see a change to that data word (rule 6 of the brief: the rewrite should load it from the image).",
     },
     Method {
         name: "second table slot 7 (position point copy)",
@@ -74,13 +74,13 @@ pub const METHODS: &[Method] = &[
     },
     Method {
         name: "primary table slot 22 (advance progress)",
-        state: State::Unlifted,
-        note: "Verified (661 bytes). Not lifted: it shares three lazily filled cached floats and a flag word through global data with its siblings, and calls a double-precision helper once per process. The lift needs those caches as host state and the helper as a host call before it can be proven.",
+        state: State::Proven,
+        note: "The shared cache (a flag word and three cached words, filled on first use) is an owned value the caller passes in; the lift holds no global state. The ped's link flags and position are host reads, each made only where the verified method makes it. The scale helper is one host call with the bits of its double argument; the proof compares the two argument words and the answer it narrows to a float. The target point is passed by value and read by the caller; the rewrite reads it only on its working path. The return register is not compared: the rewrite's own notes say its value differs by path. The constants 1.5, 2.0, 3.0, 4.0, 1.1 and the double of one eighth of pi are literals in the rewrite and in the lift; the original loads them from the executable's data, so the proof cannot see a change to those words (rule 6). The generated cache flags reach both the first-use and the filled path of each cached word.",
     },
     Method {
         name: "primary table slot 20 (route follow step)",
         state: State::Unlifted,
-        note: "Verified (2018 bytes, eleven callees and a large set of global data reads). Not lifted in this lane.",
+        note: "Verified (2018 bytes, about 440 instructions, eleven callees and several data reads). Not lifted in this lane: its host trait would need one method per callee with its argument order, and its proof a script for each. Not reached in the time available.",
     },
     Method {
         name: "constructor",

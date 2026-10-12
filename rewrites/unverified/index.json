@@ -728,6 +728,22 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x005EFE20",
+  "name": "sub_005efe20",
+  "file": "fn_005efe20.rs",
+  "lane": "r-s802",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x005EFE40",
+  "name": "sub_005efe40",
+  "file": "fn_005efe40.rs",
+  "lane": "r-s802",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x005F2300",
   "name": null,
   "file": "fn_005f2300.rs",
@@ -968,6 +984,14 @@
   "reason": "other"
  },
  {
+  "address": "0x006287D0",
+  "name": null,
+  "file": "fn_006287d0.rs",
+  "lane": "r-s798",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00628FD0",
   "name": null,
   "file": "fn_00628fd0.rs",
@@ -1060,6 +1084,54 @@
   "name": "rage::rmPtfxKeyframe::rmPtfxKeyframe",
   "file": "fn_0063aab0.rs",
   "lane": "r-s779",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00646040",
+  "name": "rage::ptxEmitRuleStd::vf20",
+  "file": "fn_00646040.rs",
+  "lane": "r-s793",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00646070",
+  "name": null,
+  "file": "fn_00646070.rs",
+  "lane": "r-s793",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00648F20",
+  "name": "rage::rmPtfxShaderVar_Texture::vf1",
+  "file": "fn_00648f20.rs",
+  "lane": "r-s793",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0064D2F0",
+  "name": "rage::ptxSprite::vf24",
+  "file": "fn_0064d2f0.rs",
+  "lane": "r-s793",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00655150",
+  "name": "rage::ptxSprite::vf15",
+  "file": "fn_00655150.rs",
+  "lane": "r-s793",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x006551E0",
+  "name": null,
+  "file": "fn_006551e0.rs",
+  "lane": "r-s793",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1396,14 +1468,6 @@
   "name": "allocate_utf16_buffer",
   "file": "fn_00880310.rs",
   "lane": "a-U151",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00880B70",
-  "name": "audio_mixer_buffer_create",
-  "file": "fn_00880b70.rs",
-  "lane": "a-U154",
   "outcome": "not yet run",
   "reason": null
  },
@@ -3229,6 +3293,94 @@
   "file": "fn_00bde5b0.rs",
   "lane": "r-b326",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFD60",
+  "name": "CTaskList::vf0",
+  "file": "fn_00bdfd60.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFD80",
+  "name": "CTaskSimpleClearLookAt::vf0",
+  "file": "fn_00bdfd80.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFDB0",
+  "name": "CTaskSimpleDuckToggle::vf0",
+  "file": "fn_00bdfdb0.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFE10",
+  "name": "CTaskSimpleOpenDoor::vf0",
+  "file": "fn_00bdfe10.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFE40",
+  "name": "CTaskSimpleSayAudio::vf0",
+  "file": "fn_00bdfe40.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFE70",
+  "name": "CTaskSimpleShovePed::vf0",
+  "file": "fn_00bdfe70.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFEA0",
+  "name": "CTaskSimpleSitDown::vf0",
+  "file": "fn_00bdfea0.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFED0",
+  "name": "CTaskSimpleStandStill::vf0",
+  "file": "fn_00bdfed0.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFF00",
+  "name": "CTaskSimpleStandUp::vf0",
+  "file": "fn_00bdff00.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFF30",
+  "name": "CTaskSimpleTired::vf0",
+  "file": "fn_00bdff30.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFF60",
+  "name": "CTaskSimpleTriggerLookAt::vf0",
+  "file": "fn_00bdff60.rs",
+  "lane": "r-s795",
+  "outcome": "not_reached",
   "reason": null
  },
  {

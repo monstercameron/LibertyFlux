@@ -3,11 +3,12 @@
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `relocated`,
 //! `global`). A numbered callee dispatches through the innermost active
-//! script: each stub records its raw argument words, writes the scripted
-//! words through the call's out-pointer arguments, and returns the scripted
-//! return word. One callee of the damage-free nested case runs another
-//! verified rewrite under a second script, so its calls are recorded in the
-//! same log, tagged with the script they belong to.
+//! script: each stub records its raw argument words (with the words its
+//! callee reads through pointers), writes the scripted words through the
+//! call's out-pointer arguments, and returns the scripted return word. The
+//! deleting destructor's teardown call runs the verified teardown rewrite under
+//! a second script, so both sides' calls land in one log, tagged with the
+//! script they belong to.
 //!
 //! Test-support code: the lifted crate itself stays `#![forbid(unsafe_code)]`.
 

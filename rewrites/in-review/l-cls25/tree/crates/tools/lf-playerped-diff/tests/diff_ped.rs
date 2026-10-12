@@ -17,7 +17,7 @@ use core::hint::black_box;
 use lf_core::Handle32;
 use lf_playerped_diff::rewrites::{
     fn_009e54c0, fn_009e5940, fn_009eaee0, fn_009f0fc0, fn_00a2a620, fn_00a2d300, fn_00a2d3a0,
-    fn_00a2d3e0, fn_00a29e40, fn_009edb70,
+    fn_00a2d3e0, fn_00a29e40, fn_009edb70, fn_00a2a870,
 };
 use lf_playerped_diff::rt::{Effect, Kind, SLOT8_ID};
 use lf_world::player_ped::offsets;
@@ -47,6 +47,7 @@ fn case(
         answers,
         effect,
         player_context: 0,
+        aim_state: 0,
         model_entries: [0; 8],
         keep: Vec::new(),
     }
@@ -177,9 +178,9 @@ fn trial_vf62(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     put32(&mut init, MOTION_VALUE, float_bits(rng));
     let amount = f32::from_bits(float_bits(rng));
     let answer = rng.next_u32();
-    let c = case(init, &[(1, Kind::T2)], vec![(1, vec![answer])], None);
+    let mut c = case(init, &[(1, Kind::T2)], vec![(1, vec![answer])], None);
     let (rw, lf) = run_both(
-        &c,
+        &mut c,
         |this| fn_00a29e40::rw_a29e40(this, amount),
         |ped, this, world| match variant {
             Variant::Lifted => ped.add_motion_value(this, amount, world),
@@ -194,9 +195,9 @@ fn trial_vf44(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     put32(&mut init, LINK, handle_pick(rng));
     put32(&mut init, SUB_B, handle_pick(rng));
     let answers = vec![(2, vec![rng.next_u32()]), (3, vec![rng.next_u32()])];
-    let c = case(init, &[(2, Kind::T4), (3, Kind::T1)], answers, None);
+    let mut c = case(init, &[(2, Kind::T4), (3, Kind::T1)], answers, None);
     let (rw, lf) = run_both(
-        &c,
+        &mut c,
         |this| fn_009f0fc0::rw_009f0fc0(this),
         |ped, this, world| match variant {
             Variant::Lifted => ped.notify_while_linked(this, world),
@@ -235,9 +236,9 @@ fn trial_vf16(rng: &mut Rng, variant: Variant) -> Result<(), String> {
         (2, vec![rng.next_u32()]),
         (3, vec![rng.next_u32()]),
     ];
-    let c = case(init, &[(1, Kind::T1), (2, Kind::C3), (3, Kind::C3)], answers, effect);
+    let mut c = case(init, &[(1, Kind::T1), (2, Kind::C3), (3, Kind::C3)], answers, effect);
     let (rw, lf) = run_both(
-        &c,
+        &mut c,
         |this| fn_009e54c0::rw_009e54c0(this),
         |ped, this, world| match variant {
             Variant::Lifted => u32::from(ped.run_jobs_if_ready(this, world)),
@@ -271,14 +272,14 @@ fn trial_vf69(rng: &mut Rng, variant: Variant) -> Result<(), String> {
         (2, vec![rng.next_u32()]),
         (3, vec![rng.next_u32()]),
     ];
-    let c = case(
+    let mut c = case(
         init,
         &[(1, Kind::T2), (2, Kind::T2), (3, Kind::T3)],
         answers,
         effect,
     );
     let (rw, lf) = run_both(
-        &c,
+        &mut c,
         |this| fn_009e5940::rw_009e5940(this, arg),
         |ped, this, world| match variant {
             Variant::Lifted => ped.reset_and_apply(this, arg, world),
@@ -326,7 +327,7 @@ fn trial_vf19(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     c.keep.push(table);
     c.keep.extend(objs);
     let (rw, lf) = run_both(
-        &c,
+        &mut c,
         |this| fn_009eaee0::rw_009eaee0(this, arg),
         |ped, _this, world| match variant {
             Variant::Lifted => ped.notify_sub_objects(arg, world),
@@ -368,7 +369,7 @@ fn trial_vf47(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     );
     c.player_context = rng.next_u32();
     let (rw, lf) = run_both(
-        &c,
+        &mut c,
         |this| fn_00a2a620::rw_a2a620(this, args[0], args[1], args[2], args[3], args[4]),
         |ped, this, world| match variant {
             Variant::Lifted => ped.setup_and_store(
@@ -430,7 +431,7 @@ fn trial_change_model(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     c.model_entries = entries;
     c.keep = records;
     let (rw, lf) = run_both(
-        &c,
+        &mut c,
         |this| fn_00a2d300::rw_a2d300(this, model_id),
         |ped, this, world| match variant {
             Variant::Lifted => ped.change_model(this, model_id, world),
@@ -448,7 +449,7 @@ fn trial_vf80(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     let mut c = case(init, &[], Vec::new(), None);
     c.keep.push(src);
     let (rw, lf) = run_both(
-        &c,
+        &mut c,
         |this| fn_00a2d3e0::rw_a2d3e0(this, src_addr),
         |ped, _this, _world| match variant {
             Variant::Lifted => ped.set_transform(source),
@@ -466,7 +467,7 @@ fn trial_vf79(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     let mut c = case(init, &[], Vec::new(), None);
     c.keep.push(src);
     let (mut rw, mut lf) = run_both(
-        &c,
+        &mut c,
         |this| fn_00a2d3a0::rw_00a2d3a0(this, src_addr),
         |ped, _this, _world| {
             match variant {
@@ -494,14 +495,14 @@ fn trial_vf32(rng: &mut Rng, variant: Variant) -> Result<(), String> {
         (3, vec![rng.next_u32()]),
         (4, vec![rng.next_u32()]),
     ];
-    let c = case(
+    let mut c = case(
         init,
         &[(2, Kind::T1), (3, Kind::T2), (4, Kind::T1)],
         answers,
         None,
     );
     let (rw, lf) = run_both(
-        &c,
+        &mut c,
         |this| fn_009edb70::rw_009edb70(this),
         |ped, _this, world| match variant {
             Variant::Lifted => ped.run_entry_chain(world),
@@ -517,6 +518,114 @@ fn wrong_vf32(ped: &mut CPlayerPed, world: &mut TestWorld) -> u32 {
     world.chain_reset(sub);
     world.chain_flag(sub, 1);
     world.chain_main(sub)
+}
+
+/// Wrong: when both the threshold and the aim factor are not-a-number, the
+/// threshold's payload is kept instead of the aim factor's.
+fn wrong_acquire(
+    ped: &mut CPlayerPed,
+    this: Handle32<PedTag>,
+    key: u32,
+    flag: u32,
+    world: &mut TestWorld,
+) -> bool {
+    let targeting = this.get().wrapping_add(0x2B0);
+    let context = world.get_context(targeting);
+    if context == 0 {
+        return false;
+    }
+    let argument = world.context_property_argument(context);
+    let property = world.get_property(argument);
+    let initial = f32::from_bits(world.property_threshold_bits(property));
+    let state = world.aim_state();
+    let threshold = if state == 2 && (world.state_gate() as u8) != 0 {
+        if ped.aim_context == 0 {
+            initial
+        } else {
+            let aim = f32::from_bits(world.aim_factor_bits(ped.aim_context));
+            let product = black_box(aim) * black_box(initial);
+            if initial.is_nan() && aim.is_nan() {
+                f32::from_bits(initial.to_bits() | 0x0040_0000)
+            } else if initial.is_nan() {
+                f32::from_bits(initial.to_bits() | 0x0040_0000)
+            } else if aim.is_nan() {
+                f32::from_bits(aim.to_bits() | 0x0040_0000)
+            } else {
+                product
+            }
+        }
+    } else {
+        initial
+    };
+    let helper = if (flag as u8) == 0 { 0x22E8 } else { 0x22E4 };
+    let target = world.create_target(
+        this.get().wrapping_add(0xE6C),
+        helper,
+        threshold.to_bits(),
+        key,
+        0,
+        0,
+    );
+    if target == 0 {
+        return false;
+    }
+    world.attach_target(targeting, target);
+    if ped.aim_context == 0 {
+        return false;
+    }
+    world.mark_selected(ped.aim_context);
+    true
+}
+
+fn trial_acquire(rng: &mut Rng, variant: Variant) -> Result<(), String> {
+    // The context record holds the property argument and the aim factor,
+    // and receives the selected marker; the property record holds the
+    // threshold. Both live in the case's kept memory at fixed addresses.
+    let mut context_rec = vec![0u32; 0x180];
+    put32(&mut context_rec, 0x18, rng.next_u32());
+    put32(&mut context_rec, 0x5B4, float_bits(rng));
+    put8(&mut context_rec, 0x485, rng.next_u32() as u8);
+    let mut prop_rec = vec![0u32; 0x10];
+    put32(&mut prop_rec, 0x14, float_bits(rng));
+    let ctx_addr = context_rec.as_ptr() as usize as u32;
+    let prop_addr = prop_rec.as_ptr() as usize as u32;
+
+    let mut init = random_image(rng);
+    let aim_context = if rng.below(4) == 0 { 0 } else { ctx_addr };
+    put32(&mut init, offsets::AIM_CONTEXT, aim_context);
+    let context_answer = if rng.below(5) == 0 { 0 } else { ctx_addr };
+    let key = rng.next_u32();
+    let flag = rng.next_u32();
+    let answers = vec![
+        (1, vec![context_answer]),
+        (2, vec![prop_addr]),
+        (3, vec![rng.next_u32()]),
+        (4, vec![rng.next_u32()]),
+        (5, vec![rng.next_u32()]),
+    ];
+    let mut c = case(
+        init,
+        &[
+            (1, Kind::T1),
+            (2, Kind::C1),
+            (3, Kind::C0),
+            (4, Kind::T6),
+            (5, Kind::T2),
+        ],
+        answers,
+        None,
+    );
+    c.aim_state = if rng.coin() { 2 } else { rng.below(4) };
+    c.keep = vec![context_rec, prop_rec];
+    let (rw, lf) = run_both(
+        &mut c,
+        |this| u32::from(fn_00a2a870::fn_00a2a870(this as *mut u8, key, flag)),
+        |ped, this, world| match variant {
+            Variant::Lifted => u32::from(ped.acquire_aim_target(this, key, flag, world)),
+            Variant::Wrong => u32::from(wrong_acquire(ped, this, key, flag, world)),
+        },
+    );
+    compare("acquire_aim_target", &rw, &lf)
 }
 
 /// The slot-8 stub's address, as a word.
@@ -642,4 +751,14 @@ fn vf32_lift_matches_rewrite() {
 #[test]
 fn vf32_wrong_lift_is_caught() {
     expect_wrong_caught("vf32", trial_vf32, 0x32);
+}
+
+#[test]
+fn acquire_aim_target_lift_matches_rewrite() {
+    expect_agreement("acquire_aim_target", trial_acquire, 0xA1);
+}
+
+#[test]
+fn acquire_aim_target_wrong_lift_is_caught() {
+    expect_wrong_caught("acquire_aim_target", trial_acquire, 0xA1);
 }

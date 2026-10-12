@@ -119,6 +119,51 @@ pub trait PlayerPedWorld {
     /// and the entry's fixed offset. The lift does not read the table.
     fn model_state(&mut self, model_id: u32) -> u8;
 
+    /// Callee 1 of the aim acquisition: the targeting component's context
+    /// lookup, called with the component's identity. Zero when there is no
+    /// context.
+    fn get_context(&mut self, targeting: u32) -> u32;
+
+    /// The property argument the context holds (a word of the context).
+    fn context_property_argument(&mut self, context: u32) -> u32;
+
+    /// Callee 2 of the aim acquisition: the property lookup for an argument.
+    fn get_property(&mut self, argument: u32) -> u32;
+
+    /// The threshold of a property, as the bits of a single-precision float.
+    fn property_threshold_bits(&mut self, property: u32) -> u32;
+
+    /// The aim state word, read from a shared global.
+    fn aim_state(&mut self) -> u32;
+
+    /// Callee 3 of the aim acquisition: the state gate, which takes no
+    /// argument. Only its low byte is tested.
+    fn state_gate(&mut self) -> u32;
+
+    /// The aim factor the aim context holds, as the bits of a float.
+    fn aim_factor_bits(&mut self, context: u32) -> u32;
+
+    /// Callee 4 of the aim acquisition: creates the target with the helper
+    /// code, the threshold bits, the property key and two constant zero
+    /// words the original passes after it. Zero when no target is made.
+    #[allow(clippy::too_many_arguments)]
+    fn create_target(
+        &mut self,
+        component: u32,
+        helper: u32,
+        threshold: u32,
+        key: u32,
+        zero_first: u32,
+        zero_second: u32,
+    ) -> u32;
+
+    /// Callee 5 of the aim acquisition: attaches the target to the targeting
+    /// component. The answer is not used.
+    fn attach_target(&mut self, component: u32, target: u32);
+
+    /// Writes the selected marker byte of the aim context.
+    fn mark_selected(&mut self, context: u32);
+
     /// Callee 2 of the entry chain: the reset entry of the sub-object at
     /// `sub`, an address the chain computed (raw, since the chain works on
     /// the address and never dereferences it itself).

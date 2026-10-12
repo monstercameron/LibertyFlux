@@ -111,6 +111,7 @@ pub fn encode(ped: &CPlayerPed, img: &mut [u32]) {
     }
     put32(img, offsets::JOB_WORD, ped.job_word);
     put32(img, offsets::CHAIN_BASE, ped.chain_base);
+    put32(img, offsets::AIM_CONTEXT, ped.aim_context);
 }
 
 /// Reads every field the native pedestrian owns from the image.
@@ -127,6 +128,7 @@ pub fn decode(img: &[u32]) -> CPlayerPed {
         motion_value: f32::from_bits(get32(img, offsets::MOTION_VALUE)),
         job_word: get32(img, offsets::JOB_WORD),
         chain_base: get32(img, offsets::CHAIN_BASE),
+        aim_context: get32(img, offsets::AIM_CONTEXT),
         ..CPlayerPed::default()
     };
     for k in 0..2u32 {
@@ -260,6 +262,54 @@ impl PlayerPedWorld for TestWorld {
         rt::model_state_byte(model_id)
     }
 
+    fn get_context(&mut self, targeting: u32) -> u32 {
+        rt::script_call(1, vec![targeting])
+    }
+
+    fn context_property_argument(&mut self, context: u32) -> u32 {
+        rt::read_u32(context.wrapping_add(0x18))
+    }
+
+    fn get_property(&mut self, argument: u32) -> u32 {
+        rt::script_call(2, vec![argument])
+    }
+
+    fn property_threshold_bits(&mut self, property: u32) -> u32 {
+        rt::read_u32(property.wrapping_add(0x14))
+    }
+
+    fn aim_state(&mut self) -> u32 {
+        rt::aim_state()
+    }
+
+    fn state_gate(&mut self) -> u32 {
+        rt::script_call(3, Vec::new())
+    }
+
+    fn aim_factor_bits(&mut self, context: u32) -> u32 {
+        rt::read_u32(context.wrapping_add(0x5B4))
+    }
+
+    fn create_target(
+        &mut self,
+        component: u32,
+        helper: u32,
+        threshold: u32,
+        key: u32,
+        zero_first: u32,
+        zero_second: u32,
+    ) -> u32 {
+        rt::script_call(4, vec![component, helper, threshold, key, zero_first, zero_second])
+    }
+
+    fn attach_target(&mut self, component: u32, target: u32) {
+        rt::script_call(5, vec![component, target]);
+    }
+
+    fn mark_selected(&mut self, context: u32) {
+        rt::write_u8(context.wrapping_add(0x485), 1);
+    }
+
     fn chain_reset(&mut self, sub: u32) {
         rt::script_call(2, vec![sub]);
     }
@@ -295,6 +345,8 @@ pub struct Outcome {
     pub ret: u32,
     pub calls: Vec<Call>,
     pub image: Vec<u32>,
+    /// The kept records after the run: each one the run may write to.
+    pub records: Vec<Vec<u32>>,
 }
 
 /// One generated case: the initial image, the callee shapes, the scripted
@@ -306,6 +358,7 @@ pub struct Case {
     pub answers: Vec<(u32, Vec<u32>)>,
     pub effect: Option<Effect>,
     pub player_context: u32,
+    pub aim_state: u32,
     pub model_entries: [u32; 8],
     /// Test-owned memory the image's addresses name; kept alive for the run.
     pub keep: Vec<Vec<u32>>,
@@ -314,17 +367,22 @@ pub struct Case {
 /// Runs one case through the rewrite and through the lifted method.
 ///
 /// The lifted closure receives the decoded pedestrian, its identity and the
-/// test world. Returns the rewrite's outcome and the lifted outcome.
+/// test world. Records the case keeps are restored to their starting bytes
+/// between the two runs, at the same addresses, so both sides read the same
+/// records; each outcome carries the records as the run left them. Returns
+/// the rewrite's outcome and the lifted outcome.
 pub fn run_both(
-    case: &Case,
+    case: &mut Case,
     rewrite: impl FnOnce(u32) -> u32,
     lifted: impl FnOnce(&mut CPlayerPed, Handle32<PedTag>, &mut TestWorld) -> u32,
 ) -> (Outcome, Outcome) {
     let _guard = rt::lock();
     rt::set_player_context(case.player_context);
+    rt::set_aim_state(case.aim_state);
     for (i, record) in case.model_entries.iter().enumerate() {
         rt::set_model_entry(i, *record);
     }
+    let starting_records = case.keep.clone();
     let mut mem = case.init.clone();
     let this = mem.as_mut_ptr() as usize as u32;
     rt::begin(&case.kinds, &case.answers, case.effect, this);
@@ -334,8 +392,12 @@ pub fn run_both(
         ret: ret_rw,
         calls: calls_rw,
         image: mem,
+        records: case.keep.clone(),
     };
 
+    for (dst, src) in case.keep.iter_mut().zip(&starting_records) {
+        dst.copy_from_slice(src);
+    }
     let mut img = case.init.clone();
     let mut ped = decode(&img);
     rt::begin(&case.kinds, &case.answers, case.effect, this);
@@ -348,6 +410,7 @@ pub fn run_both(
         ret: ret_lf,
         calls: calls_lf,
         image: img,
+        records: case.keep.clone(),
     };
     (rw, lf)
 }
@@ -376,6 +439,9 @@ pub fn compare(name: &str, rw: &Outcome, lf: &Outcome) -> Result<(), String> {
     }
     if let Some(i) = rw.image.iter().zip(&lf.image).position(|(a, b)| a != b) {
         return Err(format!("{name}: image word at byte {:#x} differs", i * 4));
+    }
+    if rw.records != lf.records {
+        return Err(format!("{name}: a kept record differs after the run"));
     }
     Ok(())
 }
