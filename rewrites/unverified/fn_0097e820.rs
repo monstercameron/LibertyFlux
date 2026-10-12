@@ -9,7 +9,7 @@
 /// The audio entity is the ped subobject at `+0x570`; response labels are
 /// relocated static strings, and the helper answers arrive through checker
 /// stand-ins so this rewrite covers the caller's decisions and call ordering.
-lf_checker_rt::export!(thiscall, rw_0097E820(this: u32, _unused: u32, ped: u32) -> () {
+lf_checker_rt::export!(cdecl, rw_0097E820(_unused: u32, ped: u32) -> () {
     const PED_AUDIO_ENTITY: u32 = 0x570;
     const QUARTER_SECOND_BITS: u32 = 0x3E800000;
     const UNIT_VALUE_BITS: u32 = 0x3F800000;
@@ -27,7 +27,7 @@ lf_checker_rt::export!(thiscall, rw_0097E820(this: u32, _unused: u32, ped: u32) 
         let requested = lf_checker_rt::callee_thiscall!(
             FIRST_RESPONSE_CALL, u8, audio_entity,
             lf_checker_rt::relocated(FIRST_LABEL_VA), 0, 1, 0, NEGATIVE_ONE,
-            0, 0, UNIT_VALUE_BITS, this, 0,
+            0, 0, UNIT_VALUE_BITS, 0, 0,
         );
         if requested != 0 { return; }
     }
@@ -38,6 +38,6 @@ lf_checker_rt::export!(thiscall, rw_0097E820(this: u32, _unused: u32, ped: u32) 
     let _ = lf_checker_rt::callee_thiscall!(
         RETRY_RESPONSE_CALL, u8, audio_entity,
         lf_checker_rt::relocated(RETRY_LABEL_VA), 0, 1, fallback_value,
-        NEGATIVE_ONE, 0, 0, UNIT_VALUE_BITS, this, 0,
+        NEGATIVE_ONE, 0, 0, UNIT_VALUE_BITS, 0, 0,
     );
 });

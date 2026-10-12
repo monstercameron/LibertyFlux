@@ -1,4 +1,4 @@
-// original: 0x0059C970 CNetBlenderDummyPed::apply_entity_blend
+// original: 0x0059C970 CNetBlenderDummyPed::vf14
 
 /// Apply a blend update to the entity stored in this dummy.
 ///

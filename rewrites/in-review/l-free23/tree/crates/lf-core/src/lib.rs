@@ -22,6 +22,7 @@ pub mod boundary;
 pub mod layout_assert;
 pub mod object_rows;
 pub mod ptr32;
+pub mod slot_store;
 pub mod static_list;
 pub mod word_block;
 pub mod word_fanout;
