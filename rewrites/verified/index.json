@@ -98046,6 +98046,15 @@
   "lane": "a-G48"
  },
  {
+  "address": "0x00B4F210",
+  "name": "entity_check_model_flag_bit",
+  "kind": "function",
+  "file": "functions/fn_00b4f210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
   "address": "0x00B4F250",
   "name": "get_field_1ch_if_6",
   "kind": "function",
@@ -98208,6 +98217,15 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B504E0",
+  "name": "route_copy_staged_to_active",
+  "kind": "function",
+  "file": "functions/fn_00b504e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
   "address": "0x00B50560",
   "name": "advance_route_index",
   "kind": "function",
@@ -98253,6 +98271,15 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B50A70",
+  "name": "event_group_find_by_type",
+  "kind": "function",
+  "file": "functions/fn_00b50a70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
   "address": "0x00B50AC0",
   "name": "pick_best_event",
   "kind": "function",
@@ -98260,6 +98287,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s407"
+ },
+ {
+  "address": "0x00B50CC0",
+  "name": "event_group_contains_related",
+  "kind": "function",
+  "file": "functions/fn_00b50cc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
  },
  {
   "address": "0x00B50D10",
@@ -98271,6 +98307,15 @@
   "lane": "r-s384"
  },
  {
+  "address": "0x00B50DA0",
+  "name": "event_group_has_type20_with_id",
+  "kind": "function",
+  "file": "functions/fn_00b50da0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
   "address": "0x00B50E10",
   "name": "remove_event_and_release",
   "kind": "function",
@@ -98280,6 +98325,15 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B50E60",
+  "name": "event_group_remove_by_type",
+  "kind": "function",
+  "file": "functions/fn_00b50e60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
   "address": "0x00B50F90",
   "name": "retain_all_events",
   "kind": "function",
@@ -98287,6 +98341,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s407"
+ },
+ {
+  "address": "0x00B50FB0",
+  "name": "event_group_remove_type62_if_accepted",
+  "kind": "function",
+  "file": "functions/fn_00b50fb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
  },
  {
   "address": "0x00B51010",
@@ -98370,6 +98433,33 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B51580",
+  "name": "clear_live_blend_blocks",
+  "kind": "function",
+  "file": "functions/fn_00b51580.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
+  "address": "0x00B51ED0",
+  "name": "euphoria_slot_rebind",
+  "kind": "function",
+  "file": "functions/fn_00b51ed0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
+  "address": "0x00B51F70",
+  "name": "euphoria_reset_all_slots",
+  "kind": "function",
+  "file": "functions/fn_00b51f70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
   "address": "0x00B51FA0",
   "name": "EuphoriaBodyDamageScan",
   "kind": "function",
@@ -98388,6 +98478,24 @@
   "lane": "a-V03"
  },
  {
+  "address": "0x00B52BC0",
+  "name": "euphoria_find_or_alloc_slot",
+  "kind": "function",
+  "file": "functions/fn_00b52bc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
+  "address": "0x00B52C40",
+  "name": "euphoria_write_slot_frames",
+  "kind": "function",
+  "file": "functions/fn_00b52c40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
   "address": "0x00B52CB0",
   "name": "euphoria_blend_step",
   "kind": "function",
@@ -98397,6 +98505,15 @@
   "lane": "a-V03"
  },
  {
+  "address": "0x00B53020",
+  "name": "euphoria_step_live_slots",
+  "kind": "function",
+  "file": "functions/fn_00b53020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
   "address": "0x00B53050",
   "name": "euphoria_entry_resolve",
   "kind": "function",
@@ -98404,6 +98521,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b01"
+ },
+ {
+  "address": "0x00B53320",
+  "name": "swap_dword_values",
+  "kind": "function",
+  "file": "functions/fn_00b53320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
  },
  {
   "address": "0x00B53440",
@@ -99018,6 +99144,78 @@
   "lane": "r-s595"
  },
  {
+  "address": "0x00B56810",
+  "name": "CAtdNodeAnimChangePooledObject::dict_init",
+  "kind": "function",
+  "file": "functions/fn_00b56810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
+  "address": "0x00B56890",
+  "name": "crExpressionProcessor::dict_init",
+  "kind": "function",
+  "file": "functions/fn_00b56890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
+  "address": "0x00B568D0",
+  "name": "crFrameFilterBoneAnalogue::dict_init",
+  "kind": "function",
+  "file": "functions/fn_00b568d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
+  "address": "0x00B56950",
+  "name": "crmtObserver::dict_init",
+  "kind": "function",
+  "file": "functions/fn_00b56950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
+  "address": "0x00B56D80",
+  "name": "list_erase_10_14",
+  "kind": "function",
+  "file": "functions/fn_00b56d80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
+  "address": "0x00B56DB0",
+  "name": "list_erase_8c_90",
+  "kind": "function",
+  "file": "functions/fn_00b56db0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
+  "address": "0x00B56DE0",
+  "name": "list_pop_front_10_14",
+  "kind": "function",
+  "file": "functions/fn_00b56de0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
+  "address": "0x00B56E00",
+  "name": "list_pop_front_8c_90",
+  "kind": "function",
+  "file": "functions/fn_00b56e00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
+ },
+ {
   "address": "0x00B56E30",
   "name": "forward_scaled_level",
   "kind": "function",
@@ -99169,6 +99367,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G01"
+ },
+ {
+  "address": "0x00B57AB0",
+  "name": "integrate_clamped_accumulator",
+  "kind": "function",
+  "file": "functions/fn_00b57ab0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s754"
  },
  {
   "address": "0x00B59C80",
