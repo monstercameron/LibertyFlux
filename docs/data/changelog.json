@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Rewrites: 1 more functions pass the checker (20055 in total)",
+    "title": "Changelog: the count of lifts corrected in three entries",
     "commit": null,
+    "summary": "Three lift entries of 12 October give a running count of lifted routines that is too high. The right count after the last of them is 1,352, not 1,381.",
+    "changes": [
+      "The entries on the game camera class, the follow-point-route task and the layout frame class say that lifts are now 1,334, 1,344 and 1,381. The counts were 1,325, 1,335 and 1,352.",
+      "Two causes. The coordinator carried forward a figure that was nine too high. And 20 of the layout frame's 37 methods had already been lifted earlier as plain field and flag stores, so the class added 17 routines to the count, not 37; those 20 now have a second lifted form, as methods of their class.",
+      "The count is the number of distinct verified rewrites that a differential test crate in the repository proves a portable form against. It is now taken from that script when an entry is written, never carried from the entry before."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Rewrites: 1 more functions pass the checker (20055 in total)",
+    "commit": "72358718e4d6c61bb478cecd871a7313c433749b",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
