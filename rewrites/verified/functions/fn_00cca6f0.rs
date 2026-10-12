@@ -18,3 +18,5 @@ export!(thiscall, rw_rs01_cca6f0(this: *mut u8, flags: u32) -> u32 {
         this as u32
     }
 });
+
+const TASK_POOL: u32 = 0x167E2A0;

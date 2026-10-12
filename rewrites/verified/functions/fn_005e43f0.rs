@@ -31,3 +31,13 @@ export!(stdcall, rw_005e43f0(arg: u32) -> u32 {
         }
     }
 });
+
+const POOL_COUNT: u32 = 0x110E8EC;
+
+const POOL_BITMAP: u32 = 0x110E8E8;
+
+const POOL_STRIDE: u32 = 0x110E8F0;
+
+const POOL_BASE: u32 = 0x110E8E4;
+
+const SLOT_DEAD: u8 = 0x80;

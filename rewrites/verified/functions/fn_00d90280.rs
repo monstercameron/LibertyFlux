@@ -6,7 +6,7 @@
 /// strictly inside its disc and its height differs from the entry's height
 /// by less than the configured tolerance. An empty list matches nothing.
 /// All arithmetic is single precision, exactly as the original evaluates it.
-lf_rs89_rt::export!(cdecl, rw_00d90280(pt: u32, hdr: u32) -> u32 {
+lf_checker_rt::export!(cdecl, rw_00d90280(pt: u32, hdr: u32) -> u32 {
     unsafe {
         let count = *(hdr.wrapping_add(0x560) as *const u32);
         if count == 0 {
@@ -16,8 +16,8 @@ lf_rs89_rt::export!(cdecl, rw_00d90280(pt: u32, hdr: u32) -> u32 {
         let x = *(pt as *const f32);
         let y = *(pt.wrapping_add(4) as *const f32);
         let z = *(pt.wrapping_add(8) as *const f32);
-        let abs_mask = *lf_rs89_rt::global::<u32>(0xFE8F80);
-        let tol = *lf_rs89_rt::global::<f32>(0xFE8A94);
+        let abs_mask = *lf_checker_rt::global::<u32>(0xFE8F80);
+        let tol = *lf_checker_rt::global::<f32>(0xFE8A94);
         let mut k: u32 = 0;
         while k < count {
             let r = *(ent.wrapping_add(0x10) as *const f32);

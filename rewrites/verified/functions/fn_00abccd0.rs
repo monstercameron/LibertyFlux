@@ -452,33 +452,3 @@ export!(
     }
 );
 
-export!(
-    cdecl,
-    rw_00abccd0_m1(
-        a0w: u32,
-        mode: u32,
-        a2w: u32,
-        avec: u32,
-        bvec: u32,
-        cptr: u32,
-        a6w: u32,
-        a7w: u32,
-        a8w: u32,
-        a9w: u32,
-        a10w: u32,
-        a11w: u32,
-        a12w: u32,
-        a13w: u32,
-        a14w: u32,
-        a15w: u32,
-        a16w: u32,
-        a17w: u32,
-    ) -> u32 {
-        unsafe {
-            body(
-                a0w, mode, a2w, avec, bvec, cptr, a6w, a7w, a8w, a9w, a10w, a11w, a12w, a13w,
-                a14w, a15w, a16w, a17w, 1,
-            )
-        }
-    }
-);

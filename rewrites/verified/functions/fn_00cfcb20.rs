@@ -5,15 +5,15 @@
 /// stores two scalar parameters and a float factor (forwarded as bits),
 /// copies the two input vectors into the object, then zeroes the state
 /// words and sets two default factors to 1.0. Returns the object pointer.
-lf_rs85_rt::export!(thiscall, rw_00cfcb20(this: *mut u8, first_scalar: u32, second_scalar: u32, factor_bits: u32, first_vec: *const u32, second_vec: *const u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00cfcb20(this: *mut u8, first_scalar: u32, second_scalar: u32, factor_bits: u32, first_vec: *const u32, second_vec: *const u32) -> u32 {
     unsafe {
         /// Bit pattern of the 1.0f default factor.
         const ONE: u32 = 0x3F800000;
-        lf_rs85_rt::callee_thiscall!(1, u32, this as u32);
+        lf_checker_rt::callee_thiscall!(1, u32, this as u32);
         let w = |off: usize| this.add(off) as *mut u32;
         *w(0x14) = first_scalar;
         *w(0x18) = second_scalar;
-        *w(0) = lf_rs85_rt::relocated(0x00EE05E4);
+        *w(0) = lf_checker_rt::relocated(0x00EE05E4);
         *w(0x1C) = factor_bits;
         for i in 0..3 {
             *w(0x20 + i * 4) = *second_vec.add(i);

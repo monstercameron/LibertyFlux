@@ -20,3 +20,7 @@ lf_checker_rt::export!(thiscall, rw_00a2cc10(this: u32) -> u32 {
         0
     }
 });
+
+unsafe fn rd32(a: u32) -> u32 {
+    unsafe { (a as *const u32).read_unaligned() }
+}

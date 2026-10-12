@@ -79,3 +79,102 @@ export!(thiscall, rw_00e42da0(this: u32) -> () {
         }
     }
 });
+
+const F_ENABLE: usize = 0x44c;
+
+#[inline(always)]
+unsafe fn u8_at(this: u32, off: usize) -> u8 {
+    unsafe { ((this as usize + off) as *const u8).read() }
+}
+
+/// Exact `cvttss2si` semantics: truncate toward zero, out-of-range or NaN
+/// yields `i32::MIN` (Rust's `as` would saturate instead).
+#[inline(always)]
+fn cvtt(x: f32) -> i32 {
+    if x.is_nan() || x >= 2147483648.0 || x < -2147483648.0 {
+        i32::MIN
+    } else {
+        x as i32
+    }
+}
+
+/// The `comiss`/`jbe`/`ja` clamp idiom: `v` clamped to `[0.0, hi]`,
+/// propagating NaN exactly like the instruction sequence.
+#[inline(always)]
+fn clamp_lo0(v: f32, hi: f32) -> f32 {
+    if v < 0.0 {
+        0.0
+    } else if !(v > hi) {
+        v
+    } else {
+        hi
+    }
+}
+
+#[inline(always)]
+unsafe fn f32_at(this: u32, off: usize) -> f32 {
+    unsafe { ((this as usize + off) as *const f32).read_unaligned() }
+}
+
+#[inline(always)]
+unsafe fn coin_pick(a: u32, b: u32) -> u32 {
+    let ans: u32 = callee_cdecl!(COIN, u32,);
+    if (ans as u8) != 0 {
+        b
+    } else {
+        a
+    }
+}
+
+// Callee ids (shared by both contracts).
+const CFG: u32 = 1; // config pair fetch: (out: *mut [u32; 2], id) -> answers
+
+const CFG_C: u32 = 0x82;
+
+const GATE_FLAG: u32 = 0x01161668;
+
+const ADJ: u32 = 2; // adjustment fetch, this = GATE_ADDR, () -> u32
+
+const GATE_ADDR: u32 = 0x01161668;
+
+const COL: u32 = 3; // color fetch: (out: *mut u32, id) -> answers
+
+const COL_ID2: u32 = 0x42;
+
+const CFG_D: u32 = 0x81;
+
+const F260: u32 = 6; // scaler: (mode, null, out: *mut [u32; 2], null)
+
+const F_COUNT1: usize = 0x313;
+
+const F_B: usize = 0x32c;
+
+const F_X0: usize = 0x320;
+
+const F_A: usize = 0x328;
+
+const F_YBASE: usize = 0x43c;
+
+const F_Y0: usize = 0x314;
+
+const F_YSPAN: usize = 0x31c;
+
+const F_MODE: usize = 0x395;
+
+const F_YSTEP: usize = 0x318;
+
+const G1A: u32 = 0x0105c880;
+
+const G1B: u32 = 0x0105c87c;
+
+const G2A: u32 = 0x0105c884;
+
+const G2B: u32 = 0x0105c888;
+
+const F_LOOP: usize = 0x310;
+
+const F_XSTEP: usize = 0x324;
+
+const DRAW: u32 = 5; // quad draw: (pos: *const [u32; 4], style: *const [u32; 4])
+
+const COIN: u32 = 4; // two-way selector: () -> u32, low byte decides

@@ -14,7 +14,7 @@
 /// its key at +0xc. On the first entry whose index also exceeds the best
 /// index kept at owner+index*4+0x80, the best index is updated and the
 /// entry's address is returned; otherwise the result is null.
-lf_rb80_rt::export!(thiscall, rw_0099e240(this: u32, index: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_0099e240(this: u32, index: u32) -> u32 {
     let owner = this;
     let rd32 = |addr: u32| unsafe { (addr as *const u32).read_unaligned() };
     let mut desc = rd32(owner.wrapping_add(0x94));
@@ -31,19 +31,19 @@ lf_rb80_rt::export!(thiscall, rw_0099e240(this: u32, index: u32) -> u32 {
         return 0;
     }
     let seed = unsafe { (desc.wrapping_add(0x3c) as *const i16).read_unaligned() } as i32 as u32;
-    let token = lf_rb80_rt::callee_cdecl!(1, u32, seed);
-    let handle = lf_rb80_rt::callee_thiscall!(2, u32, desc);
-    let group = lf_rb80_rt::callee_cdecl!(3, u32, token, handle, 0x7deef8b7u32);
+    let token = lf_checker_rt::callee_cdecl!(1, u32, seed);
+    let handle = lf_checker_rt::callee_thiscall!(2, u32, desc);
+    let group = lf_checker_rt::callee_cdecl!(3, u32, token, handle, 0x7deef8b7u32);
     if group == 0 {
         return 0;
     }
     let entries = group.wrapping_add(8);
-    let probe = lf_rb80_rt::callee_thiscall!(4, u32, desc);
-    let saved = lf_rb80_rt::callee_thiscall!(5, u32, probe, 0);
+    let probe = lf_checker_rt::callee_thiscall!(4, u32, desc);
+    let saved = lf_checker_rt::callee_thiscall!(5, u32, probe, 0);
     let count = rd32(group.wrapping_add(4)) >> 4;
     if count > 1 && unsafe { (owner.wrapping_add(0x209) as *const u8).read_unaligned() } == 0 {
         let end = entries.wrapping_add(count << 4);
-        lf_rb80_rt::callee_cdecl!(6, u32, entries, end, 0);
+        lf_checker_rt::callee_cdecl!(6, u32, entries, end, 0);
         unsafe { (owner.wrapping_add(0x209) as *mut u8).write_unaligned(1) };
     }
     if count == 0 {

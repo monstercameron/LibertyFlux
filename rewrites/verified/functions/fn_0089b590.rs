@@ -35,3 +35,6 @@ export!(thiscall, rw_0089b590(
     }
 });
 
+const VOICE_ROW_STRIDE: u32 = 0x6F40;
+
+const VOICE_ROW_BIAS: u32 = 0x6F14;

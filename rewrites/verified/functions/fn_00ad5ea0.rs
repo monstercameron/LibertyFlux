@@ -45,21 +45,21 @@ export!(cdecl, rw_ad5ea0(a0: f32, a1: f32, a2: u32, a3: u32, a4: u32, a5: u32, a
         // (tag 0); the first nonzero call answer wins.
         let mut s = w & 0x3FFF;
         let mut w2 =
-            unsafe { *lf_rb34_rt::global::<u16>(0x154E478).offset(s as isize) as u32 };
+            unsafe { *lf_checker_rt::global::<u16>(0x154E478).offset(s as isize) as u32 };
         if (w2 >> 14) == 0 {
             return w2 & 0xFF00;
         }
         loop {
             let top = w2 >> 14;
             if top == 1 {
-                let ptr = lf_rb34_rt::relocated(0x1550EB0)
+                let ptr = lf_checker_rt::relocated(0x1550EB0)
                     .wrapping_add((w2 & 0x3FFF).wrapping_mul(16));
                 let ans = callee_cdecl!(1, u32, ptr, a0b, a1b, a2, a3, a4, a5, a6);
                 if (ans & 0xFF) != 0 {
                     return (ans & 0xFFFFFF00) | 1;
                 }
             } else if top == 2 {
-                let ptr = lf_rb34_rt::relocated(0x154E308)
+                let ptr = lf_checker_rt::relocated(0x154E308)
                     .wrapping_add((w2 & 0x3FFF).wrapping_mul(8));
                 let ans = callee_cdecl!(2, u32, ptr, a0b, a1b, a2, a3, a4, a5);
                 if (ans & 0xFF) != 0 {
@@ -68,7 +68,7 @@ export!(cdecl, rw_ad5ea0(a0: f32, a1: f32, a2: u32, a3: u32, a4: u32, a5: u32, a
             }
             s = s.wrapping_add(1);
             w2 =
-                unsafe { *lf_rb34_rt::global::<u16>(0x154E478).offset(s as isize) as u32 };
+                unsafe { *lf_checker_rt::global::<u16>(0x154E478).offset(s as isize) as u32 };
             if (w2 >> 14) == 0 {
                 return w2 & 0xFF00;
             }
@@ -112,3 +112,16 @@ export!(cdecl, rw_ad5ea0(a0: f32, a1: f32, a2: u32, a3: u32, a4: u32, a5: u32, a
         }
     }
 });
+
+/// Convert a file VA (as seen in disassembly, image base 0x400000) to the
+/// relocated address in the worker's mapping.
+#[inline(always)]
+pub fn relocated(file_va: u32) -> u32 {
+    file_va.wrapping_sub(0x400000).wrapping_add(xbase())
+}
+
+/// Relocated base of the original image.
+#[inline(always)]
+pub fn xbase() -> u32 {
+    unsafe { CHECKER_XBASE }
+}

@@ -15,3 +15,7 @@ export!(thiscall, rw_00a7e380(this: *mut u8) -> u32 {
         callee_thiscall!(2, u32, this as u32)
     }
 });
+
+unsafe fn st32(obj: *mut u8, off: usize, v: u32) {
+    *((obj.add(off)) as *mut u32) = v;
+}

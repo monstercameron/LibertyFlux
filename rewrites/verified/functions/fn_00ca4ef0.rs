@@ -2,7 +2,7 @@
 /// Releases the reference-counted member at +8 (virtual release with count
 /// 1 through the member's vtable slot 0) and nulls the slot. Null-slot
 /// return is entry garbage in the original; handled like rw_00ca4ea0.
-lf_rs75_rt::export!(thiscall, rw_00ca4ef0(this: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00ca4ef0(this: u32) -> u32 {
     unsafe {
         let obj = *((this + 8) as *const u32);
         if obj != 0 {

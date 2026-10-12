@@ -18,3 +18,8 @@ export!(thiscall, rw_00a32070(ent: *const u8) -> u32 {
         *(info.add(4) as *const u32)
     }
 });
+
+/// File VA of the runtime-filled model-info pointer table, indexed by the
+/// entity's signed 16-bit model index (`model_index` at entity+0x2E).
+/// (Carried over verbatim from lane r-s65's crate root; used by 4 rewrites.)
+const MODEL_TABLE: u32 = 0x1295CD8;

@@ -139,4 +139,50 @@ export!(thiscall, rw_00d6b260(this: u32) -> u32 {
     }
 });
 
+/// Shared epilogue of 0x00D6B260: gate checks, one helper, one byte probe.
+/// Stage 1 reaches only the helper path with a nonzero answer; the other
+/// tail exits return whatever EAX the taken path left behind (stage 2).
+unsafe fn epilogue_00d6b260() -> u32 {
+    const EPI_FIRST: u32 = 0x011F_7060;
+    const EPI_PAIR_A: u32 = 0x0120_88B4;
+    const EPI_PAIR_B: u32 = 0x00F1_C040;
+    const MODE: u32 = 0x0103_7720;
+    const EPI_SECOND: u32 = 0x011F_66A0;
+    unsafe {
+        if global::<u32>(EPI_FIRST).read() != 1 {
+            if global::<u32>(EPI_PAIR_A).read() != global::<u32>(EPI_PAIR_B).read() {
+                if global::<u32>(EPI_SECOND).read() != 0 {
+                    unreachable!("stage 2: epilogue early tail");
+                }
+            } else if global::<u32>(MODE).read() != 0x12 {
+                // fall through to helper
+            } else if global::<u32>(EPI_SECOND).read() != 0 {
+                unreachable!("stage 2: epilogue early tail");
+            }
+        } else if global::<u32>(EPI_SECOND).read() != 0 {
+            unreachable!("stage 2: epilogue early tail");
+        }
+        let ans = callee_cdecl!(9, u32,);
+        if ans != 0 {
+            return ans;
+        }
+        let st = callee_cdecl!(1, u32, 1);
+        let mask = (st as *const u8).add(0x304C).read();
+        let b = (st as *const u8).add(0x3048);
+        if b.add(6).read() ^ mask <= 0x7F {
+            unreachable!("stage 2: epilogue probe tail");
+        }
+        if b.add(7).read() ^ mask > 0x7F {
+            unreachable!("stage 2: epilogue probe tail");
+        }
+        unreachable!("stage 2: epilogue tail");
+    }
+}
 
+    const EPI_FIRST: u32 = 0x011F_7060;
+
+    const EPI_PAIR_A: u32 = 0x0120_88B4;
+
+    const EPI_PAIR_B: u32 = 0x00F1_C040;
+
+    const EPI_SECOND: u32 = 0x011F_66A0;

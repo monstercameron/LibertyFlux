@@ -23,3 +23,15 @@ export!(thiscall, rw_00d8c6b0(this: *mut u8, src: *const u8) -> u32 {
         tail
     }
 });
+
+/// Emulate `cvttss2si`: truncate toward zero, yielding `i32::MIN` for NaN or
+/// out-of-range inputs (Rust's `as` cast saturates instead, which differs).
+/// (Carried over from lane r-s44's crate; used by two ported rewrites.)
+#[inline(always)]
+pub fn cvtt_ss2si(x: f32) -> i32 {
+    if x.is_nan() || x >= 2147483648.0 || x < -2147483648.0 {
+        i32::MIN
+    } else {
+        x.trunc() as i32
+    }
+}

@@ -4,7 +4,7 @@
 /// is already null the original returns whatever happened to be in EAX at
 /// entry; the rewrite returns 0 there, which the primary contract does not
 /// check (`ret: none`); a second contract with a non-null slot checks EAX.
-lf_rs75_rt::export!(thiscall, rw_00ca4ea0(this: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00ca4ea0(this: u32) -> u32 {
     unsafe {
         let obj = *((this + 4) as *const u32);
         if obj != 0 {

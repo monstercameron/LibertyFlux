@@ -7,7 +7,7 @@
 /// matches itself, otherwise each nonzero child at offsets 0x30..0x40 is
 /// searched in order and the first match wins. Returns the matching box
 /// pointer, or null.
-lf_rs89_rt::export!(thiscall, rw_00d911d0(this: u32, bx: u32, pt: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00d911d0(this: u32, bx: u32, pt: u32) -> u32 {
     unsafe {
         let px = *(pt as *const f32);
         if px < *(bx as *const f32) {
@@ -31,7 +31,7 @@ lf_rs89_rt::export!(thiscall, rw_00d911d0(this: u32, bx: u32, pt: u32) -> u32 {
         while child_at < end {
             let child = *(child_at as *const u32);
             if child != 0 {
-                let hit: u32 = lf_rs89_rt::callee_thiscall!(1, u32, this, child, pt);
+                let hit: u32 = lf_checker_rt::callee_thiscall!(1, u32, this, child, pt);
                 if hit != 0 {
                     return hit;
                 }

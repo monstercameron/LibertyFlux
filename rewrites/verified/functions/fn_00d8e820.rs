@@ -3,7 +3,7 @@
 ///
 /// The original clears bytes 0..22 with overlapping dword and word stores;
 /// every byte in that range ends up zero however the stores are grouped.
-lf_rs89_rt::export!(thiscall, rw_00d8e820(this: *mut u8) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00d8e820(this: *mut u8) -> u32 {
     unsafe {
         core::ptr::write_bytes(this, 0, 22);
         this as u32

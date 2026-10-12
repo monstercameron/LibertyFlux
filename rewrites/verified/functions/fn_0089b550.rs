@@ -23,3 +23,6 @@ export!(thiscall, rw_0089b550(this: *const u8, arg: u32) -> u32 {
     }
 });
 
+const VOICE_ROW_STRIDE: u32 = 0x6F40;
+
+const VOICE_ROW_BIAS: u32 = 0x6F14;

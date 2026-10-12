@@ -32,3 +32,7 @@ lf_checker_rt::export!(thiscall, rw_00535320(_this: u32, want: u32) -> u32 {
         }
         NONE
     }});
+
+unsafe fn rd(base: u32, idx: u32) -> u32 {
+    unsafe { (base.wrapping_add(idx.wrapping_mul(4)) as *const u32).read_unaligned() }
+}

@@ -10,3 +10,11 @@ export!(thiscall, rw_00a7e1e0(this: *mut u8) -> u32 {
         this as u32
     }
 });
+
+unsafe fn st16(obj: *mut u8, off: usize, v: u16) {
+    *((obj.add(off)) as *mut u16) = v;
+}
+
+unsafe fn st32(obj: *mut u8, off: usize, v: u32) {
+    *((obj.add(off)) as *mut u32) = v;
+}

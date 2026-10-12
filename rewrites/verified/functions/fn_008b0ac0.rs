@@ -37,3 +37,9 @@ export!(thiscall, rw_008b0ac0(this: u32) -> () {
         ((this.wrapping_add(0x17f4)) as *mut u8).write_unaligned(0);
     }
 });
+
+/// Unaligned 32-bit store. (Carried from r-s35.)
+#[inline(always)]
+pub unsafe fn st32(addr: u32, v: u32) {
+    (addr as *mut u32).write_unaligned(v);
+}

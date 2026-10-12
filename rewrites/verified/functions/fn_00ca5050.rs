@@ -4,13 +4,13 @@
 /// by the primary `ret: none` contract; a second contract with a non-null
 /// argument checks EAX). Otherwise builds an initialised object exactly
 /// like rw_00ca4f10 and stores it at this+0xC.
-lf_rs75_rt::export!(thiscall, rw_00ca5050(this: u32, _a: u32, b: u32, _c: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00ca5050(this: u32, _a: u32, b: u32, _c: u32) -> u32 {
     unsafe {
         if b == 0 {
             return 0;
         }
-        let mgr = *lf_rs75_rt::global::<u32>(0x0167E2A0);
-        let obj: u32 = lf_rs75_rt::callee_thiscall!(1, u32, mgr);
+        let mgr = *lf_checker_rt::global::<u32>(0x0167E2A0);
+        let obj: u32 = lf_checker_rt::callee_thiscall!(1, u32, mgr);
         if obj == 0 {
             *((this + 0xC) as *mut u32) = 0;
             return 0;
@@ -18,7 +18,7 @@ lf_rs75_rt::export!(thiscall, rw_00ca5050(this: u32, _a: u32, b: u32, _c: u32) -
         const KIND: u32 = 0x19B;
         const SPEED: u32 = 0x3F800000; // 1.0f bits
         const RANGE: u32 = 0x40800000; // 4.0f bits
-        let ans: u32 = lf_rs75_rt::callee_thiscall!(
+        let ans: u32 = lf_checker_rt::callee_thiscall!(
             2,
             u32,
             obj,
@@ -26,12 +26,12 @@ lf_rs75_rt::export!(thiscall, rw_00ca5050(this: u32, _a: u32, b: u32, _c: u32) -
             1,
             RANGE,
             KIND,
-            lf_rs75_rt::relocated(0x00ED7B48),
+            lf_checker_rt::relocated(0x00ED7B48),
             0,
             SPEED,
             0
         );
-        *(obj as *mut u32) = lf_rs75_rt::relocated(0x00ED7AF4);
+        *(obj as *mut u32) = lf_checker_rt::relocated(0x00ED7AF4);
         *((this + 0xC) as *mut u32) = obj;
         ans
     }

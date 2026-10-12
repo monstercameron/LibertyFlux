@@ -8,3 +8,9 @@ export!(thiscall, rw_006847b0(this_: *mut u8, value: u32) -> u32 {
         value
     }
 });
+
+const TAG_OFF: usize = 4;
+
+const FLAG: u8 = 0x10;
+
+const VALUE_OFF: usize = 0x10;

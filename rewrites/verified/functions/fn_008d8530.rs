@@ -17,3 +17,6 @@ export!(cdecl, rw_008d8530(addend: u32, index: u32) -> u32 {
         u32::from(flag & 3 == 2)
     }
 });
+
+/// Row stride in bytes of the game table read by [`rw_008d8530`].
+const ROW_STRIDE: u32 = 100;

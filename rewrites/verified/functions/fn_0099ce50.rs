@@ -8,7 +8,7 @@
 /// exits with that helper's status. Otherwise the function selects the runtime
 /// mixer row, treating an empty tag as row zero, and returns the row helper's
 /// result.
-lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
     const INNER_STATE_OFFSET: u32 = 0x9e0;
     const VOICE_SLOT_OFFSET: u32 = 0x864;
     const VOICE_ARGUMENT_OFFSET: u32 = 0xa20;
@@ -64,16 +64,16 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
         );
         let relative = sub_in_order(
             elapsed,
-            read_f32(lf_au87_rt::relocated(0x00fe8df8)),
+            read_f32(lf_checker_rt::relocated(0x00fe8df8)),
         );
         if relative >= 0.0 {
             let scaled = mul_in_order(
                 elapsed,
-                read_f32(lf_au87_rt::relocated(0x00fe876c)),
+                read_f32(lf_checker_rt::relocated(0x00fe876c)),
             );
-            let base_bits = read_f64(lf_au87_rt::relocated(0x00fe8a78)).to_bits();
+            let base_bits = read_f64(lf_checker_rt::relocated(0x00fe8a78)).to_bits();
             let exponent_bits = f64::from(scaled).to_bits();
-            let power_bits: u64 = lf_au87_rt::callee_cdecl!(
+            let power_bits: u64 = lf_checker_rt::callee_cdecl!(
                 1,
                 u64,
                 base_bits as u32,
@@ -84,16 +84,16 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
             response = f64::from_bits(power_bits) as f32;
         }
 
-        let envelope = lf_au87_rt::callee_thiscall!(
+        let envelope = lf_checker_rt::callee_thiscall!(
             2,
             f32,
-            lf_au87_rt::relocated(0x01283ee0),
+            lf_checker_rt::relocated(0x01283ee0),
             read_u32(entity.wrapping_add(0x64)),
         );
         let envelope_gain = mul_in_order(envelope, read_f32(entity.wrapping_add(0x60)));
         final_level = mul_in_order(envelope_gain, response);
     }
-    let mixer_result = lf_au87_rt::callee_thiscall!(
+    let mixer_result = lf_checker_rt::callee_thiscall!(
         3,
         f32,
         object.wrapping_add(0x4dc),
@@ -105,7 +105,7 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
         read_f32(entity.wrapping_add(0x50)),
         read_f32(entity.wrapping_add(0x14)),
     );
-    let voice_status = lf_au87_rt::callee_thiscall!(
+    let voice_status = lf_checker_rt::callee_thiscall!(
         4,
         u32,
         object,
@@ -114,7 +114,7 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
         mixer_result.to_bits(),
         volume.to_bits(),
         read_u32(object.wrapping_add(VOICE_ARGUMENT_OFFSET)),
-        read_u32(lf_au87_rt::relocated(0x0128347c)),
+        read_u32(lf_checker_rt::relocated(0x0128347c)),
         0,
         1,
         0x3f80_0000,
@@ -130,8 +130,8 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
     } else {
         let tag = u32::from(read_u8(voice.wrapping_add(ENTITY_TAG_OFFSET)));
         let row_index = u32::from(read_u8(voice.wrapping_add(ENTITY_ROW_OFFSET)));
-        let stride = read_u32(lf_au87_rt::relocated(0x0115d968));
-        let table = read_u32(lf_au87_rt::relocated(0x0115d988));
+        let stride = read_u32(lf_checker_rt::relocated(0x0115d968));
+        let table = read_u32(lf_checker_rt::relocated(0x0115d988));
         let cell = read_u32(
             table
                 .wrapping_add(row_index.wrapping_mul(ROW_STRIDE))
@@ -140,5 +140,5 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
         stride.wrapping_mul(tag).wrapping_add(cell)
     };
 
-    lf_au87_rt::callee_thiscall!(5, u32, row, 0)
+    lf_checker_rt::callee_thiscall!(5, u32, row, 0)
 });

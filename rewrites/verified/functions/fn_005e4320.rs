@@ -24,3 +24,15 @@ export!(stdcall, rw_005e4320(arg: u32) -> u32 {
         index
     }
 });
+
+const POOL_BASE: u32 = 0x110E8E4;
+
+const OBJ_LEN: u32 = 0x598;
+
+const OBJ_TEXT: u32 = 0x20;
+
+const OBJ_FLAG: u32 = 0x59C;
+
+const POOL_STRIDE: u32 = 0x110E8F0;
+
+const DEFAULT_TEXT: u32 = 0xF924EC;

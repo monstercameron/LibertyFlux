@@ -5,7 +5,7 @@
 //! config words, eight float parameters, twelve body dwords, three flag
 //! bytes. Returns `this`.
 
-lf_rb69_rt::export!(thiscall, rw_00895590(this: *mut u8, src: *const u8) -> *mut u8 {
+lf_checker_rt::export!(thiscall, rw_00895590(this: *mut u8, src: *const u8) -> *mut u8 {
     unsafe {
         let d = this;
         let s = src;

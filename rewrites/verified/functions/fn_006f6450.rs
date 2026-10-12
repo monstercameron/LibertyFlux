@@ -4,7 +4,7 @@
 /// Reads a clock helper, subtracts the stamp at `+0x24`, and returns 1
 /// when the elapsed time exceeds the limit at `+0x38`. Returns 0 when
 /// the limit or stamp is zero or the mode at `+0x20` is not 3.
-rt::export!(thiscall, rw_006f6450(this: *const u8) -> u8 {
+lf_checker_rt::export!(thiscall, rw_006f6450(this: *const u8) -> u8 {
     unsafe {
         if *this.add(0x38).cast::<u32>() == 0 {
             return 0;
@@ -16,7 +16,7 @@ rt::export!(thiscall, rw_006f6450(this: *const u8) -> u8 {
         if stamp == 0 {
             return 0;
         }
-        let now: u32 = rt::callee_thiscall!(1, u32, this as u32);
+        let now: u32 = lf_checker_rt::callee_thiscall!(1, u32, this as u32);
         (now.wrapping_sub(stamp) > *this.add(0x38).cast::<u32>()) as u8
     }
 });

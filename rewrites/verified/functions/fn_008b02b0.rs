@@ -373,3 +373,27 @@ export!(thiscall, rw_008b02b0(this: u32, vec: u32, voice: u32) -> () {
         wrf(esi.wrapping_add(0x14), x4);
     }
 });
+
+/// Unaligned f32 load. (Carried from r-s35.)
+#[inline(always)]
+pub unsafe fn rdf(addr: u32) -> f32 {
+    f32::from_bits(ld32(addr))
+}
+
+/// Unaligned 32-bit load. (Carried from r-s35.)
+#[inline(always)]
+pub unsafe fn ld32(addr: u32) -> u32 {
+    (addr as *const u32).read_unaligned()
+}
+
+/// Unaligned 32-bit store. (Carried from r-s35.)
+#[inline(always)]
+pub unsafe fn st32(addr: u32, v: u32) {
+    (addr as *mut u32).write_unaligned(v);
+}
+
+/// Unaligned f32 store. (Carried from r-s35.)
+#[inline(always)]
+pub unsafe fn wrf(addr: u32, v: f32) {
+    st32(addr, v.to_bits());
+}

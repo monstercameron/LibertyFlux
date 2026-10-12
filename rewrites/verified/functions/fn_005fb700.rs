@@ -61,4 +61,14 @@ lf_checker_rt::export!(thiscall, rw_005fb700(this: u32) -> () {
         }
         write_u32(this.wrapping_add(TYPE_REFERENCE), 0);
     }
+});
+
+    #[inline(always)]
+    unsafe fn read_u32(address: u32) -> u32 {
+        unsafe { (address as *const u32).read_unaligned() }
+    }
+
+#[inline(always)]
+unsafe fn write_u32(address: u32, value: u32) {
+    unsafe { (address as *mut u32).write_unaligned(value) }
 }

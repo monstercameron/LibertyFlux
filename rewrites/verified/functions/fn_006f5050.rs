@@ -3,7 +3,7 @@
 ///
 /// Covers bytes 4..7: low 6 bits of byte 4, all of byte 5, top 2 bits of
 /// byte 6.
-rt::export!(thiscall, rw_006f5050(this: *const u8) -> u32 {
+lf_checker_rt::export!(thiscall, rw_006f5050(this: *const u8) -> u32 {
     unsafe {
         let b4 = *this.add(4) as u32;
         let b5 = *this.add(5) as u32;

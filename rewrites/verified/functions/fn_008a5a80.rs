@@ -138,3 +138,13 @@ export!(thiscall, rw_008a5a80(this: u32, arg0: u32) -> u32 {
         commit(op2)
     }
 });
+
+#[inline(always)]
+fn fadd(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}
+
+#[inline(always)]
+fn fsub(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) - core::hint::black_box(b)
+}

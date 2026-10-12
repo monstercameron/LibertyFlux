@@ -23,3 +23,15 @@ export!(stdcall, rw_005e44a0(index: u32, arg: u32) -> u32 {
         r
     }
 });
+
+const POOL_BITMAP: u32 = 0x110E8E8;
+
+const SLOT_DEAD: u8 = 0x80;
+
+const POOL_STRIDE: u32 = 0x110E8F0;
+
+const POOL_BASE: u32 = 0x110E8E4;
+
+const OBJ_LEN: u32 = 0x598;
+
+const OBJ_TEXT: u32 = 0x20;

@@ -18,7 +18,7 @@
 /// guard callee, whose answer is scripted), so the contract pins it to a
 /// constant the rewrite passes explicitly. The CRT security-cookie check
 /// runs natively on the original side and is not modelled.
-lf_checker_lf_checker_rt::export!(stdcall, rb586_fn3(path: u32) -> u32 {
+lf_checker_rt::export!(stdcall, rb586_fn3(path: u32) -> u32 {
     unsafe {
         const PINNED_ECX: u32 = 0x12345678;
         const K_LOOKUP: u32 = 0x00f01ee0;

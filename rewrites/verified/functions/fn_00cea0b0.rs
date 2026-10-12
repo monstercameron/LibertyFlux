@@ -178,4 +178,4 @@ unsafe fn advance_generic_curse(this: u32, owner: u32, mutant: bool) {
 lf_checker_rt::export!(thiscall, rw_00cea0b0(this: u32, owner: u32) -> u32 {
     unsafe { advance_generic_curse(this, owner, false) }
     0
-}
+});

@@ -5,10 +5,10 @@
 /// When the lookup reports success through its low byte and returns a
 /// nonzero handle, bit 0x10000000 is set in the handle's status word.
 /// Returns the lookup's answer byte-extended state as the full answer word.
-lf_rs89_rt::export!(thiscall, rw_00d8ed10(this: u32, key: u32, level_bits: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00d8ed10(this: u32, key: u32, level_bits: u32) -> u32 {
     unsafe {
         let mut handle: u32 = 0;
-        let ans: u32 = lf_rs89_rt::callee_thiscall!(
+        let ans: u32 = lf_checker_rt::callee_thiscall!(
             1,
             u32,
             this,

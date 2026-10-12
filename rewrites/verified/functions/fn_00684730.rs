@@ -19,3 +19,5 @@ export!(thiscall, rw_00684730(this_: *mut u8, factor: f32) -> u32 {
         out
     }
 });
+
+const VALUE_OFF: usize = 0x10;

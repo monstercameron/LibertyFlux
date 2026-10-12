@@ -1,5 +1,4 @@
 // original: 0x00cf5b70 ped_task_climb
-use crate::{add_f32, mul_f32, neg_f32, read_f32, read_u32, sub_f32, write_u32};
 
 /// Advance a climb task for one frame. The pedestrian flag is set first; a
 /// positive predicate result delegates to the early helper and returns its
@@ -205,3 +204,40 @@ lf_checker_rt::export!(thiscall, rw_00cf5b70(this: u32, ped: u32, target: u32, s
 lf_checker_rt::export!(thiscall, mut_00cf5b70(this: u32, ped: u32, target: u32, step: u32) -> u32 {
     unsafe { run(this, ped, target, step, true) }
 });
+
+#[inline(always)]
+unsafe fn write_u32(address: u32, value: u32) {
+    unsafe { (address as *mut u32).write_unaligned(value) }
+}
+
+#[inline(always)]
+unsafe fn read_u32(address: u32) -> u32 {
+    unsafe { (address as *const u32).read_unaligned() }
+}
+
+#[inline(always)]
+unsafe fn read_f32(address: u32) -> f32 {
+    f32::from_bits(unsafe { read_u32(address) })
+}
+
+#[inline(always)]
+fn mul_f32(left: f32, right: f32) -> f32 {
+    core::hint::black_box(core::hint::black_box(left) * core::hint::black_box(right))
+}
+
+#[inline(always)]
+fn neg_f32(value: f32) -> f32 {
+    f32::from_bits(value.to_bits() ^ SIGN_BIT)
+}
+
+#[inline(always)]
+fn sub_f32(left: f32, right: f32) -> f32 {
+    core::hint::black_box(core::hint::black_box(left) - core::hint::black_box(right))
+}
+
+#[inline(always)]
+fn add_f32(left: f32, right: f32) -> f32 {
+    core::hint::black_box(core::hint::black_box(left) + core::hint::black_box(right))
+}
+
+const SIGN_BIT: u32 = 0x8000_0000;

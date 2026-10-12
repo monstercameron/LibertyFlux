@@ -1,7 +1,17 @@
 // original: 0x00E6E2A0 mainloop_timing_release_group_b_slot_1
 
-/// Passes the second group's object pointer to the imported critical-section
-/// release routine and returns the API's result.
-pub extern "cdecl" fn rw_00e6e2a0() -> u32 {
-    lf_checker_rt::callee_stdcall!(1, u32, lf_checker_rt::relocated(0x018d_c250))
+/// Releases the second object in the matching critical-section group.
+lf_checker_rt::export!(cdecl, rw_00e6e2a0() -> u32 {
+    release_critical_section(0x018d_c250)
+});
+
+#[inline(always)]
+fn release_critical_section(resource_va: u32) -> u32 {
+    lf_checker_rt::callee_stdcall!(
+        DELETE_CRITICAL_SECTION,
+        u32,
+        lf_checker_rt::relocated(resource_va)
+    )
 }
+
+const DELETE_CRITICAL_SECTION: u32 = 1;

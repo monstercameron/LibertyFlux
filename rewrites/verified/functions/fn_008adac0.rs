@@ -15,3 +15,15 @@ export!(thiscall, rw_008adac0(this: u32) -> u32 {
         1
     }
 });
+
+/// Unaligned 32-bit load. (Carried from r-s35.)
+#[inline(always)]
+pub unsafe fn ld32(addr: u32) -> u32 {
+    (addr as *const u32).read_unaligned()
+}
+
+/// Unaligned 32-bit store. (Carried from r-s35.)
+#[inline(always)]
+pub unsafe fn st32(addr: u32, v: u32) {
+    (addr as *mut u32).write_unaligned(v);
+}

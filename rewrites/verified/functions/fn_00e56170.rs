@@ -8,7 +8,7 @@
 /// selects the first ready round object, evaluates the two float chains
 /// with min/max reductions and clamped gate cells, and either returns
 /// through the shared epilogue or tail-dispatches with argument 1.
-use crate::{callee_cdecl, callee_thiscall, export, global, relocated};
+use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global, relocated};
 
 fn vcall0(obj: u32, off: u32) -> u32 {
     let vt = unsafe { (obj as *const u32).read() };

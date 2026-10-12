@@ -24,3 +24,7 @@ lf_checker_rt::export!(thiscall, rw_00a2ccb0(this: u32) -> u32 {
         0
     }
 });
+
+unsafe fn wr32(a: u32, v: u32) {
+    unsafe { (a as *mut u32).write_unaligned(v) }
+}

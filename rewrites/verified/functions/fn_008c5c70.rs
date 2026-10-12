@@ -16,3 +16,8 @@ lf_checker_rt::export!(thiscall, rw_008c5c70(this: u32, label: u32) -> u32 {
         u32::MAX
     }
 });
+
+#[inline(always)]
+unsafe fn read_u32(address: u32) -> u32 {
+    unsafe { (address as *const u32).read_unaligned() }
+}

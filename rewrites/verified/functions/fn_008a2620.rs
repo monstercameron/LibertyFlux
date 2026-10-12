@@ -160,3 +160,28 @@ export!(thiscall, rw_008a2620(this: u32, a0: u32) -> f64 {
         (k0) as f64
     }
 });
+
+#[inline(always)]
+fn fadd(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}
+
+#[inline(always)]
+fn fsqrt(a: f32) -> f32 {
+    core::hint::black_box(a).sqrt()
+}
+
+#[inline(always)]
+fn fmul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+#[inline(always)]
+fn fdiv(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) / core::hint::black_box(b)
+}
+
+#[inline(always)]
+fn fsub(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) - core::hint::black_box(b)
+}

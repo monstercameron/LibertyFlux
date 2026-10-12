@@ -20,7 +20,7 @@
 /// signedness there is unobservable by any terminating trial). Finishes
 /// with two calls into the gallery helper and the counter block (reset via
 /// the pass-reset callee past 6).
-lf_checker_lf_checker_rt::export!(thiscall, rb586_fn1(this: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rb586_fn1(this: u32) -> u32 {
     unsafe {
         const TAG: u32 = 0x308;
         const COUNT: u32 = 0x310;

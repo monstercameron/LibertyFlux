@@ -290,3 +290,23 @@ lf_checker_rt::export!(thiscall, rw_005D7700(this: u32, node: u32) -> u32 {
         }
     }
 });
+
+#[inline(always)]
+unsafe fn rd32(a: u32) -> u32 {
+    unsafe { (a as *const u32).read_unaligned() }
+}
+
+#[inline(always)]
+unsafe fn wr32(a: u32, v: u32) {
+    unsafe { (a as *mut u32).write_unaligned(v) }
+}
+
+#[inline(always)]
+unsafe fn rd16(a: u32) -> u16 {
+    unsafe { (a as *const u16).read_unaligned() }
+}
+
+#[inline(always)]
+unsafe fn wr8(a: u32, v: u8) {
+    unsafe { (a as *mut u8).write(v) }
+}

@@ -22,3 +22,11 @@ export!(cdecl, rw_009086F0(op: u32, handle: u32, coord: u32) -> u32 {
         callee_cdecl!(2, u32, a as u32, coord)
     }
 });
+
+#[inline(always)]
+unsafe fn blip(id: u32) -> *mut u8 {
+    let table = global::<u32>(BLIP_TABLE);
+    *table.add(id as usize) as *mut u8
+}
+
+const BLIP_TABLE: u32 = 0x118F6F8;

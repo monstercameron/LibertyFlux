@@ -12,3 +12,18 @@ export!(thiscall, rw_008a1840(this: u32, flags: u32) -> u32 {
         this
     }
 });
+
+const SOUND_POOL: u32 = 0x115d8a0;
+
+/// Convert a file VA (as seen in disassembly, image base 0x400000) to the
+/// relocated address in the worker's mapping.
+#[inline(always)]
+pub fn relocated(file_va: u32) -> u32 {
+    file_va.wrapping_sub(0x400000).wrapping_add(xbase())
+}
+
+/// Relocated base of the original image.
+#[inline(always)]
+pub fn xbase() -> u32 {
+    unsafe { CHECKER_XBASE }
+}

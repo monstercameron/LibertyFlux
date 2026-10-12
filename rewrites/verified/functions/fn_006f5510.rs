@@ -3,7 +3,7 @@
 ///
 /// Stores `a1` at `+0`, zeroes the words up to `+0x2C`, clears bit 0 at
 /// `+0x32` and the word at `+0x30`. Returns `this`.
-rt::export!(thiscall, rw_006f5510(this: *mut u8, a1: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_006f5510(this: *mut u8, a1: u32) -> u32 {
     unsafe {
         *this.cast::<u32>() = a1;
         for off in [4usize, 8, 0xC, 0x10, 0x14] {

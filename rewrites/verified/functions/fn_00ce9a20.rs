@@ -133,4 +133,4 @@ unsafe fn build_on_fire_message(this: u32, owner: u32, mutant: bool) {
 lf_checker_rt::export!(thiscall, rw_00ce9a20(this: u32, owner: u32) -> u32 {
     unsafe { build_on_fire_message(this, owner, false) }
     0
-}
+});

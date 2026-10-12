@@ -4,7 +4,7 @@
 /// the adjusted +8 through the same slot. The both-null combination returns
 /// entry garbage in the original and is never generated; every branch is
 /// still covered both ways by alternating which slot is null.
-lf_rs75_rt::export!(thiscall, rw_00ca4ec0(this: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00ca4ec0(this: u32) -> u32 {
     unsafe {
         let base = this.wrapping_add(0x20);
         let first = *((base + 4) as *const u32);

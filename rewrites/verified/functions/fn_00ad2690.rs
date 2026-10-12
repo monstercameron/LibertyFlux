@@ -71,3 +71,34 @@ export!(cdecl, rw_ad2690(sel: u32, coeff: *const f32) -> u32 {
         callee_thiscall!(2, u32, mgr, relocated(0x1110090))
     }
 });
+
+/// Truncating float-to-int conversion with x86 `cvttss2si` semantics.
+///
+/// Unlike Rust's `as` cast (which saturates), `cvttss2si` yields
+/// `i32::MIN` for NaN and out-of-range inputs. All callers pass the
+/// result of an `f32` multiply, exactly as the originals do.
+#[inline(always)]
+fn cvtt_f32_to_i32(x: f32) -> i32 {
+    if x.is_nan() {
+        return i32::MIN;
+    }
+    let t = x.trunc();
+    if t >= 2_147_483_648.0 || t < -2_147_483_648.0 {
+        i32::MIN
+    } else {
+        t as i32
+    }
+}
+
+/// Convert a file VA (as seen in disassembly, image base 0x400000) to the
+/// relocated address in the worker's mapping.
+#[inline(always)]
+pub fn relocated(file_va: u32) -> u32 {
+    file_va.wrapping_sub(0x400000).wrapping_add(xbase())
+}
+
+/// Relocated base of the original image.
+#[inline(always)]
+pub fn xbase() -> u32 {
+    unsafe { CHECKER_XBASE }
+}

@@ -35,3 +35,5 @@ export!(thiscall, rw_rs01_ccaa50(_this: *const u8) -> u32 {
         fresh as u32
     }
 });
+
+const TASK_POOL: u32 = 0x167E2A0;

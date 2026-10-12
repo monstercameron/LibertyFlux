@@ -5,7 +5,7 @@
 /// fields are unpacked from the header, a construction helper is invoked
 /// with the inner block pointer `a1 + 4` and the unpacked values, then
 /// the vtable, an 11-bit field and a flag bit are stored. Returns `this`.
-rt::export!(thiscall, rw_006f5440(
+lf_checker_rt::export!(thiscall, rw_006f5440(
     this: *mut u8,
     a1: *mut u8,
     a2: u32,
@@ -25,8 +25,8 @@ rt::export!(thiscall, rw_006f5440(
         let inner = a1.add(4);
         let w10 = *inner.add(0x10).cast::<u32>();
         let w14 = *inner.add(0x14).cast::<u32>();
-        rt::callee_thiscall!(1, u32, this as u32, inner as u32, w10, w14, a2, scaled, a4, flag, a5);
-        *this.cast::<u32>() = rt::relocated(0x00FE4AA0);
+        lf_checker_rt::callee_thiscall!(1, u32, this as u32, inner as u32, w10, w14, a2, scaled, a4, flag, a5);
+        *this.cast::<u32>() = lf_checker_rt::relocated(0x00FE4AA0);
         for off in [0x4Cusize, 0x50, 0x54] {
             *this.add(off).cast::<u32>() = 0;
         }

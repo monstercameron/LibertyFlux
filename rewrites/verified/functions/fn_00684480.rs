@@ -19,3 +19,9 @@ export!(thiscall, rw_00684480(this_: *mut u8, other: *const u8, limit: f32) -> u
         other as u32
     }
 });
+
+const VALUE_OFF: usize = 0x10;
+
+const TAG_OFF: usize = 4;
+
+const FLAG: u8 = 0x10;

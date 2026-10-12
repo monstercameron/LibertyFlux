@@ -4,7 +4,7 @@
 /// non-null probe and marker bits in the probe's status word before
 /// converting through the factory; a registry release call runs on every
 /// converted event. Stores the conversion at this+0xC.
-lf_rs75_rt::export!(thiscall, rw_00ca65d0(this: u32, ev: u32, _b: u32, _c: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00ca65d0(this: u32, ev: u32, _b: u32, _c: u32) -> u32 {
     unsafe {
         let vtbl = *(ev as *const u32);
         let probe: extern "thiscall" fn(u32) -> u32 =
@@ -13,7 +13,7 @@ lf_rs75_rt::export!(thiscall, rw_00ca65d0(this: u32, ev: u32, _b: u32, _c: u32) 
         let found = probe(ev);
         let ctx = *((this + 4) as *const u32);
         let reg = *((ctx + 0x224) as *const u32);
-        let r2: u32 = lf_rs75_rt::callee_thiscall!(2, u32, reg, ebx);
+        let r2: u32 = lf_checker_rt::callee_thiscall!(2, u32, reg, ebx);
         if r2 != 0 {
             return r2;
         }
@@ -27,14 +27,14 @@ lf_rs75_rt::export!(thiscall, rw_00ca65d0(this: u32, ev: u32, _b: u32, _c: u32) 
         if bits != 0xC0 {
             return bits;
         }
-        let mgr = *lf_rs75_rt::global::<u32>(0x0167E2A0);
-        let h: u32 = lf_rs75_rt::callee_thiscall!(3, u32, mgr);
+        let mgr = *lf_checker_rt::global::<u32>(0x0167E2A0);
+        let h: u32 = lf_checker_rt::callee_thiscall!(3, u32, mgr);
         let conv: u32 = if h == 0 {
             0
         } else {
-            lf_rs75_rt::callee_thiscall!(4, u32, h, found, 0)
+            lf_checker_rt::callee_thiscall!(4, u32, h, found, 0)
         };
         *((this + 0xC) as *mut u32) = conv;
-        lf_rs75_rt::callee_thiscall!(5, u32, reg, found, 1)
+        lf_checker_rt::callee_thiscall!(5, u32, reg, found, 1)
     }
 });

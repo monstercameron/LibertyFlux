@@ -85,3 +85,12 @@ export!(thiscall, rw_00e3d730(obj: u32) -> u32 {
         u32::from(matched_third)
     }
 });
+
+fn cvttss2si(x: f32) -> i32 {
+    if x.is_nan() || (x as f64) >= 2147483648.0 || (x as f64) < -2147483648.0 {
+        i32::MIN
+    } else {
+        // In range: `as` truncates toward zero exactly.
+        x as i32
+    }
+}

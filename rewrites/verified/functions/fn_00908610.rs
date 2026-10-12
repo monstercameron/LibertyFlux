@@ -14,3 +14,11 @@ export!(cdecl, rw_00908610(id: u32, value: u32) -> u32 {
         }
     }
 });
+
+#[inline(always)]
+unsafe fn blip(id: u32) -> *mut u8 {
+    let table = global::<u32>(BLIP_TABLE);
+    *table.add(id as usize) as *mut u8
+}
+
+const BLIP_TABLE: u32 = 0x118F6F8;

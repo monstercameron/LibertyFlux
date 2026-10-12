@@ -79,3 +79,13 @@ lf_checker_rt::export!(thiscall, rw_00D4B7A0(this: u32) -> u32 {
         target
     }
 });
+
+        #[inline(always)]
+        unsafe fn rd8(a: u32) -> u8 {
+            unsafe { (a as *const u8).read() }
+        }
+
+            #[inline(always)]
+            unsafe fn rd16(a: u32) -> u16 {
+                unsafe { (a as *const u16).read_unaligned() }
+            }

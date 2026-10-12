@@ -1,11 +1,6 @@
 // original: 0x00664D50 rage::snSendInvitesTask::vf7
-/// Handles a pending invite request, optionally resets the service request state,
-/// then completes the task with two forwarded arguments. `this` is a 32-bit task
-/// pointer; fields at +0x60, +0x90, and +0x98 hold the service, request state,
-/// and optional request pointer. The request's virtual method is called only
-/// when its pointer is non-null, and that field is then cleared. The reset helper
-/// runs only when the state word equals one. The final helper's return value is
-/// returned, and the service field is cleared after that call.lf_checker_rt::export!(thiscall, rw_00664d50(this: u32, first_arg: u32, second_arg: u32) -> u32 {
+
+lf_checker_rt::export!(thiscall, rw_00664d50(this: u32, first_arg: u32, second_arg: u32) -> u32 {
     unsafe {
         const SERVICE_OBJECT: u32 = 0x60;
         const REQUEST_POINTER: u32 = 0x98;
@@ -62,3 +57,5 @@
         result
     }
 });
+
+

@@ -43,3 +43,26 @@ export!(cdecl, rw_008d7720(a: f32, b: f32, t: f32) -> u32 {
         0
     }
 });
+
+/// Scalar-SSE multiplication with the original's exact NaN rule (see
+/// [`sse_sub`]).
+fn sse_mul(dest: f32, src: f32) -> f32 {
+    if dest.is_nan() {
+        f32::from_bits(dest.to_bits() | 0x0040_0000)
+    } else if src.is_nan() {
+        f32::from_bits(src.to_bits() | 0x0040_0000)
+    } else {
+        dest * src
+    }
+}
+
+/// Scalar-SSE addition with the original's exact NaN rule (see [`sse_sub`]).
+fn sse_add(dest: f32, src: f32) -> f32 {
+    if dest.is_nan() {
+        f32::from_bits(dest.to_bits() | 0x0040_0000)
+    } else if src.is_nan() {
+        f32::from_bits(src.to_bits() | 0x0040_0000)
+    } else {
+        dest + src
+    }
+}

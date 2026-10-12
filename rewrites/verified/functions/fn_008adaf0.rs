@@ -39,3 +39,9 @@ export!(thiscall, rw_008adaf0(this: u32, arg: f32) -> f64 {
         f32::from_bits(ld32(addr)) as f64
     }
 });
+
+/// Unaligned 32-bit load. (Carried from r-s35.)
+#[inline(always)]
+pub unsafe fn ld32(addr: u32) -> u32 {
+    (addr as *const u32).read_unaligned()
+}

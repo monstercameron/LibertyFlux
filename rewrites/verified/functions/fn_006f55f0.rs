@@ -4,9 +4,9 @@
 /// Installs the vtable, fills sentinel words (`-1`), zero words, timing
 /// constants and a flag byte, and masks the mode bits at `+0x88`.
 /// Returns `this`.
-rt::export!(thiscall, rw_006f55f0(this: *mut u8) -> u32 {
+lf_checker_rt::export!(thiscall, rw_006f55f0(this: *mut u8) -> u32 {
     unsafe {
-        *this.cast::<u32>() = rt::relocated(0x00FE543C);
+        *this.cast::<u32>() = lf_checker_rt::relocated(0x00FE543C);
         *this.add(4).cast::<u32>() = 0xFFFF_FFFF;
         *this.add(0xC).cast::<u32>() = 0xFFFF_FFFF;
         *this.add(8).cast::<u16>() = 0;

@@ -12,13 +12,13 @@
 /// the tail. The tail blends a per-object factor with the slot value,
 /// re-selects the mixer row, truncates the blend to an integer and delivers
 /// it to the mixer. The result is the mixer's answer.
-lf_rb80_rt::export!(thiscall, rw_0099cc60(this: u32, ent: u32, _unused: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_0099cc60(this: u32, ent: u32, _unused: u32) -> u32 {
     let rd32 = |addr: u32| unsafe { (addr as *const u32).read_unaligned() };
     let rd8 = |addr: u32| unsafe { (addr as *const u8).read_unaligned() };
     let obj = this;
     let esi = ent;
-    let stride = rd32(lf_rb80_rt::relocated(0x115d968));
-    let table = rd32(lf_rb80_rt::relocated(0x115d988));
+    let stride = rd32(lf_checker_rt::relocated(0x115d968));
+    let table = rd32(lf_checker_rt::relocated(0x115d988));
     let select = |e: u32| {
         let tag = rd8(e.wrapping_add(4)) as u32;
         if tag == 0xff {
@@ -37,50 +37,50 @@ lf_rb80_rt::export!(thiscall, rw_0099cc60(this: u32, ent: u32, _unused: u32) -> 
         match sw {
             0 | 1 | 2 | 3 => {
                 let mut out = [0u32; 4];
-                let r = lf_rb80_rt::callee_thiscall!(1, u32, obj, sw, out.as_mut_ptr() as u32);
-                lf_rb80_rt::callee_thiscall!(5, u32, esi, r);
+                let r = lf_checker_rt::callee_thiscall!(1, u32, obj, sw, out.as_mut_ptr() as u32);
+                lf_checker_rt::callee_thiscall!(5, u32, esi, r);
             }
             4 | 5 => {}
             6 => {
                 let mut a0 = [0u32; 1];
                 let mut a1 = [23900.0f32.to_bits()];
-                lf_rb80_rt::callee_thiscall!(2, u32, obj, a0.as_mut_ptr() as u32,
+                lf_checker_rt::callee_thiscall!(2, u32, obj, a0.as_mut_ptr() as u32,
                     a1.as_mut_ptr() as u32);
-                lf_rb80_rt::callee_thiscall!(3, u32, esi, a0[0]);
+                lf_checker_rt::callee_thiscall!(3, u32, esi, a0[0]);
                 tail_in = f32::from_bits(a1[0]);
             }
             7 => {
                 let mut out = [0u32; 4];
                 let inner = rd32(obj.wrapping_add(0x820));
-                let r = lf_rb80_rt::callee_thiscall!(4, u32, inner, out.as_mut_ptr() as u32,
+                let r = lf_checker_rt::callee_thiscall!(4, u32, inner, out.as_mut_ptr() as u32,
                     obj.wrapping_add(0x20));
-                lf_rb80_rt::callee_thiscall!(5, u32, esi, r);
+                lf_checker_rt::callee_thiscall!(5, u32, esi, r);
             }
             8 => {
                 let mut out = [0u32; 4];
                 let inner = rd32(obj.wrapping_add(0x820));
-                let r = lf_rb80_rt::callee_thiscall!(4, u32, inner, out.as_mut_ptr() as u32,
+                let r = lf_checker_rt::callee_thiscall!(4, u32, inner, out.as_mut_ptr() as u32,
                     obj.wrapping_add(0x10));
-                lf_rb80_rt::callee_thiscall!(5, u32, esi, r);
+                lf_checker_rt::callee_thiscall!(5, u32, esi, r);
             }
             9 => {
                 let mut out = [0u32; 4];
                 let inner = rd32(obj.wrapping_add(0x820));
-                let r = lf_rb80_rt::callee_thiscall!(4, u32, inner, out.as_mut_ptr() as u32,
+                let r = lf_checker_rt::callee_thiscall!(4, u32, inner, out.as_mut_ptr() as u32,
                     obj.wrapping_add(0x30));
-                lf_rb80_rt::callee_thiscall!(5, u32, esi, r);
+                lf_checker_rt::callee_thiscall!(5, u32, esi, r);
             }
             _ => {
                 let mut out = [0u32; 4];
                 let inner = rd32(obj.wrapping_add(0x820));
-                let r = lf_rb80_rt::callee_thiscall!(4, u32, inner, out.as_mut_ptr() as u32,
+                let r = lf_checker_rt::callee_thiscall!(4, u32, inner, out.as_mut_ptr() as u32,
                     obj.wrapping_add(0x20));
-                lf_rb80_rt::callee_thiscall!(5, u32, esi, r);
-                let t: u32 = lf_rb80_rt::callee_thiscall!(6, u32, rd32(obj.wrapping_add(0x820)));
+                lf_checker_rt::callee_thiscall!(5, u32, esi, r);
+                let t: u32 = lf_checker_rt::callee_thiscall!(6, u32, rd32(obj.wrapping_add(0x820)));
                 if (t & 0xff) != 0 {
-                    lf_rb80_rt::callee_thiscall!(7, u32, rd32(obj.wrapping_add(0x820)));
+                    lf_checker_rt::callee_thiscall!(7, u32, rd32(obj.wrapping_add(0x820)));
                 }
-                lf_rb80_rt::callee_thiscall!(3, u32, esi, 0);
+                lf_checker_rt::callee_thiscall!(3, u32, esi, 0);
             }
         }
     }
@@ -88,6 +88,6 @@ lf_rb80_rt::export!(thiscall, rw_0099cc60(this: u32, ent: u32, _unused: u32) -> 
     let blend = 23900.0f32 - factor;
     let slot = if blend <= tail_in { blend } else { tail_in };
     let n = (slot as i64) as i32 as u32;
-    lf_rb80_rt::callee_thiscall!(8, u32, select(esi), n);
+    lf_checker_rt::callee_thiscall!(8, u32, select(esi), n);
     0
 });

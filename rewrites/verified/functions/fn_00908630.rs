@@ -29,3 +29,15 @@ export!(cdecl, rw_00908630(id: u32, arg2: u32) -> u32 {
         tgt as u32
     }
 });
+
+/// Global table of pointers to blip records, indexed by blip id.
+const BLIP_TABLE: u32 = 0x118F6F8;
+
+/// Global holding the TLS slot index of the current thread's queue block.
+const TLS_QUEUE_INDEX: u32 = 0x17ABA14;
+
+/// Offset of the thread anchor passed to the attach steps inside the TLS block.
+const THREAD_ANCHOR_OFF: u32 = 0x78;
+
+/// Blip id the game falls back to when a record has no own data.
+const BLIP_DEFAULT: u32 = 0x1034494;

@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 488 published files made whole, each proven as the file that is published",
+    "commit": null,
+    "summary": "488 verified rewrites whose published file did not build alone are replaced by repaired files, each of which was built alone and run against its proving lane's contract of record before it went in. The verified count does not change; what changes is that for these functions the file in the repository is now the code that was proven.",
+    "changes": [
+      "The pipeline's manifest showed this evening that 706 of the verified rewrites were left out of the assembled library because the published file did not build alone: helpers, constants and types that had stayed in the proving lane's crate, a lane's own runtime in place of the shared one, a file malformed as published, or a wrapper with the body left behind. A tool lane repaired what a script could repair from the proving lanes' own source, changing nothing in behaviour, and wrote a prover that needs no model: it builds each repaired file alone, runs the proving lane's contract of record against that build on the stock checker at 300 trials, and runs the lane's wrong version where one exists.",
+      "Of 550 repaired files the prover settled, 501 pass. 130 of those pass with their wrong version rejected; the others pass their contract of record where the proving lane has no wrong version that can still be built or run, which was already true of the proof they replace and leaves them in the backlog of old proofs to be run again. 488 of the 501 go in now: 11 were already identical to the tracked file and 2 use a word the current language edition reserves and wait for a separate change.",
+      "Before applying, the coordinator checked for each file that its hash is the one the prover recorded, that the function is still in the verified index and its tracked file had not been committed again since the repair, and that the whole set builds alone by the same check the importer now runs. By kind of repair: 270 with a helper, constant or type carried into the file; 197 moved from a lane's own runtime to the shared one; 9 wrappers given the body their lane proved; 8 with a closing bracket restored; 2 with a wrong version removed from the published file; 2 with an import path corrected.",
+      "Not applied and still open: 8 repaired files fail their contract (three examined: an old contract that is vacuous under the current checker, and a repair of tail-jump script natives that is not a pure renaming); 41 could not be run (no contract of record where the index says, a build that still fails, a contract the stock driver rejects); and about 150 of the 706 that no script could repair. Those go to lanes."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 19 files from lanes (693 unverified rewrites, 1063 in review)",
     "commit": "8018063a9ce48114b91e0706c227f45f6118e295",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

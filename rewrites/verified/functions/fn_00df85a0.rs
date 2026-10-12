@@ -17,7 +17,7 @@
 /// frame, so they are skipped and their preset words snapshotted instead;
 /// the written select code and parameters are observed through the gates
 /// they drive and the call arguments they become.
-lf_checker_lf_checker_rt::export!(thiscall, rb586_fn4(this: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rb586_fn4(this: u32) -> u32 {
     unsafe {
         const CTX: u32 = 0x019d2f18;
         const CHILD0: u32 = 0x1e0;

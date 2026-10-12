@@ -32,3 +32,8 @@ lf_checker_rt::export!(thiscall, rw_00bf8e90(this: u32, a0: u32, a1: u32, a2: u3
         0
     }
 });
+
+#[inline(always)]
+fn fmul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}

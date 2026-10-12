@@ -5,7 +5,7 @@
 /// Interprets bytes 0..2 as a big-endian value, derives a quotient and a
 /// bit-dependent adjustment from it, and range-checks both against `limit`
 /// and fixed bounds. Returns 1 when everything is consistent, else 0.
-rt::export!(fastcall, rw_006f50e0(this: *const u8, limit: u32) -> u8 {
+lf_checker_rt::export!(fastcall, rw_006f50e0(this: *const u8, limit: u32) -> u8 {
     unsafe {
         if limit < 4 {
             return 0;

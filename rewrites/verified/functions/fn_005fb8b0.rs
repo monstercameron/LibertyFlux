@@ -27,4 +27,9 @@ lf_checker_rt::export!(thiscall, rw_005fb8b0(this: u32) -> u32 {
         };
         if object == 0 { 0 } else { read_u32(resource.wrapping_add(RESOURCE_VALUE)) }
     }
-}
+});
+
+    #[inline(always)]
+    unsafe fn read_u32(address: u32) -> u32 {
+        unsafe { (address as *const u32).read_unaligned() }
+    }

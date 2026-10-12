@@ -21,3 +21,5 @@ export!(thiscall, rw_rs01_cca910(this: *const u8) -> u32 {
         init(fresh, arg)
     }
 });
+
+const TASK_POOL: u32 = 0x167E2A0;

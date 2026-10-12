@@ -56,3 +56,9 @@ export!(thiscall, rw_00d90a10(this: u32, v: *const f32, f: f32, tag: u32) -> u32
     let head = unsafe { *((this + 0x70) as *const u32) };
     callee_thiscall!(1, u32, this, head, bounds.as_ptr() as u32, tag)
 });
+
+fn cvtt(x: f32) -> i32 {
+    unsafe {
+        core::arch::x86::_mm_cvtt_ss2si(core::arch::x86::_mm_set_ss(x))
+    }
+}

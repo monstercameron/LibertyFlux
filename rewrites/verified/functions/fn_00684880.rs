@@ -21,3 +21,5 @@ export!(thiscall, rw_00684880(this_: *mut u8, kind: u32) -> u32 {
         kind & 0xFF
     }
 });
+
+const TAG_OFF: usize = 4;

@@ -339,3 +339,23 @@ export!(thiscall, rw_008a6310(this: u32, arg0: u32) -> u32 {
         0
     }
 });
+
+#[inline(always)]
+fn fadd(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}
+
+#[inline(always)]
+fn fsub(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) - core::hint::black_box(b)
+}
+
+#[inline(always)]
+fn fmul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+#[inline(always)]
+fn fdiv(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) / core::hint::black_box(b)
+}

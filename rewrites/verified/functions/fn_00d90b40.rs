@@ -104,3 +104,14 @@ export!(thiscall, rw_00d90b40(this: u32, node: u32, bounds: *const i16, out: *mu
     }
     0
 });
+
+/// `a + b` with `a` kept as the instruction destination, so a NaN in `a`
+/// propagates its payload exactly like the original's addss. Plain `+`
+/// (even via `_mm_add_ss`, which LLVM sees through) lets the backend
+/// commute the operands to reuse a live register, changing NaN payloads
+/// bit-wise; the call boundary here keeps the order. Verified by reading
+/// the built code: the add inside has the first argument as destination.
+#[inline(never)]
+fn fadd(a: f32, b: f32) -> f32 {
+    a + b
+}

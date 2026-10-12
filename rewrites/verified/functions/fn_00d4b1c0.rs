@@ -160,3 +160,8 @@ lf_checker_rt::export!(thiscall, rw_00D4B1C0(this: u32, ped: u32) -> u32 {
         tail_clear(this, anim)
     }
 });
+
+#[inline(always)]
+unsafe fn rd8(a: u32) -> u8 {
+    unsafe { (a as *const u8).read() }
+}
