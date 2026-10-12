@@ -36,14 +36,16 @@ lf_checker_rt::export!(thiscall, rw_audvehicleaudioentity_bind_vehicle(
             (entity.wrapping_add(SHAPER_B) as *mut u32).write_unaligned(u32::MAX);
             (entity.wrapping_add(SHAPER_C) as *mut u32).write_unaligned(2);
         } else {
-            let random_range: unsafe extern "cdecl" fn(i32, i32) -> u32 =
+            let random_first: unsafe extern "cdecl" fn(i32, i32) -> u32 =
                 core::mem::transmute(lf_checker_rt::callee_addr(1));
+            let random_second: unsafe extern "cdecl" fn(i32, i32) -> u32 =
+                core::mem::transmute(lf_checker_rt::callee_addr(2));
             let shaper_table = lf_checker_rt::global::<u32>(SHAPER_TABLE);
 
             loop {
-                let first_index = random_range(0, 2) as usize;
+                let first_index = random_first(0, 2) as usize;
                 let first_shaper = shaper_table.add(first_index).read_unaligned();
-                let second_index = random_range(0, 2) as usize;
+                let second_index = random_second(0, 2) as usize;
                 let second_shaper = shaper_table.add(second_index).read_unaligned();
                 (entity.wrapping_add(SHAPER_A) as *mut u32).write_unaligned(first_shaper);
                 (entity.wrapping_add(SHAPER_B) as *mut u32).write_unaligned(second_shaper);
@@ -52,7 +54,9 @@ lf_checker_rt::export!(thiscall, rw_audvehicleaudioentity_bind_vehicle(
                 }
             }
 
-            let third_index = random_range(0, 2) as usize;
+            let random_third: unsafe extern "cdecl" fn(i32, i32) -> u32 =
+                core::mem::transmute(lf_checker_rt::callee_addr(3));
+            let third_index = random_third(0, 2) as usize;
             let third_shaper = lf_checker_rt::global::<u32>(FINAL_SHAPER_TABLE)
                 .add(third_index)
                 .read_unaligned();
@@ -63,7 +67,7 @@ lf_checker_rt::export!(thiscall, rw_audvehicleaudioentity_bind_vehicle(
         (entity.wrapping_add(INITIALIZED_FLAG) as *mut u8).write(0);
 
         let random_range: unsafe extern "cdecl" fn(i32, i32) -> u32 =
-            core::mem::transmute(lf_checker_rt::callee_addr(1));
+            core::mem::transmute(lf_checker_rt::callee_addr(4));
         let random_offset = random_range(-400, 400);
         (entity.wrapping_add(RANDOM_VALUE) as *mut u32).write_unaligned(random_offset);
 
@@ -74,7 +78,7 @@ lf_checker_rt::export!(thiscall, rw_audvehicleaudioentity_bind_vehicle(
             .write(u8::from(is_below_threshold));
 
         let acquire_slot: unsafe extern "thiscall" fn(u32) -> u32 =
-            core::mem::transmute(lf_checker_rt::callee_addr(2));
+            core::mem::transmute(lf_checker_rt::callee_addr(5));
         acquire_slot(entity)
     }
 });
