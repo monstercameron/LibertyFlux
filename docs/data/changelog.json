@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Lift: the montage container, three methods",
+    "title": "Devlog: the lift lane's entry on the montage container",
     "commit": null,
+    "summary": "The lane's own account of lifting three methods of the montage container is added to the devlog.",
+    "changes": [
+      "The entry gives the class's methods, the lifted form, what the proofs compare and narrow, why the fourth verified method was left, and the findings about its contract's fixed stack fill and two comments."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Lift: the montage container, three methods",
+    "commit": "20eb56040152283c9d39cf120b7fc5ac44edb168",
     "summary": "Three of the four verified methods of the replay editor's montage container are lifted into portable Rust in the front-end crate and proven against their 32-bit rewrites.",
     "changes": [
       "The lifted module forbids unsafe code; state is passed at the boundary and collaborators are a trait.",
