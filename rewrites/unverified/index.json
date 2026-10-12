@@ -624,9 +624,17 @@
   "reason": null
  },
  {
-  "address": "0x005C4350",
-  "name": "ped_factory_dispatch_service_call",
-  "file": "fn_005c4350.rs",
+  "address": "0x005C4260",
+  "name": "ped_tls_pool_descriptor_init_e",
+  "file": "fn_005c4260.rs",
+  "lane": "a-U139",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005C42E0",
+  "name": "ped_factory_try_add_ped",
+  "file": "fn_005c42e0.rs",
   "lane": "a-U139",
   "outcome": "not yet run",
   "reason": null
@@ -1123,6 +1131,14 @@
   "address": "0x0065A780",
   "name": "rage::fragHeapAllocator::vf18",
   "file": "fn_0065a780.rs",
+  "lane": "r-s765",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065A880",
+  "name": "rage::ProceduralTextureRenderTargetDef::vf0",
+  "file": "fn_0065a880.rs",
   "lane": "r-s765",
   "outcome": "not_reached",
   "reason": null
@@ -1912,14 +1928,6 @@
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
  },
  {
-  "address": "0x0089A8A0",
-  "name": "rage::audEnvelopeSound::drive_state",
-  "file": "fn_0089a8a0.rs",
-  "lane": "r-s761",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x008DBF60",
   "name": "task_ctor_update_thread_range",
   "file": "fn_008dbf60.rs",
@@ -2358,6 +2366,14 @@
   "lane": "r-s631",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00A325E0",
+  "name": "CEntity::vf19",
+  "file": "fn_00a325e0.rs",
+  "lane": "r-s770",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00A3ECB0",

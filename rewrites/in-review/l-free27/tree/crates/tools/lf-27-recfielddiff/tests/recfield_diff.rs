@@ -182,9 +182,12 @@ fn make_case(rng: &mut Rng, state: &mut Blocks, addresses: &[u32; RECORDS], zero
     for byte in state.window.iter_mut() {
         *byte = rng.next() as u8;
     }
+    // Half the blocks are mostly zero, so that a flag byte read at a neighbouring
+    // offset differs from the one the original reads.
     for block in state.records.iter_mut() {
+        let sparse = rng.below(2) == 0;
         for byte in block.iter_mut() {
-            *byte = rng.next() as u8;
+            *byte = if sparse && rng.below(4) != 0 { 0 } else { rng.next() as u8 };
         }
     }
     for slot in 0..SLOTS as usize {
