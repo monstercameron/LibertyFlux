@@ -1056,25 +1056,9 @@
   "reason": "The original stores the returned count byte at params+0x1e3; the earlier rewrite omitted it, causing the heap mismatch at 0x33E0. After adding the byte store, a 60-trial zero-count diagnostic passes 60/60 with all originals complete. The required 1,000-trial correct and wrong-version runs were started but stopped before completion at the 95-minute lane cap."
  },
  {
-  "address": "0x0063A7E0",
-  "name": "rage::ptxRenderState::create",
-  "file": "fn_0063a7e0.rs",
-  "lane": "r-s777",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0063A840",
-  "name": "rage::ptxTriggerEvent::create",
-  "file": "fn_0063a840.rs",
-  "lane": "r-s777",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00643210",
-  "name": "rage::ptxDomain::init_as_kind",
-  "file": "fn_00643210.rs",
+  "address": "0x0063AAB0",
+  "name": "rage::rmPtfxKeyframe::rmPtfxKeyframe",
+  "file": "fn_0063aab0.rs",
   "lane": "r-s779",
   "outcome": "not_reached",
   "reason": null
@@ -1421,14 +1405,6 @@
   "file": "fn_00880310.rs",
   "lane": "a-U151",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00880AB0",
-  "name": "audio_interleave_floats_to_int16",
-  "file": "fn_00880ab0.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -1892,7 +1868,7 @@
   "name": "CEntity::detach_pool_link",
   "file": "fn_00a33c50.rs",
   "lane": "a-U151",
-  "outcome": "not yet run",
+  "outcome": "failed_v8",
   "reason": null
  },
  {
@@ -2360,22 +2336,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x00AF5540",
-  "name": "select_flagged_global",
-  "file": "fn_00af5540.rs",
-  "lane": "r-s781",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00AF55F0",
-  "name": "pad_is_device_enabled",
-  "file": "fn_00af55f0.rs",
-  "lane": "r-s781",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00AF5DE0",
   "name": "weapon_model_add_reference",
   "file": "fn_00af5de0.rs",
@@ -2672,6 +2632,14 @@
   "reason": null
  },
  {
+  "address": "0x00B4B640",
+  "name": "CEventAcquaintancePedHate::vf20",
+  "file": "fn_00b4b640.rs",
+  "lane": "r-s786",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B4B6C0",
   "name": "CEventBuildingCollision::vf20",
   "file": "fn_00b4b6c0.rs",
@@ -2691,6 +2659,22 @@
   "address": "0x00B4B8B0",
   "name": "CEventLeaderEnteredCarAsDriver::vf20",
   "file": "fn_00b4b8b0.rs",
+  "lane": "r-s786",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4B960",
+  "name": "CEventOnFire::vf20",
+  "file": "fn_00b4b960.rs",
+  "lane": "r-s786",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4B9B0",
+  "name": "CEventPedCollisionWithPlayer::vf20",
+  "file": "fn_00b4b9b0.rs",
   "lane": "r-s786",
   "outcome": "not_reached",
   "reason": null
@@ -2720,6 +2704,14 @@
   "reason": "other"
  },
  {
+  "address": "0x00B59D40",
+  "name": "update_mirror_transitions",
+  "file": "fn_00b59d40.rs",
+  "lane": "a-U147",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00B6D1B0",
   "name": "ped_task_ctor_reference_values_and_flags",
   "file": "fn_00b6d1b0.rs",
@@ -2739,6 +2731,86 @@
   "address": "0x00B6DC20",
   "name": "CTaskSimpleWaitUntilPedIsOutCar::~CTaskSimpleWaitUntilPedIsOutCar",
   "file": "fn_00b6dc20.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6E2A0",
+  "name": "CTaskComplexGoToCarDoorAndStandStill::vf1",
+  "file": "fn_00b6e2a0.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6E300",
+  "name": "CTaskSimpleCarAlign::vf1",
+  "file": "fn_00b6e300.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6E330",
+  "name": "CTaskSimpleCarCloseDoorFromInside::vf1",
+  "file": "fn_00b6e330.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6E360",
+  "name": "CTaskSimpleCarCloseDoorFromOutside::vf1",
+  "file": "fn_00b6e360.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6E390",
+  "name": "CTaskSimpleCarGetIn::vf1",
+  "file": "fn_00b6e390.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6E3D0",
+  "name": "CTaskSimpleCarGetOut::vf1",
+  "file": "fn_00b6e3d0.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6E400",
+  "name": "CTaskSimpleCarJumpOut::vf1",
+  "file": "fn_00b6e400.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6E430",
+  "name": "CTaskSimpleCarOpenDoorFromOutside::vf1",
+  "file": "fn_00b6e430.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6E460",
+  "name": "CTaskSimpleCarOpenLockedDoorFromOutside::vf1",
+  "file": "fn_00b6e460.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6E490",
+  "name": "CTaskSimpleCarSetPedInVehicle::vf1",
+  "file": "fn_00b6e490.rs",
   "lane": "r-s785",
   "outcome": "not_reached",
   "reason": null
@@ -3168,6 +3240,14 @@
   "reason": null
  },
  {
+  "address": "0x00BCD5B0",
+  "name": "NativeImpl_SET_ALL_CARS_CAN_BE_DAMAGED_4",
+  "file": "fn_00bcd5b0.rs",
+  "lane": "a-U147",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00BD42A0",
   "name": null,
   "file": "fn_00bd42a0.rs",
@@ -3321,34 +3401,50 @@
  },
  {
   "address": "0x00C22630",
-  "name": null,
+  "name": "nav_cells_sync_locked",
   "file": "fn_00c22630.rs",
   "lane": "r-s788",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C252D0",
-  "name": null,
+  "name": "cam_interp_style_config_a",
   "file": "fn_00c252d0.rs",
   "lane": "r-s788",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C25320",
-  "name": null,
+  "name": "cam_interp_style_config_b",
   "file": "fn_00c25320.rs",
   "lane": "r-s788",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C25370",
-  "name": null,
+  "name": "cam_interp_style_config_c",
   "file": "fn_00c25370.rs",
   "lane": "r-s788",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C292D0",
+  "name": "audio_table_primary_slot_is_valid",
+  "file": "fn_00c292d0.rs",
+  "lane": "r-s789",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C292F0",
+  "name": "audio_table_secondary_slot_is_valid",
+  "file": "fn_00c292f0.rs",
+  "lane": "r-s789",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4136,6 +4232,30 @@
   "reason": "other"
  },
  {
+  "address": "0x00CF3270",
+  "name": "game_function_00cf3270",
+  "file": "fn_00cf3270.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CF32E0",
+  "name": "game_function_00cf32e0",
+  "file": "fn_00cf32e0.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CF35E0",
+  "name": "game_function_00cf35e0",
+  "file": "fn_00cf35e0.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00CF72B0",
   "name": null,
   "file": "fn_00cf72b0.rs",
@@ -4504,14 +4624,6 @@
   "reason": null
  },
  {
-  "address": "0x00D72AE0",
-  "name": "",
-  "file": "fn_00d72ae0.rs",
-  "lane": "r-s787",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00D82CD0",
   "name": null,
   "file": "fn_00d82cd0.rs",
@@ -4568,19 +4680,19 @@
   "reason": null
  },
  {
+  "address": "0x00DB8F20",
+  "name": "function_00db8f20",
+  "file": "fn_00db8f20.rs",
+  "lane": "r-s782",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DC1760",
   "name": null,
   "file": "fn_00dc1760.rs",
   "lane": "a-U152",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DC68E0",
-  "name": "CTaskSimpleFireGun::build_fire_animation",
-  "file": "fn_00dc68e0.rs",
-  "lane": "r-b709",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4768,14 +4880,6 @@
   "reason": null
  },
  {
-  "address": "0x00DF79B0",
-  "name": "UIGalleryFileViewer::vf107",
-  "file": "fn_00df79b0.rs",
-  "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DF7B30",
   "name": "UIGalleryFileViewer::vf108",
   "file": "fn_00df7b30.rs",
@@ -4787,22 +4891,6 @@
   "address": "0x00DFB980",
   "name": "sse_float_unary_tables_a",
   "file": "fn_00dfb980.rs",
-  "lane": "a-U148",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DFBD90",
-  "name": "sse_float_unary_tables_call",
-  "file": "fn_00dfbd90.rs",
-  "lane": "a-U148",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DFE938",
-  "name": "sse_float_unary_tables_b",
-  "file": "fn_00dfe938.rs",
   "lane": "a-U148",
   "outcome": "not yet run",
   "reason": null

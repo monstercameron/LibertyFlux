@@ -16,13 +16,18 @@ const ID_RESOLVE_1F: u32 = 7;
 const ID_BUTTON_CODE_SCAN: u32 = 8;
 const ID_MENU_COLUMN: u32 = 9;
 const ID_COUNT_ROWS: u32 = 10;
-const ID_ALLOC_SMALL: u32 = 15;
-const ID_INIT_SMALL: u32 = 17;
-const ID_INIT_LARGE: u32 = 18;
-const ID_INIT_FINAL: u32 = 19;
-const ID_UPDATE: u32 = 20;
-const ID_BUILD_RANKED: u32 = 21;
-const ID_BUILD_TWIN: u32 = 22;
+const ID_ALLOC_SMALL: u32 = 11;
+const ID_INIT_SMALL: u32 = 12;
+const ID_LOG_UPDATE: u32 = 13;
+const ID_BUILD_RANKED: u32 = 14;
+const ID_BUILD_TWIN: u32 = 15;
+const ID_CHECK_ROW: u32 = 16;
+const ID_SELECT_FIRST: u32 = 17;
+const ID_SELECT_SECOND: u32 = 18;
+const ID_SELECT_THIRD: u32 = 19;
+const ID_ALLOC_LARGE: u32 = 20;
+const ID_INIT_LARGE: u32 = 21;
+const ID_INIT_FINAL: u32 = 22;
 const ID_TAIL: u32 = 23;
 
 #[inline(always)]
@@ -125,7 +130,7 @@ export!(thiscall, rw_00E45260(this_ptr: *mut u8) -> u32 {
         store_u32(this_ptr, 0x38C, mode);
 
         let resolved_19 = callee_cdecl!(ID_RESOLVE_19, u32, query_index, 0x19);
-        let mut scratch_index = if resolved_19 == UNRESOLVED_ID { 0x2B } else { resolved_19 };
+        let key_for_second_match = if resolved_19 == UNRESOLVED_ID { 0x2B } else { resolved_19 };
         let resolved_1b_first = callee_cdecl!(ID_RESOLVE_1B_FIRST, u32, query_index, 0x1B);
         let key_for_first_match = if resolved_1b_first == UNRESOLVED_ID {
             // This branch is narrowed by the contract: the original then
@@ -135,7 +140,7 @@ export!(thiscall, rw_00E45260(this_ptr: *mut u8) -> u32 {
             callee_cdecl!(ID_RESOLVE_1B_SECOND, u32, query_index, 0x1B)
         };
         let resolved_1e = callee_cdecl!(ID_RESOLVE_1E, u32, query_index, 0x1E);
-        let key_for_second_match = if resolved_1e == UNRESOLVED_ID { 0x2F } else { resolved_1e };
+        let _ = resolved_1e;
         let resolved_1f = callee_cdecl!(ID_RESOLVE_1F, u32, query_index, 0x1F);
         let key_for_third_match = if resolved_1f == UNRESOLVED_ID { 0x30 } else { resolved_1f };
 
@@ -213,17 +218,19 @@ export!(thiscall, rw_00E45260(this_ptr: *mut u8) -> u32 {
         } else {
             store_u32(small_array as *mut u8, 0, count_small as u32);
             let mut index = 0u32;
-            while index < count_small as u32 {
-                let element = small_array.wrapping_add(4).wrapping_add(index.wrapping_mul(0x7C));
-                let _ = callee_thiscall!(ID_INIT_SMALL, u32, element);
-                index += 1;
+            if count_small <= 128 {
+                while index < count_small as u32 {
+                    let element = small_array.wrapping_add(4).wrapping_add(index.wrapping_mul(0x7C));
+                    let _ = callee_thiscall!(ID_INIT_SMALL, u32, element);
+                    index += 1;
+                }
             }
             small_array.wrapping_add(4)
         };
         store_u32(this_ptr, 0x50, small_array_body);
 
         let _ = callee_thiscall!(
-            ID_UPDATE,
+            ID_LOG_UPDATE,
             u32,
             this_ptr as u32,
             0xFFFF_FFFE,
@@ -232,7 +239,7 @@ export!(thiscall, rw_00E45260(this_ptr: *mut u8) -> u32 {
             relocated(0x00F15BB0),
         );
         let _ = callee_thiscall!(
-            ID_UPDATE,
+            ID_LOG_UPDATE,
             u32,
             this_ptr as u32,
             0xFFFF_FFFF,
@@ -248,7 +255,7 @@ export!(thiscall, rw_00E45260(this_ptr: *mut u8) -> u32 {
             let category = load_u32(this, 0x390);
             let table_mode = load_u32(this, 0x388);
             let ready = callee_cdecl!(
-                ID_UPDATE,
+                ID_CHECK_ROW,
                 u8,
                 table_mode,
                 category,
@@ -257,17 +264,17 @@ export!(thiscall, rw_00E45260(this_ptr: *mut u8) -> u32 {
                 flags,
             );
             if ready != 0 {
-                let first = callee_cdecl!(ID_RESOLVE_19, u32, table_mode, category, update_index, mode, flags);
-                let second = callee_cdecl!(ID_RESOLVE_1F, u32, table_mode, category, update_index, mode, flags);
-                let third = callee_cdecl!(ID_RESOLVE_1E, u32, table_mode, category, update_index, mode, flags);
+                let first = callee_cdecl!(ID_SELECT_FIRST, u32, table_mode, category, update_index, mode, flags);
+                let second = callee_cdecl!(ID_SELECT_SECOND, u32, table_mode, category, update_index, mode, flags);
+                let third = callee_cdecl!(ID_SELECT_THIRD, u32, table_mode, category, update_index, mode, flags);
                 let _ = callee_thiscall!(
-                    ID_UPDATE,
+                ID_CHECK_ROW,
                     u32,
                     this_ptr as u32,
                     update_index,
                     first,
-                    third,
                     second,
+                    third,
                 );
             }
             update_index += 1;
@@ -281,23 +288,25 @@ export!(thiscall, rw_00E45260(this_ptr: *mut u8) -> u32 {
         } else {
             store_u32(large_array as *mut u8, 0, count_large as u32);
             let mut index = 0u32;
-            while index < count_large as u32 {
-                let element = large_array.wrapping_add(4).wrapping_add(index.wrapping_mul(0x2B0));
-                let _ = callee_thiscall!(ID_INIT_LARGE, u32, element);
-                index += 1;
+            if count_large <= 128 {
+                while index < count_large as u32 {
+                    let element = large_array.wrapping_add(4).wrapping_add(index.wrapping_mul(0x2B0));
+                    let _ = callee_thiscall!(ID_INIT_LARGE, u32, element);
+                    index += 1;
+                }
             }
             large_array.wrapping_add(4)
         };
         store_u32(this_ptr, 0x54, large_array_body);
 
         let mut index = 0u32;
-        while index < count_large as u32 {
+        let final_count = if count_large > 127 { 256 } else { count_large as u32 };
+        while index < final_count {
             let element = large_array_body.wrapping_add(index.wrapping_mul(0x2B0));
             let _ = callee_thiscall!(ID_INIT_FINAL, u32, element, count_small as u32);
             index += 1;
         }
 
-        let _ = scratch_index;
         callee_thiscall!(ID_TAIL, u32, this_ptr as u32)
     }
 });

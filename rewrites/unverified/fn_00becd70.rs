@@ -121,7 +121,7 @@ lf_checker_rt::export!(thiscall, rw_00becd70(this: u32, out: u32, other: u32, we
                 weight_bits,
             )
         } else {
-            0.0
+            f32::from(read_i8(this + SOURCE_CURVE))
         };
 
         let x_source = read_f32(this + SOURCE_X);
@@ -164,11 +164,7 @@ lf_checker_rt::export!(thiscall, rw_00becd70(this: u32, out: u32, other: u32, we
         } else {
             f32::from(read_i8(this + SOURCE_E))
         };
-        let byte_f = if interpolate {
-            blend_i8_u8(read_i8(this + SOURCE_F), read_u8(other + SOURCE_F), weight)
-        } else {
-            f32::from(read_i8(this + SOURCE_F))
-        };
+        let byte_f = f32::from(read_i8(this + SOURCE_F));
         let byte_g = if interpolate {
             blend_u8(read_u8(this + SOURCE_G), read_u8(other + SOURCE_G), weight)
         } else {
