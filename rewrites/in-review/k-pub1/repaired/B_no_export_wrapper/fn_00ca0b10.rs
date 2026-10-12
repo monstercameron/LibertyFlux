@@ -4,4 +4,6 @@ mod fn_00ca0b10 {
     include!("../../out/rewrites/fn_00ca0b10.rs");
 }
 
-
+mod fn_00ca0b10 {
+    include!("../../out/rewrites/fn_00ca0b10.rs");
+}
