@@ -1,4 +1,4 @@
-//! The verified fan-out rewrites under test, read from their tracked files.
+﻿//! The verified fan-out rewrites under test, read from their tracked files.
 //!
 //! Each file is read unchanged and sees this crate as `lf_checker_rt`
 //! (32-bit target only).
@@ -47,3 +47,19 @@ pub mod fn_00E5BEC0;
 // source folder to the repository root, then rewrites/verified/functions/.
 #[path = "../../../../../../../../rewrites/verified/functions/fn_00e5bef0.rs"]
 pub mod fn_00E5BEF0;
+
+pub mod fn_00E5FE90 {
+    use crate::{export, global};
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00e5fe90.rs"
+    ));
+}
+
+pub mod fn_00E622D0 {
+    use crate::{export, global};
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00e622d0.rs"
+    ));
+}

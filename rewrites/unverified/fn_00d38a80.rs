@@ -1,8 +1,7 @@
 // original: 0x00D38A80 CTaskComplexOpenVehicleDoor::get_status_name
 
 /// Return the original image pointer for the status label selected by the
-/// unsigned status id. Every id from 0 through 4 has a distinct
-/// relocated string pointer; all larger 32-bit values return null. The
+/// unsigned status id. Each defined id has a distinct relocated string pointer. All larger 32-bit values return null. The
 /// function is cdecl with one stack argument and has no memory writes.
 lf_checker_rt::export!(cdecl, rw_00D38A80(status_id: u32) -> u32 {
     const LAST_STATUS: u32 = 4;

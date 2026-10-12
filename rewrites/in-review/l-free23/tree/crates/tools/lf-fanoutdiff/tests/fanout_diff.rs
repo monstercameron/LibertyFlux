@@ -1,4 +1,4 @@
-//! Differential test of the lifted one-source, three-target word fan-out
+﻿//! Differential test of the lifted one-source, three-target word fan-out
 //! against the verified rewrites of its family.
 //!
 //! Each rewrite reads one global and writes its value into three other
@@ -146,3 +146,5 @@ instance_test!(t_fn_00e5bdc0, 2);
 instance_test!(t_fn_00e5bdf0, 3);
 instance_test!(t_fn_00e5bec0, 4);
 instance_test!(t_fn_00e5bef0, 5);
+instance_test!(t_fn_00e5fe90, 6);
+instance_test!(t_fn_00e622d0, 7);

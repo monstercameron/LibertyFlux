@@ -4,7 +4,7 @@
 /// in the object held at TLS slot zero. The indirect allocator receives
 /// a request for 48 bytes, alignment 16, and flags zero.
 /// A null allocator result is returned unchanged. On success, initialize
-/// the returned object as follows: +0x0 = relocated class descriptor; +0x8 = 0x0 (32-bit); +0x4 = 0x0 (32-bit); +0x10 = 0x100 (16-bit); +0x20 = 0x0 (32-bit); +0x12 = 0x0 (8-bit).
+/// the returned object as follows: +0x0 = relocated class descriptor; +0x8 = 0x0 (32-bit); +0x4 = 0x0 (32-bit); +0x10 = 0x100 (16-bit); +0x20 = 0x0 (8-bit); +0x12 = 0x0 (8-bit).
 /// The factory has no input parameters and returns the allocated object.
 lf_checker_rt::export!(cdecl, rw_0066ccd0() -> u32 {
     unsafe {
@@ -40,7 +40,7 @@ lf_checker_rt::export!(cdecl, rw_0066ccd0() -> u32 {
         write_word(object + 0x8, 0x0);
         write_word(object + 0x4, 0x0);
         (object.wrapping_add(0x10) as *mut u16).write_unaligned(0x100);
-        write_word(object + 0x20, 0x0);
+        (object.wrapping_add(0x20) as *mut u8).write(0x0);
         (object.wrapping_add(0x12) as *mut u8).write(0x0);
         object
     }

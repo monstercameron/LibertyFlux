@@ -1,4 +1,4 @@
-//! The 32-bit differential runtime for the word fan-out rewrites.
+﻿//! The 32-bit differential runtime for the word fan-out rewrites.
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!` and `global`). Each global the rewrites of this crate touch is
@@ -12,7 +12,9 @@ use core::sync::atomic::AtomicU32;
 
 /// The globals the fan-out rewrites of this crate read or write, in the order
 /// the differential test lays them out: three sources, then eighteen targets.
-pub const SLOT_VAS: [u32; 21] = [
+pub const SLOT_VAS: [u32; 28] = [
+    0x01BB_3900, 0x01BB_3904, 0x01BB_3908,
+    0x0111_0CD8, 0x01B4_A9A0, 0x01B4_A9A4, 0x01B4_A9A8,
     0x017AD148, 0x017AD14C, 0x017AD150,
     0x01B4B304, 0x01B4B308, 0x01B4B30C,
     0x01B4B2B0, 0x01B4B2B8, 0x01B4B2BC,
@@ -23,14 +25,14 @@ pub const SLOT_VAS: [u32; 21] = [
 ];
 
 /// One stable word per global of `SLOT_VAS`.
-static SLOTS: [AtomicU32; 21] = [
-    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
-    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
-    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
-    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
-    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
-    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
-    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
+static SLOTS: [AtomicU32; 28] = [
+    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
+    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
+    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
+    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
+    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
+    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
+    AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0),
 ];
 
 /// The slot behind a file address. An unlisted address is a test bug.
