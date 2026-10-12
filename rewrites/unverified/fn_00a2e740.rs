@@ -7,7 +7,7 @@
 /// into the forecast-byte table, and a low-byte transition flag. With a
 /// nonzero flag it calls the immediate-apply routine with the selector. With
 /// a zero flag it calls the weather update routine, conditionally marks the
-/// time-of-day object dirty when either selector differs from its cached
+/// time-of-day object dirty only when both selectors differ from their cached
 /// value, stores both selector words, and reads a signed forecast byte at the
 /// requested index. Both paths then compute
 /// `(selected_minute + selected_hour * scale) * scale`, where the two integer inputs
@@ -47,7 +47,7 @@ lf_checker_rt::export!(cdecl, rw_00a2e740(weather_selector: u32, forecast_index:
             let previous_index =
                 lf_checker_rt::global::<u32>(FORECAST_INDEX_CACHE).read_unaligned();
 
-            if previous_weather != weather_selector || previous_index != forecast_index {
+            if previous_weather != weather_selector && previous_index != forecast_index {
                 let object = lf_checker_rt::global::<u32>(TIME_OF_DAY_OBJECT).read_unaligned();
                 (object as *mut u32)
                     .add(DIRTY_WORD_OFFSET)

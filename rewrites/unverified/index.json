@@ -1200,14 +1200,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x00686340",
-  "name": "dof_array_read_entry_raw",
-  "file": "fn_00686340.rs",
-  "lane": "r-s750",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00686380",
   "name": "dof_array_write_entry_raw",
   "file": "fn_00686380.rs",
@@ -1409,19 +1401,19 @@
  },
  {
   "address": "0x0097E820",
-  "name": "",
+  "name": null,
   "file": "fn_0097e820.rs",
   "lane": "a-U131",
   "outcome": "not yet run",
-  "reason": ""
+  "reason": null
  },
  {
   "address": "0x0097EF40",
-  "name": "",
+  "name": null,
   "file": "fn_0097ef40.rs",
   "lane": "a-U131",
   "outcome": "not yet run",
-  "reason": ""
+  "reason": null
  },
  {
   "address": "0x0098CD60",
@@ -2592,36 +2584,60 @@
   "reason": null
  },
  {
+  "address": "0x00B464A0",
+  "name": null,
+  "file": "fn_00b464a0.rs",
+  "lane": "a-U131",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B464D0",
+  "name": null,
+  "file": "fn_00b464d0.rs",
+  "lane": "a-U131",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B46500",
+  "name": null,
+  "file": "fn_00b46500.rs",
+  "lane": "a-U131",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00B46530",
-  "name": "",
+  "name": null,
   "file": "fn_00b46530.rs",
   "lane": "a-U131",
   "outcome": "not yet run",
-  "reason": ""
+  "reason": null
  },
  {
   "address": "0x00B46B80",
-  "name": "",
+  "name": null,
   "file": "fn_00b46b80.rs",
   "lane": "a-U131",
   "outcome": "not yet run",
-  "reason": ""
+  "reason": null
  },
  {
   "address": "0x00B46BA0",
-  "name": "",
+  "name": null,
   "file": "fn_00b46ba0.rs",
   "lane": "a-U131",
   "outcome": "not yet run",
-  "reason": ""
+  "reason": null
  },
  {
   "address": "0x00B46BC0",
-  "name": "",
+  "name": null,
   "file": "fn_00b46bc0.rs",
   "lane": "a-U131",
   "outcome": "not yet run",
-  "reason": ""
+  "reason": null
  },
  {
   "address": "0x00B4BEA0",
@@ -3005,22 +3021,6 @@
   "file": "fn_00bb2670.rs",
   "lane": "r-n88",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB79E0",
-  "name": "NativeImpl_LOAD_SCENE_2",
-  "file": "fn_00bb79e0.rs",
-  "lane": "r-s744",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00BB8100",
-  "name": "NativeImpl_START_LOAD_SCENE",
-  "file": "fn_00bb8100.rs",
-  "lane": "r-s744",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -3635,6 +3635,14 @@
   "address": "0x00C84F90",
   "name": "scrollbar_table_add_entity",
   "file": "fn_00c84f90.rs",
+  "lane": "r-s746",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C85BC0",
+  "name": "gtaFragType::init_lights",
+  "file": "fn_00c85bc0.rs",
   "lane": "r-s746",
   "outcome": "not_reached",
   "reason": null
@@ -4840,28 +4848,12 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x00E62B50",
-  "name": "initialize_audio_link_head_and_register_cleanup_d",
-  "file": "fn_00e62b50.rs",
-  "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00E62BD0",
   "name": "register_audio_low_end_footprint_setting",
   "file": "fn_00e62bd0.rs",
   "lane": "r-s745",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00E62CB0",
-  "name": "register_network_global_pointer_initializer_b",
-  "file": "fn_00e62cb0.rs",
-  "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E62CC0",
