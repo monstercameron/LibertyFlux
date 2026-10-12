@@ -5,7 +5,8 @@
 /// cleaned by the thiscall return. TLS slot 0 points to an allocator object
 /// whose virtual slot at +8 allocates the large block and the byte-tag array.
 /// The descriptor receives both pointers, the requested tag-byte count, the
-/// tag-array length, `u32::MAX` at +0x10, zero at +0x14 and one at +0x18.
+/// byte-array length, its distinct slot capacity, `u32::MAX` at +0x10, zero
+/// at +0x14 and one at +0x18.
 /// Every tag byte is initialized to `(old & 0x81) | 0x81`.
 lf_checker_rt::export!(thiscall, rw_005c3f70(this: u32, _arg0: u32, _arg1: u32, _arg2: u32) -> u32 {
     unsafe {
