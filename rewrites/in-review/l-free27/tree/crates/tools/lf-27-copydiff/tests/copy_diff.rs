@@ -74,6 +74,10 @@ struct Outcome {
 fn call_rewrite(call: Call, object: u32, buffer: u32) -> Option<u32> {
     match call {
         Call::A(f) => Some(f(object, buffer)),
+        Call::AU(f) => {
+            f(object, buffer);
+            None
+        }
         Call::B(f) => Some(f(object, 0, buffer, 0)),
         Call::U(f) => {
             f(object, 0, buffer, 0);
