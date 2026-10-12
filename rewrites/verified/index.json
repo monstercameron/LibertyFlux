@@ -55152,6 +55152,15 @@
   "lane": "a-G02"
  },
  {
+  "address": "0x008AD310",
+  "name": "audio_clamp_call_select",
+  "kind": "function",
+  "file": "functions/fn_008ad310.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U146"
+ },
+ {
   "address": "0x008AD390",
   "name": "audio_set_flag_gains",
   "kind": "function",
@@ -55159,6 +55168,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G02"
+ },
+ {
+  "address": "0x008AD3D0",
+  "name": "audio_shape_call_blend",
+  "kind": "function",
+  "file": "functions/fn_008ad3d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U146"
  },
  {
   "address": "0x008AD440",
@@ -55249,6 +55267,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G02"
+ },
+ {
+  "address": "0x008ADA70",
+  "name": "audio_curve_stage_filtered",
+  "kind": "function",
+  "file": "functions/fn_008ada70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U146"
  },
  {
   "address": "0x008ADAC0",
@@ -95598,6 +95625,15 @@
   "lane": "a-Q76"
  },
  {
+  "address": "0x00B06210",
+  "name": "timed_falloff",
+  "kind": "function",
+  "file": "functions/fn_00b06210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U146"
+ },
+ {
   "address": "0x00B062E0",
   "name": "reset_state_block",
   "kind": "function",
@@ -132219,6 +132255,15 @@
   "lane": "r-s426"
  },
  {
+  "address": "0x00C05BD0",
+  "name": "stream_gain_to_byte",
+  "kind": "function",
+  "file": "functions/fn_00c05bd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U146"
+ },
+ {
   "address": "0x00C05C80",
   "name": "stream_item_init_tag8d",
   "kind": "function",
@@ -134485,6 +134530,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G29"
+ },
+ {
+  "address": "0x00C3E430",
+  "name": "train_xmm_double_call",
+  "kind": "function",
+  "file": "functions/fn_00c3e430.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U146"
  },
  {
   "address": "0x00C3E460",
@@ -176254,6 +176308,15 @@
   "trials": 300,
   "checker": "version 7",
   "lane": "a-S15"
+ },
+ {
+  "address": "0x00E6C000",
+  "name": "veh_f64_convert_store",
+  "kind": "function",
+  "file": "functions/fn_00e6c000.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U146"
  },
  {
   "address": "0x00E6C020",
