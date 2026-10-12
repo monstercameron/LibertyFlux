@@ -7,7 +7,7 @@ lf_checker_rt::export!(cdecl, rw_00e6e290() -> u32 {
 
 #[inline(always)]
 fn release_critical_section(resource_va: u32) -> u32 {
-    __lf_callee_stdcall!(
+    lf_checker_rt::callee_stdcall!(
         DELETE_CRITICAL_SECTION,
         u32,
         lf_checker_rt::relocated(resource_va)

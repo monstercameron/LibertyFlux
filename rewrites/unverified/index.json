@@ -1380,8 +1380,8 @@
   "name": "audVehicleAudioEntity::bind_vehicle",
   "file": "fn_0098cd60.rs",
   "lane": "r-s735",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x009AA110",
@@ -1660,8 +1660,8 @@
   "name": "mission_cleanup_save",
   "file": "fn_00a0b420.rs",
   "lane": "r-s738",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00A0B4B0",
@@ -1884,6 +1884,14 @@
   "name": "pool_emit_positioned",
   "file": "fn_00a8d5f0.rs",
   "lane": "r-s463",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A8D670",
+  "name": "interior_release_room_records",
+  "file": "fn_00a8d670.rs",
+  "lane": "r-s737",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2496,6 +2504,14 @@
   "reason": null
  },
  {
+  "address": "0x00B44290",
+  "name": "line_box_query",
+  "file": "fn_00b44290.rs",
+  "lane": "r-b701",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B4BEA0",
   "name": "peds_in_same_group",
   "file": "fn_00b4bea0.rs",
@@ -2884,6 +2900,14 @@
   "name": null,
   "file": "fn_00bb2670.rs",
   "lane": "r-n88",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00BB3370",
+  "name": null,
+  "file": "fn_00bb3370.rs",
+  "lane": "r-s744",
   "outcome": "not yet run",
   "reason": null
  },

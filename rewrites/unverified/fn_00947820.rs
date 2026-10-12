@@ -24,8 +24,8 @@
 /// may commute them. When two operands are both not-a-number, SSE addss
 /// returns the first operand's payload, so a commuted sum carries the other
 /// payload. Both operands of both additions are now pinned with
-/// `black_box`, and the order is the original's: (adjusted + addend), then
-/// + a1 (`addss xmm0, [ADDEND]` then `addss xmm0, [esp+0x24]`).
+/// `black_box`, and the order is the original's: the addend is added to the
+/// adjusted value first, then a1.
 export!(thiscall, rw_00947820(
     obj: u32,
     a0: u32,
