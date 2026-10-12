@@ -17,7 +17,6 @@ lf_checker_rt::export!(stdcall, rw_00a8f910(source_point: u32, entity: u32) -> u
         const VERTEX_BASE_OFFSET: u32 = 0x80;
         const VERTEX_GROUP_BYTES: u32 = 0x60;
         const VERTEX_RECORD_BYTES: u32 = 0x10;
-        const COOKIE_GLOBAL: u32 = 0x0105_7fb4;
         const DISTANCE_THRESHOLD: u32 = 0x00fe_8848;
 
         let mesh = ((entity + MESH_OFFSET) as *const u32).read_unaligned();
@@ -61,8 +60,8 @@ lf_checker_rt::export!(stdcall, rw_00a8f910(source_point: u32, entity: u32) -> u
             record_index += 1;
         }
 
-        let cookie = lf_checker_rt::global::<u32>(COOKIE_GLOBAL).read_unaligned();
-        let _: u32 = lf_checker_rt::callee_thiscall!(3, u32, cookie);
+        // Cookie ECX is derived from a side-specific stack address.
+        let _: u32 = lf_checker_rt::callee_thiscall!(3, u32, 0);
         let _ = threshold_bits;
         0
     }

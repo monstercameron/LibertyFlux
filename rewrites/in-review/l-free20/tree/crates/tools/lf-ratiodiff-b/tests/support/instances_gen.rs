@@ -1,5 +1,11 @@
 // One entry per instance in this crate: its rewrite and its three globals.
 pub const INSTANCES: &[Instance] = &[
+    Instance { name: "global_ratio_store_02", address: "0x00E66D10", call: RefreshFn::Word(rewrites::fn_00E66D10::rw_00e66d10), num: 0x0103B568, den: 0x0103B56C, dst: 0x012B6254 },
+    Instance { name: "global_ratio_store_03", address: "0x00E66E00", call: RefreshFn::Word(rewrites::fn_00E66E00::rw_00e66e00), num: 0x0103B570, den: 0x0103B574, dst: 0x012B6494 },
+    Instance { name: "global_ratio_store_04", address: "0x00E66E40", call: RefreshFn::Word(rewrites::fn_00E66E40::rw_00e66e40), num: 0x0103B5A0, den: 0x0103B5A4, dst: 0x012B90F8 },
+    Instance { name: "task_ratio_store_00E66EB0", address: "0x00E66EB0", call: RefreshFn::Word(rewrites::fn_00E66EB0::rw_00E66EB0), num: 0x0103B688, den: 0x0103B68C, dst: 0x012BCCCC },
+    Instance { name: "task_ratio_store_00E66F00", address: "0x00E66F00", call: RefreshFn::Word(rewrites::fn_00E66F00::rw_00E66F00), num: 0x0103B6D4, den: 0x0103B6D8, dst: 0x012BD098 },
+    Instance { name: "task_ratio_store_00E66F40", address: "0x00E66F40", call: RefreshFn::Word(rewrites::fn_00E66F40::rw_00E66F40), num: 0x0103B6E4, den: 0x0103B6E8, dst: 0x012BD0D8 },
     Instance { name: "task_ratio_store_00E66FA0", address: "0x00E66FA0", call: RefreshFn::Word(rewrites::fn_00E66FA0::rw_00E66FA0), num: 0x0103B744, den: 0x0103B748, dst: 0x012BD17C },
     Instance { name: "task_ratio_store_00E67060", address: "0x00E67060", call: RefreshFn::Word(rewrites::fn_00E67060::rw_00E67060), num: 0x0103B918, den: 0x0103B91C, dst: 0x012BD1D4 },
     Instance { name: "task_ratio_store_00E67100", address: "0x00E67100", call: RefreshFn::Word(rewrites::fn_00E67100::rw_00E67100), num: 0x0103C04C, den: 0x0103C050, dst: 0x012DD2A8 },
@@ -52,7 +58,4 @@ pub const INSTANCES: &[Instance] = &[
     Instance { name: "veh_global_ratio_10", address: "0x00E69E80", call: RefreshFn::Unit(rewrites::fn_00E69E80::rw_00e69e80), num: 0x01047598, den: 0x0104759C, dst: 0x0167F188 },
     Instance { name: "veh_global_ratio_11", address: "0x00E69EB0", call: RefreshFn::Unit(rewrites::fn_00E69EB0::rw_00e69eb0), num: 0x010475B0, den: 0x010475B4, dst: 0x0167F590 },
     Instance { name: "veh_global_ratio_12", address: "0x00E69F00", call: RefreshFn::Unit(rewrites::fn_00E69F00::rw_00e69f00), num: 0x010475C8, den: 0x010475CC, dst: 0x0167F634 },
-    Instance { name: "veh_global_ratio_13", address: "0x00E69F20", call: RefreshFn::Unit(rewrites::fn_00E69F20::rw_00e69f20), num: 0x01047A28, den: 0x01047A2C, dst: 0x01682F24 },
-    Instance { name: "veh_global_ratio_14", address: "0x00E69F40", call: RefreshFn::Unit(rewrites::fn_00E69F40::rw_00e69f40), num: 0x01047A30, den: 0x01047A34, dst: 0x01682F30 },
-    Instance { name: "quotient_refresh_00", address: "0x00E6A070", call: RefreshFn::Word(rewrites::fn_00E6A070::rw_00e6a070), num: 0x01047A90, den: 0x01047A94, dst: 0x01682F68 },
 ];

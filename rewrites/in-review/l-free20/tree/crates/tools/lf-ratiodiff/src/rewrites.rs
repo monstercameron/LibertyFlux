@@ -50,6 +50,15 @@ pub mod fn_00E63790 { #![allow(unused_imports)] use super::{global}; use crate::
 pub mod fn_00E63800 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e63800.rs")); }
 pub mod fn_00E63830 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e63830.rs")); }
 pub mod fn_00E63850 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e63850.rs")); }
+pub mod fn_00E63920 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e63920.rs")); }
+pub mod fn_00E639D0 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e639d0.rs")); }
+pub mod fn_00E63A60 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e63a60.rs")); }
+pub mod fn_00E63B70 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e63b70.rs")); }
+pub mod fn_00E63BC0 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e63bc0.rs")); }
+pub mod fn_00E64020 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e64020.rs")); }
+pub mod fn_00E64050 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e64050.rs")); }
+pub mod fn_00E64070 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e64070.rs")); }
+pub mod fn_00E641E0 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e641e0.rs")); }
 pub mod fn_00E647F0 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e647f0.rs")); }
 pub mod fn_00E64900 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e64900.rs")); }
 pub mod fn_00E649A0 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e649a0.rs")); }
@@ -69,9 +78,3 @@ pub mod fn_00E668E0 { #![allow(unused_imports)] use super::{global}; use crate::
 pub mod fn_00E66910 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e66910.rs")); }
 pub mod fn_00E66960 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e66960.rs")); }
 pub mod fn_00E66C60 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e66c60.rs")); }
-pub mod fn_00E66D10 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e66d10.rs")); }
-pub mod fn_00E66E00 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e66e00.rs")); }
-pub mod fn_00E66E40 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e66e40.rs")); }
-pub mod fn_00E66EB0 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e66eb0.rs")); }
-pub mod fn_00E66F00 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e66f00.rs")); }
-pub mod fn_00E66F40 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e66f40.rs")); }

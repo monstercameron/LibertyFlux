@@ -1,5 +1,8 @@
 // One entry per instance in this crate: its rewrite and its three globals.
 pub const INSTANCES: &[Instance] = &[
+    Instance { name: "veh_global_ratio_13", address: "0x00E69F20", call: RefreshFn::Unit(rewrites::fn_00E69F20::rw_00e69f20), num: 0x01047A28, den: 0x01047A2C, dst: 0x01682F24 },
+    Instance { name: "veh_global_ratio_14", address: "0x00E69F40", call: RefreshFn::Unit(rewrites::fn_00E69F40::rw_00e69f40), num: 0x01047A30, den: 0x01047A34, dst: 0x01682F30 },
+    Instance { name: "quotient_refresh_00", address: "0x00E6A070", call: RefreshFn::Word(rewrites::fn_00E6A070::rw_00e6a070), num: 0x01047A90, den: 0x01047A94, dst: 0x01682F68 },
     Instance { name: "quotient_refresh_01", address: "0x00E6A090", call: RefreshFn::Word(rewrites::fn_00E6A090::rw_00e6a090), num: 0x01047A98, den: 0x01047A9C, dst: 0x01682F6C },
     Instance { name: "quotient_refresh_02", address: "0x00E6A0B0", call: RefreshFn::Word(rewrites::fn_00E6A0B0::rw_00e6a0b0), num: 0x01047AA0, den: 0x01047AA4, dst: 0x01682F70 },
     Instance { name: "quotient_refresh_03", address: "0x00E6A0D0", call: RefreshFn::Word(rewrites::fn_00E6A0D0::rw_00e6a0d0), num: 0x01047AA8, den: 0x01047AAC, dst: 0x01682F74 },

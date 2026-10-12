@@ -325,7 +325,7 @@ mod x86 {
 
     #[test]
     fn instance_table_is_complete() {
-        assert_eq!(INSTANCES.len(), 55);
+        assert_eq!(INSTANCES.len(), 58);
         for inst in INSTANCES {
             assert_ne!(inst.num, inst.dst, "{}: destination is the numerator", inst.name);
             assert_ne!(inst.den, inst.dst, "{}: destination is the denominator", inst.name);
@@ -362,29 +362,32 @@ mod x86 {
     ratio_test!(t_fn_00e63800, 27, 0x101B);
     ratio_test!(t_fn_00e63830, 28, 0x101C);
     ratio_test!(t_fn_00e63850, 29, 0x101D);
-    ratio_test!(t_fn_00e647f0, 30, 0x101E);
-    ratio_test!(t_fn_00e64900, 31, 0x101F);
-    ratio_test!(t_fn_00e649a0, 32, 0x1020);
-    ratio_test!(t_fn_00e64a20, 33, 0x1021);
-    ratio_test!(t_fn_00e64a60, 34, 0x1022);
-    ratio_test!(t_fn_00e654a0, 35, 0x1023);
-    ratio_test!(t_fn_00e65980, 36, 0x1024);
-    ratio_test!(t_fn_00e66300, 37, 0x1025);
-    ratio_test!(t_fn_00e66380, 38, 0x1026);
-    ratio_test!(t_fn_00e664c0, 39, 0x1027);
-    ratio_test!(t_fn_00e666f0, 40, 0x1028);
-    ratio_test!(t_fn_00e66790, 41, 0x1029);
-    ratio_test!(t_fn_00e66840, 42, 0x102A);
-    ratio_test!(t_fn_00e668a0, 43, 0x102B);
-    ratio_test!(t_fn_00e668c0, 44, 0x102C);
-    ratio_test!(t_fn_00e668e0, 45, 0x102D);
-    ratio_test!(t_fn_00e66910, 46, 0x102E);
-    ratio_test!(t_fn_00e66960, 47, 0x102F);
-    ratio_test!(t_fn_00e66c60, 48, 0x1030);
-    ratio_test!(t_fn_00e66d10, 49, 0x1031);
-    ratio_test!(t_fn_00e66e00, 50, 0x1032);
-    ratio_test!(t_fn_00e66e40, 51, 0x1033);
-    ratio_test!(t_fn_00e66eb0, 52, 0x1034);
-    ratio_test!(t_fn_00e66f00, 53, 0x1035);
-    ratio_test!(t_fn_00e66f40, 54, 0x1036);
+    ratio_test!(t_fn_00e63920, 30, 0x101E);
+    ratio_test!(t_fn_00e639d0, 31, 0x101F);
+    ratio_test!(t_fn_00e63a60, 32, 0x1020);
+    ratio_test!(t_fn_00e63b70, 33, 0x1021);
+    ratio_test!(t_fn_00e63bc0, 34, 0x1022);
+    ratio_test!(t_fn_00e64020, 35, 0x1023);
+    ratio_test!(t_fn_00e64050, 36, 0x1024);
+    ratio_test!(t_fn_00e64070, 37, 0x1025);
+    ratio_test!(t_fn_00e641e0, 38, 0x1026);
+    ratio_test!(t_fn_00e647f0, 39, 0x1027);
+    ratio_test!(t_fn_00e64900, 40, 0x1028);
+    ratio_test!(t_fn_00e649a0, 41, 0x1029);
+    ratio_test!(t_fn_00e64a20, 42, 0x102A);
+    ratio_test!(t_fn_00e64a60, 43, 0x102B);
+    ratio_test!(t_fn_00e654a0, 44, 0x102C);
+    ratio_test!(t_fn_00e65980, 45, 0x102D);
+    ratio_test!(t_fn_00e66300, 46, 0x102E);
+    ratio_test!(t_fn_00e66380, 47, 0x102F);
+    ratio_test!(t_fn_00e664c0, 48, 0x1030);
+    ratio_test!(t_fn_00e666f0, 49, 0x1031);
+    ratio_test!(t_fn_00e66790, 50, 0x1032);
+    ratio_test!(t_fn_00e66840, 51, 0x1033);
+    ratio_test!(t_fn_00e668a0, 52, 0x1034);
+    ratio_test!(t_fn_00e668c0, 53, 0x1035);
+    ratio_test!(t_fn_00e668e0, 54, 0x1036);
+    ratio_test!(t_fn_00e66910, 55, 0x1037);
+    ratio_test!(t_fn_00e66960, 56, 0x1038);
+    ratio_test!(t_fn_00e66c60, 57, 0x1039);
 }

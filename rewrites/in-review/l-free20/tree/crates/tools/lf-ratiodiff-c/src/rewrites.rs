@@ -20,6 +20,9 @@
 
 pub use crate::global;
 
+pub mod fn_00E69F20 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e69f20.rs")); }
+pub mod fn_00E69F40 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e69f40.rs")); }
+pub mod fn_00E6A070 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e6a070.rs")); }
 pub mod fn_00E6A090 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e6a090.rs")); }
 pub mod fn_00E6A0B0 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e6a0b0.rs")); }
 pub mod fn_00E6A0D0 { #![allow(unused_imports)] use super::{global}; use crate::export; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00e6a0d0.rs")); }

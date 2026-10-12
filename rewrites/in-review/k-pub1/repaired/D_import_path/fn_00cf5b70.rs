@@ -1,5 +1,4 @@
 // original: 0x00cf5b70 ped_task_climb
-use lf_checker_rt::{add_f32, mul_f32, neg_f32, read_f32, read_u32, sub_f32, write_u32};
 
 /// Advance a climb task for one frame. The pedestrian flag is set first; a
 /// positive predicate result delegates to the early helper and returns its
