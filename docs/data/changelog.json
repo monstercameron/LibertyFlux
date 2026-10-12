@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 86 proofs re-run on the current checker and recorded on it",
+    "title": "Changelog: a count corrected in the entry on the placement check",
     "commit": null,
+    "summary": "The entry on the driver's placement check said the verified rewrite still passes for 37 of the 54 contracts that set a value in code. It is 32.",
+    "changes": [
+      "Of the 54, a corrected contract could be built for 37. On 32 of them the verified rewrite still passes; on the other 5 the corrected value makes the original itself fault on a share of trials (a stack-cookie word in four of them), which settles nothing either way. For 17 no mechanical correction was found. No rewrite fails on a corrected contract. The entry ran the two figures together, a slip of the coordinator's."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 86 proofs re-run on the current checker and recorded on it",
+    "commit": "3dc05a41baf6e7c934095077b2fa3ac2ed915c97",
     "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
     "changes": [
       "86 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
