@@ -2624,14 +2624,6 @@
   "reason": null
  },
  {
-  "address": "0x0098A0F0",
-  "name": "fire_audio_cooldown_gain",
-  "file": "fn_0098a0f0.rs",
-  "lane": "r-s827",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0098CD60",
   "name": "audVehicleAudioEntity::bind_vehicle",
   "file": "fn_0098cd60.rs",
@@ -3109,6 +3101,14 @@
   "file": "fn_00a011a0.rs",
   "lane": "r-n88",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00A04910",
+  "name": "NativeImpl_GET_OBJECT_ROTATION_VELOCITY",
+  "file": "fn_00a04910.rs",
+  "lane": "r-s828",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -7294,14 +7294,6 @@
   "lane": "r-b707",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00DB2B50",
-  "name": "UITexture::snapshot_active_slot_for_render",
-  "file": "fn_00db2b50.rs",
-  "lane": "r-s824",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00DB7860",
