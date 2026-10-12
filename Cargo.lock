@@ -904,6 +904,13 @@ name = "lf-shaderpack"
 version = "0.1.0"
 
 [[package]]
+name = "lf-shaftdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-math",
+]
+
+[[package]]
 name = "lf-slotdiff"
 version = "0.1.0"
 dependencies = [

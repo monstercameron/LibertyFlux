@@ -68,6 +68,7 @@ pub mod approx;
 mod mat3;
 mod mat4;
 mod quat;
+pub mod shaft;
 mod transform;
 mod vec;
 

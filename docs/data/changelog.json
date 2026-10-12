@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 5 files from lanes (659 unverified rewrites, 1163 in review)",
+    "title": "Lift: the four channel steps of the spatial library's shaft class",
     "commit": null,
+    "summary": "The third class lift of the evening: all four verified methods of one class, four near-identical steps over a channel each, about a kilobyte of float arithmetic apiece.",
+    "changes": [
+      "crates/lf-math gains a shaft module with one type and four methods, one per channel: 460 lines with no unsafe code, where the four verified rewrites are 1,022 lines with 52 uses of unsafe. The class's name comes from the executable's type information; what the step means physically is not established and the module says so.",
+      "One new test crate runs the lifted steps against the four tracked verified rewrites on the 32-bit target: 160,101 steps over 20,000 generated objects, compared bit for bit in the answer, the channel's words, a pending byte, the calls to the square-root helper and every other byte of the object. Five deliberate faults are each caught on all four channels. The coordinator ran the maths crate's host tests (44) and the test crate on the 32-bit target before committing; none failed.",
+      "Narrowed, and stated in the module: the square root each step takes is the host's on both sides of the test. The helper the original calls for it is not in the function inventory, its rounding is unknown, and a port must match it bit for bit. The constructor and one other method are not verified and are not lifted.",
+      "A finding for the proof audits: the header comments of three of the four verified rewrites give the wrong starting values for one path (the code and the contracts, which exercise that path, agree with each other; the comments are wrong). Comments in verified files have now been found wrong three times in one evening by lanes that had to read them closely.",
+      "Verified routines with a lifted counterpart proven in the pipeline: 1,305."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 5 files from lanes (659 unverified rewrites, 1163 in review)",
+    "commit": "5b98ec5f83398d7c97db7a319464a31108e610fd",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 659 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
