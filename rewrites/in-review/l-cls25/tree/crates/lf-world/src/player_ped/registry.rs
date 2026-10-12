@@ -158,11 +158,13 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         method: "vf45",
-        lifted_as: "",
-        state: State::NotLifted,
-        calls: &[],
+        lifted_as: "CPlayerPed::relink_on_move",
+        state: State::Proven,
+        calls: &["base_entry", "read_word", "distance_threshold_bits", "relink"],
         narrows: &[
-            "verified: a squared distance in single-precision scalar operations over two sub-objects and a global threshold; not lifted in this pass",
+            "the point components are read through the world's word read: the lift computes the addresses, the proof compares the results and the block and flag writes, not the reads themselves",
+            "the squared distance is pinned operand by operand with black_box; the original's own sums are not pinned, and the proof did not show a difference",
+            "the source and target points are kept records the case builds; the target is absent or the kept point, since the original dereferences it",
         ],
     },
     Row {
