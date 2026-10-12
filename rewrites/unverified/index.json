@@ -960,14 +960,6 @@
   "reason": "other"
  },
  {
-  "address": "0x0065A780",
-  "name": "rage::fragHeapAllocator::vf18",
-  "file": "fn_0065a780.rs",
-  "lane": "r-s765",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0065BC30",
   "name": "rage::EnviromentDomeLighting::vf5",
   "file": "fn_0065bc30.rs",
@@ -1096,14 +1088,6 @@
   "reason": null
  },
  {
-  "address": "0x00667020",
-  "name": "resize_keyframe_array",
-  "file": "fn_00667020.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00668240",
   "name": "ptx_event_emitter_release_owned_resources",
   "file": "fn_00668240.rs",
@@ -1222,6 +1206,14 @@
   "lane": "r-s693",
   "outcome": "deferred",
   "reason": "partly_proven"
+ },
+ {
+  "address": "0x00683EC0",
+  "name": "gated_vec3_accumulate",
+  "file": "fn_00683ec0.rs",
+  "lane": "a-U144",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x0068A450",
@@ -1430,22 +1422,6 @@
   "lane": "a-U105",
   "outcome": "deferred",
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
- },
- {
-  "address": "0x0089A810",
-  "name": "",
-  "file": "fn_0089a810.rs",
-  "lane": "a-U143",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x008C5CC0",
-  "name": "n:/text",
-  "file": "fn_008c5cc0.rs",
-  "lane": "a-U139",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x008DBF60",
@@ -1952,20 +1928,28 @@
   "reason": null
  },
  {
+  "address": "0x00A668D0",
+  "name": "fn_00A668D0",
+  "file": "fn_00a668d0.rs",
+  "lane": "r-s770",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A668F0",
+  "name": "fn_00A668F0",
+  "file": "fn_00a668f0.rs",
+  "lane": "r-s770",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A75A40",
   "name": "ped_task_update_dispatch",
   "file": "fn_00a75a40.rs",
   "lane": "r-b446",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00A76700",
-  "name": "NativeImpl_GET_CHAR_LAST_DAMAGE_BONE",
-  "file": "fn_00a76700.rs",
-  "lane": "a-U142",
-  "outcome": "not yet run",
-  "reason": ""
  },
  {
   "address": "0x00A7E990",
@@ -2036,14 +2020,6 @@
   "name": "CSimpleNMHighFallTaskInfo::vf9",
   "file": "fn_00a7f6a0.rs",
   "lane": "r-s596",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A81E20",
-  "name": "slide_cover_subtask_id_to_index",
-  "file": "fn_00a81e20.rs",
-  "lane": "r-s762",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2176,9 +2152,9 @@
   "reason": null
  },
  {
-  "address": "0x00AAC350",
-  "name": "stream_packed_fields_unpack",
-  "file": "fn_00aac350.rs",
+  "address": "0x00AAC790",
+  "name": "stream_release_gate",
+  "file": "fn_00aac790.rs",
   "lane": "r-s767",
   "outcome": "not_reached",
   "reason": null
@@ -2571,7 +2547,7 @@
   "address": "0x00B271B0",
   "name": "clone_ped_blend_component",
   "file": "fn_00b271b0.rs",
-  "lane": "a-U137",
+  "lane": "a-U126",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2619,7 +2595,7 @@
   "address": "0x00B2F8A0",
   "name": "reset_three_task_slots",
   "file": "fn_00b2f8a0.rs",
-  "lane": "a-U137",
+  "lane": "a-U126",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2816,19 +2792,51 @@
   "reason": "needs_encrypted_code"
  },
  {
+  "address": "0x00B79C10",
+  "name": null,
+  "file": "fn_00b79c10.rs",
+  "lane": "r-s771",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B79C60",
+  "name": null,
+  "file": "fn_00b79c60.rs",
+  "lane": "r-s771",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B79C90",
+  "name": null,
+  "file": "fn_00b79c90.rs",
+  "lane": "r-s771",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00B79CE0",
-  "name": "CTaskComplexCarDrive::~CTaskComplexCarDrive",
+  "name": null,
   "file": "fn_00b79ce0.rs",
   "lane": "r-s771",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
   "reason": null
  },
  {
   "address": "0x00B79D10",
-  "name": "CTaskComplexCarDriveBasic::~CTaskComplexCarDriveBasic",
+  "name": null,
   "file": "fn_00b79d10.rs",
   "lane": "r-s771",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B7E9A0",
+  "name": null,
+  "file": "fn_00b7e9a0.rs",
+  "lane": "r-s771",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -4544,6 +4552,14 @@
   "reason": null
  },
  {
+  "address": "0x00DA8FF0",
+  "name": null,
+  "file": "fn_00da8ff0.rs",
+  "lane": "r-b707",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00DB3500",
   "name": "UIFrame::UIFrame",
   "file": "fn_00db3500.rs",
@@ -4643,6 +4659,14 @@
   "address": "0x00DB3FB0",
   "name": "UIMouseCursor::vf2",
   "file": "fn_00db3fb0.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DB4830",
+  "name": "UITexture::set_mapping_parameter_and_refresh_extent",
+  "file": "fn_00db4830.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
   "reason": null
@@ -4950,118 +4974,6 @@
   "lane": "r-s745",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00E63A80",
-  "name": "CLOUD",
-  "file": "fn_00e63a80.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63B90",
-  "name": "pending-name",
-  "file": "fn_00e63b90.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63BE0",
-  "name": "pending-name",
-  "file": "fn_00e63be0.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63C20",
-  "name": "pending-name",
-  "file": "fn_00e63c20.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63C50",
-  "name": "pending-name",
-  "file": "fn_00e63c50.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63DD0",
-  "name": "pending-name",
-  "file": "fn_00e63dd0.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63E00",
-  "name": "pending-name",
-  "file": "fn_00e63e00.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63E40",
-  "name": "pending-name",
-  "file": "fn_00e63e40.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63E60",
-  "name": "pending-name",
-  "file": "fn_00e63e60.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63E80",
-  "name": "pending-name",
-  "file": "fn_00e63e80.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63EA0",
-  "name": "pending-name",
-  "file": "fn_00e63ea0.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63EB0",
-  "name": "pending-name",
-  "file": "fn_00e63eb0.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63EF0",
-  "name": "pending-name",
-  "file": "fn_00e63ef0.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E63F10",
-  "name": "pending-name",
-  "file": "fn_00e63f10.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E63F30",

@@ -1,5 +1,4 @@
 // original: 0x00B2F8A0 reset_three_task_slots
-
 /// Reset four six-byte task slots through their shared helper, then initialize
 /// the receiver's seven default words. The helper calls are preserved in order
 /// because they may perform work beyond clearing the slot bytes. This method

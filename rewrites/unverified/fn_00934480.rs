@@ -32,7 +32,7 @@ lf_checker_rt::export!(thiscall, rw_00934480(this: *mut u8) -> u32 {
             this.add(SLOT_COUNT_OFFSET).cast::<u16>().read_unaligned(),
         );
         let slots = this.add(ARRAY_POINTER_OFFSET).cast::<u32>().read_unaligned();
-        let mut work_area = core::mem::MaybeUninit::<[u32; 16]>::uninit();
+        let mut work_area = core::mem::MaybeUninit::<[u32; 26]>::uninit();
         let work_pointer = work_area.as_mut_ptr().cast::<u32>() as u32;
 
         let mut index = 0u32;

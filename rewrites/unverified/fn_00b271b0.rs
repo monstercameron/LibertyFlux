@@ -1,5 +1,4 @@
 // original: 0x00B271B0 clone_ped_blend_component
-
 /// Clone a blend component only when the source passes the readiness check and
 /// allocation returns a destination. Copy the source's top flag bit, type
 /// halfword and state word while preserving other destination bits. Clear the

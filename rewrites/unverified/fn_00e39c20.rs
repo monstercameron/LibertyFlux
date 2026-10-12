@@ -1,12 +1,12 @@
 // original: 0x00E39C20 audio_set_entity_voice_channel_value
 
 /// Forward this entity's voice-channel value to the input store. The channel
-/// byte at `this + 4` equal to `0xff` sends zero; otherwise the value is the
-/// word at `table + entity_index * ENTITY_STRIDE + channel * channel_scale +
-/// VALUE_OFFSET`, plus `channel * channel_scale`. The table base and scale are
-/// loaded from the image globals for every call. The input store is reached
-/// through a thiscall tail transfer and its return value is returned unchanged.
-lf_checker_rt::export!(thiscall, rw_00e39c20(this: u32) -> u32 {
+/// byte at `this + 4` equal to `0xff` sends a null target; otherwise the target
+/// is the table word at `table + entity_index * ENTITY_STRIDE + VALUE_OFFSET`
+/// plus `channel * channel_scale`. The table base and scale are loaded from
+/// image globals for every call. The input store is reached through a thiscall
+/// tail transfer; its caller ignores the incidental return value.
+lf_checker_rt::export!(thiscall, rw_00e39c20(this: u32, channel_value: u32) -> u32 {
     unsafe {
         const CHANNEL_OFFSET: u32 = 0x04;
         const ENTITY_INDEX_OFFSET: u32 = 0x40;
@@ -26,11 +26,10 @@ lf_checker_rt::export!(thiscall, rw_00e39c20(this: u32) -> u32 {
             let channel_offset = (channel as u32).wrapping_mul(scale);
             let value_address = table
                 .wrapping_add(entity_index.wrapping_mul(ENTITY_STRIDE))
-                .wrapping_add(VALUE_OFFSET)
-                .wrapping_add(channel_offset);
+                .wrapping_add(VALUE_OFFSET);
             channel_offset.wrapping_add((value_address as *const u32).read_unaligned())
         };
 
-        lf_checker_rt::callee_thiscall!(1, u32, value)
+        lf_checker_rt::callee_thiscall!(1, u32, value, channel_value)
     }
 });
