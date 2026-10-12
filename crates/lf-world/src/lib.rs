@@ -17,4 +17,5 @@
 pub mod cam_game;
 pub mod cutscene_object;
 pub mod layout;
+pub mod player_ped;
 pub mod pools;

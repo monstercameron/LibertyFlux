@@ -1,0 +1,15 @@
+[package]
+name = "lf-playerped-diff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: lifted player pedestrian methods against their verified 32-bit rewrites"
+publish = false
+
+[dependencies]
+lf-core = { path = "../../lf-core" }
+lf-world = { path = "../../lf-world" }
+
+[lints]
+workspace = true
