@@ -6,7 +6,7 @@
 /// position at `+0x10..+0x18`, and candidate task at `+0x28`. Kinds above 25
 /// are accepted. Kinds 3 through 11 require candidate flags `0xc0` under mask
 /// `0x3c0`, a clear abort bit at `+0x26c`, and a child state other than 2 at
-/// `+0x12c`. Kinds 12 and 22 require candidate flags `0x80` under the same
+/// `+0x12c`. Kinds 12 and 23 require candidate flags `0x80` under the same
 /// mask, then consult the target's virtual slot `+0x128`; a nonzero byte
 /// result accepts immediately. Otherwise the task position is compared with
 /// the current player position, accepting a squared distance at most 15.
@@ -32,13 +32,12 @@ lf_checker_rt::export!(cdecl, rw_00b30950(ped_record: u32) -> u8 {
         const RUNNABLE_KIND_MIN: u32 = 3;
         const RUNNABLE_KIND_MAX: u32 = 11;
         const EVENT_KIND_A: u32 = 12;
-        const EVENT_KIND_B: u32 = 22;
+        const EVENT_KIND_B: u32 = 23;
         const FLAGS_MASK: u32 = 0x3c0;
         const ORDINARY_TASK_FLAGS: u32 = 0xc0;
         const EVENT_TASK_FLAGS: u32 = 0x80;
         const ABORT_BIT: u8 = 0x04;
         const TERMINAL_CHILD_STATE: u32 = 2;
-        const RUN_CHECK_CALLEE: u32 = 1;
         const PLAYER_POSITION_CALLEE: u32 = 2;
 
         #[inline(always)]

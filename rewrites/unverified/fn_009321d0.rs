@@ -40,7 +40,7 @@ lf_checker_rt::export!(cdecl, rw_009321D0(key: u32) -> u32 {
         }
     }
 
-    let sample = lf_checker_rt::callee_cdecl!(RATE_HELPER_ID, u32);
+    let sample = lf_checker_rt::callee_cdecl!(RATE_HELPER_ID, u32,);
     let divisor = if sample <= 1 { sample } else { sample.wrapping_add(1) };
     let denominator = unsafe { lf_checker_rt::global::<u32>(DENOMINATOR_VA).read_unaligned() };
     if denominator % divisor == 0 {
