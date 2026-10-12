@@ -147,7 +147,6 @@ impl UILayoutFrame {
         self.bytes[at..at + 4].copy_from_slice(&value.to_le_bytes());
     }
 
-    /// The byte at t.
     /// The unsigned 16-bit value at `at`, little-endian.
     pub(super) fn half_at(&self, at: usize) -> u16 {
         let mut half = [0u8; 2];

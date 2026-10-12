@@ -49,7 +49,7 @@ pub const METHODS: &[Method] = &[
     Method {
         name: "vf19 (pick waypoint)",
         state: State::Proven,
-        note: "The ped is read through a snapshot taken by the caller. The route search covers every segment and the nearest-point fallback; not-a-number payloads are pinned by operand order.",
+        note: "The ped is read through a snapshot the caller takes. Covers the search over every segment and the nearest-point fallback.",
     },
     Method {
         name: "vf21 (waypoint copy)",
@@ -58,28 +58,28 @@ pub const METHODS: &[Method] = &[
     },
     Method {
         name: "CTaskComplexMoveFollowPointRoute::CTaskComplexMoveFollowPointRoute",
-        state: State::Unlifted,
-        note: "Writes the class's vtable words, calls the move-base constructor and the route constructor (which build the route table), and reads back a flag word after the base call. Needs the callee effects modelled and the route table built from the constructor's arguments.",
+        state: State::Proven,
+        note: "Selector form: the speed helper runs first, then the move base, then the route constructor, as the rewrite does. The move base's effect on the flag word is a host call and the flag word is read back after it. The words kept for copying (speed, target, route arguments, final value) reach the proof through the call arguments; their stores into memory are inside the callees and are not compared. Vtable words are not represented.",
     },
     Method {
         name: "CTaskComplexMoveFollowPointRoute::CTaskComplexMoveFollowPointRoute_2",
-        state: State::Unlifted,
-        note: "Same as the first constructor, with the speed word passed in rather than selected through a helper. Waits on the same constructor model.",
+        state: State::Proven,
+        note: "Speed given as an argument; otherwise as the selector form. Same narrowings. The route table is stored as the current route, and the proof compares only whether the word is null, not which table it names.",
     },
     Method {
         name: "CTaskComplexMoveFollowPointRoute::vf1 (clone)",
-        state: State::Unlifted,
-        note: "Calls the thread allocator and the constructor with fields of the source. Waits on the constructor lift.",
+        state: State::Proven,
+        note: "The allocation is a host call (the allocator global is read on the host side). The new task is constructed through the lifted constructor; the proof runs it against the verified constructor rewrite behind the callee. A null allocation returns no task. The copied words are compared through the constructor's call arguments.",
     },
     Method {
         name: "CTaskComplexMoveFollowPointRoute::~CTaskComplexMoveFollowPointRoute",
-        state: State::Unlifted,
-        note: "Writes vtable words and releases an owned field through a shared context object and the chained destructor. Needs the global context and the two callees modelled.",
+        state: State::Proven,
+        note: "Releases the owned route word through the host when it is not zero, then runs the move base's destructor and returns its answer. The host reads the release context. Vtable words are not represented; the proof checks them against the constants the rewrite installs.",
     },
     Method {
         name: "CTaskComplexMoveFollowPointRoute::vf5 (poll)",
         state: State::Unlifted,
-        note: "Calls about ten virtual slots on the owner and the sub-task, one direct helper and the owner's finish call. The owner is the same word as the sub-task slot in the verified rewrites; not modelled yet.",
+        note: "Verified, not lifted. It reads the route count through the table pointer and clears it when the second argument is null (the two rewrites' comments disagree on what that word is; not settled). It calls about ten slots on the owner and the sub-task, two direct helpers, and the owner's finish call, with a scratch output that has no lifted model yet.",
     },
     Method {
         name: "CTaskComplexMoveFollowPointRoute::dtor_thunk",

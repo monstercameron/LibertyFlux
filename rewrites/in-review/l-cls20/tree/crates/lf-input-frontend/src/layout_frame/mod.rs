@@ -17,6 +17,7 @@
 pub mod blend;
 pub mod follow_up;
 pub mod frame;
+pub mod indexed;
 pub mod list;
 pub mod records;
 pub mod registry;
@@ -24,5 +25,6 @@ pub mod registry;
 pub use blend::BlendHost;
 pub use follow_up::{FollowUpHost, SharedFlag, Target, TargetStep};
 pub use frame::{SPAN, UILayoutFrame, field};
+pub use indexed::{IndexedListHost, ListAnswer};
 pub use list::ListHost;
 pub use records::RecordHost;

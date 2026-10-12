@@ -64,7 +64,8 @@ pub struct Effect {
 
 /// Camera words the callees record, as (offset, width in bytes). The
 /// order is the order of the recorded words.
-pub const SNAPSHOT: [(u32, u8); 19] = [
+pub const SNAPSHOT: [(u32, u8); 20] = [
+    (0x74, 4),
     (0x114, 4),
     (0x140, 4),
     (0x144, 1),
@@ -246,10 +247,10 @@ extern "cdecl" fn stub_cdecl0() -> u32 {
     record_numbered(CURRENT_ID.with(|c| c.get()), vec![])
 }
 
-/// The globals the second family of rewrites reads through the relocated
-/// address map: one byte cell each, with the word cells two bytes wide.
-/// Offsets within [`GLOBAL_CELLS`].
-const GLOBAL_CELLS: usize = 32;
+/// The globals the rewrites read and write through the relocated address map.
+/// Each global has a cell in [`GLOBAL_BYTES`] at the offset [`cell_of`] gives;
+/// cells keep the width the original gives the global.
+const GLOBAL_CELLS: usize = 128;
 static GLOBAL_BYTES: [AtomicU8; GLOBAL_CELLS] = [const { AtomicU8::new(0) }; GLOBAL_CELLS];
 
 const CELL_INHIBIT: usize = 0;
@@ -287,22 +288,65 @@ pub fn gate_done() -> u8 {
     GLOBAL_BYTES[CELL_DONE].load(Ordering::SeqCst)
 }
 
-/// Address of a global at a file address, for the relocated address map.
+/// Offset of the cell for a global at a file address.
 ///
 /// # Panics
 ///
-/// For any address the gate step does not read or write: a case bug.
+/// For any address the rewrites under test do not read or write: a case bug.
 #[must_use]
-pub fn relocated(file_va: u32) -> u32 {
-    let cell = match file_va {
+pub fn cell_of(file_va: u32) -> usize {
+    match file_va {
         0x011F_701F => CELL_INHIBIT,
         0x0104_008C => CELL_WORD_FIRST,
         0x0104_0090 => CELL_WORD_SECOND,
         0x0161_54A3 => CELL_MATCHED,
         0x0161_54B0 => CELL_DONE,
+        0x00FE_88E8 => 32,
+        0x0116_0C39 => 36,
+        0x017F_5EB3 => 37,
+        0x0104_0070 => 40,
+        0x0104_0074 => 44,
+        0x0104_0078 => 48,
+        0x0104_007C => 52,
+        0x0104_0080 => 56,
+        0x0161_54A4 => 60,
+        0x0161_54A8 => 64,
+        0x0161_54A0 => 68,
+        0x0161_54AC => 72,
+        0x0161_54A1 => 80,
+        0x012B_D193 => 76,
         _ => panic!("unexpected relocated address {file_va:#x}"),
-    };
-    GLOBAL_BYTES[cell].as_ptr() as usize as u32
+    }
+}
+
+/// Address of a global at a file address, for the relocated address map.
+///
+/// # Panics
+///
+/// For any address the rewrites under test do not read or write: a case bug.
+#[must_use]
+pub fn relocated(file_va: u32) -> u32 {
+    GLOBAL_BYTES[cell_of(file_va)].as_ptr() as usize as u32
+}
+
+/// Writes a global of `width` bytes (1 or 4) at a file address.
+pub fn set_global(file_va: u32, width: u8, bits: u32) {
+    let base = cell_of(file_va);
+    let bytes = bits.to_le_bytes();
+    for i in 0..usize::from(width) {
+        GLOBAL_BYTES[base + i].store(bytes[i], Ordering::SeqCst);
+    }
+}
+
+/// Reads a global of `width` bytes (1 or 4) at a file address, as raw bits.
+#[must_use]
+pub fn global_bits(file_va: u32, width: u8) -> u32 {
+    let base = cell_of(file_va);
+    let mut bytes = [0u8; 4];
+    for (i, b) in bytes.iter_mut().enumerate().take(usize::from(width)) {
+        *b = GLOBAL_BYTES[base + i].load(Ordering::SeqCst);
+    }
+    u32::from_le_bytes(bytes)
 }
 
 /// Raw stub address for callee `id`, by the installed script.

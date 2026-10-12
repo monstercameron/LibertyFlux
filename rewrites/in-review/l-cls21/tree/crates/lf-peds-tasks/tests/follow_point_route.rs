@@ -45,6 +45,14 @@ impl RouteTaskHost for Log {
         self.calls.push(format!("base({},{speed_bits:#x})", task.handle));
         0
     }
+    fn release_route(&mut self, table: u32) -> u32 {
+        self.calls.push(format!("release({table})"));
+        0
+    }
+    fn base_destroy(&mut self, task: u32) -> u32 {
+        self.calls.push(format!("base_destroy({task})"));
+        0
+    }
     fn allocate_task(&mut self) -> u32 {
         self.calls.push("alloc".to_string());
         0
@@ -278,7 +286,7 @@ fn advance_on_an_index_wrap_at_the_end_of_an_empty_route_starts_the_route() {
 #[test]
 fn registry_counts_match_the_methods_lifted() {
     assert_eq!(registry::METHODS.len(), 15, "the class has fifteen listed methods");
-    assert_eq!(registry::proven_count(), 5);
+    assert_eq!(registry::proven_count(), 9);
 }
 
 
@@ -311,6 +319,8 @@ impl RouteTaskHost for BaseSetsFlags {
         task.flags = self.0;
         self.1.move_base_ctor(task, speed_bits)
     }
+    fn release_route(&mut self, table: u32) -> u32 { self.1.release_route(table) }
+    fn base_destroy(&mut self, task: u32) -> u32 { self.1.base_destroy(task) }
     fn allocate_task(&mut self) -> u32 { self.1.allocate_task() }
     fn route_ctor(&mut self, task: u32, target: u32, start: u32, end: u32, final_value: u32, id: u32) -> u32 {
         self.1.route_ctor(task, target, start, end, final_value, id)
@@ -376,6 +386,8 @@ fn clone_constructs_the_copy_from_the_source_words() {
         fn move_base_ctor(&mut self, task: &mut FollowPointRouteTask, speed_bits: u32) -> u32 {
             self.0.move_base_ctor(task, speed_bits)
         }
+        fn release_route(&mut self, table: u32) -> u32 { self.0.release_route(table) }
+        fn base_destroy(&mut self, task: u32) -> u32 { self.0.base_destroy(task) }
         fn allocate_task(&mut self) -> u32 {
             self.0.calls.push("alloc".to_string());
             77
@@ -414,4 +426,5 @@ fn clone_constructs_the_copy_from_the_source_words() {
     assert_eq!(copy.flags & 0x8, 0x8);
     assert_eq!(copy.flags & 0x4, 0);
 }
+
 

@@ -17,9 +17,11 @@ mod x86 {
     use lf_camgame_diff::rt::{self, Call, Effect, SNAPSHOT, StubKind};
     use lf_core::Handle32;
     use lf_world::cam_game::{
-        ACTIVE_MARKER, CCamGame, CamGameWorld, CamOwnerTag, CamTag, DEFAULT_ZOOM, GateBlock,
-        GateTag, IDLE_MARKER, PoolTag, TailTag, TargetTag, WorkerTag,
+        ACTIVE_MARKER, CCamGame, CamGameWorld, CamGlobal, CamOwnerTag, CamTag, DEFAULT_ZOOM,
+        GateBlock, GateTag, IDLE_MARKER, PoolTag, SingletonField, SingletonTag, TailTag, TargetTag,
+        WorkerTag,
     };
+    use std::collections::HashMap;
 
     /// Size of a camera image: enough for every offset the rewrites touch.
     const OBJ: usize = 0x200;
@@ -88,6 +90,7 @@ mod x86 {
     /// The camera word at `off`, as the rewrites see it (widened).
     fn get_field(cam: &CCamGame, off: u32) -> u32 {
         match off {
+            0x74 => cam.blend,
             0x114 => cam.owner.map_or(0, Handle32::get),
             0x140 => cam.mode,
             0x144 => u32::from(cam.mode_flag),
@@ -113,6 +116,7 @@ mod x86 {
 
     fn set_field(cam: &mut CCamGame, off: u32, v: u32) {
         match off {
+            0x74 => cam.blend = v,
             0x114 => cam.owner = Handle32::new(v),
             0x140 => cam.mode = v,
             0x144 => cam.mode_flag = v as u8,
@@ -187,6 +191,13 @@ mod x86 {
         images: Vec<(u32, Vec<u8>)>,
         matched: Option<u8>,
         done: Option<u8>,
+        // The blend step's world: its globals and the singleton's fields.
+        ugl: HashMap<CamGlobal, u32>,
+        sing: Option<u32>,
+        sing_active: u8,
+        sing_mode: u32,
+        gate_one: u32,
+        gate_two: u32,
     }
 
     impl Fake {
@@ -369,6 +380,111 @@ mod x86 {
 
         fn clear_done(&mut self) {
             self.done = Some(0);
+        }
+
+        fn update_1(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.log_update("update_1", cam, this, None);
+        }
+
+        fn update_2(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.log_update("update_2", cam, this, None);
+        }
+
+        fn update_3(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.log_update("update_3", cam, this, None);
+        }
+
+        fn update_4(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.log_update("update_4", cam, this, None);
+        }
+
+        fn watch_init(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.log_update("watch_init", cam, this, None);
+        }
+
+        fn singleton(&mut self) -> Option<Handle32<SingletonTag>> {
+            self.log.push(("singleton".to_string(), vec![]));
+            self.sing.and_then(Handle32::new)
+        }
+
+        fn singleton_field(&mut self, _singleton: Handle32<SingletonTag>, field: SingletonField) -> u32 {
+            match field {
+                SingletonField::ActiveByte => u32::from(self.sing_active),
+                SingletonField::ModeWord => self.sing_mode,
+            }
+        }
+
+        fn blend_gate_one(&mut self) -> u32 {
+            self.log.push(("blend_gate_one".to_string(), vec![]));
+            self.gate_one
+        }
+
+        fn blend_gate_two(&mut self) -> u32 {
+            self.log.push(("blend_gate_two".to_string(), vec![]));
+            self.gate_two
+        }
+
+        fn read_global(&mut self, global: CamGlobal) -> u32 {
+            self.ugl.get(&global).copied().unwrap_or(0)
+        }
+
+        fn write_global(&mut self, global: CamGlobal, bits: u32) {
+            let masked = bits & global_mask(global);
+            self.ugl.insert(global, masked);
+        }
+
+        fn update_9(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.log_update("update_9", cam, this, None);
+        }
+
+        fn update_10(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.log_update("update_10", cam, this, None);
+        }
+
+        fn update_11(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.log_update("update_11", cam, this, None);
+        }
+    }
+
+    /// The bytes a global occupies: the mask of its value.
+    fn global_mask(global: CamGlobal) -> u32 {
+        match global {
+            CamGlobal::InhibitA
+            | CamGlobal::InhibitB
+            | CamGlobal::Done1
+            | CamGlobal::Done2
+            | CamGlobal::Fallback => 0xFF,
+            _ => 0xFFFF_FFFF,
+        }
+    }
+
+    /// The file address and width of each global the blend step uses.
+    const UPDATE_GLOBALS: [(CamGlobal, u32, u8); 14] = [
+        (CamGlobal::Ceiling, 0x00FE_88E8, 4),
+        (CamGlobal::InhibitA, 0x0116_0C39, 1),
+        (CamGlobal::InhibitB, 0x017F_5EB3, 1),
+        (CamGlobal::Step1, 0x0104_0070, 4),
+        (CamGlobal::Accumulator1Step, 0x0104_0074, 4),
+        (CamGlobal::Step2, 0x0104_0078, 4),
+        (CamGlobal::Accumulator2Step, 0x0104_007C, 4),
+        (CamGlobal::Cap, 0x0104_0080, 4),
+        (CamGlobal::Accumulator1, 0x0161_54A4, 4),
+        (CamGlobal::Count, 0x0161_54A8, 4),
+        (CamGlobal::Done1, 0x0161_54A0, 1),
+        (CamGlobal::Accumulator2, 0x0161_54AC, 4),
+        (CamGlobal::Done2, 0x0161_54A1, 1),
+        (CamGlobal::Fallback, 0x012B_D193, 1),
+    ];
+
+    impl Fake {
+        /// Logs an update callee with the words the rewrite's stub records:
+        /// the camera's identity and its snapshot, then any extra word.
+        fn log_update(&mut self, name: &str, cam: &mut CCamGame, this: Handle32<CamTag>, extra: Option<u32>) {
+            let mut args = vec![this.get()];
+            args.extend(snap_cam(cam));
+            args.extend(extra);
+            self.log.push((name.to_string(), args));
+            apply_effects(cam, &self.effects);
         }
     }
 
@@ -1091,4 +1207,4 @@ mod x86 {
             assert!(gate_run(Some(kind)) > 0, "{kind:?} was not caught");
         }
     }
-}
+__UPDATE_TESTS__

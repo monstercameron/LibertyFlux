@@ -1072,6 +1072,14 @@
   "reason": null
  },
  {
+  "address": "0x0063A840",
+  "name": "rage::ptxTriggerEvent::create",
+  "file": "fn_0063a840.rs",
+  "lane": "r-s777",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0063B550",
   "name": "rage::ptxModelRulePropList::vf0",
   "file": "fn_0063b550.rs",
@@ -4225,26 +4233,162 @@
  },
  {
   "address": "0x00D00CE0",
-  "name": null,
+  "name": "CTaskComplexArrestedAIPedAndDriveAway::vf1",
   "file": "fn_00d00ce0.rs",
-  "lane": "r-s286",
-  "outcome": "not yet run",
+  "lane": "r-s783",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00D00D10",
-  "name": null,
+  "name": "CTaskComplexBackOff::vf1",
   "file": "fn_00d00d10.rs",
-  "lane": "r-s286",
-  "outcome": "not yet run",
+  "lane": "r-s783",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00D00D40",
-  "name": null,
+  "name": "CTaskComplexBeArrestedAndDrivenAway::vf1",
   "file": "fn_00d00d40.rs",
-  "lane": "r-s286",
-  "outcome": "not yet run",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D00D70",
+  "name": "CTaskComplexCombat::vf1",
+  "file": "fn_00d00d70.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D00E10",
+  "name": "CTaskComplexCombatAdditionalTask::vf1",
+  "file": "fn_00d00e10.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D00E50",
+  "name": "CTaskComplexCombatAdvanceSubtask::vf1",
+  "file": "fn_00d00e50.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D00E80",
+  "name": "CTaskComplexCombatBustPed::vf1",
+  "file": "fn_00d00e80.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D00EB0",
+  "name": "CTaskComplexCombatChargeSubtask::vf1",
+  "file": "fn_00d00eb0.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D00EE0",
+  "name": "CTaskComplexCombatClosestTargetInArea::vf1",
+  "file": "fn_00d00ee0.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D00F20",
+  "name": "CTaskComplexCombatExecutePedSubtask::vf1",
+  "file": "fn_00d00f20.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D00F50",
+  "name": "CTaskComplexCombatFireSubtask::vf1",
+  "file": "fn_00d00f50.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D00FA0",
+  "name": "CTaskComplexCombatFlankSubtask::vf1",
+  "file": "fn_00d00fa0.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D00FD0",
+  "name": "CTaskComplexCombatInvestigateSubtask::vf1",
+  "file": "fn_00d00fd0.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D01000",
+  "name": "CTaskComplexCombatPersueInCarSubtask::vf1",
+  "file": "fn_00d01000.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D01030",
+  "name": "CTaskComplexCombatPullFromCarSubtask::vf1",
+  "file": "fn_00d01030.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D01060",
+  "name": "CTaskComplexCombatRetreatSubtask::vf1",
+  "file": "fn_00d01060.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D010A0",
+  "name": "CTaskComplexCombatSeekCoverSubtask::vf1",
+  "file": "fn_00d010a0.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D010F0",
+  "name": "CTaskComplexCombatSubtask::vf1",
+  "file": "fn_00d010f0.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D01120",
+  "name": "CTaskComplexGoIntoCover::vf1",
+  "file": "fn_00d01120.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D01160",
+  "name": "CTaskComplexHelicopterStrafe::vf1",
+  "file": "fn_00d01160.rs",
+  "lane": "r-s783",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4406,14 +4550,6 @@
   "lane": "r-b673",
   "outcome": "not_reached",
   "reason": null
- },
- {
-  "address": "0x00D69890",
-  "name": "",
-  "file": "fn_00d69890.rs",
-  "lane": "r-s787",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00D698B0",

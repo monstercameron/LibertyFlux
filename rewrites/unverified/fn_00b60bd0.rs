@@ -56,12 +56,12 @@ lf_checker_rt::export!(thiscall, rw_00B60BD0(
             u32,
             ped_info,
             event_word,
-            source,
+            source_owner,
             position_ptr,
             FAR_CLIP_BITS
         );
 
-        let _ = callee_thiscall!(3, u32, source, position_address, related_value, 0, position_address, 0);
+        let _ = callee_thiscall!(3, u32, source, ped_info, related_value, 0, position_address, 0);
 
         let resolved_ped = callee_cdecl!(4, u32, ped_info);
         if ped_info != 0 && resolved_ped == ped_info {

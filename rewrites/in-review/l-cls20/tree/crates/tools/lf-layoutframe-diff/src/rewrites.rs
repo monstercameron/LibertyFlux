@@ -261,3 +261,8 @@ pub mod fn_00DB18C0 {
     use lf_checker_rt::{callee_cdecl, callee_thiscall, export};
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db18c0.rs"));
 }
+/// Verified rewrite of the indexed-list check: every entry of the registry's list must resolve.
+pub mod fn_00DB1490 {
+    #![allow(unused_imports)]
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1490.rs"));
+}
