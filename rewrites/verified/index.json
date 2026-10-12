@@ -126333,6 +126333,15 @@
   "lane": "r-s398"
  },
  {
+  "address": "0x00BF9120",
+  "name": "fx_heli_update",
+  "kind": "function",
+  "file": "functions/fn_00bf9120.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U110"
+ },
+ {
   "address": "0x00BF93E0",
   "name": "task_handle_acquire_scaled",
   "kind": "function",
@@ -133783,6 +133792,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b09"
+ },
+ {
+  "address": "0x00C87B00",
+  "name": "audio_entry_scan_and_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00c87b00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U110"
  },
  {
   "address": "0x00C87F40",
