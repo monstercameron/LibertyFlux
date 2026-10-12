@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Lift: 16 routines from the sizes of 26 to 36 bytes, where the families run out",
+    "commit": null,
+    "summary": "The seventh list chosen by shape gives 16 of 168 functions. At these sizes the verified functions that call nothing are no longer a few routines repeated: most are one of a kind.",
+    "changes": [
+      "crates/lf-core gains three small modules, each a weak lift of four instances: an assignment to an indexed slot of a table, a store of three bytes that returns the rest of the value, and a float written to a field only when it differs from what is there (compared as the processor compares, written as bits, with signed zeros and not-a-number among the cases). Four more functions are proved against routines already lifted, unchanged: three constant writes and a six-word block copy.",
+      "Five new test crates run the routines against 16 tracked verified rewrites on the 32-bit target, 1,000 cases per instance, with four or five deliberately wrong versions per family caught by every instance. The coordinator read the three modules and ran the core crate's host tests (123) and the five crates' 10 tests on the 32-bit target before committing; none failed.",
+      "The yield of lists chosen by size has fallen with the size: 229 of 265 at 25 bytes, 170 of 198 at 21, about half at 13 to 17, a third at 24 to 33, a quarter at 37 to 62, and here a tenth. 152 functions on this list are left: families of two or three, listed as candidates, and 138 of one kind each. The next lists will be chosen another way.",
+      "A naming finding for later: four functions named as storing a three-byte value most significant byte first store the least significant byte at the lowest offset in their verified rewrites. The lift follows the rewrite; the name needs checking against the original.",
+      "Verified routines with a lifted counterpart proven in the pipeline: 1,193, up from 1,177."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Checker: the placement check's module imports without its two packages",
     "commit": "71b48615577bd2e14364d8cf66ef06b3e3e1db2c",
     "summary": "The pipeline's checker tests failed for a second reason after the placement check was adopted: its module imported a disassembler and an executable-format reader when it was loaded, and the pipeline's runner has neither.",
