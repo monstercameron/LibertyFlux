@@ -85032,6 +85032,33 @@
   "lane": "r-s467"
  },
  {
+  "address": "0x00A82C90",
+  "name": "CComplexNewExitVehicleTaskInfo::get_status_name",
+  "kind": "function",
+  "file": "functions/fn_00a82c90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A82CA0",
+  "name": "CComplexNewGetInVehicleTaskInfo::get_status_name",
+  "kind": "function",
+  "file": "functions/fn_00a82ca0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A82CB0",
+  "name": "CComplexOpenVehicleDoorTaskInfo::get_status_name",
+  "kind": "function",
+  "file": "functions/fn_00a82cb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
   "address": "0x00A82CC0",
   "name": "CComplexPickUpAndCarryObjectTaskInfo::vf18",
   "kind": "function",
@@ -85192,6 +85219,177 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-U45"
+ },
+ {
+  "address": "0x00A83AD0",
+  "name": "CComplexPickUpAndCarryObjectTaskInfo::append_animation_group",
+  "kind": "function",
+  "file": "functions/fn_00a83ad0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A83B00",
+  "name": "CComplexSlideIntoCoverInfo::append_cover_animation",
+  "kind": "function",
+  "file": "functions/fn_00a83b00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A83B30",
+  "name": "CDeadInfo::append_drowned_flag",
+  "kind": "function",
+  "file": "functions/fn_00a83b30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A83B70",
+  "name": "CJackTaskInfo::append_jack_attack_flag",
+  "kind": "function",
+  "file": "functions/fn_00a83b70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A83CD0",
+  "name": "CMeleeTaskInfo::append_action_result",
+  "kind": "function",
+  "file": "functions/fn_00a83cd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A83D00",
+  "name": "CPlayRandomAmbientsInfo::append_base_animation_flag",
+  "kind": "function",
+  "file": "functions/fn_00a83d00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A83ED0",
+  "name": "CSequenceTaskInfo::append_sequence_state",
+  "kind": "function",
+  "file": "functions/fn_00a83ed0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A83F30",
+  "name": "CSimpleAimPlayerProjectileInfo::append_preparing_to_throw_flag",
+  "kind": "function",
+  "file": "functions/fn_00a83f30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A83F70",
+  "name": "CSimpleCarDriveTaskInfo::append_drive_flags",
+  "kind": "function",
+  "file": "functions/fn_00a83f70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A84050",
+  "name": "CSimpleClimbTaskInfo::append_climb_state",
+  "kind": "function",
+  "file": "functions/fn_00a84050.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A841A0",
+  "name": "CSimpleNMBalanceTaskInfo::append_balance_failed_flag",
+  "kind": "function",
+  "file": "functions/fn_00a841a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A84270",
+  "name": "CSimpleNMExplosionTaskInfo::append_explosion_position",
+  "kind": "function",
+  "file": "functions/fn_00a84270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A843A0",
+  "name": "CSimpleNMHighFallTaskInfo::append_high_fall_flag",
+  "kind": "function",
+  "file": "functions/fn_00a843a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A84490",
+  "name": "CSimpleSidewaysDiveTaskInfo::append_dive_direction",
+  "kind": "function",
+  "file": "functions/fn_00a84490.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A844C0",
+  "name": "CSimpleThrowProjectileInfo::append_throw_type",
+  "kind": "function",
+  "file": "functions/fn_00a844c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A844F0",
+  "name": "CSitDownIdleThenStandTaskInfo::append_seat_state",
+  "kind": "function",
+  "file": "functions/fn_00a844f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A84680",
+  "name": "CStandUpTaskInfo::append_animation_ids",
+  "kind": "function",
+  "file": "functions/fn_00a84680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A84780",
+  "name": "CTargetTaskInfo::append_target_info",
+  "kind": "function",
+  "file": "functions/fn_00a84780.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
+ },
+ {
+  "address": "0x00A847D0",
+  "name": "CDieInfo::append_network_sequence_id",
+  "kind": "function",
+  "file": "functions/fn_00a847d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s723"
  },
  {
   "address": "0x00A872D0",
