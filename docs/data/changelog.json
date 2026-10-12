@@ -2,7 +2,7 @@
   {
     "date": "2026-10-11",
     "title": "Checker: the placement check's module imports without its two packages",
-    "commit": null,
+    "commit": "71b48615577bd2e14364d8cf66ef06b3e3e1db2c",
     "summary": "The pipeline's checker tests failed for a second reason after the placement check was adopted: its module imported a disassembler and an executable-format reader when it was loaded, and the pipeline's runner has neither.",
     "changes": [
       "The module now imports those two packages inside the functions that use them. Its tests need the original executable and are skipped where it is absent, as they were written to be, but the test file could not even be imported on the runner. With the packages present, the 50 checker tests pass as before; with both made unavailable, the module and its test file import.",
