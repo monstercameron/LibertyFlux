@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 14 more functions pass the checker (19393 in total)",
+    "title": "Devlog: sixteen verified rewrites withdrawn in a day, and all sixteen proven again",
     "commit": null,
+    "summary": "The last of the rewrites withdrawn today for differing from the original outside what its proof covered is proven again and imported. The entry closes the day's account: the causes, why ordinary trials passed each, and what was learned about proofs.",
+    "changes": [
+      "The causes by kind, with the number of rewrites each appeared in: a float-to-integer cast (eight), a float comparison's predicate at equality (four), an integer comparison's signedness (two), a read from the wrong place on the stack (two), a read made early or once where the original repeats it (one), call arguments in the wrong order (one), an unpinned float sum (one), faults of logic behind other faults (four), a constant written where the original loads it (one). At least eight of the sixteen showed a further fault only after the first was corrected and every input widened. None was caught by its contract of record.",
+      "What was learned: a proof covers the inputs its contract draws and the memory it compares, and three further gaps of that kind were measured the same day; reading an instruction is enough neither to withdraw nor to clear; a widened contract can itself be wrong; a map of the stack located the hardest case.",
+      "The verified count is back above where the withdrawals began, with sixteen proofs that now say what they cover."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 14 more functions pass the checker (19393 in total)",
+    "commit": "e09f6fa0382f03bdddb94263953fc59c46f687b1",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "14 rewrites added under rewrites/verified: 0 script native handlers and 14 other functions.",
