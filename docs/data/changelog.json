@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Checker: the driver refuses a contract that sets a value in code",
+    "commit": null,
+    "summary": "A proof was found today to have passed because its contract set two globals at addresses inside the code section. The driver now checks where every declared range and set value lands before it runs anything.",
+    "changes": [
+      "A contract whose declared range or set value starts in code, in a gap between sections or outside the image is refused: it is not run, and its verdict file says so with the reason. Nothing is ever meant to be set there. A placement in read-only data is a warning and not a refusal, because varying a constant the original loads from read-only data is a legitimate test; the worker maps the image writable and restores such words after each side. Two more conditions are reported as warnings for review: a value none of the function's instructions refers to, and a writable word the function refers to that the contract neither sets nor declares.",
+      "Warnings are one line per contract with a count per kind; the detail goes to a file beside the verdicts. For a contract that is not refused, the verdict is identical to what the driver wrote before.",
+      "Written by a checker investigation lane with seven tests of its own (they need the original executable and are skipped where it is absent); the 50 tests of the checker folder pass with it in place. The coordinator reviewed it and made one change at integration: lanes run a copy of the driver from their own folders, so the new module is taken from the repository when it is not beside the copy. Checked by running one corrected and one misplaced contract through a copied driver: the first runs and passes, the second is refused with a verdict.",
+      "What it would do to the contracts of record: of 16,381 scanned, 54 would be refused and 3,001 would carry a warning. For 37 of the 54 a corrected contract exists and the verified rewrite still passes it; none of the rewrites tested so far fails once its contract is corrected. The coordinator's re-run reads a refusal as a claim that does not hold, not as a broken re-run."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 9 files from lanes (631 unverified rewrites, 669 in review)",
     "commit": "8b7d12924351a0ef6993ef27c822dcd861ff73d7",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

@@ -2400,6 +2400,44 @@ def main(argv):
     contracts = [json.load(open(os.path.join(HERE, "contracts", n + ".json"))) for n in names]
     for c in contracts:
         validate_contract(c)
+    # Placement check (lane k-chk4, 11 October 2026). A declared range or set value that starts in code, in a gap
+    # between sections, or past the image is refused: the contract is not run and its verdict says so.
+    # A read-only placement is a warning. One line per contract; the detail is in OUT/placement/<name>.json.
+    # A lane runs a copy of this driver from its own folder; the module is then taken from the repository.
+    try:
+        import global_placement as _gp
+    except ImportError:
+        sys.path.insert(0, os.path.join(ROOT, "scripts", "checker"))
+        import global_placement as _gp
+    _img = _gp.Image(EXE)
+    _kept, _refused = [], []
+    for c in contracts:
+        if str(c["function"]).startswith("selftest:"):
+            _kept.append(c)
+            continue
+        _found = _gp.check_contract(_img, c, int(c["function"], 16))
+        _kinds = {}
+        for _x in _found:
+            _kinds[_x["kind"]] = _kinds.get(_x["kind"], 0) + 1
+        _detail = os.path.join("placement", c["name"] + ".json")
+        if _found:
+            os.makedirs(os.path.join(OUT, "placement"), exist_ok=True)
+            with open(os.path.join(OUT, _detail), "w", encoding="utf-8") as _f:
+                json.dump({"name": c["name"], "function": c["function"], "findings": _found}, _f, indent=1)
+        _counts = ", ".join("%s=%d" % (k, v) for k, v in sorted(_kinds.items()))
+        if any(_x["level"] == "refuse" for _x in _found):
+            _reason = "placement refused: " + _counts + " (code, gap or outside the image; detail in " + _detail + ")"
+            with open(os.path.join(OUT, "verdicts", c["name"] + ".json"), "w", encoding="utf-8") as _f:
+                json.dump({"function": c["function"], "name": c["name"], "passed": False,
+                           "inputs_tested": 0, "comparisons": [], "checker_version": "checker4",
+                           "trials": 0, "fails": 0, "comparisons_detail": [], "refused": _reason}, _f, indent=1)
+            print("placement %s: REFUSED (%s)" % (c["name"], _reason), flush=True)
+            _refused.append(c["name"])
+            continue
+        if _found:
+            print("placement %s: warn %s (detail %s)" % (c["name"], _counts, _detail), flush=True)
+        _kept.append(c)
+    contracts = _kept
     w = Worker()
     summary = []
     t_all = time.perf_counter()
@@ -2495,7 +2533,7 @@ def main(argv):
     json.dump(out, open(os.path.join(OUT, "results.json"), "w"), indent=1)
     print("TOTAL: %d trials in %.1fs = %.1f trials/s" % (total_trials, wall_all, out["trials_per_s"]), flush=True)
     w.stop()
-    return 0
+    return 1 if _refused else 0
 
 
 if __name__ == "__main__":
