@@ -6,5 +6,5 @@
 lf_checker_rt::export!(cdecl, rw_00DE3EB0() -> u32 {
     const CLASS_NAME_TEXT: u32 = 0x00EFDF00;
     let name = lf_checker_rt::relocated(CLASS_NAME_TEXT);
-    unsafe { lf_checker_rt::callee_cdecl!(1, u32, name) }
+    lf_checker_rt::callee_cdecl!(1, u32, name)
 });
