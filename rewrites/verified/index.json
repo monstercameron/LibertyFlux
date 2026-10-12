@@ -158616,6 +158616,60 @@
   "lane": "r-s637"
  },
  {
+  "address": "0x00DB0150",
+  "name": "network_protect_data_blob",
+  "kind": "function",
+  "file": "functions/fn_00db0150.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
+  "address": "0x00DB01A0",
+  "name": "network_buffer_has_suffix",
+  "kind": "function",
+  "file": "functions/fn_00db01a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
+  "address": "0x00DB0220",
+  "name": "dequantize_unsigned_float_range",
+  "kind": "function",
+  "file": "functions/fn_00db0220.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
+  "address": "0x00DB0280",
+  "name": "dequantize_signed_float_range",
+  "kind": "function",
+  "file": "functions/fn_00db0280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
+  "address": "0x00DB0300",
+  "name": "quantize_unsigned_float_range",
+  "kind": "function",
+  "file": "functions/fn_00db0300.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
+  "address": "0x00DB0390",
+  "name": "quantize_signed_float_range",
+  "kind": "function",
+  "file": "functions/fn_00db0390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
   "address": "0x00DB0B80",
   "name": "mainloop_timing_initialize_triple",
   "kind": "function",
@@ -158877,6 +158931,33 @@
   "lane": "r-s150"
  },
  {
+  "address": "0x00DB1DC0",
+  "name": "UILayoutFrame::sync_cached_child_metrics",
+  "kind": "function",
+  "file": "functions/fn_00db1dc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
+  "address": "0x00DB2440",
+  "name": "UITexture::UITexture_2",
+  "kind": "function",
+  "file": "functions/fn_00db2440.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
+  "address": "0x00DB2460",
+  "name": "UITexture::~UITexture__deleting",
+  "kind": "function",
+  "file": "functions/fn_00db2460.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
   "address": "0x00DB2480",
   "name": "UITexture::vf85",
   "kind": "function",
@@ -158884,6 +158965,42 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b233"
+ },
+ {
+  "address": "0x00DB2740",
+  "name": "UITexture::bind_texture_resource",
+  "kind": "function",
+  "file": "functions/fn_00db2740.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
+  "address": "0x00DB27C0",
+  "name": "UITexture::apply_hud_colour",
+  "kind": "function",
+  "file": "functions/fn_00db27c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
+  "address": "0x00DB2860",
+  "name": "UITexture::release_texture_resource",
+  "kind": "function",
+  "file": "functions/fn_00db2860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
+  "address": "0x00DB28A0",
+  "name": "UITexture::get_class_name_hash",
+  "kind": "function",
+  "file": "functions/fn_00db28a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
  },
  {
   "address": "0x00DB28B0",
@@ -158895,6 +159012,15 @@
   "lane": "r-b233"
  },
  {
+  "address": "0x00DB2B50",
+  "name": "UITexture::snapshot_active_slot_for_render",
+  "kind": "function",
+  "file": "functions/fn_00db2b50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
+ },
+ {
   "address": "0x00DB2C00",
   "name": "UITexture::vf87",
   "kind": "function",
@@ -158902,6 +159028,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b233"
+ },
+ {
+  "address": "0x00DB2F30",
+  "name": "UITexture::set_unit_texture_rect",
+  "kind": "function",
+  "file": "functions/fn_00db2f30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s824"
  },
  {
   "address": "0x00DB2FE0",
