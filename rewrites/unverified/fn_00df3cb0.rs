@@ -2,22 +2,22 @@
 
 /// Clear and populate the file-entry buffer and return the final view update.
 ///
-/// The fourth stack word supplies a NUL-terminated string copied to the
+/// The first stack word supplies a NUL-terminated string copied to the
 /// 256-byte buffer at `+0x200`; the second supplies a second string copied to
-/// `+0x300`. Three float bit patterns are copied unchanged to `+0x318` through
-/// `+0x324`, with the middle word also retained at `+0x30c`. The buffer clear
+/// `+0x300`. The third word is retained at `+0x30c`, and four float bit
+/// patterns are copied unchanged to `+0x318` through `+0x324`. The buffer clear
 /// is delegated to the intercepted C runtime call. Finally, vtable slots
 /// `+0x1ec`, `+0x24` and `+0x13c` run in order, the latter two with argument 1;
 /// the last result is returned.
 lf_checker_rt::export!(thiscall, rw_df3cb0(
     this: u32,
-    _opaque_word_1: u32,
-    second_text: u32,
-    _opaque_word_3: u32,
     first_text: u32,
+    second_text: u32,
+    entry_id: u32,
     float_bits_0: u32,
     float_bits_1: u32,
     float_bits_2: u32,
+    float_bits_3: u32,
 ) -> u32 {
     unsafe {
         const ENTRY_TEXT_BUFFER: u32 = 0x200;
@@ -36,9 +36,9 @@ lf_checker_rt::export!(thiscall, rw_df3cb0(
         ((this.wrapping_add(SECOND_TEXT_FIELD + 4)) as *mut u8).write(0);
         ((this.wrapping_add(DISPLAY_VALUE_0)) as *mut u32).write_unaligned(float_bits_0);
         ((this.wrapping_add(DISPLAY_VALUE_1)) as *mut u32).write_unaligned(float_bits_1);
-        ((this.wrapping_add(DISPLAY_VALUE_2)) as *mut u32).write_unaligned(float_bits_1);
-        ((this.wrapping_add(0x30C)) as *mut u32).write_unaligned(float_bits_1);
-        ((this.wrapping_add(DISPLAY_VALUE_3)) as *mut u32).write_unaligned(float_bits_2);
+        ((this.wrapping_add(DISPLAY_VALUE_2)) as *mut u32).write_unaligned(float_bits_2);
+        ((this.wrapping_add(0x30C)) as *mut u32).write_unaligned(entry_id);
+        ((this.wrapping_add(DISPLAY_VALUE_3)) as *mut u32).write_unaligned(float_bits_3);
 
         let mut source = first_text as *const u8;
         let mut target = entry_text_buffer as *mut u8;

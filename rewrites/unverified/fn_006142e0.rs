@@ -4,7 +4,7 @@
 /// points to a destination. The three incoming scalar words come from XMM0,
 /// XMM1 and XMM2. The other record words are read from global data. The record
 /// is nine 32-bit words, and the cursor advances by its size only when written.
-/// The global sample counter increments on every call.
+/// The global sample counter increments on every call. The token loaded from image data is returned in EAX.
 lf_checker_rt::export!(cdecl, rw_006142e0() -> u32 {
     const COUNT: u32 = 0x01b4_f718;
     const ENABLED: u32 = 0x01b4_f71c;
@@ -19,13 +19,14 @@ lf_checker_rt::export!(cdecl, rw_006142e0() -> u32 {
     ];
     const RECORD_BYTES: u32 = 0x24;
 
-    unsafe {
+    let return_token = unsafe {
         let count = lf_checker_rt::global::<u32>(COUNT);
         let enabled = lf_checker_rt::global::<u32>(ENABLED);
         let cursor = lf_checker_rt::global::<u32>(CURSOR);
         let next_count = count.read_volatile().wrapping_add(1);
         let is_enabled = enabled.read_volatile() != 0;
         let record = cursor.read_volatile();
+        let global_token = lf_checker_rt::global::<u32>(TOKEN).read_volatile();
 
         if is_enabled && record != 0 {
             let words = [
@@ -35,7 +36,7 @@ lf_checker_rt::export!(cdecl, rw_006142e0() -> u32 {
                 lf_checker_rt::global::<u32>(GLOBAL_FLOATS[0]).read_volatile(),
                 lf_checker_rt::global::<u32>(GLOBAL_FLOATS[1]).read_volatile(),
                 lf_checker_rt::global::<u32>(GLOBAL_FLOATS[2]).read_volatile(),
-                lf_checker_rt::global::<u32>(TOKEN).read_volatile(),
+                global_token,
                 lf_checker_rt::global::<u32>(GLOBAL_FLOATS[3]).read_volatile(),
                 lf_checker_rt::global::<u32>(GLOBAL_FLOATS[4]).read_volatile(),
             ];
@@ -45,6 +46,7 @@ lf_checker_rt::export!(cdecl, rw_006142e0() -> u32 {
             cursor.write_volatile(record.wrapping_add(RECORD_BYTES));
         }
         count.write_volatile(next_count);
-    }
-    0
+        global_token
+    };
+    return_token
 });

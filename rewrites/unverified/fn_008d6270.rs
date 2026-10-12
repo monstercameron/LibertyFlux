@@ -31,9 +31,9 @@ lf_checker_rt::export!(cdecl, rw_fn_008d6270(input_bits: u32, index: u32) -> f32
 
     let adjust = unsafe { lf_checker_rt::global::<f32>(ADJUST_FLOAT_VA).read() };
     let adjusted = if !(input < 0.0) {
-        black_box(product) - black_box(adjust)
-    } else {
         black_box(product) + black_box(adjust)
+    } else {
+        black_box(product) - black_box(adjust)
     };
     let scale = unsafe { lf_checker_rt::global::<f32>(SCALE_FLOAT_VA).read() };
     let scaled = black_box(adjusted) * black_box(scale);

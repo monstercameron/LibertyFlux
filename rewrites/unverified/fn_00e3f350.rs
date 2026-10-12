@@ -1,8 +1,8 @@
 // original: 0x00E3F350 net_info_header_copy_fields
 
 /// Copy the first 28 bytes from the supplied source header to this header,
-/// run its refresh helper, then forward the eleven text pointers at 60-byte
-/// intervals to the text writer. Return the final scripted text-writer result.
+/// run its refresh helper, then forward the addresses of eleven text fields
+/// at 60-byte intervals to the text writer. Return its final scripted result.
 /// This is a thiscall with one source pointer; each text call is a thiscall
 /// with the record index and source text pointer.
 lf_checker_rt::export!(thiscall, rw_00e3f350(destination: u32, source: u32) -> u32 {
@@ -22,13 +22,11 @@ lf_checker_rt::export!(thiscall, rw_00e3f350(destination: u32, source: u32) -> u
         let mut last_text_result = 0;
         let mut record_index = 0;
         while record_index < TEXT_FIELD_COUNT {
-            let text_pointer = (source
+            let text_field = source
                 .wrapping_add(TEXT_POINTERS_OFFSET)
-                .wrapping_add(record_index.wrapping_mul(TEXT_POINTER_STRIDE))
-                as *const u32)
-                .read_unaligned();
+                .wrapping_add(record_index.wrapping_mul(TEXT_POINTER_STRIDE));
             last_text_result = lf_checker_rt::callee_thiscall!(
-                2, u32, destination, record_index, text_pointer
+                2, u32, destination, record_index, text_field
             );
             record_index = record_index.wrapping_add(1);
         }

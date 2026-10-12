@@ -1,7 +1,0 @@
-// original: 0x00C6F830 nm_message_array_push
-
-/// Append one dword to a counted array. When count equals capacity, increase the 16-bit capacity by the supplied 32-bit growth narrowed to 16 bits, request a replacement buffer, copy the existing elements, release the old buffer, and then append. Return the address of the new slot.
-lf_checker_rt::export!(thiscall, rw_0x00c6f830(this: u32, growth: u32) -> u32 {
-    const DATA:u32=0; const COUNT:u32=4; const CAPACITY:u32=6;
-    unsafe { let object=this as *mut u8; let mut count=object.add(COUNT as usize).cast::<u16>().read_unaligned(); let capacity=object.add(CAPACITY as usize).cast::<u16>().read_unaligned(); if count==capacity { let new_capacity=capacity.wrapping_add(growth as u16); object.add(CAPACITY as usize).cast::<u16>().write_unaligned(new_capacity); let old_data=object.cast::<u32>().read_unaligned(); let new_data=lf_checker_rt::callee_thiscall!(1,u32,this,new_capacity as u32); let mut i=0u16; while i<count { let value=((old_data as *const u32).add(i as usize)).read_unaligned(); ((new_data as *mut u32).add(i as usize)).write_unaligned(value); i=i.wrapping_add(1); } let _=lf_checker_rt::callee_cdecl!(2,u32,old_data); object.cast::<u32>().write_unaligned(new_data); } let data=object.cast::<u32>().read_unaligned(); let slot=data.wrapping_add((count as u32).wrapping_mul(4)); count=count.wrapping_add(1); object.add(COUNT as usize).cast::<u16>().write_unaligned(count); slot }
-});
