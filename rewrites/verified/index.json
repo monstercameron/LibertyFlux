@@ -89676,6 +89676,15 @@
   "lane": "r-s762"
  },
  {
+  "address": "0x00A82C80",
+  "name": "CComplexGunTaskInfo::get_status_name",
+  "kind": "function",
+  "file": "functions/fn_00a82c80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
   "address": "0x00A82C90",
   "name": "CComplexNewExitVehicleTaskInfo::get_status_name",
   "kind": "function",
@@ -90034,6 +90043,114 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s723"
+ },
+ {
+  "address": "0x00A848D0",
+  "name": "quantize_float_to_2bit",
+  "kind": "function",
+  "file": "functions/fn_00a848d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84A00",
+  "name": "CComplexFallAndGetUpTaskInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84a00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84A20",
+  "name": "CComplexGangDrivebyTaskInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84a20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84B10",
+  "name": "CComplexGunTaskInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84b10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84B60",
+  "name": "CComplexJumpTaskInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84b60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84BA0",
+  "name": "CComplexNewExitVehicleTaskInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84BE0",
+  "name": "CComplexNewGetInVehicleTaskInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84be0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84C00",
+  "name": "CComplexNewUseCoverInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84c00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84C70",
+  "name": "CComplexPickUpAndCarryObjectTaskInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84c70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84CA0",
+  "name": "CComplexSlideIntoCoverInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84ca0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84D10",
+  "name": "CJackTaskInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84d10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
+ },
+ {
+  "address": "0x00A84E40",
+  "name": "CMeleeTaskInfo::deserialize",
+  "kind": "function",
+  "file": "functions/fn_00a84e40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s823"
  },
  {
   "address": "0x00A85A40",
