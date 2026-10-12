@@ -138,7 +138,7 @@ impl UILayoutFrame {
     }
 
     /// Stores a little-endian word at `at`.
-    fn set_word_at(&mut self, at: usize, value: u32) {
+    pub(super) fn set_word_at(&mut self, at: usize, value: u32) {
         self.bytes[at..at + 4].copy_from_slice(&value.to_le_bytes());
     }
 

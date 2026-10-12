@@ -11,13 +11,14 @@
 #[cfg(target_arch = "x86")]
 mod x86 {
     use lf_camgame_diff::rewrites::fn_00b05d30::rw_00b05d30;
+    use lf_camgame_diff::rewrites::fn_00b07760::rw_00b07760;
     use lf_camgame_diff::rewrites::fn_00b09cf0::rw_00b09cf0;
     use lf_camgame_diff::rewrites::fn_00b09da0::rw_00b09da0;
     use lf_camgame_diff::rt::{self, Call, Effect, SNAPSHOT, StubKind};
     use lf_core::Handle32;
     use lf_world::cam_game::{
-        ACTIVE_MARKER, CCamGame, CamGameWorld, CamOwnerTag, CamTag, DEFAULT_ZOOM, IDLE_MARKER,
-        PoolTag, WorkerTag,
+        ACTIVE_MARKER, CCamGame, CamGameWorld, CamOwnerTag, CamTag, DEFAULT_ZOOM, GateBlock,
+        GateTag, IDLE_MARKER, PoolTag, TailTag, TargetTag, WorkerTag,
     };
 
     /// Size of a camera image: enough for every offset the rewrites touch.
@@ -174,6 +175,46 @@ mod x86 {
         default_word: u32,
         worker: Option<Handle32<WorkerTag>>,
         effects: Vec<Effect>,
+        // The gate step's world: its answers and the byte images it reads
+        // and writes, keyed by the address the rewrite sees.
+        inhibit: u8,
+        gate_a: Option<u32>,
+        gate_b: Option<u32>,
+        targets: [Option<u32>; 2],
+        words: [u16; 2],
+        singleton: bool,
+        tail: Option<u32>,
+        images: Vec<(u32, Vec<u8>)>,
+        matched: Option<u8>,
+        done: Option<u8>,
+    }
+
+    impl Fake {
+        fn image(&self, addr: u32) -> &[u8] {
+            &self
+                .images
+                .iter()
+                .find(|(a, _)| *a == addr)
+                .expect("the case installed this image")
+                .1
+        }
+
+        fn image_mut(&mut self, addr: u32) -> &mut Vec<u8> {
+            &mut self
+                .images
+                .iter_mut()
+                .find(|(a, _)| *a == addr)
+                .expect("the case installed this image")
+                .1
+        }
+    }
+
+    /// Index of a block's answers: the first block is 0, the second 1.
+    fn block_index(block: GateBlock) -> usize {
+        match block {
+            GateBlock::First => 0,
+            GateBlock::Second => 1,
+        }
     }
 
     impl CamGameWorld for Fake {
@@ -232,6 +273,102 @@ mod x86 {
 
         fn shared_default_word(&mut self) -> u32 {
             self.default_word
+        }
+
+        fn inhibit_flag(&mut self) -> u8 {
+            self.inhibit
+        }
+
+        fn gate_status(&mut self, block: GateBlock) -> Option<Handle32<GateTag>> {
+            self.log.push(("gate_status".to_string(), vec![0, 0]));
+            let addr = match block {
+                GateBlock::First => self.gate_a,
+                GateBlock::Second => self.gate_b,
+            };
+            addr.and_then(Handle32::new)
+        }
+
+        fn gate_byte(&mut self, gate: Handle32<GateTag>, offset: u32) -> u8 {
+            self.image(gate.get())[offset as usize]
+        }
+
+        fn find_target(
+            &mut self,
+            _cam: &mut CCamGame,
+            this: Handle32<CamTag>,
+            block: GateBlock,
+        ) -> Option<Handle32<TargetTag>> {
+            self.log
+                .push(("find_target".to_string(), vec![this.get(), 0x16, 0]));
+            self.targets[block_index(block)].and_then(Handle32::new)
+        }
+
+        fn gate_word(&mut self, block: GateBlock) -> u16 {
+            self.words[block_index(block)]
+        }
+
+        fn notify_sink(
+            &mut self,
+            _cam: &mut CCamGame,
+            this: Handle32<CamTag>,
+            word: u16,
+            _block: GateBlock,
+        ) {
+            let sub = this.get().wrapping_add(0x10);
+            self.log.push((
+                "notify_sink".to_string(),
+                vec![this.get(), sub, u32::from(word), 1, 1],
+            ));
+        }
+
+        fn sync_target(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            let mut args = vec![this.get()];
+            args.extend(snap_cam(cam));
+            self.log.push(("sync_target".to_string(), args));
+            apply_effects(cam, &self.effects);
+        }
+
+        fn singleton_present(&mut self) -> bool {
+            self.log.push(("singleton_present".to_string(), vec![]));
+            self.singleton
+        }
+
+        fn middle_update(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>, step: u32) {
+            let mut args = vec![this.get()];
+            args.extend(snap_cam(cam));
+            args.push(step);
+            self.log.push(("middle_update".to_string(), args));
+            apply_effects(cam, &self.effects);
+        }
+
+        fn tail(&mut self, _cam: &mut CCamGame, this: Handle32<CamTag>) -> Option<Handle32<TailTag>> {
+            self.log
+                .push(("tail".to_string(), vec![this.get(), 2, 0]));
+            self.tail.and_then(Handle32::new)
+        }
+
+        fn tail_state(&mut self, tail: Handle32<TailTag>) -> u8 {
+            self.image(tail.get())[0x22E]
+        }
+
+        fn tail_flags(&mut self, tail: Handle32<TailTag>) -> u8 {
+            self.image(tail.get())[0x18C]
+        }
+
+        fn set_tail_flags(&mut self, tail: Handle32<TailTag>, flags: u8) {
+            self.image_mut(tail.get())[0x18C] = flags;
+        }
+
+        fn set_tail_state(&mut self, tail: Handle32<TailTag>, state: u8) {
+            self.image_mut(tail.get())[0x22E] = state;
+        }
+
+        fn set_matched(&mut self, matched: u8) {
+            self.matched = Some(matched);
+        }
+
+        fn clear_done(&mut self) {
+            self.done = Some(0);
         }
     }
 
@@ -605,5 +742,353 @@ mod x86 {
             vf6_run(Some(mutant_vf6_active)) > 0,
             "the active-marker version was not caught"
         );
+    }
+    // ---------------------------------------------------------------------
+    // Camera event step (slot 4).
+
+    /// Size of a gate status object: enough for every offset the step reads.
+    const GATE_LEN: usize = 0x32A0;
+
+    /// Size of the tail object: enough for every offset the tail step touches.
+    const TAIL_LEN: usize = 0x240;
+
+    /// Draws a folded value that makes the pair high (above the threshold).
+    fn xor_high(rng: &mut Rng) -> u8 {
+        0x80 | (rng.u8() & 0x7F)
+    }
+
+    /// Draws a folded value that keeps the pair low (at or below the threshold).
+    fn xor_low(rng: &mut Rng) -> u8 {
+        rng.u8() & 0x7F
+    }
+
+    /// A gate status object: random bytes, with the selector nonzero half the
+    /// time and each folded pair high or low, with the boundary value now and
+    /// then, so both verdict paths and both pair tests are taken.
+    fn gen_gate(rng: &mut Rng) -> Vec<u8> {
+        let mut g: Vec<u8> = (0..GATE_LEN).map(|_| rng.u8()).collect();
+        g[0x328D] = if rng.below(2) == 0 {
+            0
+        } else {
+            (rng.below(255) + 1) as u8
+        };
+        let base = rng.u8();
+        g[0x269C] = base;
+        g[0x269E] = base ^ if rng.below(2) == 0 { xor_high(rng) } else { xor_low(rng) };
+        g[0x269F] = base ^ if rng.below(2) == 0 { xor_high(rng) } else { xor_low(rng) };
+        if rng.below(8) == 0 {
+            g[0x269F] = base ^ 0x7F;
+        }
+        if rng.below(8) == 0 {
+            g[0x269E] = base ^ 0x80;
+        }
+        let c0 = rng.u8();
+        g[0x29BC] = c0;
+        g[0x29BE] = c0 ^ if rng.below(2) == 0 { xor_high(rng) } else { xor_low(rng) };
+        if rng.below(8) == 0 {
+            g[0x29BE] = c0 ^ 0x7F;
+        }
+        g
+    }
+
+    /// A tail object: random bytes; the state is the matched state a third of
+    /// the time, so both matched values are taken.
+    fn gen_tail(rng: &mut Rng) -> Vec<u8> {
+        let mut t: Vec<u8> = (0..TAIL_LEN).map(|_| rng.u8()).collect();
+        if rng.below(3) == 0 {
+            t[0x22E] = 3;
+        }
+        t
+    }
+
+    /// Renames the rewrite's numbered calls to the lifted names, and adds the
+    /// step number the middle chain's callees are identified by.
+    fn normalize_gate(calls: Vec<Call>) -> Vec<Call> {
+        calls
+            .into_iter()
+            .map(|(name, mut args)| {
+                let id = name.strip_prefix('#').and_then(|s| s.parse::<u32>().ok());
+                let lifted = match id {
+                    Some(1 | 13) => "gate_status",
+                    Some(2 | 14) => "find_target",
+                    Some(3 | 15) => "notify_sink",
+                    Some(4) => "sync_target",
+                    Some(5) => "singleton_present",
+                    Some(k @ 6..=12) => {
+                        args.push(k);
+                        "middle_update"
+                    }
+                    Some(16) => "tail",
+                    _ => return (name, args),
+                };
+                (lifted.to_string(), args)
+            })
+            .collect()
+    }
+
+    /// Deliberately wrong versions of the camera event step, built by wrapping
+    /// the world: each changes one answer or one call the lifted step makes.
+    #[derive(Debug, Clone, Copy)]
+    enum GateMutant {
+        /// The second block passes the first block's global word.
+        SwapWords,
+        /// The inhibit flag is read as clear.
+        IgnoreInhibit,
+        /// The middle chain runs its seven steps in reverse order.
+        ReverseChain,
+        /// The tail step never clears the busy bit.
+        TailKeepsBusy,
+        /// The selector byte is read inverted.
+        InvertSelector,
+    }
+
+    struct Mutated {
+        inner: Fake,
+        kind: GateMutant,
+    }
+
+    impl CamGameWorld for Mutated {
+        fn destroy_body(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.destroy_body(cam, this);
+        }
+        fn pool_manager(&mut self) -> Option<Handle32<PoolTag>> {
+            self.inner.pool_manager()
+        }
+        fn pool_release(&mut self, manager: Option<Handle32<PoolTag>>, this: Handle32<CamTag>) {
+            self.inner.pool_release(manager, this);
+        }
+        fn teardown(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.teardown(cam, this);
+        }
+        fn create_worker(
+            &mut self,
+            owner: Option<Handle32<CamOwnerTag>>,
+            mode: u32,
+            extra: u32,
+            this: Handle32<CamTag>,
+        ) -> Option<Handle32<WorkerTag>> {
+            self.inner.create_worker(owner, mode, extra, this)
+        }
+        fn chain_set_flags(&mut self, worker: Option<Handle32<WorkerTag>>) {
+            self.inner.chain_set_flags(worker);
+        }
+        fn release_worker(&mut self, worker: Option<Handle32<WorkerTag>>) {
+            self.inner.release_worker(worker);
+        }
+        fn reset_state_block(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.reset_state_block(cam, this);
+        }
+        fn shared_default_word(&mut self) -> u32 {
+            self.inner.shared_default_word()
+        }
+        fn inhibit_flag(&mut self) -> u8 {
+            match self.kind {
+                GateMutant::IgnoreInhibit => 0,
+                _ => self.inner.inhibit_flag(),
+            }
+        }
+        fn gate_status(&mut self, block: GateBlock) -> Option<Handle32<GateTag>> {
+            self.inner.gate_status(block)
+        }
+        fn gate_byte(&mut self, gate: Handle32<GateTag>, offset: u32) -> u8 {
+            let v = self.inner.gate_byte(gate, offset);
+            match self.kind {
+                GateMutant::InvertSelector if offset == 0x328D => u8::from(v == 0),
+                _ => v,
+            }
+        }
+        fn find_target(
+            &mut self,
+            cam: &mut CCamGame,
+            this: Handle32<CamTag>,
+            block: GateBlock,
+        ) -> Option<Handle32<TargetTag>> {
+            self.inner.find_target(cam, this, block)
+        }
+        fn gate_word(&mut self, block: GateBlock) -> u16 {
+            match (self.kind, block) {
+                (GateMutant::SwapWords, GateBlock::Second) => self.inner.gate_word(GateBlock::First),
+                _ => self.inner.gate_word(block),
+            }
+        }
+        fn notify_sink(
+            &mut self,
+            cam: &mut CCamGame,
+            this: Handle32<CamTag>,
+            word: u16,
+            block: GateBlock,
+        ) {
+            self.inner.notify_sink(cam, this, word, block);
+        }
+        fn sync_target(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.sync_target(cam, this);
+        }
+        fn singleton_present(&mut self) -> bool {
+            self.inner.singleton_present()
+        }
+        fn middle_update(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>, step: u32) {
+            let step = match self.kind {
+                GateMutant::ReverseChain => 18 - step,
+                _ => step,
+            };
+            self.inner.middle_update(cam, this, step);
+        }
+        fn tail(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) -> Option<Handle32<TailTag>> {
+            self.inner.tail(cam, this)
+        }
+        fn tail_state(&mut self, tail: Handle32<TailTag>) -> u8 {
+            self.inner.tail_state(tail)
+        }
+        fn tail_flags(&mut self, tail: Handle32<TailTag>) -> u8 {
+            self.inner.tail_flags(tail)
+        }
+        fn set_tail_flags(&mut self, tail: Handle32<TailTag>, flags: u8) {
+            if !matches!(self.kind, GateMutant::TailKeepsBusy) {
+                self.inner.set_tail_flags(tail, flags);
+            }
+        }
+        fn set_tail_state(&mut self, tail: Handle32<TailTag>, state: u8) {
+            self.inner.set_tail_state(tail, state);
+        }
+        fn set_matched(&mut self, matched: u8) {
+            self.inner.set_matched(matched);
+        }
+        fn clear_done(&mut self) {
+            self.inner.clear_done();
+        }
+    }
+
+    /// Runs the camera event step cases. Returns the trials that disagree
+    /// (zero for the lifted step).
+    fn gate_run(mutant: Option<GateMutant>) -> u32 {
+        let _guard = rt::script_lock();
+        let mut rng = Rng(0x0C_AA_0004);
+        let mut mismatches = 0;
+        for trial in 0..TRIALS {
+            let gate_a_buf = gen_gate(&mut rng);
+            let gate_b_buf = gen_gate(&mut rng);
+            let tail_rw = gen_tail(&mut rng);
+            let gate_a_addr = gate_a_buf.as_ptr() as usize as u32;
+            let gate_b_addr = gate_b_buf.as_ptr() as usize as u32;
+            let tail_addr = tail_rw.as_ptr() as usize as u32;
+
+            let zero_gate_a = rng.below(8) == 0;
+            let zero_gate_b = rng.below(8) == 0;
+            let gate_a = if zero_gate_a { 0 } else { gate_a_addr };
+            let gate_b = if zero_gate_b { 0 } else { gate_b_addr };
+            let targets = [
+                if rng.below(3) == 0 { 0 } else { 0x5000_0001 + trial },
+                if rng.below(3) == 0 { 0 } else { 0x6000_0001 + trial },
+            ];
+            let singleton = rng.below(2) == 1;
+            let tail = if rng.below(8) == 0 { 0 } else { tail_addr };
+            let words = [rng.u32() as u16, rng.u32() as u16];
+            let inhibit = if rng.below(2) == 0 { 0 } else { 1 };
+            let matched_init = rng.u8();
+            let done_init = rng.u8();
+            let effects = random_effects(&mut rng);
+
+            let cam_rw = random_object(&mut rng, trial);
+            let cam_addr = cam_rw.as_ptr() as usize as u32;
+            let cam_before = cam_rw.clone();
+            // The lifted side starts from the images as they were before the
+            // original ran; the original writes the tail object.
+            let tail_before = tail_rw.clone();
+
+            rt::set_case(
+                &[
+                    (1, StubKind::Cdecl2, vec![gate_a]),
+                    (2, StubKind::Thiscall3, vec![targets[0]]),
+                    (3, StubKind::Thiscall5, vec![]),
+                    (4, StubKind::Thiscall1Effect, vec![]),
+                    (5, StubKind::Cdecl0, vec![u32::from(singleton)]),
+                    (6, StubKind::Thiscall1Effect, vec![]),
+                    (7, StubKind::Thiscall1Effect, vec![]),
+                    (8, StubKind::Thiscall1Effect, vec![]),
+                    (9, StubKind::Thiscall1Effect, vec![]),
+                    (10, StubKind::Thiscall1Effect, vec![]),
+                    (11, StubKind::Thiscall1Effect, vec![]),
+                    (12, StubKind::Thiscall1Effect, vec![]),
+                    (13, StubKind::Cdecl2, vec![gate_b]),
+                    (14, StubKind::Thiscall3, vec![targets[1]]),
+                    (15, StubKind::Thiscall5, vec![]),
+                    (16, StubKind::Thiscall3, vec![tail]),
+                ],
+                &effects,
+                0,
+                0,
+            );
+            rt::set_gate_globals(inhibit, words[0], words[1]);
+            rt::set_gate_outputs(matched_init, done_init);
+            let ret = rw_00b07760(cam_addr);
+            let rw_calls = normalize_gate(rt::take_calls());
+            assert_eq!(ret & 0xFF, 1, "the original always answers 1");
+            let matched_rw = rt::gate_matched();
+            let done_rw = rt::gate_done();
+
+            let mut fake = Fake {
+                inhibit,
+                gate_a: (!zero_gate_a).then_some(gate_a_addr),
+                gate_b: (!zero_gate_b).then_some(gate_b_addr),
+                targets: [
+                    (targets[0] != 0).then_some(targets[0]),
+                    (targets[1] != 0).then_some(targets[1]),
+                ],
+                words,
+                singleton,
+                tail: (tail != 0).then_some(tail_addr),
+                images: vec![
+                    (gate_a_addr, gate_a_buf.clone()),
+                    (gate_b_addr, gate_b_buf.clone()),
+                    (tail_addr, tail_before),
+                ],
+                effects: effects.clone(),
+                ..Fake::default()
+            };
+            let mut cam = decode(&cam_before);
+            let this = Handle32::new(cam_addr).expect("non-zero identity");
+            match mutant {
+                None => cam.gate_update(&mut fake, this),
+                Some(kind) => {
+                    let mut m = Mutated { inner: fake, kind };
+                    cam.gate_update(&mut m, this);
+                    fake = m.inner;
+                }
+            }
+            let mut cam_lift = cam_before.clone();
+            encode(&cam, &mut cam_lift);
+
+            let matched_expected = fake.matched.unwrap_or(matched_init);
+            let tail_bytes_ok = tail == 0 || fake.images[2].1 == tail_rw;
+            let ok = cam_lift == cam_rw
+                && rw_calls == fake.log
+                && matched_rw == matched_expected
+                && done_rw == 0
+                && fake.done == Some(0)
+                && tail_bytes_ok;
+            if !ok {
+                mismatches += 1;
+            }
+        }
+        eprintln!("camera event step trials disagreeing: {mismatches} of {TRIALS}");
+        mismatches
+    }
+
+    #[test]
+    fn vf4_lifted_matches_rewrite() {
+        assert_eq!(gate_run(None), 0, "lifted camera event step disagrees");
+    }
+
+    #[test]
+    fn vf4_wrong_versions_are_caught() {
+        for kind in [
+            GateMutant::SwapWords,
+            GateMutant::IgnoreInhibit,
+            GateMutant::ReverseChain,
+            GateMutant::TailKeepsBusy,
+            GateMutant::InvertSelector,
+        ] {
+            assert!(gate_run(Some(kind)) > 0, "{kind:?} was not caught");
+        }
     }
 }

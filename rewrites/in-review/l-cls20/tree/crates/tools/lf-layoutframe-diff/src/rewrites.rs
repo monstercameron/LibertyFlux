@@ -218,3 +218,35 @@ pub mod fn_00DB1890 {
     use lf_checker_rt::{callee_cdecl, export};
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1890.rs"));
 }
+/// Verified rewrite of the three gated follow-ups that clear a pending flag (token at 0xDC).
+pub mod fn_00DB1740 {
+    #![allow(unused_imports)]
+    use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global, relocated};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1740.rs"));
+}
+
+/// Verified rewrite of the token follow-up that clears a pending flag (token at 0xE0).
+pub mod fn_00DB17F0 {
+    #![allow(unused_imports)]
+    use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global, relocated};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db17f0.rs"));
+}
+
+/// Verified rewrite of the token follow-up that hands off to the shared routine (token at 0xE4).
+pub mod fn_00DB1840 {
+    #![allow(unused_imports)]
+    use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global, relocated};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1840.rs"));
+}
+/// Verified rewrite of the token resolve and follow-up that answers plus one (no token argument).
+pub mod fn_00DB1660 {
+    #![allow(unused_imports)]
+    use lf_checker_rt::{callee_cdecl, export};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1660.rs"));
+}
+/// Verified rewrite of the mode store and the clamped blend that forwards to the frame's handler.
+pub mod fn_00DB19A0 {
+    #![allow(unused_imports)]
+    use lf_checker_rt::{export, global, relocated};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db19a0.rs"));
+}

@@ -16,11 +16,13 @@
 use core::cell::{Cell, RefCell};
 use std::sync::{Mutex, MutexGuard};
 
-use lf_peds_follow_diff::rewrites::{fn_00cb2970, fn_00cb3b50, fn_00cb73a0, fn_00cb73d0, fn_00cbc9f0};
+use lf_peds_follow_diff::rewrites::{
+    fn_00caf2a0, fn_00cabc00, fn_00cabca0, fn_00cb2970, fn_00cb3b50, fn_00cb73a0, fn_00cb73d0, fn_00cbc9f0,
+};
 use lf_peds_tasks::follow_point_route::host::{PedView, RouteTaskHost};
 use lf_peds_tasks::follow_point_route::route::{RoutePoint, RouteTable};
 use lf_peds_tasks::follow_point_route::task::{
-    FLAG_REPEAT, FollowPointRouteTask, PED_BLOCKED,
+    FLAG_KEEP_MASK, FLAG_REPEAT, FollowPointRouteTask, PED_BLOCKED, RouteTaskInit,
     SUBTASK_GO_TO_DONE, SUBTASK_LEG_DONE, SUBTASK_ROUTE, SUBTASK_TURN_DONE,
 };
 
@@ -179,6 +181,10 @@ enum Ev {
     Create { task: u32, id: u32, ped: u32 },
     Plan { task: u32 },
     Kind { sub: u32 },
+    Select { selector: u32 },
+    Base { task: u32, speed: u32 },
+    RouteCtor { task: u32, target: u32, start: u32, end: u32, final_value: u32, id: u32 },
+    Alloc { mgr: u32 },
 }
 
 thread_local! {
@@ -225,6 +231,10 @@ extern "thiscall" fn kind_stub(sub: u32) -> u32 {
 #[derive(Default)]
 struct RecHost {
     log: Vec<Ev>,
+    /// The allocator manager the case reads from its global.
+    mgr: u32,
+    /// The handle the allocation answers with (0 for none).
+    new_handle: u32,
 }
 
 impl RouteTaskHost for RecHost {
@@ -247,6 +257,24 @@ impl RouteTaskHost for RecHost {
     fn plan_next_subtask(&mut self, task: u32) -> u32 {
         self.log.push(Ev::Plan { task });
         ans_plan(task)
+    }
+    fn select_speed(&mut self, selector: u32) -> f32 {
+        self.log.push(Ev::Select { selector });
+        ans_select(selector)
+    }
+    fn move_base_ctor(&mut self, task: &mut FollowPointRouteTask, speed_bits: u32) -> u32 {
+        self.log.push(Ev::Base { task: task.handle, speed: speed_bits });
+        let f = ans_base(task.handle, speed_bits);
+        task.flags = f;
+        f
+    }
+    fn route_ctor(&mut self, task: u32, target: u32, start: u32, end: u32, final_value: u32, id: u32) -> u32 {
+        self.log.push(Ev::RouteCtor { task, target, start, end, final_value, id });
+        ans_route(task, target, start, end, final_value, id)
+    }
+    fn allocate_task(&mut self) -> u32 {
+        self.log.push(Ev::Alloc { mgr: self.mgr });
+        self.new_handle
     }
 }
 
@@ -412,6 +440,7 @@ fn pick_lifted(c: &PickCase, this: u32, ped_addr: u32) -> Outcome {
         route_cursor: 0,
         waypoint_index: c.index,
         flags: c.flags,
+        ..Default::default()
     };
     let ped = PedView {
         handle: ped_addr,
@@ -441,6 +470,7 @@ fn pick_wrong(c: &PickCase, this: u32, ped_addr: u32, which: u32) -> Outcome {
         route_cursor: 0,
         waypoint_index: c.index,
         flags: c.flags,
+        ..Default::default()
     };
     let mut ped = PedView {
         handle: ped_addr,
@@ -570,6 +600,7 @@ fn adv_lifted(c: &AdvCase, this: u32, sub: u32) -> Outcome {
         route_cursor: 0,
         waypoint_index: c.index,
         flags: c.flags,
+        ..Default::default()
     };
     KIND.with(|k| k.set(c.kind));
     let mut host = RecHost::default();
@@ -593,6 +624,7 @@ fn adv_wrong(c: &AdvCase, this: u32, sub: u32, which: u32) -> Outcome {
         route_cursor: 0,
         waypoint_index: c.index,
         flags: c.flags,
+        ..Default::default()
     };
     KIND.with(|k| k.set(c.kind));
     let mut host = RecHost::default();
@@ -1014,3 +1046,597 @@ fn waypoint_wrong_lift_is_caught() {
 
 
 
+
+
+// ---- Constructors (verified rewrites fn_00cabca0 and fn_00cabc00). ----
+
+fn ans_select(selector: u32) -> f32 {
+    // Finite results only: this value crosses a float return, which takes
+    // an x87 path on this target, and a signalling payload would be quieted
+    // there on the rewrite side alone.
+    ((mix(selector, 1, 2) % 1000) as f32) * 0.25 - 100.0
+}
+
+fn ans_base(task: u32, speed: u32) -> u32 {
+    mix(task, speed, 0x3C)
+}
+
+fn ans_route(task: u32, target: u32, start: u32, end: u32, final_value: u32, id: u32) -> u32 {
+    mix(task ^ target, start ^ end, final_value ^ id)
+}
+
+extern "cdecl" fn select_stub(selector: u32) -> f32 {
+    record(Ev::Select { selector });
+    ans_select(selector)
+}
+
+extern "thiscall" fn base_stub(this: u32, speed: u32) -> u32 {
+    record(Ev::Base { task: this, speed });
+    let f = ans_base(this, speed);
+    // The move base writes the flag word of the object it constructs.
+    // SAFETY: `this` is the task object the case built; its flag word lies inside it.
+    unsafe { ((this as usize + OFF_FLAGS) as *mut u32).write_unaligned(f) };
+    f
+}
+
+extern "thiscall" fn route6_stub(this: u32, target: u32, start: u32, end: u32, final_value: u32, id: u32) -> u32 {
+    record(Ev::RouteCtor { task: this, target, start, end, final_value, id });
+    ans_route(this, target, start, end, final_value, id)
+}
+
+#[derive(Debug, Clone)]
+struct CtorCase {
+    selector: u32,
+    speed_bits: u32,
+    target: u32,
+    route_tag: Option<Vec<[u32; 3]>>,
+    route_start: u32,
+    route_end: u32,
+    include_start: u32,
+    include_end: u32,
+    route_flags: u32,
+    route_id: u32,
+    final_value: u32,
+}
+
+fn gen_ctor(rng: &mut Rng) -> CtorCase {
+    let n = rng.below(4) as usize;
+    let route_tag = if rng.chance(3, 4) {
+        Some((0..n).map(|_| point(rng)).collect())
+    } else {
+        None
+    };
+    CtorCase {
+        selector: rng.u32(),
+        speed_bits: rng.u32(),
+        target: rng.u32(),
+        route_tag,
+        route_start: rng.u32(),
+        route_end: rng.u32(),
+        // Only bit 0 of each flag argument is used; the other bits are random too.
+        include_start: rng.u32(),
+        include_end: rng.u32(),
+        route_flags: rng.u32(),
+        route_id: rng.u32(),
+        final_value: rng.u32(),
+    }
+}
+
+/// Byte offsets of the two vtable words the constructor writes.
+const OFF_VTABLE: usize = 0x00;
+const OFF_BASE_VTABLE: usize = 0x14;
+/// The vtable constants the rewrites install, as file addresses.
+const TASK_VTABLE_VA: u32 = 0x00ED_85BC;
+const BASE_VTABLE_VA: u32 = 0x00ED_8618;
+
+fn ctor_rewrite(c: &CtorCase, selector_form: bool) -> (Outcome, u32) {
+    let tag = c.route_tag.as_ref().map(|p| route_words(p));
+    let tag_word = tag.as_ref().map_or(0, |v| addr(v));
+    let mut obj = obj_words();
+    let before = obj.clone();
+    if selector_form {
+        install(&[
+            (CALLEE_1, select_stub as *const () as usize as u32),
+            (CALLEE_2, base_stub as *const () as usize as u32),
+            (CALLEE_3, route6_stub as *const () as usize as u32),
+        ]);
+    } else {
+        install(&[
+            (CALLEE_1, base_stub as *const () as usize as u32),
+            (CALLEE_2, route6_stub as *const () as usize as u32),
+        ]);
+    }
+    let _ = take_calls();
+    let this = addr(&obj);
+    let ret = if selector_form {
+        fn_00cabc00::rw_00cabc00(
+            this,
+            c.selector,
+            c.target,
+            tag_word,
+            c.route_start,
+            c.route_end,
+            c.include_start,
+            c.include_end,
+            c.route_flags,
+            c.route_id,
+            c.final_value,
+        )
+    } else {
+        fn_00cabca0::rw_00cabca0(
+            this,
+            c.speed_bits,
+            c.target,
+            tag_word,
+            c.route_start,
+            c.route_end,
+            c.include_start,
+            c.include_end,
+            c.route_flags,
+            c.route_id,
+            c.final_value,
+        )
+    };
+    let calls = take_calls();
+    let written = [
+        OFF_VTABLE / 4,
+        OFF_BASE_VTABLE / 4,
+        OFF_CURRENT / 4,
+        OFF_INDEX / 4,
+        OFF_FLAGS / 4,
+    ];
+    let clobbered = obj
+        .iter()
+        .enumerate()
+        .any(|(i, w)| !written.contains(&i) && *w != before[i]);
+    // The vtable words are the class identity: checked against the constants
+    // the rewrite installs, not compared with the lifted object.
+    assert_eq!(obj[OFF_VTABLE / 4], lf_checker_rt::relocated(TASK_VTABLE_VA));
+    assert_eq!(obj[OFF_BASE_VTABLE / 4], lf_checker_rt::relocated(BASE_VTABLE_VA));
+    (
+        Outcome {
+            ret,
+            calls,
+            index: obj[OFF_INDEX / 4],
+            flags: obj[OFF_FLAGS / 4],
+            out: vec![(obj[OFF_CURRENT / 4] != 0) as u8],
+            clobbered,
+        },
+        this,
+    )
+}
+
+fn ctor_init(c: &CtorCase) -> RouteTaskInit {
+    RouteTaskInit {
+        speed_bits: c.speed_bits,
+        target: c.target,
+        route_tag: c.route_tag.as_ref().map(|p| RouteTable::new(to_points(p))),
+        route_start: c.route_start,
+        route_end: c.route_end,
+        include_start: c.include_start,
+        include_end: c.include_end,
+        route_flags: c.route_flags,
+        route_id: c.route_id,
+        final_value: c.final_value,
+    }
+}
+
+fn ctor_lifted(c: &CtorCase, selector_form: bool, this: u32) -> Outcome {
+    let mut host = RecHost::default();
+    let init = ctor_init(c);
+    let task = if selector_form {
+        FollowPointRouteTask::construct_from_selector(this, c.selector, init, &mut host)
+    } else {
+        FollowPointRouteTask::construct(this, init, &mut host)
+    };
+    Outcome {
+        ret: this,
+        calls: host.calls(),
+        index: task.waypoint_index,
+        flags: task.flags,
+        out: vec![task.current_route.is_some() as u8],
+        clobbered: false,
+    }
+}
+
+/// The constructor's host with its route arguments swapped: a wrong lift.
+struct SwapRouteArgs(RecHost);
+
+impl RouteTaskHost for SwapRouteArgs {
+    fn next_order_id(&mut self, task: u32) -> u32 {
+        self.0.next_order_id(task)
+    }
+    fn order_ped(&mut self, task: u32, order: u32, ped: u32) -> u32 {
+        self.0.order_ped(task, order, ped)
+    }
+    fn subtask_type(&mut self, subtask: u32) -> u32 {
+        self.0.subtask_type(subtask)
+    }
+    fn create_subtask(&mut self, task: u32, id: u32, ped: u32) -> u32 {
+        self.0.create_subtask(task, id, ped)
+    }
+    fn plan_next_subtask(&mut self, task: u32) -> u32 {
+        self.0.plan_next_subtask(task)
+    }
+    fn select_speed(&mut self, selector: u32) -> f32 {
+        self.0.select_speed(selector)
+    }
+    fn move_base_ctor(&mut self, task: &mut FollowPointRouteTask, speed_bits: u32) -> u32 {
+        self.0.move_base_ctor(task, speed_bits)
+    }
+    fn route_ctor(&mut self, task: u32, target: u32, start: u32, end: u32, final_value: u32, id: u32) -> u32 {
+        self.0.route_ctor(task, target, end, start, final_value, id)
+    }
+    fn allocate_task(&mut self) -> u32 {
+        self.0.allocate_task()
+    }
+}
+
+/// The constructor with the flag word read before the move base runs: a wrong lift.
+fn construct_flags_first(handle: u32, init: &RouteTaskInit, host: &mut RecHost) -> FollowPointRouteTask {
+    let mut task = FollowPointRouteTask {
+        handle,
+        ..Default::default()
+    };
+    let base_flags = task.flags;
+    host.move_base_ctor(&mut task, init.speed_bits);
+    task.flags = ((init.include_end & 1) << 3)
+        | ((init.route_flags & 1) << 2)
+        | (init.include_start & 1)
+        | (base_flags & FLAG_KEEP_MASK);
+    task.current_route = init.route_tag.clone();
+    task.waypoint_index = 0;
+    host.route_ctor(handle, init.target, init.route_start, init.route_end, init.final_value, init.route_id);
+    task
+}
+
+fn ctor_wrong(c: &CtorCase, selector_form: bool, this: u32, which: u32) -> Outcome {
+    let init = ctor_init(c);
+    match which {
+        // The include-end and route-flag arguments are swapped.
+        0 => {
+            let mut init = init;
+            core::mem::swap(&mut init.include_end, &mut init.route_flags);
+            let mut host = RecHost::default();
+            let task = if selector_form {
+                FollowPointRouteTask::construct_from_selector(this, c.selector, init, &mut host)
+            } else {
+                FollowPointRouteTask::construct(this, init, &mut host)
+            };
+            Outcome {
+                ret: this,
+                calls: host.calls(),
+                index: task.waypoint_index,
+                flags: task.flags,
+                out: vec![task.current_route.is_some() as u8],
+                clobbered: false,
+            }
+        }
+        // The flag word is read before the move base constructor runs.
+        1 => {
+            let mut host = RecHost::default();
+            let task = construct_flags_first(this, &init, &mut host);
+            Outcome {
+                ret: this,
+                calls: host.calls(),
+                index: task.waypoint_index,
+                flags: task.flags,
+                out: vec![task.current_route.is_some() as u8],
+                clobbered: false,
+            }
+        }
+        // The two route arguments reach the route constructor in swapped order.
+        _ => {
+            let mut host = SwapRouteArgs(RecHost::default());
+            let task = if selector_form {
+                FollowPointRouteTask::construct_from_selector(this, c.selector, init, &mut host)
+            } else {
+                FollowPointRouteTask::construct(this, init, &mut host)
+            };
+            Outcome {
+                ret: this,
+                calls: host.0.calls(),
+                index: task.waypoint_index,
+                flags: task.flags,
+                out: vec![task.current_route.is_some() as u8],
+                clobbered: false,
+            }
+        }
+    }
+}
+
+#[test]
+fn constructors_match_rewrites() {
+    let _g = guard();
+    let mut rng = Rng(0x5EED_0006);
+    let mut tagged = 0usize;
+    for _ in 0..TRIALS {
+        let c = gen_ctor(&mut rng);
+        for selector_form in [false, true] {
+            let (rw, this) = ctor_rewrite(&c, selector_form);
+            assert!(!rw.clobbered, "constructor wrote outside its fields: {c:?}");
+            let lf = ctor_lifted(&c, selector_form, this);
+            assert_eq!(rw, lf, "constructor differs (selector form {selector_form}) for {c:?}");
+            if c.route_tag.is_some() {
+                tagged += 1;
+            }
+        }
+    }
+    eprintln!("constructors: {TRIALS} trials per form; {tagged} with a route tag");
+}
+
+#[test]
+fn constructor_wrong_lifts_are_caught() {
+    let _g = guard();
+    for which in 0..3u32 {
+        let mut rng = Rng(0x5EED_0106 + which as u64);
+        let mut caught = 0usize;
+        for trial in 0..WRONG_TRIALS {
+            let c = gen_ctor(&mut rng);
+            let selector_form = trial % 2 == 0 && which != 1;
+            let (rw, this) = ctor_rewrite(&c, selector_form);
+            if ctor_wrong(&c, selector_form, this, which) != rw {
+                caught += 1;
+            }
+        }
+        eprintln!("constructor wrong lift {which}: caught in {caught} of {WRONG_TRIALS} trials");
+        assert!(caught > 0, "wrong constructor lift {which} was not caught");
+    }
+}
+
+
+
+
+
+// ---- Clone (verified rewrite fn_00caf2a0). ----
+
+/// The allocator manager word the clone reads from its global.
+const MGR_VALUE: u32 = 0x0BAD_F00D;
+/// The global cell the clone's manager read lands on: the relocation base is
+/// set so that the clone's global address maps to this cell.
+static mut MGR_CELL: u32 = MGR_VALUE;
+/// The file address of the allocator global the clone reads.
+const ALLOCATOR_GLOBAL_VA: u32 = 0x0167_E2A0;
+
+thread_local! {
+    static NEW_OBJ: RefCell<Option<Vec<u32>>> = const { RefCell::new(None) };
+    static NULL_ALLOC: Cell<bool> = const { Cell::new(false) };
+}
+
+/// The allocation callee: answers a fresh object, or none when the case
+/// says the allocator is empty.
+extern "thiscall" fn alloc_stub(mgr: u32) -> u32 {
+    record(Ev::Alloc { mgr });
+    if NULL_ALLOC.with(|n| n.get()) {
+        return 0;
+    }
+    let v = obj_words();
+    let a = addr(&v);
+    NEW_OBJ.with(|n| *n.borrow_mut() = Some(v));
+    a
+}
+
+/// The constructor callee of the clone: runs the verified constructor on the
+/// new object. Its own two callees (the move base and the route) are swapped
+/// in for the duration of the call and the clone's entries are restored after.
+extern "thiscall" fn ctor_proxy(
+    obj: u32,
+    speed: u32,
+    target: u32,
+    tag: u32,
+    start: u32,
+    end: u32,
+    include_start: u32,
+    include_end: u32,
+    route_flags: u32,
+    id: u32,
+    final_value: u32,
+) -> u32 {
+    install(&[
+        (CALLEE_1, base_stub as *const () as usize as u32),
+        (CALLEE_2, route6_stub as *const () as usize as u32),
+    ]);
+    let r = fn_00cabca0::rw_00cabca0(
+        obj,
+        speed,
+        target,
+        tag,
+        start,
+        end,
+        include_start,
+        include_end,
+        route_flags,
+        id,
+        final_value,
+    );
+    install(&[
+        (CALLEE_1, alloc_stub as *const () as usize as u32),
+        (CALLEE_2, ctor_proxy as *const () as usize as u32),
+    ]);
+    r
+}
+
+#[derive(Debug, Clone)]
+struct CloneCase {
+    speed: u32,
+    target: u32,
+    route_start: u32,
+    route_end: u32,
+    final_value: u32,
+    tag: Option<Vec<[u32; 3]>>,
+    flags: u32,
+    index: u32,
+    null_alloc: bool,
+}
+
+fn gen_clone(rng: &mut Rng) -> CloneCase {
+    let n = rng.below(4) as usize;
+    let tag = if rng.chance(3, 4) {
+        Some((0..n).map(|_| point(rng)).collect())
+    } else {
+        None
+    };
+    CloneCase {
+        speed: rng.u32(),
+        target: rng.u32(),
+        route_start: rng.u32(),
+        route_end: rng.u32(),
+        final_value: rng.u32(),
+        tag,
+        flags: rng.u32(),
+        index: rng.u32(),
+        null_alloc: rng.chance(1, 8),
+    }
+}
+
+/// Points the clone's global read at the manager cell.
+fn set_manager_global() {
+    let cell = core::ptr::addr_of!(MGR_CELL) as usize as u32;
+    let xbase = cell.wrapping_sub(ALLOCATOR_GLOBAL_VA.wrapping_sub(0x40_0000));
+    // SAFETY: the relocation base is only read by the rewrites' global and
+    // relocated-address helpers during a call; the lock serialises the cases.
+    unsafe { lf_checker_rt::CHECKER_XBASE = xbase };
+    // SAFETY: the cell is a plain static word; it is written before each call.
+    unsafe { core::ptr::addr_of_mut!(MGR_CELL).write(MGR_VALUE) };
+}
+
+/// The source task's memory for the clone: the constructor words at their
+/// offsets, the table word, the index and the flags.
+fn clone_source(c: &CloneCase, tag_word: u32) -> Vec<u32> {
+    let mut src = obj_words();
+    set_word(&mut src, 0x18, c.speed);
+    set_word(&mut src, OFF_WAYPOINTS, c.target);
+    set_word(&mut src, OFF_CURRENT, tag_word);
+    set_word(&mut src, 0x2C, c.route_start);
+    set_word(&mut src, 0x30, c.route_end);
+    set_word(&mut src, 0x28, c.final_value);
+    set_word(&mut src, OFF_INDEX, c.index);
+    set_word(&mut src, OFF_FLAGS, c.flags);
+    src
+}
+
+fn clone_rewrite(c: &CloneCase) -> (Outcome, u32) {
+    let tag = c.tag.as_ref().map(|p| route_words(p));
+    let tag_word = tag.as_ref().map_or(0, |v| addr(v));
+    let src = clone_source(c, tag_word);
+    let src_before = src.clone();
+    set_manager_global();
+    NULL_ALLOC.with(|n| n.set(c.null_alloc));
+    NEW_OBJ.with(|n| *n.borrow_mut() = None);
+    install(&[
+        (CALLEE_1, alloc_stub as *const () as usize as u32),
+        (CALLEE_2, ctor_proxy as *const () as usize as u32),
+    ]);
+    let _ = take_calls();
+    let this = addr(&src);
+    let ret = fn_00caf2a0::rw_00caf2a0(this);
+    let calls = take_calls();
+    let new = NEW_OBJ.with(|n| n.borrow_mut().take());
+    let fresh = obj_words();
+    let written = [OFF_VTABLE / 4, OFF_BASE_VTABLE / 4, OFF_CURRENT / 4, OFF_INDEX / 4, OFF_FLAGS / 4];
+    let (index, flags, tag_present, new_clobbered) = match &new {
+        Some(nw) => (
+            nw[OFF_INDEX / 4],
+            nw[OFF_FLAGS / 4],
+            (nw[OFF_CURRENT / 4] != 0) as u8,
+            nw.iter().enumerate().any(|(i, w)| !written.contains(&i) && *w != fresh[i]),
+        ),
+        None => (0, 0, 0, false),
+    };
+    let clobbered = src != src_before || new_clobbered;
+    (
+        Outcome {
+            ret,
+            calls,
+            index,
+            flags,
+            out: vec![tag_present],
+            clobbered,
+        },
+        this,
+    )
+}
+
+fn clone_outcome(c: &CloneCase, this: u32, new_handle: u32, which: Option<u32>) -> Outcome {
+    let mut task = FollowPointRouteTask {
+        handle: this,
+        speed_bits: c.speed,
+        route_target: c.target,
+        route_start: c.route_start,
+        route_end: c.route_end,
+        final_value: c.final_value,
+        current_route: c.tag.as_ref().map(|p| RouteTable::new(to_points(p))),
+        waypoint_index: c.index,
+        flags: c.flags,
+        ..Default::default()
+    };
+    match which {
+        // The include-end and route-flag bits are read from each other's place.
+        Some(0) => {
+            let f = task.flags;
+            let b2 = (f >> 2) & 1;
+            let b3 = (f >> 3) & 1;
+            task.flags = (f & !0xC) | (b2 << 3) | (b3 << 2);
+        }
+        // The speed and the route target are copied the wrong way round.
+        Some(_) => core::mem::swap(&mut task.speed_bits, &mut task.route_target),
+        None => {}
+    }
+    let mut host = RecHost {
+        mgr: MGR_VALUE,
+        new_handle: if c.null_alloc { 0 } else { new_handle },
+        ..Default::default()
+    };
+    let r = task.clone_task(&mut host);
+    let (ret, index, flags, tag) = match &r {
+        None => (0, 0, 0, false),
+        Some(t) => (t.handle, t.waypoint_index, t.flags, t.current_route.is_some()),
+    };
+    Outcome {
+        ret,
+        calls: host.calls(),
+        index,
+        flags,
+        out: vec![tag as u8],
+        clobbered: false,
+    }
+}
+
+#[test]
+fn clone_matches_rewrite() {
+    let _g = guard();
+    let mut rng = Rng(0x5EED_0007);
+    let (mut nulls, mut built) = (0usize, 0usize);
+    for _ in 0..TRIALS {
+        let c = gen_clone(&mut rng);
+        let (rw, this) = clone_rewrite(&c);
+        assert!(!rw.clobbered, "clone wrote outside the words it should: {c:?}");
+        let lf = clone_outcome(&c, this, rw.ret, None);
+        assert_eq!(rw, lf, "clone differs for {c:?}");
+        if rw.ret == 0 {
+            nulls += 1;
+        } else {
+            built += 1;
+        }
+    }
+    eprintln!("clone: {TRIALS} trials; {built} built a copy, {nulls} with a null allocation");
+    assert!(nulls > 0 && built > 0);
+}
+
+#[test]
+fn clone_wrong_lift_is_caught() {
+    let _g = guard();
+    for which in 0..2u32 {
+        let mut rng = Rng(0x5EED_0107 + which as u64);
+        let mut caught = 0usize;
+        for _ in 0..WRONG_TRIALS {
+            let c = gen_clone(&mut rng);
+            let (rw, this) = clone_rewrite(&c);
+            if clone_outcome(&c, this, rw.ret, Some(which)) != rw {
+                caught += 1;
+            }
+        }
+        eprintln!("clone wrong lift {which}: caught in {caught} of {WRONG_TRIALS} trials");
+        assert!(caught > 0, "wrong clone lift {which} was not caught");
+    }
+}

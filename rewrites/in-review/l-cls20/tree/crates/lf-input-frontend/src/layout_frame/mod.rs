@@ -11,6 +11,7 @@
 //! `lf-layoutframe-diff` compares each method with its verified rewrite on the
 //! 32-bit target.
 
+pub mod blend;
 pub mod follow_up;
 pub mod frame;
 pub mod registry;

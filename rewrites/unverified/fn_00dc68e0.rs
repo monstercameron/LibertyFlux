@@ -320,7 +320,7 @@ lf_checker_rt::export!(thiscall, rw_00dc68e0(task: u32, ped: u32) -> u32 {
             CALL_UPDATE_BLEND,
             u32,
             association,
-            animation_time.to_bits(),
+            0.0f32.to_bits(),
         );
 
         let mut association_flags = read_u32(association.wrapping_add(ASSOCIATION_FLAGS));

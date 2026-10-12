@@ -16,7 +16,6 @@ lf_checker_rt::export!(thiscall, rw_005e2c80(this: *mut u8, output: *mut u8) -> 
     const TABLE_POINTER_OFFSET: usize = 0x00;
     const ENTRY_COUNT_OFFSET: usize = 0x04;
     const ENTRY_STRIDE: usize = 0x10;
-    const ENTRY_KIND_OFFSET: usize = 0x00;
     const ENTRY_VALUE_OFFSET: usize = 0x04;
     const ENTRY_REMAINING_OFFSET: usize = 0x0c;
     const COLOR_OUTPUT_OFFSET: usize = 0xbc;
@@ -37,7 +36,7 @@ lf_checker_rt::export!(thiscall, rw_005e2c80(this: *mut u8, output: *mut u8) -> 
     unsafe {
         let entries = this
             .add(TABLE_POINTER_OFFSET)
-            .cast::<*const u8>()
+            .cast::<*mut u8>()
             .read_unaligned();
         let entry_count = this
             .add(ENTRY_COUNT_OFFSET)

@@ -69,6 +69,12 @@ pub trait FollowUpHost {
     /// when its argument is zero.
     fn frame_second_step(&mut self, frame: &mut UILayoutFrame, arg: u32) -> u32;
 
+    /// The frame's own token query: its virtual answer for the frame's token.
+    fn frame_token(&mut self, frame: &mut UILayoutFrame) -> u32;
+
+    /// The target's own follow-up query, with no argument. Answers its result.
+    fn target_follow_up(&mut self, target: Target) -> u32;
+
     /// Reads a byte of shared state.
     fn read_flag(&mut self, flag: SharedFlag) -> u8;
 
@@ -101,6 +107,14 @@ impl UILayoutFrame {
         let target = host.resolve_token(token);
         let arg = host.frame_step(self);
         host.target_step(target, step, arg)
+    }
+
+    /// Asks the frame for its token, resolves that token to its target, asks
+    /// the target for its follow-up answer, and answers that answer plus one.
+    pub fn resolve_token_and_follow_up_plus_one<H: FollowUpHost>(&mut self, host: &mut H) -> u32 {
+        let token = host.frame_token(self);
+        let target = host.resolve_token(token);
+        host.target_follow_up(target).wrapping_add(1)
     }
 
     /// Runs the token follow-up when the token at 0xD4 is non-zero, then

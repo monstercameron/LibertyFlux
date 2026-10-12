@@ -1,4 +1,4 @@
-//! The 32-bit differential runtime for the game camera rewrites.
+﻿//! The 32-bit differential runtime for the game camera rewrites.
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `global`). Numbered
@@ -22,7 +22,7 @@
 #![allow(unsafe_code)]
 
 use std::collections::{HashMap, VecDeque};
-use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::atomic::{AtomicU8, AtomicU32, Ordering};
 use std::sync::{Mutex, MutexGuard};
 
 /// A recorded call: the rewrite's callee as `#id`, or a virtual stub's
@@ -41,6 +41,14 @@ pub enum StubKind {
     Thiscall2,
     /// `extern "thiscall" fn(u32, u32, u32, u32) -> u32`.
     Thiscall4,
+    /// `extern "thiscall" fn(u32, u32, u32) -> u32`.
+    Thiscall3,
+    /// `extern "thiscall" fn(u32, u32, u32, u32, u32) -> u32`.
+    Thiscall5,
+    /// `extern "cdecl" fn(u32, u32) -> u32`.
+    Cdecl2,
+    /// `extern "cdecl" fn() -> u32`.
+    Cdecl0,
 }
 
 /// One scripted write a callee makes to the camera object.
@@ -222,6 +230,81 @@ extern "thiscall" fn stub_thiscall4(a: u32, b: u32, c: u32, d: u32) -> u32 {
     record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b, c, d])
 }
 
+extern "thiscall" fn stub_thiscall3(a: u32, b: u32, c: u32) -> u32 {
+    record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b, c])
+}
+
+extern "thiscall" fn stub_thiscall5(a: u32, b: u32, c: u32, d: u32, e: u32) -> u32 {
+    record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b, c, d, e])
+}
+
+extern "cdecl" fn stub_cdecl2(a: u32, b: u32) -> u32 {
+    record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b])
+}
+
+extern "cdecl" fn stub_cdecl0() -> u32 {
+    record_numbered(CURRENT_ID.with(|c| c.get()), vec![])
+}
+
+/// The globals the second family of rewrites reads through the relocated
+/// address map: one byte cell each, with the word cells two bytes wide.
+/// Offsets within [`GLOBAL_CELLS`].
+const GLOBAL_CELLS: usize = 32;
+static GLOBAL_BYTES: [AtomicU8; GLOBAL_CELLS] = [const { AtomicU8::new(0) }; GLOBAL_CELLS];
+
+const CELL_INHIBIT: usize = 0;
+const CELL_WORD_FIRST: usize = 8;
+const CELL_WORD_SECOND: usize = 16;
+const CELL_MATCHED: usize = 24;
+const CELL_DONE: usize = 25;
+
+/// Sets the inhibit byte and the two global words the gate step reads.
+pub fn set_gate_globals(inhibit: u8, word_first: u16, word_second: u16) {
+    GLOBAL_BYTES[CELL_INHIBIT].store(inhibit, Ordering::SeqCst);
+    let first = word_first.to_le_bytes();
+    let second = word_second.to_le_bytes();
+    GLOBAL_BYTES[CELL_WORD_FIRST].store(first[0], Ordering::SeqCst);
+    GLOBAL_BYTES[CELL_WORD_FIRST + 1].store(first[1], Ordering::SeqCst);
+    GLOBAL_BYTES[CELL_WORD_SECOND].store(second[0], Ordering::SeqCst);
+    GLOBAL_BYTES[CELL_WORD_SECOND + 1].store(second[1], Ordering::SeqCst);
+}
+
+/// Sets the matched and done bytes the gate step writes.
+pub fn set_gate_outputs(matched: u8, done: u8) {
+    GLOBAL_BYTES[CELL_MATCHED].store(matched, Ordering::SeqCst);
+    GLOBAL_BYTES[CELL_DONE].store(done, Ordering::SeqCst);
+}
+
+/// The matched byte the gate step last wrote (or the value set before).
+#[must_use]
+pub fn gate_matched() -> u8 {
+    GLOBAL_BYTES[CELL_MATCHED].load(Ordering::SeqCst)
+}
+
+/// The done byte the gate step last wrote (or the value set before).
+#[must_use]
+pub fn gate_done() -> u8 {
+    GLOBAL_BYTES[CELL_DONE].load(Ordering::SeqCst)
+}
+
+/// Address of a global at a file address, for the relocated address map.
+///
+/// # Panics
+///
+/// For any address the gate step does not read or write: a case bug.
+#[must_use]
+pub fn relocated(file_va: u32) -> u32 {
+    let cell = match file_va {
+        0x011F_701F => CELL_INHIBIT,
+        0x0104_008C => CELL_WORD_FIRST,
+        0x0104_0090 => CELL_WORD_SECOND,
+        0x0161_54A3 => CELL_MATCHED,
+        0x0161_54B0 => CELL_DONE,
+        _ => panic!("unexpected relocated address {file_va:#x}"),
+    };
+    GLOBAL_BYTES[cell].as_ptr() as usize as u32
+}
+
 /// Raw stub address for callee `id`, by the installed script.
 ///
 /// # Panics
@@ -241,6 +324,10 @@ pub fn callee_addr(id: u32) -> u32 {
         StubKind::Thiscall1Effect => stub_thiscall1_effect as *const () as usize as u32,
         StubKind::Thiscall2 => stub_thiscall2 as *const () as usize as u32,
         StubKind::Thiscall4 => stub_thiscall4 as *const () as usize as u32,
+        StubKind::Thiscall3 => stub_thiscall3 as *const () as usize as u32,
+        StubKind::Thiscall5 => stub_thiscall5 as *const () as usize as u32,
+        StubKind::Cdecl2 => stub_cdecl2 as *const () as usize as u32,
+        StubKind::Cdecl0 => stub_cdecl0 as *const () as usize as u32,
     }
 }
 
@@ -300,6 +387,17 @@ macro_rules! callee_thiscall {
         let f: extern "thiscall" fn(u32 $(, $crate::__ty!($arg) )*) -> $ret =
             unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
         f($this_arg $(, $arg )*)
+    }};
+}
+
+/// Call intercepted callee `id` with the cdecl convention.
+#[macro_export]
+macro_rules! callee_cdecl {
+    ($id:expr, $ret:ty, $($arg:expr),* $(,)?) => {{
+        #[allow(unused_unsafe)]
+        let f: extern "cdecl" fn($( $crate::__ty!($arg) ),*) -> $ret =
+            unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
+        f($( $arg ),*)
     }};
 }
 

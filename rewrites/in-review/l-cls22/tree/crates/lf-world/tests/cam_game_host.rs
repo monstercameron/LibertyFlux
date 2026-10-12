@@ -1,4 +1,4 @@
-//! Host tests for the lifted game camera methods.
+﻿//! Host tests for the lifted game camera methods.
 //!
 //! These run on every host and need no rewrite: they check the edge cases a
 //! reader of the lifted code would ask about. The differential proof against
@@ -305,8 +305,8 @@ fn inhibit_flag_blocks_the_zero_selector_verdict() {
     let bytes: std::collections::HashMap<u32, u8> = [
         (0x328D, 0),
         (0x269C, 0x00),
-        (0x269E, 0x80),
-        (0x269F, 0x00),
+        (0x269E, 0x00),
+        (0x269F, 0x80),
         (0x29BC, 0x00),
         (0x29BE, 0xFF),
     ]
@@ -339,12 +339,12 @@ fn this() -> Handle32<CamTag> {
 
 #[test]
 fn registry_counts_three_proven_methods() {
-    assert_eq!(registry::proven_count(), 3);
+    assert_eq!(registry::proven_count(), 4);
     let missing = registry::ROWS
         .iter()
         .filter(|r| r.state == State::Missing)
         .count();
-    assert_eq!(missing, 4);
+    assert_eq!(missing, 3);
 }
 
 #[test]

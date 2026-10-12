@@ -1,4 +1,4 @@
-//! The verified rewrites under test, compiled from their tracked files.
+﻿//! The verified rewrites under test, compiled from their tracked files.
 //!
 //! Each file is included unchanged and sees this crate as `lf_checker_rt`
 //! (32-bit target only). The include paths are relative to this crate's
@@ -18,7 +18,7 @@
     clippy::pedantic
 )]
 
-pub use crate::{callee_addr, global};
+pub use crate::{callee_addr, global, relocated};
 
 pub mod fn_00b05d30 {
     #![allow(unused_imports)]
@@ -47,5 +47,15 @@ pub mod fn_00b09cf0 {
     include!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/../../../../../../../rewrites/verified/functions/fn_00b09cf0.rs"
+    ));
+}
+
+pub mod fn_00b07760 {
+    #![allow(unused_imports)]
+    use super::{callee_addr, global, relocated};
+    use crate::{callee_cdecl, callee_thiscall, export};
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00b07760.rs"
     ));
 }

@@ -7,7 +7,7 @@
 
 use lf_core::Handle32;
 
-use super::world::{CamGameWorld, CamOwnerTag, CamTag, GateBlock, GateTag, TailTag};
+use super::world::{CamGameWorld, CamOwnerTag, CamTag, GateBlock, GateTag};
 
 /// Mode word an idle camera holds (set by the idle reset).
 pub const IDLE_MODE: u32 = 3;
@@ -166,18 +166,6 @@ const GATE_PAIR_HIGH: u32 = 0x29BE;
 
 /// Threshold of the xor-folded byte tests: a folded value above it is "high".
 const HIGH_THRESHOLD: u8 = 0x7F;
-
-/// Target type the gate check asks the watcher for.
-const TARGET_TYPE: u32 = 0x16;
-
-/// Constant the gate check's tail request passes as its selector.
-const TAIL_SELECTOR: u32 = 2;
-
-/// Offset of the state byte in the tail object.
-const TAIL_STATE: u32 = 0x22E;
-
-/// Offset of the flag byte in the tail object.
-const TAIL_FLAGS: u32 = 0x18C;
 
 /// The busy bit of the tail object's flag byte, cleared by the tail step.
 const TAIL_BUSY: u8 = 0x20;

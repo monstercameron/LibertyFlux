@@ -1,4 +1,4 @@
-//! The follow-point route task: the complex move task that walks a ped along
+﻿//! The follow-point route task: the complex move task that walks a ped along
 //! a route of points, one leg at a time.
 //!
 //! The fields are the state the verified methods read or write. The
@@ -53,6 +53,17 @@ pub struct FollowPointRouteTask {
     pub waypoint_index: u32,
     /// The task's flag word.
     pub flags: u32,
+    /// The move speed word the constructor was given (copied by the clone).
+    pub speed_bits: u32,
+    /// The route target word the constructor was given, as the clone copies
+    /// it from the task's table word.
+    pub route_target: u32,
+    /// The first route argument the constructor was given.
+    pub route_start: u32,
+    /// The second route argument the constructor was given.
+    pub route_end: u32,
+    /// The final value the constructor was given.
+    pub final_value: u32,
 }
 
 // Each arithmetic step is a separate call with its operands fixed in
@@ -234,3 +245,113 @@ impl FollowPointRouteTask {
 
 /// Byte offset of the handle slot in an output record.
 pub const HANDLE_RECORD_OFFSET: usize = 0x38;
+
+/// The arguments of the route-task constructor, as the verified constructors
+/// receive them. Only bit 0 of the three flag arguments is used.
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct RouteTaskInit {
+    /// The move speed, as the bits of a single-precision float.
+    pub speed_bits: u32,
+    /// The route target: an opaque word the route constructor receives.
+    pub target: u32,
+    /// The route the task follows. `None` is the null word stored as the
+    /// current route.
+    pub route_tag: Option<RouteTable>,
+    /// The first route argument, passed to the route constructor.
+    pub route_start: u32,
+    /// The second route argument, passed to the route constructor.
+    pub route_end: u32,
+    /// Its bit 0 sets flag bit 0.
+    pub include_start: u32,
+    /// Its bit 0 sets flag bit 3.
+    pub include_end: u32,
+    /// Its bit 0 sets flag bit 2.
+    pub route_flags: u32,
+    /// The route id, passed to the route constructor.
+    pub route_id: u32,
+    /// The final value, passed to the route constructor.
+    pub final_value: u32,
+}
+
+impl FollowPointRouteTask {
+    /// The route-task constructor. The move base is built first, then the
+    /// flag word is read back from the base (its bits 0, 2 and 3 are replaced
+    /// by the arguments' bits; all other bits are kept), then the route
+    /// table is installed, the waypoint index is cleared, and the route
+    /// constructor runs with the target and the route arguments.
+    #[must_use]
+    pub fn construct<H: RouteTaskHost>(handle: u32, init: RouteTaskInit, host: &mut H) -> Self {
+        let mut task = Self {
+            handle,
+            ..Self::default()
+        };
+        host.move_base_ctor(&mut task, init.speed_bits);
+        let base_flags = task.flags;
+        task.flags = ((init.include_end & 1) << 3)
+            | ((init.route_flags & 1) << 2)
+            | (init.include_start & 1)
+            | (base_flags & FLAG_KEEP_MASK);
+        task.current_route = init.route_tag;
+        task.waypoint_index = 0;
+        task.speed_bits = init.speed_bits;
+        task.route_target = init.target;
+        task.route_start = init.route_start;
+        task.route_end = init.route_end;
+        task.final_value = init.final_value;
+        host.route_ctor(
+            handle,
+            init.target,
+            init.route_start,
+            init.route_end,
+            init.final_value,
+            init.route_id,
+        );
+        task
+    }
+
+    /// The clone: allocates a new task through the host and constructs it
+    /// from this task's words. The flag bits the constructor takes are read
+    /// back from this task's flag word (bit 0 as the start include, bit 3 as
+    /// the end include, bit 2 as the route flag). Returns the new task, or
+    /// `None` when the allocator gives nothing; the new task's handle is the
+    /// allocation's answer.
+    #[must_use]
+    pub fn clone_task<H: RouteTaskHost>(&self, host: &mut H) -> Option<Self> {
+        let handle = host.allocate_task();
+        if handle == 0 {
+            return None;
+        }
+        let init = RouteTaskInit {
+            speed_bits: self.speed_bits,
+            target: self.route_target,
+            route_tag: self.current_route.clone(),
+            route_start: self.route_start,
+            route_end: self.route_end,
+            include_start: self.flags & 1,
+            include_end: (self.flags >> 3) & 1,
+            route_flags: (self.flags >> 2) & 1,
+            route_id: self.waypoint_index,
+            final_value: self.final_value,
+        };
+        Some(Self::construct(handle, init, host))
+    }
+
+    /// The constructor of the selector form: the move speed comes from the
+    /// speed helper, called before the move base, and the rest is as in
+    /// [`FollowPointRouteTask::construct`]. The `speed_bits` of `init` is
+    /// ignored.
+    #[must_use]
+    pub fn construct_from_selector<H: RouteTaskHost>(
+        handle: u32,
+        selector: u32,
+        mut init: RouteTaskInit,
+        host: &mut H,
+    ) -> Self {
+        init.speed_bits = host.select_speed(selector).to_bits();
+        Self::construct(handle, init, host)
+    }
+}
+
+/// The flag bits the constructor keeps from the move base: every bit except
+/// bits 0, 2 and 3.
+pub const FLAG_KEEP_MASK: u32 = 0xffff_fff2;

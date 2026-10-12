@@ -1,4 +1,4 @@
-//! What the follow-point task asks of the outside world.
+﻿//! What the follow-point task asks of the outside world.
 //!
 //! Every call a verified method makes that is not itself lifted is one
 //! method here. The host performs the call and gives back its answer; the
@@ -8,6 +8,7 @@
 //! through them.
 
 use super::route::RoutePoint;
+use super::task::FollowPointRouteTask;
 
 /// The calls the follow-point task makes on the task system and on its
 /// sub-tasks.
@@ -31,6 +32,30 @@ pub trait RouteTaskHost {
 
     /// Names the next route sub-task type, from the route planner.
     fn plan_next_subtask(&mut self, task: u32) -> u32;
+
+    /// The move speed for a selector: the helper the selector form of the
+    /// constructor calls first.
+    fn select_speed(&mut self, selector: u32) -> f32;
+
+    /// The move base's constructor, run on the new task before the task's own
+    /// fields are set. It may write any part of the task; the lifted
+    /// constructor reads the task's flag word after this call.
+    fn move_base_ctor(&mut self, task: &mut FollowPointRouteTask, speed_bits: u32) -> u32;
+
+    /// Allocates the storage for a new task of this class. Returns the new
+    /// task's handle, or 0 when the allocator has none to give.
+    fn allocate_task(&mut self) -> u32;
+
+    /// The route constructor: builds the route from its arguments.
+    fn route_ctor(
+        &mut self,
+        task: u32,
+        target: u32,
+        route_start: u32,
+        route_end: u32,
+        final_value: u32,
+        route_id: u32,
+    ) -> u32;
 }
 
 /// The part of a ped the waypoint pick reads: its handle for the calls it
@@ -45,3 +70,4 @@ pub struct PedView {
     /// The ped's state byte; bit 2 set means the ped may not follow a route.
     pub state_byte: u8,
 }
+

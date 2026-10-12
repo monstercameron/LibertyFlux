@@ -36,7 +36,7 @@ lf_checker_rt::export!(thiscall, rw_df6770(this: u32) -> u32 {
                 lf_checker_rt::relocated(NOTIFICATION_MANAGER),
                 lf_checker_rt::relocated(0xF01BF4)
             );
-            let selected_record = lf_checker_rt::callee_thiscall!(3, u32, candidate);
+            let selected_record = lf_checker_rt::callee_thiscall!(3, u32, entry_list);
             ((this.wrapping_add(SELECTED_RECORD)) as *mut u32)
                 .write_unaligned(selected_record);
             ((this.wrapping_add(ACTIVITY_FLAG)) as *mut u8).write(1);

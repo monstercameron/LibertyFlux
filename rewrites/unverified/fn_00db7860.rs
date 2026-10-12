@@ -4,7 +4,8 @@
 /// temporary record. The timing helper receives `this` in ECX and two stack
 /// words (zero and the bit pattern for 5.0f). Its returned pointer supplies
 /// three packed pairs; the last pair is also forwarded in XMM0. The final
-/// cleanup receives eight words beginning with 5.0f and `this`. This is a
+/// cleanup receives a pointer into the caller frame; this function does not
+/// initialize the eight words observed there before the call. This is a
 /// 32-bit MSVC thiscall wrapper with three stack arguments and no result.
 lf_checker_rt::export!(thiscall, rw_00db7860(
     this_ptr: u32,
@@ -55,16 +56,7 @@ lf_checker_rt::export!(thiscall, rw_00db7860(
         PANEL_ENABLED,
     );
 
-    let mut temporary_record = [
-        FIVE_SECONDS_BITS,
-        this_ptr,
-        panel_values[0],
-        panel_values[1],
-        panel_values[2],
-        panel_values[3],
-        panel_values[4],
-        panel_values[5],
-    ];
+    let mut temporary_record = [0u32; 8];
     let _ = lf_checker_rt::callee_thiscall!(
         3,
         u32,

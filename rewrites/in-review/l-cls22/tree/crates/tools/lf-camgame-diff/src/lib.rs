@@ -1,4 +1,4 @@
-//! `lf-camgame-diff`: the lifted game camera methods against their verified rewrites.
+﻿//! `lf-camgame-diff`: the lifted game camera methods against their verified rewrites.
 //!
 //! The verified rewrite files are included unchanged; on the 32-bit target
 //! they see this crate as `lf_checker_rt`, via `extern crate self as`, with
@@ -21,6 +21,8 @@ pub mod rt;
 pub use rt::callee_addr;
 #[cfg(target_arch = "x86")]
 pub use rt::global;
+#[cfg(target_arch = "x86")]
+pub use rt::relocated;
 
 #[cfg(target_arch = "x86")]
 pub mod rewrites;

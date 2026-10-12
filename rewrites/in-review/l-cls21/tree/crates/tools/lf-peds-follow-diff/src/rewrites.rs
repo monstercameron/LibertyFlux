@@ -62,3 +62,27 @@ pub mod fn_00cb3b50 {
 }
 
 
+
+/// Verified rewrite: route-task constructor, speed given as an argument.
+pub mod fn_00cabca0 {
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00cabca0.rs"
+    ));
+}
+
+/// Verified rewrite: route-task constructor, speed taken from a selector.
+pub mod fn_00cabc00 {
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00cabc00.rs"
+    ));
+}
+
+/// Verified rewrite: copy of the route task (allocates and constructs).
+pub mod fn_00caf2a0 {
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00caf2a0.rs"
+    ));
+}
