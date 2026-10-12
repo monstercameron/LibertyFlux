@@ -15,32 +15,32 @@ lf_checker_rt::export!(cdecl, rw_0059eb10(first_input: u32, second_input: u32) -
     unsafe {
         let sample_slot = lf_checker_rt::global::<u32>(SAMPLE_GLOBAL);
 
-        let first_sample = lf_checker_rt::callee_fastcall!(
+        let first_sample_bits = lf_checker_rt::callee_fastcall!(
             1,
-            f32,
+            u32,
             first_input,
             second_input
         );
-        sample_slot.write_unaligned(first_sample.to_bits());
+        sample_slot.write_unaligned(first_sample_bits);
 
-        let second_sample = lf_checker_rt::callee_cdecl!(2, f32,);
-        sample_slot.write_unaligned(second_sample.to_bits());
+        let second_sample_bits = lf_checker_rt::callee_cdecl!(2, u32,);
+        sample_slot.write_unaligned(second_sample_bits);
 
-        let third_sample = lf_checker_rt::callee_fastcall!(
+        let third_sample_bits = lf_checker_rt::callee_fastcall!(
             3,
-            f32,
+            u32,
             first_input,
             second_input
         );
-        sample_slot.write_unaligned(third_sample.to_bits());
+        sample_slot.write_unaligned(third_sample_bits);
 
-        let final_sample = lf_checker_rt::callee_fastcall!(
+        let final_sample_bits = lf_checker_rt::callee_fastcall!(
             4,
-            f32,
+            u32,
             first_input,
             second_input
         );
-        sample_slot.write_unaligned(final_sample.to_bits());
-        final_sample
+        sample_slot.write_unaligned(final_sample_bits);
+        f32::from_bits(final_sample_bits)
     }
 });

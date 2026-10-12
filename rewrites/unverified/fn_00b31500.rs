@@ -31,8 +31,8 @@ lf_checker_rt::export!(cdecl, rw_00b31500(
         const SPECIAL_KIND_MAX: u32 = 11;
         const SPECIAL_KIND_A: u32 = 14;
         const SPECIAL_KIND_B: u32 = 28;
-        const RANDOM_CALLEE: u32 = 0x00DF_C099;
-        const SECURITY_COOKIE_CHECK: u32 = 0x00DF_8AAE;
+        const RANDOM_CALLEE_ID: u32 = 1;
+        const SECURITY_COOKIE_CHECK_ID: u32 = 2;
         const SECURITY_COOKIE_VA: u32 = 0x0105_7FB4;
         const RANDOM_FRACTION_SCALE_VA: u32 = 0x00FE_8680;
         const RANDOM_PERCENT_SCALE_VA: u32 = 0x00FE_8BB0;
@@ -55,7 +55,7 @@ lf_checker_rt::export!(cdecl, rw_00b31500(
 
         #[inline(always)]
         unsafe fn random_word() -> u32 {
-            lf_checker_rt::callee_cdecl!(RANDOM_CALLEE, u32,) & 0xffff
+            lf_checker_rt::callee_cdecl!(RANDOM_CALLEE_ID, u32,) & 0xffff
         }
 
         #[inline(always)]
@@ -64,7 +64,7 @@ lf_checker_rt::export!(cdecl, rw_00b31500(
                 lf_checker_rt::global::<u32>(SECURITY_COOKIE_VA).read()
             };
             let _ = lf_checker_rt::callee_thiscall!(
-                SECURITY_COOKIE_CHECK,
+                SECURITY_COOKIE_CHECK_ID,
                 u32,
                 cookie
             );
