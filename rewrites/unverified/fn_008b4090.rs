@@ -1,92 +1,98 @@
-// original: 0x008B4090 stick_response_apply
-/// Convert each of two response channels into a scaled double helper call,
-/// store the helper results, copy the associated integer and byte fields, and
-/// advance the object's three-position counter.
+// original: 0x008b4090 stick_response_apply
+/// Applies a two-channel stick response curve and advances the slot cycle.
 ///
-/// A channel below the image's lower bound stores zero without a helper call.
-/// Otherwise its value is scaled before promotion to a double. The shared
-/// double helper receives the image's ten-valued argument and the promoted
-/// channel value through XMM0 and XMM1. A changed response code triggers a
-/// scripted thiscall only when the copied flag byte is clear.
-///
-/// Original: `0x008B4090` (thiscall, response pointer on the stack).
-lf_checker_rt::export!(thiscall, rw_008b4090(this: u32, response: u32) -> () {
+/// The source holds two sampled channel values, a tag word, a spare word and
+/// two flag bytes; the destination holds the filtered outputs, a copied tag, a
+/// rotating slot index and the flag bytes. Each channel value is first shifted
+/// by the gate constant: a shifted value that is below zero (or unordered) maps
+/// to a zero output, otherwise the value is scaled and passed with the base
+/// double to the curve helper, whose double result narrows to the output float.
+/// The spare word and both flag bytes are copied over, and when the tag differs
+/// from the stored one the stored tag is replaced and, if the second flag byte
+/// is zero, the table refresh routine runs against this object. Finally the
+/// slot index increments modulo 3 and the divided-down count is returned.
+use core::hint::black_box;
+use lf_checker_rt::{callee_cdecl, callee_thiscall, export, relocated};
+
+export!(thiscall, rw_008b4090(this_ptr: u32, src_ptr: u32) -> u32 {
     unsafe {
-        let object = this as *mut u8;
-        let input = response as *const u8;
-        let ten = lf_checker_rt::global::<f64>(0x00FE_8A78).read_unaligned();
-        let scale = lf_checker_rt::global::<f32>(0x00FE_876C).read_unaligned();
-        let lower_bound = lf_checker_rt::global::<f32>(0x00FE_8DF8).read_unaligned();
+        /// Gate constant: values at or below it map to a zero output.
+        const GATE_LO: u32 = 0x00FE_8DF8;
+        /// Per-channel scale applied before the curve helper runs.
+        const SCALE: u32 = 0x00FE_876C;
+        /// Base double passed as the helper's first argument.
+        const BASE_DBL: u32 = 0x00FE_8A78;
+        /// Destination fields.
+        const OUT_A: u32 = 0x0C;
+        const OUT_B: u32 = 0x10;
+        const SPARE: u32 = 0x14;
+        const TAG: u32 = 0x18;
+        const FLAG_A: u32 = 0x1C;
+        const FLAG_B: u32 = 0x20;
+        const SLOT: u32 = 0x08;
+        /// Source fields.
+        const SRC_A: u32 = 0x00;
+        const SRC_B: u32 = 0x04;
+        const SRC_SPARE: u32 = 0x08;
+        const SRC_TAG: u32 = 0x0C;
+        const SRC_FLAG_B: u32 = 0x10;
+        const SRC_FLAG_A: u32 = 0x11;
+        /// Curve helper callee id (takes two doubles, answers one).
+        const CURVE: u32 = 1;
+        /// Table refresh callee id.
+        const REFRESH: u32 = 2;
+        /// Slot cycle length.
+        const SLOTS: u32 = 3;
 
-        let first = (input as *const f32).read_unaligned();
-        let first_delta = sub32(first, lower_bound);
-        let first_result = if jb32(first_delta, 0.0) {
-            0.0
-        } else {
-            let scaled = mul32(first, scale);
-            let answer = call_curve(ten, scaled);
-            core::hint::black_box(answer) as f32
+        let gate = *(relocated(GATE_LO) as *const f32);
+        let scale = *(relocated(SCALE) as *const f32);
+        let base_bits = *(relocated(BASE_DBL) as *const u64);
+        let base_lo = (base_bits & 0xFFFF_FFFF) as u32;
+        let base_hi = (base_bits >> 32) as u32;
+
+        let run_curve = |sample: f32| -> f32 {
+            let scaled = black_box(sample) * black_box(scale);
+            let wide: f64 = black_box(scaled) as f64;
+            let bits = wide.to_bits();
+            let answer: u64 = callee_cdecl!(
+                CURVE,
+                u64,
+                base_lo,
+                base_hi,
+                (bits & 0xFFFF_FFFF) as u32,
+                (bits >> 32) as u32
+            );
+            black_box(f64::from_bits(answer)) as f32
         };
-        (object.add(0x0c) as *mut f32).write_unaligned(first_result);
 
-        let second = (input.add(4) as *const f32).read_unaligned();
-        let second_delta = sub32(second, lower_bound);
-        let second_result = if jb32(second_delta, 0.0) {
-            0.0
-        } else {
-            let scaled = mul32(second, scale);
-            let answer = call_curve(ten, scaled);
-            core::hint::black_box(answer) as f32
-        };
-        (object.add(0x10) as *mut f32).write_unaligned(second_result);
+        let a = *(src_ptr.wrapping_add(SRC_A) as *const f32);
+        let gated_a = black_box(a) - black_box(gate);
+        // The original branches below-or-unordered here: NaN takes the zero path.
+        let out_a = if !(gated_a >= 0.0) { 0.0 } else { run_curve(a) };
+        *((this_ptr.wrapping_add(OUT_A)) as *mut f32) = out_a;
 
-        let input_word = (input.add(8) as *const u32).read_unaligned();
-        (object.add(0x14) as *mut u32).write_unaligned(input_word);
-        let copied_flag = input.add(0x11).read();
-        object.add(0x1c).write(copied_flag);
-        let update_flag = input.add(0x10).read();
-        object.add(0x20).write(update_flag);
-        let response_code = (input.add(0x0c) as *const u32).read_unaligned();
-        let old_code = (object.add(0x18) as *const u32).read_unaligned();
-        if response_code != old_code {
-            (object.add(0x18) as *mut u32).write_unaligned(response_code);
-            if update_flag == 0 {
-                let _: u32 = lf_checker_rt::callee_thiscall!(2, u32, this);
+        let b = *(src_ptr.wrapping_add(SRC_B) as *const f32);
+        let gated_b = black_box(b) - black_box(gate);
+        let out_b = if !(gated_b >= 0.0) { 0.0 } else { run_curve(b) };
+        *((this_ptr.wrapping_add(OUT_B)) as *mut f32) = out_b;
+
+        let spare = *((src_ptr.wrapping_add(SRC_SPARE)) as *const u32);
+        *((this_ptr.wrapping_add(SPARE)) as *mut u32) = spare;
+        let flag_a = *((src_ptr.wrapping_add(SRC_FLAG_A)) as *const u8);
+        *((this_ptr.wrapping_add(FLAG_A)) as *mut u8) = flag_a;
+        let flag_b = *((src_ptr.wrapping_add(SRC_FLAG_B)) as *const u8);
+        *((this_ptr.wrapping_add(FLAG_B)) as *mut u8) = flag_b;
+
+        let tag = *((src_ptr.wrapping_add(SRC_TAG)) as *const u32);
+        if tag != *((this_ptr.wrapping_add(TAG)) as *const u32) {
+            *((this_ptr.wrapping_add(TAG)) as *mut u32) = tag;
+            if *((this_ptr.wrapping_add(FLAG_B)) as *const u8) == 0 {
+                callee_thiscall!(REFRESH, u32, this_ptr);
             }
         }
 
-        let counter_ptr = object.add(8) as *mut u32;
-        let next = counter_ptr.read_unaligned().wrapping_add(1);
-        counter_ptr.write_unaligned(next % 3);
+        let slot = (*((this_ptr.wrapping_add(SLOT)) as *const u32)).wrapping_add(1);
+        *((this_ptr.wrapping_add(SLOT)) as *mut u32) = slot % SLOTS;
+        slot / SLOTS
     }
 });
-
-#[inline(never)]
-fn call_curve(ten: f64, value: f32) -> f64 {
-    let ten_bits = ten.to_bits();
-    let value_bits = f64::from(value).to_bits();
-    let bits: u64 = lf_checker_rt::callee_cdecl!(
-        1,
-        u64,
-        ten_bits as u32,
-        (ten_bits >> 32) as u32,
-        value_bits as u32,
-        (value_bits >> 32) as u32,
-    );
-    f64::from_bits(bits)
-}
-
-#[inline(never)]
-fn sub32(left: f32, right: f32) -> f32 {
-    core::hint::black_box(left) - core::hint::black_box(right)
-}
-
-#[inline(never)]
-fn mul32(left: f32, right: f32) -> f32 {
-    core::hint::black_box(left) * core::hint::black_box(right)
-}
-
-#[inline(always)]
-fn jb32(left: f32, right: f32) -> bool {
-    left.is_nan() || right.is_nan() || left < right
-}
