@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 21 files from lanes (718 unverified rewrites, 976 in review)",
+    "title": "Lift: a harvest over every unlifted leaf function finds 44 more instances of six routines",
     "commit": null,
+    "summary": "One lane matched all 1,977 verified functions that call nothing and have no portable counterpart against the routines lifted this evening. 44 match and are proved; the routines are too narrow to recur widely.",
+    "changes": [
+      "Six new test crates prove 44 more tracked verified rewrites against routines already in the repository, unchanged: constant writes (26 on objects, 3 over a region of globals), a field store (1), a pair store (3), a row address (1) and the ratio cell (10). 1,000 cases per instance on the 32-bit target, the routines' deliberately wrong versions caught by every instance. The coordinator ran the six crates' tests before committing; none failed. One crate has the debug build's alignment check switched off, for the same reason as two earlier ones.",
+      "Why so few, as the lane measured it: of the 1,977, 901 use forms of access its extractor does not parse, 574 branch or loop, 224 use relocated, global or thread-local operands, and the 143 straight-line ones it could describe fall into 129 different shapes, the largest with five members. The routines lifted tonight are narrow (one width, constants only, or two word parameters). So the supply of leaf functions that are instances of a few routines is used up: about 660 of them were found and lifted in the evening, and what remains is mostly one of a kind.",
+      "Two faults in an earlier lane's matcher were found by the proofs it led to: it accepted an indexed read whose return is a comparison (the instance failed its proof and was dropped) and two stores through a pointer it could not parse. No verified rewrite disagreed with another or with its lifted routine.",
+      "Verified routines with a lifted counterpart proven in the pipeline: 1,272, up from 1,228. The next lifts go back to functions that call other code, lifted as methods on owning types."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 21 files from lanes (718 unverified rewrites, 976 in review)",
+    "commit": "d1bf5761262f26b6015123ee8e1558f617bf69cb",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 718 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",

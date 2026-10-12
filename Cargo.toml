@@ -147,6 +147,12 @@ members = [
     "crates/tools/lf-27-recorddiff",
     "crates/tools/lf-27-scandiff",
     "crates/tools/lf-27-sentineldiff",
+    "crates/tools/lf-28-constdiff",
+    "crates/tools/lf-28-globwrdiff",
+    "crates/tools/lf-28-pairdiff",
+    "crates/tools/lf-28-ratiodiff",
+    "crates/tools/lf-28-rowdiff",
+    "crates/tools/lf-28-storediff",
     "crates/formats/lf-archive",
     "crates/formats/lf-resource",
     "crates/formats/lf-model",
@@ -199,4 +205,10 @@ debug-assertions = false
 # address that is four bytes past an eight-byte boundary, which the 32-bit processor allows and a debug build's
 # pointer-alignment check aborts on. The check is switched off for this crate only.
 [profile.dev.package.lf-25-rowdiff]
+debug-assertions = false
+
+# This test crate places verified rewrites over a region of bytes, where a rewrite's 32-bit access can fall on an
+# address that is not a multiple of four; the 32-bit processor allows it and a debug build's pointer-alignment
+# check aborts on it. The check is switched off for this crate only.
+[profile.dev.package.lf-28-globwrdiff]
 debug-assertions = false
