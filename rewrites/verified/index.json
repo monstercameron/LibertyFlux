@@ -93573,6 +93573,15 @@
   "lane": "a-G37"
  },
  {
+  "address": "0x00AD8930",
+  "name": "quad_batch_forward",
+  "kind": "function",
+  "file": "functions/fn_00ad8930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s781"
+ },
+ {
   "address": "0x00AD8960",
   "name": "emit_ui_quad_batch",
   "kind": "function",
@@ -94392,6 +94401,42 @@
   "lane": "r-b313"
  },
  {
+  "address": "0x00AE4E00",
+  "name": "T_CB_Generic_2Args<void(*)(bool, bool), bool, bool>::invoke",
+  "kind": "function",
+  "file": "functions/fn_00ae4e00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s781"
+ },
+ {
+  "address": "0x00AE4E20",
+  "name": "T_CB_Generic_3Args<void(*)(int, const rage::Matrix34&, unsigned char), int, rage::Matrix34, unsigned char>::invoke",
+  "kind": "function",
+  "file": "functions/fn_00ae4e20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s781"
+ },
+ {
+  "address": "0x00AE4E40",
+  "name": "T_CB_Generic_4Args<void(*)(int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode), int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode>::invoke",
+  "kind": "function",
+  "file": "functions/fn_00ae4e40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s781"
+ },
+ {
+  "address": "0x00AE4E60",
+  "name": "T_CB_Generic_5Args<void(*)(int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode, int), int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode, int>::invoke",
+  "kind": "function",
+  "file": "functions/fn_00ae4e60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s781"
+ },
+ {
   "address": "0x00AE4FE0",
   "name": "transformed_box_overlap_score",
   "kind": "function",
@@ -94948,6 +94993,33 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s440"
+ },
+ {
+  "address": "0x00AF5540",
+  "name": "select_flagged_global",
+  "kind": "function",
+  "file": "functions/fn_00af5540.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s781"
+ },
+ {
+  "address": "0x00AF5560",
+  "name": "pad_has_active_input",
+  "kind": "function",
+  "file": "functions/fn_00af5560.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s781"
+ },
+ {
+  "address": "0x00AF55F0",
+  "name": "pad_is_device_enabled",
+  "kind": "function",
+  "file": "functions/fn_00af55f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s781"
  },
  {
   "address": "0x00AF5EA0",
