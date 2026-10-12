@@ -39654,6 +39654,15 @@
   "lane": "r-s481"
  },
  {
+  "address": "0x00633E10",
+  "name": "rage::fragDrawable::~fragDrawable__deleting",
+  "kind": "function",
+  "file": "functions/fn_00633e10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
   "address": "0x00633E30",
   "name": "section_table_load",
   "kind": "function",
@@ -39672,6 +39681,15 @@
   "lane": "r-b594"
  },
  {
+  "address": "0x006341E0",
+  "name": "frag_parse_bonetag_all",
+  "kind": "function",
+  "file": "functions/fn_006341e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
   "address": "0x00634270",
   "name": "motion_sample_resolve",
   "kind": "function",
@@ -39688,6 +39706,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b594"
+ },
+ {
+  "address": "0x006349F0",
+  "name": "frag_parse_skeletontype_all",
+  "kind": "function",
+  "file": "functions/fn_006349f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
  },
  {
   "address": "0x00634C40",
@@ -39825,6 +39852,60 @@
   "lane": "r-s509"
  },
  {
+  "address": "0x006379F0",
+  "name": "rage::ptxEffectRule::~ptxEffectRule__deleting",
+  "kind": "function",
+  "file": "functions/fn_006379f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x00637A20",
+  "name": "set_effect_instance_enabled",
+  "kind": "function",
+  "file": "functions/fn_00637a20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x00637B20",
+  "name": "rage::ptxTimeLine::~ptxTimeLine__deleting",
+  "kind": "function",
+  "file": "functions/fn_00637b20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x00638110",
+  "name": "rage::ptxEffectRuleStd::~ptxEffectRuleStd__deleting",
+  "kind": "function",
+  "file": "functions/fn_00638110.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x006381D0",
+  "name": "rage::ptxEffectRuleStd::update_child_rules",
+  "kind": "function",
+  "file": "functions/fn_006381d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x00638200",
+  "name": "reindex_child_rule_indices",
+  "kind": "function",
+  "file": "functions/fn_00638200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
   "address": "0x006382B0",
   "name": "rage::ptxEffectRuleStd::vf32",
   "kind": "function",
@@ -39850,6 +39931,69 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s695"
+ },
+ {
+  "address": "0x006397A0",
+  "name": "rage::ptxRule::set_name",
+  "kind": "function",
+  "file": "functions/fn_006397a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x00639810",
+  "name": "rage::ptxRule::~ptxRule",
+  "kind": "function",
+  "file": "functions/fn_00639810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x00639870",
+  "name": "copy_three_position_words",
+  "kind": "function",
+  "file": "functions/fn_00639870.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x00639DC0",
+  "name": "rage::ptxRule::init_from_type_name",
+  "kind": "function",
+  "file": "functions/fn_00639dc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x0063A5F0",
+  "name": "rage::ptxTriggerEvent::resolve_name_entry",
+  "kind": "function",
+  "file": "functions/fn_0063a5f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x0063A7E0",
+  "name": "rage::ptxRenderState::create",
+  "kind": "function",
+  "file": "functions/fn_0063a7e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
+ },
+ {
+  "address": "0x0063A840",
+  "name": "rage::ptxTriggerEvent::create",
+  "kind": "function",
+  "file": "functions/fn_0063a840.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s777"
  },
  {
   "address": "0x0063AA40",
