@@ -47754,6 +47754,33 @@
   "lane": "r-s485"
  },
  {
+  "address": "0x00871610",
+  "name": "write_dof_vector4_entry",
+  "kind": "function",
+  "file": "functions/fn_00871610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00871F80",
+  "name": "initialize_refcounted_embedded_object",
+  "kind": "function",
+  "file": "functions/fn_00871f80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00871FD0",
+  "name": "rage::crExpressionProcessor::vf0",
+  "kind": "function",
+  "file": "functions/fn_00871fd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
   "address": "0x00872010",
   "name": "crmt_request_init",
   "kind": "function",
@@ -49374,6 +49401,105 @@
   "lane": "r-s583"
  },
  {
+  "address": "0x00876B50",
+  "name": "rage::crmtRequestFrame::vf1",
+  "kind": "function",
+  "file": "functions/fn_00876b50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00876BC0",
+  "name": "normalize_angle_radians",
+  "kind": "function",
+  "file": "functions/fn_00876bc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00876C00",
+  "name": "reset_frame_sample_bounds",
+  "kind": "function",
+  "file": "functions/fn_00876c00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00876C60",
+  "name": "rebase_frame_sample_bounds",
+  "kind": "function",
+  "file": "functions/fn_00876c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00876D10",
+  "name": "rebase_optional_frame_sample_bounds",
+  "kind": "function",
+  "file": "functions/fn_00876d10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00877230",
+  "name": "weighted_average_frame_vectors",
+  "kind": "function",
+  "file": "functions/fn_00877230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x008773F0",
+  "name": "rage::crmfAngle::vf0",
+  "kind": "function",
+  "file": "functions/fn_008773f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00877420",
+  "name": "rage::crmfAngle::vf1",
+  "kind": "function",
+  "file": "functions/fn_00877420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00877430",
+  "name": "copy_orientation_record_fields",
+  "kind": "function",
+  "file": "functions/fn_00877430.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00877710",
+  "name": "rage::crmtComposer::vf6",
+  "kind": "function",
+  "file": "functions/fn_00877710.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x008777C0",
+  "name": "rage::crmtComposerOptimized::vf0",
+  "kind": "function",
+  "file": "functions/fn_008777c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
   "address": "0x00877810",
   "name": "rage::crmtComposerOptimized::vf1",
   "kind": "function",
@@ -49723,6 +49849,60 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s482"
+ },
+ {
+  "address": "0x008792D0",
+  "name": "rage::crmtFrameBuffer::vf0",
+  "kind": "function",
+  "file": "functions/fn_008792d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00879300",
+  "name": "rage::crmtFrameBufferDynamic::vf0",
+  "kind": "function",
+  "file": "functions/fn_00879300.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00879340",
+  "name": "rage::crmtFrameBufferDynamic::initialize",
+  "kind": "function",
+  "file": "functions/fn_00879340.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00879890",
+  "name": "rage::crmtComposer::vf0",
+  "kind": "function",
+  "file": "functions/fn_00879890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x008798D0",
+  "name": "rage::crmtComposer::vf5",
+  "kind": "function",
+  "file": "functions/fn_008798d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
+ },
+ {
+  "address": "0x00879930",
+  "name": "rage::crmtComposerOptimized::vf4",
+  "kind": "function",
+  "file": "functions/fn_00879930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s816"
  },
  {
   "address": "0x0087B6B0",
