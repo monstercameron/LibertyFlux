@@ -13,10 +13,16 @@
 // included verified files resolve here.
 extern crate self as lf_checker_rt;
 
+// The runtime names the 32-bit calling conventions, so it exists on the
+// 32-bit target only.
+#[cfg(target_arch = "x86")]
 pub mod rt;
 
+#[cfg(target_arch = "x86")]
 pub use rt::callee_addr;
+#[cfg(target_arch = "x86")]
 pub use rt::global;
+#[cfg(target_arch = "x86")]
 pub use rt::relocated;
 
 #[cfg(target_arch = "x86")]

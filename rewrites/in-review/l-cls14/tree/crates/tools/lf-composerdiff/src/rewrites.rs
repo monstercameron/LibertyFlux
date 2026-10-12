@@ -53,3 +53,21 @@ pub mod fn_008782C0 {
 pub mod fn_008782E0 {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_008782e0.rs"));
 }
+
+pub mod fn_00877860 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00877860.rs"));
+}
+pub mod fn_00878250 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00878250.rs"));
+}
+
+pub mod fn_00878200 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00878200.rs"));
+}
+
+pub mod fn_00877890 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00877890.rs"));
+}
+pub mod fn_00879030 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00879030.rs"));
+}

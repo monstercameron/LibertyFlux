@@ -17,8 +17,10 @@ use lf_animation::composer::optimized_data::{
 };
 use lf_animation::composer::registry::{self, State};
 use lf_animation::composer::{
-    BaseFilterCallees, BlockId, CombiningFilter, ComposerDataCallees, ComposerOptimizedData,
-    FilterOwner, ObjectManager, PollChild, TableEntry, ValueEntry,
+    BaseFilterCallees, BlockId, CombiningFilter, ComposerCallees, ComposerDataCallees, ComposerId,
+    ComposerOptimized, ComposerOptimizedData,
+    FilterOwner, HandlerId, InnerId, ItemStack, NodeId, ObjectManager, OutId, PollChild, TableEntry,
+    ValueEntry,
 };
 use lf_core::boundary::Handle32;
 
@@ -207,10 +209,7 @@ fn reset_builds_the_pointer_table_and_returns_its_last_target() {
     assert_eq!(data.table()[1].target, first + TABLE_STRIDE);
     let last_expected = TABLE_OFFSET + (TABLE_COUNT as u32 - 1) * TABLE_STRIDE + TABLE_TARGET_SKEW;
     assert_eq!(last, last_expected);
-    // The verified rewrite's code returns 0xBEC past the block (the sum of
-    // the table base, 62 strides and the skew). Its doc comment says 0x790,
-    // which matches neither the stride the code uses nor the code; the
-    // differential test pins the code's value.
+    // The table base, 62 strides of 0x30 and the skew add up to 0xBEC.
     assert_eq!(last, 0xBEC);
     assert_eq!(COUNT_OFFSET, 0xBF0);
 }
@@ -285,8 +284,161 @@ fn destructor_that_must_free_needs_a_manager() {
 }
 
 #[test]
+fn sequence_wraps_at_the_sixteen_bit_limit() {
+    let mut c = ComposerOptimized::new(true, false, u16::MAX - 1, 0x55, None, None);
+    c.advance_sequence(None, &mut NoCallees);
+    assert_eq!(c.sequence(), 0);
+    let mut c = ComposerOptimized::new(true, false, u16::MAX, 0x55, None, None);
+    assert_eq!(c.advance_and_read_word(None, &mut NoCallees), 0x55);
+    assert_eq!(c.sequence(), 1);
+}
+
+/// Callees for runs that must not call anything (immediate mode, no drain).
+struct NoCallees;
+
+impl ComposerCallees for NoCallees {
+    fn sync(&mut self, _composer: Option<ComposerId>) {
+        panic!("this run must not sync");
+    }
+    fn handle_table_entry(&mut self, _e: Option<HandlerId>, _a: u32, _b: u32, _c: u32, _d: u32, _e2: u32) {
+        panic!("this run must not dispatch");
+    }
+    fn check(&mut self, _composer: Option<ComposerId>, _token: Option<OutId>) -> u32 {
+        panic!("this run must not gate");
+    }
+    fn handle_node(&mut self, _composer: Option<ComposerId>, _node: Option<NodeId>) {
+        panic!("this run must not handle a node");
+    }
+    fn drain(&mut self, _composer: Option<ComposerId>) {
+        panic!("this run must not drain");
+    }
+    fn forward_inner(&mut self, _inner: Option<InnerId>) -> u32 {
+        panic!("this run must not forward");
+    }
+    fn apply_pose_direct(&mut self, _c: Option<ComposerId>, _a0: u32, _a1: u32, _l: Option<ComposerId>) {
+        panic!("this run must not forward");
+    }
+    fn apply_static_tracks_to_pose(&mut self, _c: Option<ComposerId>, _a0: u32, _a1: u32, _l: Option<ComposerId>) {
+        panic!("this run must not forward");
+    }
+    fn copy_dof_pair(&mut self, _c: Option<ComposerId>, _a0: u32, _a1: u32, _l: Option<ComposerId>) {
+        panic!("this run must not forward");
+    }
+    fn setup_identity_frame(&mut self, _c: Option<ComposerId>, _a0: u32, _a1: u32, _l: Option<ComposerId>) {
+        panic!("this run must not forward");
+    }
+}
+
+/// Callees that record the order of their calls.
+#[derive(Default)]
+struct OrderLog {
+    calls: Vec<&'static str>,
+}
+
+impl ComposerCallees for OrderLog {
+    fn sync(&mut self, _composer: Option<ComposerId>) {
+        self.calls.push("sync");
+    }
+    fn handle_table_entry(&mut self, _e: Option<HandlerId>, _a: u32, _b: u32, _c: u32, _d: u32, _e2: u32) {
+        self.calls.push("dispatch");
+    }
+    fn check(&mut self, _composer: Option<ComposerId>, _token: Option<OutId>) -> u32 {
+        self.calls.push("check");
+        1
+    }
+    fn handle_node(&mut self, _composer: Option<ComposerId>, _node: Option<NodeId>) {
+        self.calls.push("handle");
+    }
+    fn drain(&mut self, _composer: Option<ComposerId>) {
+        self.calls.push("drain");
+    }
+    fn forward_inner(&mut self, _inner: Option<InnerId>) -> u32 {
+        self.calls.push("forward");
+        0x77
+    }
+    fn apply_pose_direct(&mut self, _c: Option<ComposerId>, _a0: u32, _a1: u32, _l: Option<ComposerId>) {
+        self.calls.push("pose");
+    }
+    fn apply_static_tracks_to_pose(&mut self, _c: Option<ComposerId>, _a0: u32, _a1: u32, _l: Option<ComposerId>) {
+        self.calls.push("tracks");
+    }
+    fn copy_dof_pair(&mut self, _c: Option<ComposerId>, _a0: u32, _a1: u32, _l: Option<ComposerId>) {
+        self.calls.push("copy");
+    }
+    fn setup_identity_frame(&mut self, _c: Option<ComposerId>, _a0: u32, _a1: u32, _l: Option<ComposerId>) {
+        self.calls.push("setup");
+    }
+}
+
+#[test]
+fn drain_and_forward_is_skipped_when_linked() {
+    let inner = Handle32::new(0x900);
+    let mut c = ComposerOptimized::new(false, true, 0, 0, Handle32::new(0x800), inner);
+    let mut calls = OrderLog::default();
+    assert_eq!(c.drain_and_forward(Handle32::new(0x100), &mut calls), 0);
+    assert!(calls.calls.is_empty());
+    assert!(c.free_node().is_some(), "a linked composer keeps its free node");
+}
+
+#[test]
+fn drain_and_forward_syncs_drains_clears_the_cache_then_forwards() {
+    let inner = Handle32::new(0x900);
+    let mut c = ComposerOptimized::new(true, false, 0, 0, Handle32::new(0x800), inner);
+    let mut calls = OrderLog::default();
+    // Immediate mode does not stop this sync: the original always runs it.
+    assert_eq!(c.drain_and_forward(Handle32::new(0x100), &mut calls), 0x77);
+    assert_eq!(calls.calls, vec!["sync", "drain", "forward"]);
+    assert!(c.free_node().is_none());
+}
+
+#[test]
+#[should_panic(expected = "drain and forward needs an inner object")]
+fn drain_and_forward_without_an_inner_object_is_outside_the_domain() {
+    let mut c = ComposerOptimized::new(false, false, 0, 0, None, None);
+    c.drain_and_forward(Handle32::new(0x100), &mut OrderLog::default());
+}
+
+#[test]
+fn forwarders_sync_only_while_immediate_mode_is_off() {
+    let c = ComposerOptimized::new(false, false, 0, 0, None, None);
+    let mut calls = OrderLog::default();
+    c.forward_two_words_pose(Handle32::new(0x100), 1, 2, &mut calls);
+    assert_eq!(calls.calls, vec!["sync", "pose"]);
+    let c = ComposerOptimized::new(true, false, 0, 0, None, None);
+    let mut calls = OrderLog::default();
+    c.forward_one_word_copy(Handle32::new(0x100), 1, &mut calls);
+    assert_eq!(calls.calls, vec!["copy"]);
+}
+
+#[test]
+fn stack_read_pops_after_reading_the_old_top() {
+    let c = ComposerOptimized::new(true, false, 0, 0, None, None);
+    let mut stack = ItemStack {
+        table: vec![10, 20, 30],
+        top: 2,
+    };
+    let got = c.peek_or_pop(None, 0, &mut stack, &mut NoCallees);
+    assert_eq!(got, 30, "the item read is the one on top before the pop");
+    assert_eq!(stack.top, 1);
+    let got = c.peek_or_pop(None, 1, &mut stack, &mut NoCallees);
+    assert_eq!(got, 20);
+    assert_eq!(stack.top, 1, "a nonzero low byte keeps the top");
+}
+
+#[test]
+fn stack_read_pops_from_zero_to_the_wrapped_index() {
+    let c = ComposerOptimized::new(true, false, 0, 0, None, None);
+    let mut stack = ItemStack {
+        table: vec![5],
+        top: 0,
+    };
+    assert_eq!(c.peek_or_pop(None, 0x100, &mut stack, &mut NoCallees), 5, "low byte zero pops");
+    assert_eq!(stack.top, u32::MAX);
+}
+
+#[test]
 fn registry_counts_match_the_rows() {
-    assert_eq!(registry::proven_count(), 5);
+    assert_eq!(registry::proven_count(), 16);
     assert_eq!(
         registry::ROWS.iter().filter(|r| r.state == State::Proven).count(),
         registry::proven_count()
@@ -297,3 +449,29 @@ fn registry_counts_match_the_rows() {
     );
 }
 
+
+#[test]
+fn table_dispatch_reads_the_top_entry_and_advances_by_one() {
+    let mut c = ComposerOptimized::new(true, false, 7, 0, None, None).with_word_70(0x1234);
+    let stack = ItemStack {
+        table: vec![0xAA, 0xBB, 0xCC],
+        top: 1,
+    };
+    let mut calls = OrderLog::default();
+    c.dispatch_table_entry(Handle32::new(0x100), 9, &stack, &mut calls);
+    assert_eq!(calls.calls, vec!["dispatch"]);
+    assert_eq!(c.sequence(), 8, "the dispatch advances the counter by one");
+    assert_eq!(c.word_70(), 0x1234);
+}
+
+#[test]
+fn table_dispatch_syncs_only_while_immediate_mode_is_off() {
+    let mut c = ComposerOptimized::new(false, false, 0, 0, None, None);
+    let stack = ItemStack {
+        table: vec![1],
+        top: 0,
+    };
+    let mut calls = OrderLog::default();
+    c.dispatch_table_entry(Handle32::new(0x100), 0, &stack, &mut calls);
+    assert_eq!(calls.calls, vec!["sync", "dispatch"]);
+}

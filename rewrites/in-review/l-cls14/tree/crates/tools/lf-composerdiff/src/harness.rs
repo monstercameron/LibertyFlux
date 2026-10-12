@@ -129,10 +129,28 @@ pub extern "thiscall" fn sync_stub(this: u32) -> u32 {
 
 /// A composer's vtable: slot 30 (offset 0x78) is the sync stub.
 #[must_use]
-pub fn composer_vtable() -> Box<[u32; 32]> {
-    let mut vt = Box::new([0u32; 32]);
+pub fn composer_vtable() -> Box<[u32; 40]> {
+    let mut vt = Box::new([0u32; 40]);
+    vt[0x74 / 4] = sync_stub as *const () as usize as u32;
     vt[0x78 / 4] = sync_stub as *const () as usize as u32;
+    vt[0x7C / 4] = check_stub as *const () as usize as u32;
+    vt[0x80 / 4] = handler_stub as *const () as usize as u32;
     vt
+}
+
+/// The composer's gate slot (offset 0x7C): records the composer and the
+/// token it is given, and answers with the scripted answer.
+pub extern "thiscall" fn check_stub(this: u32, token: u32) -> u32 {
+    let mut s = script();
+    s.log.push(("check", vec![this, token]));
+    s.answer
+}
+
+/// The composer's node-handler slot (offset 0x80): records the composer and
+/// the node.
+pub extern "thiscall" fn handler_stub(this: u32, node: u32) -> u32 {
+    script().log.push(("handle_node", vec![this, node]));
+    0
 }
 
 extern "thiscall" fn one_arg_stub(this: u32) -> u32 {
@@ -247,4 +265,41 @@ impl Rng {
     pub fn answer(&mut self) -> u32 {
         (self.u32() | 0x0100) & !0xFF
     }
+}
+
+/// Numbered callee 2 answers with the stub of the given arity: 1 for the
+/// drain callee, 4 for the forwarders' callee, 6 for the table dispatch.
+pub fn select_callee2(arity: u8) {
+    // SAFETY: the test lock is held by the caller, as for `install`.
+    unsafe {
+        let table = core::ptr::addr_of_mut!(CALLEE_TABLE);
+        (*table)[2] = match arity {
+            1 => one_arg_stub as *const () as usize as u32,
+            6 => six_arg_stub as *const () as usize as u32,
+            _ => four_arg_stub as *const () as usize as u32,
+        };
+    }
+}
+
+/// Six-argument callee (the table dispatch): records its arguments under
+/// the four-argument name, which the trial sets for it.
+extern "thiscall" fn six_arg_stub(this: u32, a: u32, b: u32, c: u32, d: u32, e: u32) -> u32 {
+    let mut s = script();
+    let name = s.four_name;
+    s.log.push((name, vec![this, a, b, c, d, e]));
+    s.answer
+}
+
+/// The inner object's forward: records the inner object and answers with
+/// the scripted answer.
+extern "thiscall" fn inner_forward_stub(this: u32) -> u32 {
+    let mut s = script();
+    s.log.push(("forward_inner", vec![this]));
+    s.answer
+}
+
+/// An inner object's vtable: slot 2 (offset 0x08) is the forward stub.
+#[must_use]
+pub fn inner_vtable() -> Box<[u32; 4]> {
+    Box::new([0, 0, inner_forward_stub as *const () as usize as u32, 0])
 }

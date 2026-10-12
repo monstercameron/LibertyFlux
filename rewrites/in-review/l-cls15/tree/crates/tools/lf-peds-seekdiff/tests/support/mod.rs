@@ -134,13 +134,14 @@ pub struct Ev {
     pub snap: Option<Vec<u8>>,
 }
 
-/// Normalises one recorded rewrite call. `query_id` names the callee whose
-/// second argument is a stack word of the rewrite (its out pointer).
+/// Normalises one recorded rewrite call. `overrides` names an argument by
+/// callee number and position when it is a stack word of the rewrite (an out
+/// pointer or a scratch buffer), whose value no test can know in advance.
 pub fn norm_call(
     raw: &rt::RawCall,
     id_names: &[(u32, &'static str)],
     addr_names: &[(u32, &'static str)],
-    query_id: Option<u32>,
+    overrides: &[(u32, usize, &'static str)],
 ) -> Ev {
     let name = id_names
         .iter()
@@ -151,8 +152,8 @@ pub fn norm_call(
         .iter()
         .enumerate()
         .map(|(i, &w)| {
-            if Some(raw.id) == query_id && i == 1 {
-                return Norm::S("out");
+            if let Some((_, _, n)) = overrides.iter().find(|(id, idx, _)| *id == raw.id && *idx == i) {
+                return Norm::S(n);
             }
             addr_names
                 .iter()
@@ -163,7 +164,8 @@ pub fn norm_call(
     Ev { name, args, snap: raw.snap.clone() }
 }
 
-/// Compares the rewrite's calls, normalised, with the lifted calls.
+/// Compares the rewrite's calls, normalised, with the lifted calls. The
+/// second argument of callee `query_id` is named `out`.
 pub fn compare_calls(
     raw: &[rt::RawCall],
     id_names: &[(u32, &'static str)],
@@ -171,9 +173,22 @@ pub fn compare_calls(
     query_id: Option<u32>,
     lifted: &[Ev],
 ) -> Result<(), String> {
+    let overrides: Vec<(u32, usize, &'static str)> = query_id.map(|q| (q, 1, "out")).into_iter().collect();
+    compare_calls_ov(raw, id_names, addr_names, &overrides, lifted)
+}
+
+/// Compares the rewrite's calls, normalised with the given overrides, with the
+/// lifted calls.
+pub fn compare_calls_ov(
+    raw: &[rt::RawCall],
+    id_names: &[(u32, &'static str)],
+    addr_names: &[(u32, &'static str)],
+    overrides: &[(u32, usize, &'static str)],
+    lifted: &[Ev],
+) -> Result<(), String> {
     let rewritten: Vec<Ev> = raw
         .iter()
-        .map(|r| norm_call(r, id_names, addr_names, query_id))
+        .map(|r| norm_call(r, id_names, addr_names, overrides))
         .collect();
     if rewritten != lifted {
         return Err(format!(

@@ -64,12 +64,12 @@ pub struct TableEntry {
 /// that this lane does not lift.
 pub trait ComposerDataCallees {
     /// Callee of the destructor: called on the block itself. The verified
-    /// rewrite does not establish its meaning; the evidence proposes a
+    /// rewrite does not establish its meaning; a proposed name is
     /// composer reset, and that name is not accepted.
     fn reset_optimized(&mut self, block: Option<BlockId>);
 
     /// Callee of the table reset: called on the block's header, at
-    /// `offset` bytes past the block. The evidence proposes a frame-release
+    /// `offset` bytes past the block. A proposed name is frame-release
     /// name, which is not accepted.
     fn release_child_frames(&mut self, block: Option<BlockId>, offset: u32);
 }

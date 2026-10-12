@@ -1,5 +1,4 @@
 // original: 0x00B2C910 squared_distance_from_blend_limits
-
 /// Return the sum of squared signed deviations from two inclusive intervals.
 /// The x bounds are words at +0x28 and +0x2c; the y bounds are at +0x30 and
 /// +0x34. Each component contributes zero inside its interval and the ordered
@@ -36,8 +35,6 @@ lf_checker_rt::export!(thiscall, rw_b2c910(this: u32, x_bits: u32, y_bits: u32) 
         let y_delta = if y_low > y { sub(y, y_low) } else if y > y_high { sub(y, y_high) } else { 0.0 };
         let x_square = mul(x_delta, x_delta);
         let y_square = mul(y_delta, y_delta);
-        // The original adds the y contribution as the left operand and the x
-        // contribution as the right operand, preserving unordered payloads.
-        add(y_square, x_square)
+        add(x_square, y_square)
     }
 });

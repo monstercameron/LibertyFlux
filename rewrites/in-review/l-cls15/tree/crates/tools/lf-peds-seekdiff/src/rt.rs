@@ -18,8 +18,9 @@ use std::collections::VecDeque;
 use std::sync::Mutex;
 use std::sync::atomic::{AtomicU32, Ordering};
 
-/// Callee slots a rewrite may name.
-const CALLEE_SLOTS: usize = 8;
+/// Callee slots a rewrite may name. The virtual-slot stubs record under
+/// ids above the numbered callees, so they never collide with one.
+const CALLEE_SLOTS: usize = 16;
 
 const UNSET: AtomicU32 = AtomicU32::new(0);
 static CALLEES: [AtomicU32; CALLEE_SLOTS] = [UNSET; CALLEE_SLOTS];
@@ -160,10 +161,19 @@ stub!(s2_1, 2, [a]);
 stub!(s2_5, 2, [a, b, c, d, e]);
 stub!(s2_7, 2, [a, b, c, d, e, f, g]);
 stub!(s3_0, 3, []);
+stub!(s3_2, 3, [a, b]);
 stub!(s3_7, 3, [a, b, c, d, e, f, g]);
 stub!(s4_0, 4, []);
 stub!(s4_6, 4, [a, b, c, d, e, f]);
 stub!(s5_0, 5, []);
+
+// Virtual-slot targets. A rewrite reaches them through a vtable the test
+// plants, not through a numbered callee, so each records under its own id:
+// 6 is the slot at offset 0x54 (one argument), 7 the slot at offset 0x14
+// (three arguments), 8 the type-tag slot at offset 0x0C (no arguments).
+stub!(v6_1, 6, [a]);
+stub!(v7_3, 7, [a, b, c]);
+stub!(v8_0, 8, []);
 
 /// The cover-row query: records its arguments, writes the queued words
 /// through its out pointer, and answers.
@@ -194,11 +204,15 @@ pub fn stub(name: &str) -> u32 {
         "s2_5" => s2_5 as *const () as usize as u32,
         "s2_7" => s2_7 as *const () as usize as u32,
         "s3_0" => s3_0 as *const () as usize as u32,
+        "s3_2" => s3_2 as *const () as usize as u32,
         "s3_7" => s3_7 as *const () as usize as u32,
         "s4_0" => s4_0 as *const () as usize as u32,
         "s4_2" => s4_2 as *const () as usize as u32,
         "s4_6" => s4_6 as *const () as usize as u32,
         "s5_0" => s5_0 as *const () as usize as u32,
+        "v6_1" => v6_1 as *const () as usize as u32,
+        "v7_3" => v7_3 as *const () as usize as u32,
+        "v8_0" => v8_0 as *const () as usize as u32,
         other => panic!("unknown stub {other}"),
     }
 }

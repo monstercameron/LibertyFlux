@@ -29,4 +29,7 @@ pub use combining_filter::{
 pub use optimized_data::{
     BlockId, ComposerDataCallees, ComposerOptimizedData, ObjectManager, TableEntry, ValueEntry,
 };
-pub use optimized::{ComposerCallees, ComposerId, ComposerOptimized};
+pub use optimized::{
+    ComposerCallees, ComposerId, ComposerOptimized, HandlerId, InnerId, ItemStack, PoolNode,
+    NodeId, OutId, OutWord, PendingNode, TableHandler,
+};
