@@ -65,6 +65,13 @@ impl RouteTable {
         self.points[index]
     }
 
+    /// Empties the route. The original zeroes the count word and leaves the
+    /// entries in place; no verified method reads an entry past the count,
+    /// so the entries are dropped here.
+    pub fn clear(&mut self) {
+        self.points.clear();
+    }
+
     /// All points, in order.
     #[must_use]
     pub fn points(&self) -> &[RoutePoint] {

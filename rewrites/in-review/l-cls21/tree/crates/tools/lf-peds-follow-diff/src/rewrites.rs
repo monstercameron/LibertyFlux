@@ -1,4 +1,4 @@
-﻿//! The verified rewrites under test, compiled from their tracked files.
+//! The verified rewrites under test, compiled from their tracked files.
 //!
 //! Each file is included unchanged, as a module of its own (the files share
 //! top-level helper names). The include paths are relative to this crate's
@@ -14,6 +14,7 @@
     unused_imports,
     unused_mut,
     unused_variables,
+    unused_attributes,
     unused_unsafe,
     clippy::all,
     clippy::pedantic
@@ -93,5 +94,13 @@ pub mod fn_00cace90 {
     include!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/../../../../../../../rewrites/verified/functions/fn_00cace90.rs"
+    ));
+}
+
+/// Verified rewrite: route-advance poll (sub-task slots, owner gate, helper, finish).
+pub mod fn_00cb8590 {
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00cb8590.rs"
     ));
 }

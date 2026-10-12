@@ -19,6 +19,7 @@ pub mod follow_up;
 pub mod frame;
 pub mod indexed;
 pub mod list;
+pub mod parameter_block;
 pub mod records;
 pub mod registry;
 
@@ -27,4 +28,8 @@ pub use follow_up::{FollowUpHost, SharedFlag, Target, TargetStep};
 pub use frame::{SPAN, UILayoutFrame, field};
 pub use indexed::{IndexedListHost, ListAnswer};
 pub use list::ListHost;
+pub use parameter_block::ParameterBlockHost;
 pub use records::RecordHost;
+
+#[cfg(test)]
+mod host_tests;

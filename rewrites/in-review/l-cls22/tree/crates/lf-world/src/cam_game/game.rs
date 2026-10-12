@@ -1,4 +1,4 @@
-﻿//! The game camera object and its three lifted methods.
+﻿//! The game camera object and its lifted methods.
 //!
 //! Field names say what each word is used for where that is established by
 //! the verified rewrites; words whose use is not established keep their
@@ -282,10 +282,11 @@ fn ordered_add(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) + core::hint::black_box(b)
 }
 
-/// The packed counter step: `n` plus three times a quotient of `n` computed
-/// by the original's multiply-and-shift sequence, with the sign corrected
-/// the way the original does. Wrapping throughout, as the original's 32-bit
-/// registers wrap.
+/// The packed counter step. The original's multiply-and-shift sequence leaves
+/// the remainder of the count, read as a signed value, after division by
+/// three: `(n as i32) % 3` (checked on the host for every count up to
+/// 200000 and for the negative words). The sequence is kept as the original
+/// runs it, with the same wrapping at 32 bits.
 fn counter_step(n: u32) -> u32 {
     let product = 0x5555_5555_i64 * i64::from(n as i32);
     let mut quotient = (product >> 32) as i32;
@@ -422,5 +423,27 @@ impl CCamGame {
             z0 = 1.0;
         }
         world.write_global(CamGlobal::Accumulator2, z0.to_bits());
+    }
+}
+#[cfg(test)]
+mod counter_tests {
+    use super::counter_step;
+
+    /// Counts from zero up: the step is the remainder after division by three.
+    #[test]
+    fn counter_step_small_counts_are_n_mod_three() {
+        for n in 0..=200_000_u32 {
+            assert_eq!(counter_step(n), n % 3, "count {n}");
+        }
+    }
+
+    /// Negative words, read as signed: the step is the signed remainder.
+    #[test]
+    fn counter_step_negative_words_are_signed_remainders() {
+        for n in -200_000_i32..=0 {
+            assert_eq!(counter_step(n as u32), (n % 3) as u32, "word {n}");
+        }
+        assert_eq!(counter_step(0x8000_0000), 0xFFFF_FFFE);
+        assert_eq!(counter_step(0x7FFF_FFFF), 1);
     }
 }

@@ -59,3 +59,13 @@ pub mod fn_00b07760 {
         "/../../../../../../../rewrites/verified/functions/fn_00b07760.rs"
     ));
 }
+
+pub mod fn_00b06d90 {
+    #![allow(unused_imports)]
+    use super::{callee_addr, global, relocated};
+    use crate::{callee_cdecl, callee_thiscall, export};
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_00b06d90.rs"
+    ));
+}

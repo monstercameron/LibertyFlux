@@ -63,7 +63,7 @@ lf_checker_rt::export!(thiscall, rw_00B60BD0(
 
         let _ = callee_thiscall!(3, u32, source, ped_info, related_value, 0, position_address, 0);
 
-        let resolved_ped = callee_cdecl!(4, u32, ped_info);
+        let resolved_ped = callee_cdecl!(4, u32, 0);
         if ped_info != 0 && resolved_ped == ped_info {
             let camera = callee_thiscall!(5, u32, relocated(CAMERA_MANAGER));
             if camera != 0 {

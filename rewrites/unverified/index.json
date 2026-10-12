@@ -472,14 +472,6 @@
   "reason": "indirect_call"
  },
  {
-  "address": "0x005C31F0",
-  "name": "fn_005c31f0",
-  "file": "fn_005c31f0.rs",
-  "lane": "r-s774",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005CDD40",
   "name": null,
   "file": "fn_005cdd40.rs",
@@ -661,6 +653,14 @@
   "file": "fn_005e81d0.rs",
   "lane": "r-n88",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005EB050",
+  "name": "CTaskComplexCop::vf6",
+  "file": "fn_005eb050.rs",
+  "lane": "r-s784",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -936,22 +936,6 @@
   "reason": null
  },
  {
-  "address": "0x00607910",
-  "name": null,
-  "file": "fn_00607910.rs",
-  "lane": "a-U147",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006142E0",
-  "name": null,
-  "file": "fn_006142e0.rs",
-  "lane": "a-U147",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x0061B150",
   "name": "net_session_desc_init",
   "file": "fn_0061b150.rs",
@@ -1056,14 +1040,6 @@
   "reason": "The original stores the returned count byte at params+0x1e3; the earlier rewrite omitted it, causing the heap mismatch at 0x33E0. After adding the byte store, a 60-trial zero-count diagnostic passes 60/60 with all originals complete. The required 1,000-trial correct and wrong-version runs were started but stopped before completion at the 95-minute lane cap."
  },
  {
-  "address": "0x0063A5F0",
-  "name": "rage::ptxTriggerEvent::resolve_name_entry",
-  "file": "fn_0063a5f0.rs",
-  "lane": "r-s777",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0063A7E0",
   "name": "rage::ptxRenderState::create",
   "file": "fn_0063a7e0.rs",
@@ -1080,9 +1056,9 @@
   "reason": null
  },
  {
-  "address": "0x0063B550",
-  "name": "rage::ptxModelRulePropList::vf0",
-  "file": "fn_0063b550.rs",
+  "address": "0x00643210",
+  "name": "rage::ptxDomain::init_as_kind",
+  "file": "fn_00643210.rs",
   "lane": "r-s779",
   "outcome": "not_reached",
   "reason": null
@@ -1424,9 +1400,9 @@
   "reason": null
  },
  {
-  "address": "0x00880A30",
-  "name": "audio_convert_planar_floats_to_int16",
-  "file": "fn_00880a30.rs",
+  "address": "0x00880AB0",
+  "name": "audio_interleave_floats_to_int16",
+  "file": "fn_00880ab0.rs",
   "lane": "r-s775",
   "outcome": "not_reached",
   "reason": null
@@ -1872,6 +1848,14 @@
   "reason": "other"
  },
  {
+  "address": "0x00A33C50",
+  "name": "CEntity::detach_pool_link",
+  "file": "fn_00a33c50.rs",
+  "lane": "a-U151",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00A3ECB0",
   "name": "vehicle_accept_attachment_state",
   "file": "fn_00a3ecb0.rs",
@@ -2248,6 +2232,14 @@
   "reason": null
  },
  {
+  "address": "0x00ADD200",
+  "name": "CRenderPhaseDrawScene::render",
+  "file": "fn_00add200.rs",
+  "lane": "a-H44",
+  "outcome": "deferred",
+  "reason": "partly_proven"
+ },
+ {
   "address": "0x00ADDCF0",
   "name": null,
   "file": "fn_00addcf0.rs",
@@ -2404,14 +2396,6 @@
   "name": null,
   "file": "fn_00aff630.rs",
   "lane": "a-U56",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B06210",
-  "name": "timed_falloff",
-  "file": "fn_00b06210.rs",
-  "lane": "a-U146",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2624,14 +2608,6 @@
   "reason": null
  },
  {
-  "address": "0x00B1F960",
-  "name": "cell_grid_a_clear",
-  "file": "fn_00b1f960.rs",
-  "lane": "a-U151",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00B25FB0",
   "name": "entity_replace_physics_reference",
   "file": "fn_00b25fb0.rs",
@@ -2688,30 +2664,6 @@
   "reason": null
  },
  {
-  "address": "0x00B4B390",
-  "name": "CEventGivePedTask::vf17",
-  "file": "fn_00b4b390.rs",
-  "lane": "r-s786",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B4B410",
-  "name": "CEventMustLeaveBoat::vf17",
-  "file": "fn_00b4b410.rs",
-  "lane": "r-s786",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B4B460",
-  "name": "CEventScriptCommand::vf17",
-  "file": "fn_00b4b460.rs",
-  "lane": "r-s786",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B4B6C0",
   "name": "CEventBuildingCollision::vf20",
   "file": "fn_00b4b6c0.rs",
@@ -2720,9 +2672,25 @@
   "reason": null
  },
  {
+  "address": "0x00B4B6E0",
+  "name": "CEventScriptCommand::vf20",
+  "file": "fn_00b4b6e0.rs",
+  "lane": "r-s786",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B4B8B0",
   "name": "CEventLeaderEnteredCarAsDriver::vf20",
   "file": "fn_00b4b8b0.rs",
+  "lane": "r-s786",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4B9F0",
+  "name": "CEventShocking::vf20",
+  "file": "fn_00b4b9f0.rs",
   "lane": "r-s786",
   "outcome": "not_reached",
   "reason": null
@@ -3339,6 +3307,30 @@
   "address": "0x00C22630",
   "name": null,
   "file": "fn_00c22630.rs",
+  "lane": "r-s788",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C252D0",
+  "name": null,
+  "file": "fn_00c252d0.rs",
+  "lane": "r-s788",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C25320",
+  "name": null,
+  "file": "fn_00c25320.rs",
+  "lane": "r-s788",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C25370",
+  "name": null,
+  "file": "fn_00c25370.rs",
   "lane": "r-s788",
   "outcome": "not yet run",
   "reason": null
@@ -4104,14 +4096,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00CDBDD0",
-  "name": "CTaskSimpleNMScriptControl::vf21",
-  "file": "fn_00cdbdd0.rs",
-  "lane": "r-s776",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00CF1D70",
   "name": "stat_passes_mode_check",
   "file": "fn_00cf1d70.rs",
@@ -4552,14 +4536,6 @@
   "reason": null
  },
  {
-  "address": "0x00D698B0",
-  "name": "",
-  "file": "fn_00d698b0.rs",
-  "lane": "r-s787",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00D699E0",
   "name": "",
   "file": "fn_00d699e0.rs",
@@ -4869,6 +4845,22 @@
   "file": "fn_00df68b0.rs",
   "lane": "r-s780",
   "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DF79B0",
+  "name": "UIGalleryFileViewer::vf107",
+  "file": "fn_00df79b0.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DFB980",
+  "name": "sse_float_unary_tables_a",
+  "file": "fn_00dfb980.rs",
+  "lane": "a-U148",
+  "outcome": "not yet run",
   "reason": null
  },
  {

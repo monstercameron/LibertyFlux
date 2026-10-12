@@ -7,11 +7,10 @@
 //! result.
 //!
 //! The methods here call out, so they take a [`FollowUpHost`]: the caller
-//! supplies the resolver, the frame's own steps and the target's steps. The
-//! lift fixes the order of those calls and what each one receives; the host
-//! decides what each call does. The sibling methods that do more than the
-//! sequence (reading a pending flag, notifying a shared object) are not lifted
-//! yet; see [`super::registry`].
+//! supplies the resolver, the frame's own steps, the target's steps and the
+//! shared flags and object. The lift fixes the order of those calls and what
+//! each one receives; the host decides what each call does. Each sibling
+//! method is listed, with what its proof leaves out, in [`super::registry`].
 
 use super::frame::{UILayoutFrame, field};
 

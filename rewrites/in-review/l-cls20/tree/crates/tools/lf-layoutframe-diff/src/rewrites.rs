@@ -266,3 +266,9 @@ pub mod fn_00DB1490 {
     #![allow(unused_imports)]
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1490.rs"));
 }
+/// Verified rewrite of the parameter-block refresh: allocates on first use, or refreshes when the stamp matches.
+pub mod fn_00DB1A00 {
+    #![allow(unused_imports)]
+    use lf_checker_rt::{callee_cdecl, export};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00db1a00.rs"));
+}

@@ -17,6 +17,6 @@ pub mod registry;
 pub mod route;
 pub mod task;
 
-pub use host::{PedView, RouteTaskHost};
+pub use host::{PedView, RoutePollHost, RouteTaskHost};
 pub use route::{MAX_POINTS, RoutePoint, RouteTable};
 pub use task::FollowPointRouteTask;

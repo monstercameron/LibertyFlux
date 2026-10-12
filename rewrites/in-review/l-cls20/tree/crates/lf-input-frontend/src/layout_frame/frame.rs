@@ -8,10 +8,10 @@
 //! restates each of those methods on [`UILayoutFrame`], named for what it
 //! does. Offsets are in [`field`].
 //!
-//! Only methods that call no other code are lifted here. Methods that call
-//! out (token resolution, follow-up steps, shared notifiers, list release)
-//! need a trait for their callees and are not in this module yet; see the
-//! registry in [`super::registry`].
+//! The methods that call no other code are on [`UILayoutFrame`] itself. The
+//! methods that call out are in the sibling modules, each with a host trait
+//! for its callees and collaborators; see [`super::registry`] for the full
+//! table.
 //!
 //! Every method here is a plain store, a copy, or a branch on a field the
 //! frame already holds. Nothing reads the operating system, and nothing in

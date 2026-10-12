@@ -79,3 +79,49 @@ pub struct PedView {
     pub state_byte: u8,
 }
 
+
+/// The calls and memory reads of the route-advance poll that reach outside
+/// the task: the owner object, the current sub-task, the two sub-task slots
+/// and the slot's helpers. Each call is one method; each memory read of
+/// another object is one method that returns the word read.
+pub trait RoutePollHost {
+    /// The type query of the current sub-task.
+    fn subtask_query(&mut self, subtask: u32) -> u32;
+
+    /// The sub-task's first slot object (read, not called).
+    fn subtask_slot_a(&mut self, subtask: u32) -> u32;
+
+    /// The sub-task's second slot object (read, not called).
+    fn subtask_slot_b(&mut self, subtask: u32) -> u32;
+
+    /// The owner's gate query.
+    fn owner_gate(&mut self, owner: u32) -> u32;
+
+    /// The owner's next-slot query: the object whose float and int answers
+    /// feed the helper.
+    fn owner_next(&mut self, owner: u32) -> u32;
+
+    /// The owner's poll, given the poll's three words.
+    fn owner_poll(&mut self, owner: u32, a0: u32, a1: u32, a2: u32) -> u32;
+
+    /// The owner's flag word (read, not called).
+    fn owner_flags(&mut self, owner: u32) -> u32;
+
+    /// Writes the owner's flag word (not a call).
+    fn set_owner_flags(&mut self, owner: u32, flags: u32);
+
+    /// The owner's finish call. The third argument is always zero on this path.
+    fn owner_finish(&mut self, owner: u32, a0: u32, zero: u32, a2: u32) -> u32;
+
+    /// The slot's vector query: the point it names.
+    fn slot_point(&mut self, slot: u32) -> RoutePoint;
+
+    /// The float answer of the next-slot object.
+    fn slotb_float(&mut self, slotb: u32) -> f32;
+
+    /// The int answer of the next-slot object.
+    fn slotb_int(&mut self, slotb: u32) -> u32;
+
+    /// The helper that decides whether the segment is taken: returns its word.
+    fn helper_ok(&mut self, slot: u32, int_answer: u32, float_bits: u32) -> u32;
+}

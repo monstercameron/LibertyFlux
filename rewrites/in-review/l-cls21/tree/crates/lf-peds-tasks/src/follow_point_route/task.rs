@@ -2,10 +2,10 @@
 //! a route of points, one leg at a time.
 //!
 //! The fields are the state the verified methods read or write. The
-//! constructor and the clone and destructor paths are not lifted yet; the
-//! task is built from its state record, which is how the proofs set it up.
+//! constructors, the clone, the destructor and the route-advance poll are
+//! all here.
 
-use super::host::{PedView, RouteTaskHost};
+use super::host::{PedView, RoutePollHost, RouteTaskHost};
 use super::route::{RoutePoint, RouteTable};
 
 /// Sub-task type id of the route itself: the sub-task that keeps running.
@@ -27,6 +27,17 @@ pub const FLAG_ROUTE_SEARCH: u32 = 0x2;
 pub const FLAG_REPEAT: u32 = 0x4;
 /// Ped state bit 2: when set, the ped may not follow a route.
 pub const PED_BLOCKED: u8 = 0x4;
+
+/// Type-query answer selecting the sub-task's first slot.
+pub const SUB_QUERY_A: u32 = 0x1;
+/// Type-query answer selecting the sub-task's second slot.
+pub const SUB_QUERY_B: u32 = 0x38;
+/// Owner flag bit 0: the owner is finished and the poll returns at once.
+pub const OWNER_FLAG_DONE: u32 = 0x1;
+/// Owner flag bit 1: set when the poll advanced the route.
+pub const OWNER_FLAG_ADVANCED: u32 = 0x2;
+/// Squared length under which a slot's point counts as reached.
+pub const REACHED_LEN_SQ: f32 = 0.015625;
 
 /// Stands in for "no segment chosen" in the waypoint search.
 const NO_SEGMENT: i32 = -1;
@@ -318,6 +329,59 @@ impl FollowPointRouteTask {
             host.release_route(self.route_target);
         }
         host.base_destroy(self.handle)
+    }
+
+    /// The route-advance poll. `a0` and `a1` are the words the owner calls
+    /// receive; `a2` is the current sub-task, or zero.
+    ///
+    /// With a sub-task and a step (the waypoint index plus one) below the
+    /// route count, the sub-task's type picks one of its slots. When the
+    /// owner gate is open, the owner's next-slot object is present and the
+    /// slot's point lies within the reach length, the helper decides, and
+    /// on success the owner's finish call runs. Then a zero `a1` clears the
+    /// route count. A finished owner answers 1; otherwise the owner's poll
+    /// decides, and on success the owner's advanced flag is set and the
+    /// answer is 1, else 0. The owner is the task's `subtask` word.
+    pub fn poll<H: RoutePollHost>(&mut self, a0: u32, a1: u32, a2: u32, host: &mut H) -> u32 {
+        let owner = self.subtask;
+        if a2 != 0 {
+            let step = self.waypoint_index.wrapping_add(1);
+            if (step as i32) < (self.waypoints.len() as i32) {
+                let query = host.subtask_query(a2);
+                let slot = match query {
+                    SUB_QUERY_A => host.subtask_slot_a(a2),
+                    SUB_QUERY_B => host.subtask_slot_b(a2),
+                    _ => 0,
+                };
+                if (host.owner_gate(owner) & 0xFF) != 0 {
+                    let slotb = host.owner_next(owner);
+                    if slotb != 0 && slot != 0 {
+                        let p = host.slot_point(slot);
+                        let lensq = add(add(mul(p.x, p.x), mul(p.y, p.y)), mul(p.z, p.z));
+                        if REACHED_LEN_SQ > lensq {
+                            let fv = host.slotb_float(slotb);
+                            let iv = host.slotb_int(slotb);
+                            let ok = host.helper_ok(slot, iv, fv.to_bits()) & 0xFF;
+                            if ok != 0 {
+                                host.owner_finish(owner, a0, 0, a2);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if a1 == 0 {
+            self.waypoints.clear();
+        }
+        if (host.owner_flags(owner) & OWNER_FLAG_DONE) == 0 {
+            if (host.owner_poll(owner, a0, a1, a2) & 0xFF) != 0 {
+                let flags = host.owner_flags(owner);
+                host.set_owner_flags(owner, flags | OWNER_FLAG_ADVANCED);
+                return 1;
+            }
+            return 0;
+        }
+        1
     }
 
     /// The clone: allocates a new task through the host and constructs it

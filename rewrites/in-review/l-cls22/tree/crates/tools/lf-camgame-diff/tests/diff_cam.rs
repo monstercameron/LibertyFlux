@@ -11,6 +11,7 @@
 #[cfg(target_arch = "x86")]
 mod x86 {
     use lf_camgame_diff::rewrites::fn_00b05d30::rw_00b05d30;
+    use lf_camgame_diff::rewrites::fn_00b06d90::rw_00b06d90;
     use lf_camgame_diff::rewrites::fn_00b07760::rw_00b07760;
     use lf_camgame_diff::rewrites::fn_00b09cf0::rw_00b09cf0;
     use lf_camgame_diff::rewrites::fn_00b09da0::rw_00b09da0;
@@ -1072,6 +1073,48 @@ mod x86 {
         fn clear_done(&mut self) {
             self.inner.clear_done();
         }
+        fn update_1(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_1(cam, this);
+        }
+        fn update_2(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_2(cam, this);
+        }
+        fn update_3(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_3(cam, this);
+        }
+        fn update_4(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_4(cam, this);
+        }
+        fn watch_init(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.watch_init(cam, this);
+        }
+        fn singleton(&mut self) -> Option<Handle32<SingletonTag>> {
+            self.inner.singleton()
+        }
+        fn singleton_field(&mut self, singleton: Handle32<SingletonTag>, field: SingletonField) -> u32 {
+            self.inner.singleton_field(singleton, field)
+        }
+        fn blend_gate_one(&mut self) -> u32 {
+            self.inner.blend_gate_one()
+        }
+        fn blend_gate_two(&mut self) -> u32 {
+            self.inner.blend_gate_two()
+        }
+        fn read_global(&mut self, global: CamGlobal) -> u32 {
+            self.inner.read_global(global)
+        }
+        fn write_global(&mut self, global: CamGlobal, bits: u32) {
+            self.inner.write_global(global, bits);
+        }
+        fn update_9(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_9(cam, this);
+        }
+        fn update_10(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_10(cam, this);
+        }
+        fn update_11(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_11(cam, this);
+        }
     }
 
     /// Runs the camera event step cases. Returns the trials that disagree
@@ -1204,7 +1247,386 @@ mod x86 {
             GateMutant::TailKeepsBusy,
             GateMutant::InvertSelector,
         ] {
-            assert!(gate_run(Some(kind)) > 0, "{kind:?} was not caught");
+            let n = gate_run(Some(kind));
+            eprintln!("wrong version {kind:?}: {n} of {TRIALS} trials disagree");
+            assert!(n > 0, "{kind:?} was not caught");
         }
     }
-__UPDATE_TESTS__
+    // ---------------------------------------------------------------------
+    // Camera update step (slot 5).
+
+    /// Float bit patterns the blend step meets: zeros of both signs, one,
+    /// the infinities, quiet and signalling NaNs with payloads, a subnormal,
+    /// and values near the cap and the ceiling.
+    const FLOAT_SPECIAL: [u32; 16] = [
+        0x0000_0000,
+        0x8000_0000,
+        0x3F80_0000,
+        0xBF80_0000,
+        0x7F80_0000,
+        0xFF80_0000,
+        0x7FC0_0000,
+        0x7F80_0001,
+        0xFFC0_1234,
+        0x0000_0001,
+        0x3F00_0000,
+        0x4000_0000,
+        0x3DCC_CCCD,
+        0x3F7F_BE77,
+        0x4B00_0000,
+        0xC000_0000,
+    ];
+
+    /// A float for a blend or global word: a special pattern, a small
+    /// ordinary value, or any bit pattern.
+    fn float_bits(rng: &mut Rng) -> u32 {
+        match rng.below(3) {
+            0 => FLOAT_SPECIAL[rng.below(FLOAT_SPECIAL.len() as u32) as usize],
+            1 => (rng.below(4000) as f32 / 1000.0 - 2.0).to_bits(),
+            _ => rng.u32(),
+        }
+    }
+
+    /// The singleton object: its active byte and its mode word are the only
+    /// fields the blend step reads.
+    fn singleton_image(rng: &mut Rng) -> Vec<u8> {
+        let mut s: Vec<u8> = (0..0xA80).map(|_| rng.u8()).collect();
+        s[0x210] = if rng.below(3) == 0 { 0 } else { rng.u8() };
+        let mode = match rng.below(4) {
+            0 => 1,
+            1 => 0,
+            2 => 2,
+            _ => rng.u32(),
+        };
+        s[0xA70..0xA74].copy_from_slice(&mode.to_le_bytes());
+        s
+    }
+
+    /// Deliberately wrong versions of the blend step, built by wrapping the
+    /// world: each changes one answer the lifted step relies on.
+    #[derive(Debug, Clone, Copy)]
+    enum UpdateMutant {
+        /// The fallback byte is read as set.
+        FallbackIgnored,
+        /// The second inhibit byte is read as clear.
+        InhibitBIgnored,
+        /// The second channel's mode test is one off (a neighbouring value).
+        ModeNeighbour,
+        /// The counter is never written back.
+        CounterDropped,
+    }
+
+    struct UpdateMutated {
+        inner: Fake,
+        kind: UpdateMutant,
+    }
+
+    impl CamGameWorld for UpdateMutated {
+        fn destroy_body(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.destroy_body(cam, this);
+        }
+        fn pool_manager(&mut self) -> Option<Handle32<PoolTag>> {
+            self.inner.pool_manager()
+        }
+        fn pool_release(&mut self, manager: Option<Handle32<PoolTag>>, this: Handle32<CamTag>) {
+            self.inner.pool_release(manager, this);
+        }
+        fn teardown(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.teardown(cam, this);
+        }
+        fn create_worker(
+            &mut self,
+            owner: Option<Handle32<CamOwnerTag>>,
+            mode: u32,
+            extra: u32,
+            this: Handle32<CamTag>,
+        ) -> Option<Handle32<WorkerTag>> {
+            self.inner.create_worker(owner, mode, extra, this)
+        }
+        fn chain_set_flags(&mut self, worker: Option<Handle32<WorkerTag>>) {
+            self.inner.chain_set_flags(worker);
+        }
+        fn release_worker(&mut self, worker: Option<Handle32<WorkerTag>>) {
+            self.inner.release_worker(worker);
+        }
+        fn reset_state_block(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.reset_state_block(cam, this);
+        }
+        fn shared_default_word(&mut self) -> u32 {
+            self.inner.shared_default_word()
+        }
+        fn inhibit_flag(&mut self) -> u8 {
+            self.inner.inhibit_flag()
+        }
+        fn gate_status(&mut self, block: GateBlock) -> Option<Handle32<GateTag>> {
+            self.inner.gate_status(block)
+        }
+        fn gate_byte(&mut self, gate: Handle32<GateTag>, offset: u32) -> u8 {
+            self.inner.gate_byte(gate, offset)
+        }
+        fn find_target(
+            &mut self,
+            cam: &mut CCamGame,
+            this: Handle32<CamTag>,
+            block: GateBlock,
+        ) -> Option<Handle32<TargetTag>> {
+            self.inner.find_target(cam, this, block)
+        }
+        fn gate_word(&mut self, block: GateBlock) -> u16 {
+            self.inner.gate_word(block)
+        }
+        fn notify_sink(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>, word: u16, block: GateBlock) {
+            self.inner.notify_sink(cam, this, word, block);
+        }
+        fn sync_target(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.sync_target(cam, this);
+        }
+        fn singleton_present(&mut self) -> bool {
+            self.inner.singleton_present()
+        }
+        fn middle_update(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>, step: u32) {
+            self.inner.middle_update(cam, this, step);
+        }
+        fn tail(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) -> Option<Handle32<TailTag>> {
+            self.inner.tail(cam, this)
+        }
+        fn tail_state(&mut self, tail: Handle32<TailTag>) -> u8 {
+            self.inner.tail_state(tail)
+        }
+        fn tail_flags(&mut self, tail: Handle32<TailTag>) -> u8 {
+            self.inner.tail_flags(tail)
+        }
+        fn set_tail_flags(&mut self, tail: Handle32<TailTag>, flags: u8) {
+            self.inner.set_tail_flags(tail, flags);
+        }
+        fn set_tail_state(&mut self, tail: Handle32<TailTag>, state: u8) {
+            self.inner.set_tail_state(tail, state);
+        }
+        fn set_matched(&mut self, matched: u8) {
+            self.inner.set_matched(matched);
+        }
+        fn clear_done(&mut self) {
+            self.inner.clear_done();
+        }
+        fn update_1(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_1(cam, this);
+        }
+        fn update_2(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_2(cam, this);
+        }
+        fn update_3(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_3(cam, this);
+        }
+        fn update_4(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_4(cam, this);
+        }
+        fn watch_init(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.watch_init(cam, this);
+        }
+        fn singleton(&mut self) -> Option<Handle32<SingletonTag>> {
+            self.inner.singleton()
+        }
+        fn singleton_field(&mut self, singleton: Handle32<SingletonTag>, field: SingletonField) -> u32 {
+            match (self.kind, field) {
+                (UpdateMutant::ModeNeighbour, SingletonField::ModeWord) => {
+                    self.inner.singleton_field(singleton, field).wrapping_add(1)
+                }
+                _ => self.inner.singleton_field(singleton, field),
+            }
+        }
+        fn blend_gate_one(&mut self) -> u32 {
+            self.inner.blend_gate_one()
+        }
+        fn blend_gate_two(&mut self) -> u32 {
+            self.inner.blend_gate_two()
+        }
+        fn read_global(&mut self, global: CamGlobal) -> u32 {
+            match (self.kind, global) {
+                (UpdateMutant::FallbackIgnored, CamGlobal::Fallback) => 1,
+                (UpdateMutant::InhibitBIgnored, CamGlobal::InhibitB) => 0,
+                _ => self.inner.read_global(global),
+            }
+        }
+        fn write_global(&mut self, global: CamGlobal, bits: u32) {
+            match (self.kind, global) {
+                (UpdateMutant::CounterDropped, CamGlobal::Count) => {}
+                _ => self.inner.write_global(global, bits),
+            }
+        }
+        fn update_9(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_9(cam, this);
+        }
+        fn update_10(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_10(cam, this);
+        }
+        fn update_11(&mut self, cam: &mut CCamGame, this: Handle32<CamTag>) {
+            self.inner.update_11(cam, this);
+        }
+    }
+
+    /// Renames the rewrite's numbered calls of the blend step to the lifted
+    /// names, adding the step-free words the rewrite's stubs record.
+    fn normalize_update(calls: Vec<Call>) -> Vec<Call> {
+        calls
+            .into_iter()
+            .map(|(name, args)| {
+                let lifted = match name.as_str() {
+                    "#1" => "update_1",
+                    "#2" => "update_2",
+                    "#3" => "update_3",
+                    "#4" => "update_4",
+                    "#5" => "watch_init",
+                    "#6" => "singleton",
+                    "#7" => "blend_gate_one",
+                    "#8" => "blend_gate_two",
+                    "#9" => "update_9",
+                    "#10" => "update_10",
+                    "#11" => "update_11",
+                    _ => return (name, args),
+                };
+                (lifted.to_string(), args)
+            })
+            .collect()
+    }
+
+    /// Runs the blend step cases. Returns the trials that disagree (zero for
+    /// the lifted step).
+    fn update_run(mutant: Option<UpdateMutant>) -> u32 {
+        let _guard = rt::script_lock();
+        let mut rng = Rng(0x0C_AA_0005);
+        let mut mismatches = 0;
+        for trial in 0..TRIALS {
+            // The global words for this trial, in the order of UPDATE_GLOBALS.
+            let mut values: Vec<(CamGlobal, u32, u8, u32)> = Vec::new();
+            for &(global, va, width) in &UPDATE_GLOBALS {
+                let raw = match global {
+                    CamGlobal::Count => match rng.below(4) {
+                        0 => [0, 1, 0x7FFF_FFFF, 0x8000_0000, 0xFFFF_FFFE, 0xFFFF_FFFF][rng.below(6) as usize],
+                        1 => 0x5555_5554 + rng.below(3),
+                        _ => rng.u32(),
+                    },
+                    CamGlobal::Accumulator1 | CamGlobal::Accumulator2 if rng.below(3) == 0 => {
+                        if rng.below(2) == 0 { 0 } else { 0x8000_0000 }
+                    }
+                    CamGlobal::InhibitA | CamGlobal::InhibitB => {
+                        if rng.below(4) == 0 { u32::from(rng.u8()) } else { 0 }
+                    }
+                    CamGlobal::Fallback if rng.below(2) == 0 => 0,
+                    CamGlobal::Done1 | CamGlobal::Done2 | CamGlobal::Fallback => u32::from(rng.u8()),
+                    _ if width == 1 => u32::from(rng.u8()),
+                    _ => float_bits(&mut rng),
+                };
+                values.push((global, va, width, raw & global_mask(global)));
+            }
+            let gate_one = if rng.below(4) == 0 { 0x100 } else { rng.u32() };
+            let gate_two = if rng.below(4) == 0 { 0x100 } else { rng.u32() };
+            let singleton = if rng.below(8) == 0 { None } else { Some(singleton_image(&mut rng)) };
+            let blend = float_bits(&mut rng);
+            let flags = rng.u8();
+            let effects = random_effects(&mut rng);
+
+            for &(_, va, width, raw) in &values {
+                rt::set_global(va, width, raw);
+            }
+            let sing_addr = singleton.as_ref().map(|s| s.as_ptr() as usize as u32);
+            let mut before = random_object(&mut rng, trial);
+            write_word(&mut before, 0x74, 4, blend);
+            before[0x1C4] = flags;
+            let mut rw = before.clone();
+            let addr = rw.as_mut_ptr() as usize as u32;
+
+            rt::set_case(
+                &[
+                    (1, StubKind::Thiscall1Effect, vec![]),
+                    (2, StubKind::Thiscall1Effect, vec![]),
+                    (3, StubKind::Thiscall1Effect, vec![]),
+                    (4, StubKind::Thiscall1Effect, vec![]),
+                    (5, StubKind::Thiscall1Effect, vec![]),
+                    (6, StubKind::Cdecl0, vec![sing_addr.unwrap_or(0)]),
+                    (7, StubKind::Cdecl0, vec![gate_one]),
+                    (8, StubKind::Cdecl0, vec![gate_two]),
+                    (9, StubKind::Thiscall1Effect, vec![]),
+                    (10, StubKind::Thiscall1Effect, vec![]),
+                    (11, StubKind::Thiscall1Effect, vec![]),
+                ],
+                &effects,
+                0,
+                0,
+            );
+            let ret = rw_00b06d90(addr);
+            let rw_calls = normalize_update(rt::take_calls());
+            assert_eq!(ret & 0xFF, 1, "the original always answers 1");
+            let rw_globals: Vec<u32> = values
+                .iter()
+                .map(|&(_, va, width, _)| rt::global_bits(va, width))
+                .collect();
+
+            let (sing_active, sing_mode) = match &singleton {
+                Some(s) => (s[0x210], u32::from_le_bytes(s[0xA70..0xA74].try_into().unwrap())),
+                None => (0, 0),
+            };
+            let mut fake = Fake {
+                effects: effects.clone(),
+                ugl: values.iter().map(|&(g, _, _, raw)| (g, raw)).collect(),
+                sing: sing_addr,
+                sing_active,
+                sing_mode,
+                gate_one,
+                gate_two,
+                ..Fake::default()
+            };
+            let mut cam = decode(&before);
+            let this = Handle32::new(addr).expect("non-zero identity");
+            match mutant {
+                None => cam.update_step(&mut fake, this),
+                Some(kind) => {
+                    let mut m = UpdateMutated { inner: fake, kind };
+                    cam.update_step(&mut m, this);
+                    fake = m.inner;
+                }
+            }
+            let mut lift = before.clone();
+            encode(&cam, &mut lift);
+
+            let lift_globals: Vec<u32> = values
+                .iter()
+                .map(|&(g, _, width, _)| fake.ugl.get(&g).copied().unwrap_or(0) & width_mask(width))
+                .collect();
+            let rw_masked: Vec<u32> = values
+                .iter()
+                .zip(&rw_globals)
+                .map(|(&(_, _, width, _), &v)| v & width_mask(width))
+                .collect();
+            let ok = lift == rw && rw_calls == fake.log && lift_globals == rw_masked;
+            if !ok {
+                mismatches += 1;
+            }
+        }
+        eprintln!("blend step trials disagreeing: {mismatches} of {TRIALS}");
+        mismatches
+    }
+
+    /// Mask of a global of `width` bytes.
+    fn width_mask(width: u8) -> u32 {
+        if width == 1 { 0xFF } else { 0xFFFF_FFFF }
+    }
+
+    #[test]
+    fn vf5_lifted_matches_rewrite() {
+        assert_eq!(update_run(None), 0, "lifted blend step disagrees");
+    }
+
+    #[test]
+    fn vf5_wrong_versions_are_caught() {
+        for kind in [
+            UpdateMutant::FallbackIgnored,
+            UpdateMutant::InhibitBIgnored,
+            UpdateMutant::ModeNeighbour,
+            UpdateMutant::CounterDropped,
+        ] {
+            let n = update_run(Some(kind));
+            eprintln!("wrong version {kind:?}: {n} of {TRIALS} trials disagree");
+            assert!(n > 0, "{kind:?} was not caught");
+        }
+    }
+}

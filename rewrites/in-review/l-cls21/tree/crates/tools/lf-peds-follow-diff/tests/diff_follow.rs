@@ -17,10 +17,10 @@ use core::cell::{Cell, RefCell};
 use std::sync::{Mutex, MutexGuard};
 
 use lf_peds_follow_diff::rewrites::{
-    fn_00cace90, fn_00caf2a0, fn_00cabc00, fn_00cabca0, fn_00cb2970, fn_00cb3b50, fn_00cb73a0, fn_00cb73d0,
+    fn_00cb8590, fn_00cace90, fn_00caf2a0, fn_00cabc00, fn_00cabca0, fn_00cb2970, fn_00cb3b50, fn_00cb73a0, fn_00cb73d0,
     fn_00cbc9f0,
 };
-use lf_peds_tasks::follow_point_route::host::{PedView, RouteTaskHost};
+use lf_peds_tasks::follow_point_route::host::{PedView, RoutePollHost, RouteTaskHost};
 use lf_peds_tasks::follow_point_route::route::{RoutePoint, RouteTable};
 use lf_peds_tasks::follow_point_route::task::{
     FLAG_KEEP_MASK, FLAG_REPEAT, FLAG_ROUTE_SEARCH, FollowPointRouteTask, ORDER_LEG_DONE,
@@ -50,6 +50,8 @@ const BLOCK_POS: usize = 0x30;
 const CALLEE_1: usize = 1;
 const CALLEE_2: usize = 2;
 const CALLEE_3: usize = 3;
+const CALLEE_7: usize = 7;
+const CALLEE_8: usize = 8;
 
 /// Splitmix64: a small deterministic generator.
 struct Rng(u64);
@@ -195,6 +197,15 @@ enum Ev {
     Alloc { mgr: u32 },
     Release { ctx: u32, table: u32 },
     BaseDtor { task: u32 },
+    Query { sub: u32 },
+    Gate { owner: u32 },
+    OwnerNext { owner: u32 },
+    Poll { owner: u32, a0: u32, a1: u32, a2: u32 },
+    Point { slot: u32 },
+    Float { slotb: u32 },
+    Int { slotb: u32 },
+    Helper { slot: u32, int_answer: u32, float_bits: u32 },
+    Finish { owner: u32, a0: u32, zero: u32, a2: u32 },
 }
 
 thread_local! {
@@ -1194,7 +1205,7 @@ const BASE_VTABLE_VA: u32 = 0x00ED_8618;
 fn ctor_rewrite(c: &CtorCase, selector_form: bool) -> (Outcome, u32) {
     let tag = c.route_tag.as_ref().map(|p| route_words(p));
     let tag_word = tag.as_ref().map_or(0, |v| addr(v));
-    let mut obj = obj_words();
+    let obj = obj_words();
     let before = obj.clone();
     if selector_form {
         install(&[
@@ -1861,5 +1872,540 @@ fn destructor_wrong_lift_is_caught() {
         }
         eprintln!("destructor wrong lift {which}: caught in {caught} of {WRONG_TRIALS} trials");
         assert!(caught > 0, "wrong destructor lift {which} was not caught");
+    }
+}
+
+
+// ---- Route-advance poll (verified rewrite fn_00cb8590). ----
+
+/// The poll's script: the answers its callees and reads give, set per case
+/// and read by both the rewrite's stubs and the lifted host.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+struct PollScript {
+    query: u32,
+    slot_a: u32,
+    slot_b: u32,
+    gate: u32,
+    slotb: u32,
+    poll: u32,
+    point: [u32; 3],
+    float_bits: u32,
+    int_ans: u32,
+    helper_ans: u32,
+    owner_flags: u32,
+}
+
+thread_local! {
+    static POLL: RefCell<PollScript> = RefCell::new(PollScript::default());
+    static POINT_BUF: RefCell<Vec<u32>> = const { RefCell::new(Vec::new()) };
+}
+
+fn script() -> PollScript {
+    POLL.with(|p| *p.borrow())
+}
+
+extern "thiscall" fn query_stub(sub: u32) -> u32 {
+    record(Ev::Query { sub });
+    script().query
+}
+
+extern "thiscall" fn gate_stub(owner: u32) -> u32 {
+    record(Ev::Gate { owner });
+    script().gate
+}
+
+extern "thiscall" fn owner_next_stub(owner: u32) -> u32 {
+    record(Ev::OwnerNext { owner });
+    script().slotb
+}
+
+extern "thiscall" fn poll_stub(owner: u32, a0: u32, a1: u32, a2: u32) -> u32 {
+    record(Ev::Poll { owner, a0, a1, a2 });
+    script().poll
+}
+
+/// The slot's vector query: answers the scripted point in a buffer of its own.
+extern "thiscall" fn point_stub(slot: u32, _scratch: u32) -> u32 {
+    record(Ev::Point { slot });
+    let p = script().point;
+    POINT_BUF.with(|b| {
+        let mut v = b.borrow_mut();
+        *v = vec![p[0], p[1], p[2], 0];
+        v.as_ptr() as usize as u32
+    })
+}
+
+extern "thiscall" fn float_stub(slotb: u32) -> f32 {
+    record(Ev::Float { slotb });
+    f32::from_bits(script().float_bits)
+}
+
+extern "thiscall" fn int_stub(slotb: u32, _scratch: u32) -> u32 {
+    record(Ev::Int { slotb });
+    script().int_ans
+}
+
+extern "cdecl" fn helper_stub(slot: u32, int_answer: u32, float_bits: u32) -> u32 {
+    record(Ev::Helper { slot, int_answer, float_bits });
+    script().helper_ans
+}
+
+extern "thiscall" fn finish_stub(owner: u32, a0: u32, zero: u32, a2: u32) -> u32 {
+    record(Ev::Finish { owner, a0, zero, a2 });
+    0
+}
+
+/// The poll's lifted host: the same calls, logged the same way, answering
+/// from the script. Owner flags are read and written in the script.
+struct PollHost {
+    log: Vec<Ev>,
+    s: PollScript,
+}
+
+impl RoutePollHost for PollHost {
+    fn subtask_query(&mut self, subtask: u32) -> u32 {
+        self.log.push(Ev::Query { sub: subtask });
+        self.s.query
+    }
+    fn subtask_slot_a(&mut self, _subtask: u32) -> u32 {
+        self.s.slot_a
+    }
+    fn subtask_slot_b(&mut self, _subtask: u32) -> u32 {
+        self.s.slot_b
+    }
+    fn owner_gate(&mut self, owner: u32) -> u32 {
+        self.log.push(Ev::Gate { owner });
+        self.s.gate
+    }
+    fn owner_next(&mut self, owner: u32) -> u32 {
+        self.log.push(Ev::OwnerNext { owner });
+        self.s.slotb
+    }
+    fn owner_poll(&mut self, owner: u32, a0: u32, a1: u32, a2: u32) -> u32 {
+        self.log.push(Ev::Poll { owner, a0, a1, a2 });
+        self.s.poll
+    }
+    fn owner_flags(&mut self, _owner: u32) -> u32 {
+        self.s.owner_flags
+    }
+    fn set_owner_flags(&mut self, _owner: u32, flags: u32) {
+        self.s.owner_flags = flags;
+    }
+    fn owner_finish(&mut self, owner: u32, a0: u32, zero: u32, a2: u32) -> u32 {
+        self.log.push(Ev::Finish { owner, a0, zero, a2 });
+        0
+    }
+    fn slot_point(&mut self, slot: u32) -> RoutePoint {
+        self.log.push(Ev::Point { slot });
+        let p = self.s.point;
+        RoutePoint {
+            x: f32::from_bits(p[0]),
+            y: f32::from_bits(p[1]),
+            z: f32::from_bits(p[2]),
+        }
+    }
+    fn slotb_float(&mut self, slotb: u32) -> f32 {
+        self.log.push(Ev::Float { slotb });
+        f32::from_bits(self.s.float_bits)
+    }
+    fn slotb_int(&mut self, slotb: u32) -> u32 {
+        self.log.push(Ev::Int { slotb });
+        self.s.int_ans
+    }
+    fn helper_ok(&mut self, slot: u32, int_answer: u32, float_bits: u32) -> u32 {
+        self.log.push(Ev::Helper { slot, int_answer, float_bits });
+        self.s.helper_ans
+    }
+}
+
+/// A poll host whose slot selection is swapped: a wrong lift.
+struct PollSwapSlots(PollHost);
+
+impl RoutePollHost for PollSwapSlots {
+    fn subtask_query(&mut self, subtask: u32) -> u32 {
+        self.0.subtask_query(subtask)
+    }
+    fn subtask_slot_a(&mut self, subtask: u32) -> u32 {
+        self.0.subtask_slot_b(subtask)
+    }
+    fn subtask_slot_b(&mut self, subtask: u32) -> u32 {
+        self.0.subtask_slot_a(subtask)
+    }
+    fn owner_gate(&mut self, owner: u32) -> u32 {
+        self.0.owner_gate(owner)
+    }
+    fn owner_next(&mut self, owner: u32) -> u32 {
+        self.0.owner_next(owner)
+    }
+    fn owner_poll(&mut self, owner: u32, a0: u32, a1: u32, a2: u32) -> u32 {
+        self.0.owner_poll(owner, a0, a1, a2)
+    }
+    fn owner_flags(&mut self, owner: u32) -> u32 {
+        self.0.owner_flags(owner)
+    }
+    fn set_owner_flags(&mut self, owner: u32, flags: u32) {
+        self.0.set_owner_flags(owner, flags)
+    }
+    fn owner_finish(&mut self, owner: u32, a0: u32, zero: u32, a2: u32) -> u32 {
+        self.0.owner_finish(owner, a0, zero, a2)
+    }
+    fn slot_point(&mut self, slot: u32) -> RoutePoint {
+        self.0.slot_point(slot)
+    }
+    fn slotb_float(&mut self, slotb: u32) -> f32 {
+        self.0.slotb_float(slotb)
+    }
+    fn slotb_int(&mut self, slotb: u32) -> u32 {
+        self.0.slotb_int(slotb)
+    }
+    fn helper_ok(&mut self, slot: u32, int_answer: u32, float_bits: u32) -> u32 {
+        self.0.helper_ok(slot, int_answer, float_bits)
+    }
+}
+
+/// A poll host whose finish call receives its first and third arguments
+/// swapped: a wrong lift.
+struct PollSwapFinish(PollHost);
+
+impl RoutePollHost for PollSwapFinish {
+    fn subtask_query(&mut self, subtask: u32) -> u32 {
+        self.0.subtask_query(subtask)
+    }
+    fn subtask_slot_a(&mut self, subtask: u32) -> u32 {
+        self.0.subtask_slot_a(subtask)
+    }
+    fn subtask_slot_b(&mut self, subtask: u32) -> u32 {
+        self.0.subtask_slot_b(subtask)
+    }
+    fn owner_gate(&mut self, owner: u32) -> u32 {
+        self.0.owner_gate(owner)
+    }
+    fn owner_next(&mut self, owner: u32) -> u32 {
+        self.0.owner_next(owner)
+    }
+    fn owner_poll(&mut self, owner: u32, a0: u32, a1: u32, a2: u32) -> u32 {
+        self.0.owner_poll(owner, a0, a1, a2)
+    }
+    fn owner_flags(&mut self, owner: u32) -> u32 {
+        self.0.owner_flags(owner)
+    }
+    fn set_owner_flags(&mut self, owner: u32, flags: u32) {
+        self.0.set_owner_flags(owner, flags)
+    }
+    fn owner_finish(&mut self, owner: u32, a0: u32, zero: u32, a2: u32) -> u32 {
+        self.0.owner_finish(owner, a2, zero, a0)
+    }
+    fn slot_point(&mut self, slot: u32) -> RoutePoint {
+        self.0.slot_point(slot)
+    }
+    fn slotb_float(&mut self, slotb: u32) -> f32 {
+        self.0.slotb_float(slotb)
+    }
+    fn slotb_int(&mut self, slotb: u32) -> u32 {
+        self.0.slotb_int(slotb)
+    }
+    fn helper_ok(&mut self, slot: u32, int_answer: u32, float_bits: u32) -> u32 {
+        self.0.helper_ok(slot, int_answer, float_bits)
+    }
+}
+
+/// A coordinate that is small enough for the reach test to pass, or one of the special values.
+fn reach_coord(rng: &mut Rng) -> u32 {
+    match rng.below(8) {
+        0 => 0x0000_0000,
+        1 => 0x8000_0000,
+        2 => 0.05f32.to_bits(),
+        3 => (-0.1f32).to_bits(),
+        4 => 0.2f32.to_bits(),
+        5 => 0x7FC0_0001,
+        _ => coord(rng),
+    }
+}
+
+#[derive(Debug, Clone)]
+struct PollCase {
+    points: Vec<[u32; 3]>,
+    index: u32,
+    has_sub: bool,
+    query: u32,
+    slot_a: bool,
+    slot_b: bool,
+    gate: u32,
+    has_slotb: bool,
+    poll: u32,
+    point: [u32; 3],
+    float_bits: u32,
+    int_ans: u32,
+    helper_ans: u32,
+    owner_flags: u32,
+    a0: u32,
+    a1: u32,
+}
+
+fn gen_poll(rng: &mut Rng) -> PollCase {
+    let n = rng.below(5) as usize;
+    let points: Vec<[u32; 3]> = (0..n).map(|_| point(rng)).collect();
+    let index = match rng.below(4) {
+        0 => (n as u32).wrapping_sub(2),
+        1 => (n as u32).wrapping_sub(1),
+        2 => 0,
+        _ => rng.u32() % (n as u32 + 2),
+    };
+    let query = match rng.below(3) {
+        0 => 0x1,
+        1 => 0x38,
+        _ => 0x77,
+    };
+    let finite = |rng: &mut Rng| ((rng.below(2000) as f32 - 1000.0) * 0.001).to_bits();
+    PollCase {
+        points,
+        index,
+        has_sub: !rng.chance(1, 8),
+        query,
+        slot_a: !rng.chance(1, 5),
+        slot_b: !rng.chance(1, 5),
+        gate: if rng.chance(3, 4) { rng.u32() | 1 } else { rng.u32() & !0xFF },
+        has_slotb: !rng.chance(1, 5),
+        poll: if rng.chance(1, 2) { rng.u32() | 1 } else { rng.u32() & !0xFF },
+        point: if rng.chance(1, 2) {
+            // Points near the origin pass the reach test; a not-a-number
+            // component fails it.
+            let near = |rng: &mut Rng| match rng.below(5) {
+                0 => 0x0000_0000,
+                1 => 0x8000_0000,
+                2 => 0.05f32.to_bits(),
+                3 => (-0.1f32).to_bits(),
+                _ => 0x7FC0_0001,
+            };
+            [near(rng), near(rng), near(rng)]
+        } else {
+            [reach_coord(rng), reach_coord(rng), reach_coord(rng)]
+        },
+        float_bits: finite(rng),
+        int_ans: rng.u32(),
+        helper_ans: if rng.chance(1, 2) { rng.u32() | 1 } else { rng.u32() & !0xFF },
+        owner_flags: rng.u32(),
+        a0: rng.u32(),
+        a1: if rng.chance(1, 3) { 0 } else { rng.u32() | 1 },
+    }
+}
+
+/// The addresses the poll's objects live at, from the rewrite's memory.
+struct PollWorld {
+    this: u32,
+    owner: u32,
+    sub: u32,
+    slot_a: u32,
+    slot_b: u32,
+    slotb: u32,
+}
+
+fn poll_rewrite(c: &PollCase) -> (Outcome, PollWorld) {
+    let route = route_words(&c.points);
+    let owner_vt = vec![0u32; 16];
+    let mut owner_vt = owner_vt;
+    owner_vt[0x14 / 4] = poll_stub as *const () as usize as u32;
+    owner_vt[0x28 / 4] = gate_stub as *const () as usize as u32;
+    owner_vt[0x30 / 4] = owner_next_stub as *const () as usize as u32;
+    let mut owner = vec![0u32; 8];
+    owner[0] = addr(&owner_vt);
+    owner[0x0C / 4] = c.owner_flags;
+
+    let mut slot_vt = vec![0u32; 64];
+    slot_vt[0xEC / 4] = point_stub as *const () as usize as u32;
+    let mut slot_a = vec![0u32; 4];
+    slot_a[0] = addr(&slot_vt);
+    let mut slot_b = vec![0u32; 4];
+    slot_b[0] = addr(&slot_vt);
+
+    let mut slotb_vt = vec![0u32; 16];
+    slotb_vt[0x1C / 4] = int_stub as *const () as usize as u32;
+    slotb_vt[0x20 / 4] = float_stub as *const () as usize as u32;
+    let mut slotb = vec![0u32; 4];
+    slotb[0] = addr(&slotb_vt);
+
+    let mut sub_vt = vec![0u32; 8];
+    sub_vt[4 / 4] = query_stub as *const () as usize as u32;
+    let mut sub = vec![0u32; 8];
+    sub[0] = addr(&sub_vt);
+    if c.slot_a {
+        sub[0x14 / 4] = addr(&slot_a);
+    }
+    if c.slot_b {
+        sub[0x18 / 4] = addr(&slot_b);
+    }
+
+    let mut obj = obj_words();
+    set_word(&mut obj, OFF_SUBTASK, addr(&owner));
+    set_word(&mut obj, OFF_WAYPOINTS, addr(&route));
+    set_word(&mut obj, OFF_INDEX, c.index);
+
+    let slotb_addr = if c.has_slotb { addr(&slotb) } else { 0 };
+    let slot_a_addr = if c.slot_a { addr(&slot_a) } else { 0 };
+    let slot_b_addr = if c.slot_b { addr(&slot_b) } else { 0 };
+    POLL.with(|p| {
+        *p.borrow_mut() = PollScript {
+            query: c.query,
+            slot_a: slot_a_addr,
+            slot_b: slot_b_addr,
+            gate: c.gate,
+            slotb: slotb_addr,
+            poll: c.poll,
+            point: c.point,
+            float_bits: c.float_bits,
+            int_ans: c.int_ans,
+            helper_ans: c.helper_ans,
+            owner_flags: c.owner_flags,
+        }
+    });
+
+    let obj_before = obj.clone();
+    let route_before = route.clone();
+    let owner_before = owner.clone();
+    let sub_before = sub.clone();
+    let slot_before = (slot_a.clone(), slot_b.clone());
+    let slotb_before = slotb.clone();
+
+    let _ = take_calls();
+    let this = addr(&obj);
+    let sub_addr = if c.has_sub { addr(&sub) } else { 0 };
+    let ret = fn_00cb8590::rw_00cb8590(this, c.a0, c.a1, sub_addr);
+    let calls = take_calls();
+
+    let clobbered = obj != obj_before
+        || sub != sub_before
+        || slot_a != slot_before.0
+        || slot_b != slot_before.1
+        || slotb != slotb_before
+        || owner.iter().enumerate().any(|(i, w)| i != 0x0C / 4 && *w != owner_before[i])
+        || route.iter().enumerate().any(|(i, w)| i != 0 && *w != route_before[i]);
+    let out: Vec<u8> = owner[0x0C / 4]
+        .to_le_bytes()
+        .into_iter()
+        .chain(route[0].to_le_bytes())
+        .collect();
+    let world = PollWorld {
+        this,
+        owner: addr(&owner),
+        sub: sub_addr,
+        slot_a: slot_a_addr,
+        slot_b: slot_b_addr,
+        slotb: slotb_addr,
+    };
+    (
+        Outcome {
+            ret,
+            calls,
+            index: 0,
+            flags: 0,
+            out,
+            clobbered,
+        },
+        world,
+    )
+}
+
+fn poll_lifted(c: &PollCase, w: &PollWorld, wrong: Option<u32>) -> Outcome {
+    let mut task = FollowPointRouteTask {
+        handle: w.this,
+        subtask: w.owner,
+        waypoints: RouteTable::new(to_points(&c.points)),
+        waypoint_index: c.index,
+        ..Default::default()
+    };
+    let s = PollScript {
+        query: c.query,
+        slot_a: w.slot_a,
+        slot_b: w.slot_b,
+        gate: c.gate,
+        slotb: w.slotb,
+        poll: c.poll,
+        point: c.point,
+        float_bits: c.float_bits,
+        int_ans: c.int_ans,
+        helper_ans: c.helper_ans,
+        owner_flags: c.owner_flags,
+    };
+    let a2 = if c.has_sub { w.sub } else { 0 };
+    let mut host = PollHost { log: Vec::new(), s };
+    let (ret, flags_after) = match wrong {
+        None => {
+            let r = task.poll(c.a0, c.a1, a2, &mut host);
+            (r, host.s.owner_flags)
+        }
+        Some(0) => {
+            let mut swapped = PollSwapSlots(PollHost { log: Vec::new(), s });
+            let r = task.poll(c.a0, c.a1, a2, &mut swapped);
+            host = swapped.0;
+            (r, host.s.owner_flags)
+        }
+        Some(_) => {
+            let mut swapped = PollSwapFinish(PollHost { log: Vec::new(), s });
+            let r = task.poll(c.a0, c.a1, a2, &mut swapped);
+            host = swapped.0;
+            (r, host.s.owner_flags)
+        }
+    };
+    let out: Vec<u8> = flags_after
+        .to_le_bytes()
+        .into_iter()
+        .chain((task.waypoints.len() as u32).to_le_bytes())
+        .collect();
+    Outcome {
+        ret,
+        calls: host.log,
+        index: 0,
+        flags: 0,
+        out,
+        clobbered: false,
+    }
+}
+
+#[test]
+fn poll_matches_rewrite() {
+    let _g = guard();
+    let mut rng = Rng(0x5EED_0005_0);
+    let (mut advanced, mut finished, mut reached) = (0usize, 0usize, 0usize);
+    // The helper path is reached in a small share of trials, so this case runs three times as many.
+    for _ in 0..3 * TRIALS {
+        let c = gen_poll(&mut rng);
+        install(&[(CALLEE_7, helper_stub as *const () as usize as u32), (CALLEE_8, finish_stub as *const () as usize as u32)]);
+        let (rw, w) = poll_rewrite(&c);
+        assert!(!rw.clobbered, "poll wrote outside the owner flags and the count: {c:?}");
+        let lf = poll_lifted(&c, &w, None);
+        assert_eq!(rw, lf, "poll differs for {c:?}");
+        if rw.ret == 1 {
+            advanced += 1;
+        }
+        if rw.calls.iter().any(|e| matches!(e, Ev::Finish { .. })) {
+            finished += 1;
+        }
+        if rw.calls.iter().any(|e| matches!(e, Ev::Helper { .. })) {
+            reached += 1;
+        }
+    }
+    eprintln!(
+        "poll: {} trials; returned 1 in {advanced}; reached the helper in {reached}; finished in {finished}",
+        3 * TRIALS
+    );
+    assert!(finished > 0 && reached > 0);
+}
+
+#[test]
+fn poll_wrong_lift_is_caught() {
+    let _g = guard();
+    for which in 0..2u32 {
+        let mut rng = Rng(0x5EED_0105_0 + which as u64);
+        let mut caught = 0usize;
+        for _ in 0..WRONG_TRIALS {
+            let c = gen_poll(&mut rng);
+            install(&[(CALLEE_7, helper_stub as *const () as usize as u32), (CALLEE_8, finish_stub as *const () as usize as u32)]);
+            let (rw, w) = poll_rewrite(&c);
+            if poll_lifted(&c, &w, Some(which)) != rw {
+                caught += 1;
+            }
+        }
+        eprintln!("poll wrong lift {which}: caught in {caught} of {WRONG_TRIALS} trials");
+        assert!(caught > 0, "wrong poll lift {which} was not caught");
     }
 }

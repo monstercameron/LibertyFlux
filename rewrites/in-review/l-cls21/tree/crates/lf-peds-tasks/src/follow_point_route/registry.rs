@@ -78,8 +78,8 @@ pub const METHODS: &[Method] = &[
     },
     Method {
         name: "CTaskComplexMoveFollowPointRoute::vf5 (poll)",
-        state: State::Unlifted,
-        note: "Verified, not lifted. It reads the route count through the table pointer and clears it when the second argument is null (the two rewrites' comments disagree on what that word is; not settled). It calls about ten slots on the owner and the sub-task, two direct helpers, and the owner's finish call, with a scratch output that has no lifted model yet.",
+        state: State::Proven,
+        note: "Owner, sub-task, slot and helper calls and reads are host methods. The scratch words passed to the slot and int calls are not compared: the lift does not pass them and the proof's stubs answer from their own buffer. The route count is cleared when the second argument is null, which drops the entries past the count. The word at offset 0x08 is the owner here and the current sub-task in the advance method; see the notes.",
     },
     Method {
         name: "CTaskComplexMoveFollowPointRoute::dtor_thunk",

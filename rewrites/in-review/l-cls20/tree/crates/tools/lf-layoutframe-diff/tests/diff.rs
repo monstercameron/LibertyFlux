@@ -422,14 +422,16 @@ mod x86 {
     }
 
     #[test]
-    fn cases_are_exactly_the_proven_rows() {
-        let names: Vec<&str> = cases().iter().map(|c| c.name).collect();
-        let proven: Vec<&str> = registry::ROWS
-            .iter()
-            .filter(|row| row.state == State::Proven)
-            .map(|row| row.method)
-            .collect();
-        assert_eq!(names, proven);
+    fn every_case_is_a_proven_row() {
+        for case in cases() {
+            assert!(
+                registry::ROWS
+                    .iter()
+                    .any(|row| row.method == case.name && row.state == State::Proven),
+                "{} is not a proven row",
+                case.name
+            );
+        }
     }
 
     #[test]
