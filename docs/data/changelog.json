@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Devlog: hourly review, 01:05 on 12 October",
+    "title": "Rewrites: 1 more functions pass the checker (20055 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
+      "The tree now holds 20055 rewrites, 20052 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "3 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Devlog: hourly review, 01:05 on 12 October",
+    "commit": "9c4afe30929c24b044f829fc8b4e0120fdf846c6",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "14,039 bytes an hour verified, level with the baseline; 41 routines lifted in five classes, to 1,352; the verified set passed 20,000 functions; a render method of two and a half kilobytes verified whole.",
