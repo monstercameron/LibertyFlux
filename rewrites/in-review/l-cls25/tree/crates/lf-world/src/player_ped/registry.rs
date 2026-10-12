@@ -215,14 +215,18 @@ pub const ROWS: &[Row] = &[
         lifted_as: "",
         state: State::NotLifted,
         calls: &[],
-        narrows: &["verified, 289 bytes of the original: not lifted in this pass"],
+        narrows: &[
+            "not lifted: the verified rewrite stores zero in the fourth output word, which the original leaves to an uninitialised stack slot; the rewrite's proof depends on the checker's zero stack fill, so a lift would fix a value the original does not define",
+        ],
     },
     Row {
         method: "vf54",
         lifted_as: "",
         state: State::NotLifted,
         calls: &[],
-        narrows: &["verified, 305 bytes of the original: not lifted in this pass"],
+        narrows: &[
+            "not lifted: the verified rewrite stores zero in the fourth output word, which the original reads from an uninitialised stack scratch slot; the proof depends on the checker's zero stack fill, so a lift would fix a value the original does not define",
+        ],
     },
     Row {
         method: "vf73",
