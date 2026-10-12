@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 145 files from lanes (638 unverified rewrites, 1067 in review)",
+    "title": "Devlog: the published files that do not build alone, 706 down to 218",
     "commit": null,
+    "summary": "The entry on the evening's pipeline failure gains its outcome: after 488 repaired files went in, the assembled library takes 19,414 of 19,632 verified rewrites and leaves out 218.",
+    "changes": [
+      "The update gives how the repaired files were proven before they replaced the published ones (built alone, run against the proving lane's contract of record, 130 with a wrong version rejected and 371 where no wrong version can still be run), the measured effect on the assembled library from a pipeline run on the result, and what the remaining 218 are.",
+      "The importer's build-alone check, added the same evening, keeps new files of this kind from being published."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 145 files from lanes (638 unverified rewrites, 1067 in review)",
+    "commit": "c9c41fdcf546bdf12d20f02891bc45fdb423989c",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 638 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
