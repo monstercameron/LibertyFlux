@@ -30,25 +30,25 @@ lf_checker_rt::export!(thiscall, rw_prt_sys_entity_initialize(
         // these call sites with scripted stand-ins on both sides.
         let _ = lf_checker_rt::callee_thiscall!(BASE_INITIALIZER, u32, this_ptr);
 
-        let flags_ptr = lf_checker_rt::relocated(this_ptr).wrapping_add(FLAGS_OFFSET) as *mut u32;
+        let flags_ptr = this_ptr.wrapping_add(FLAGS_OFFSET) as *mut u32;
         let flags = unsafe { flags_ptr.read_unaligned() };
         let normalized_flags = (flags & !CLEARED_FLAG_MASK) | REQUIRED_FLAG_BITS;
 
-        let vtable_ptr = lf_checker_rt::relocated(this_ptr) as *mut u32;
+        let vtable_ptr = this_ptr as *mut u32;
         unsafe { vtable_ptr.write_unaligned(lf_checker_rt::relocated(ENTITY_VTABLE)) };
-        let auxiliary_ptr = lf_checker_rt::relocated(this_ptr).wrapping_add(AUXILIARY_OFFSET) as *mut u32;
+        let auxiliary_ptr = this_ptr.wrapping_add(AUXILIARY_OFFSET) as *mut u32;
         unsafe { auxiliary_ptr.write_unaligned(0) };
         unsafe { flags_ptr.write_unaligned(normalized_flags) };
 
         let _ = lf_checker_rt::callee_thiscall!(DERIVED_SETUP, u32, this_ptr, setup_argument);
 
         let auxiliary_flags_ptr =
-            lf_checker_rt::relocated(this_ptr).wrapping_add(AUXILIARY_FLAGS_OFFSET) as *mut u32;
+            this_ptr.wrapping_add(AUXILIARY_FLAGS_OFFSET) as *mut u32;
         let auxiliary_flags = unsafe { auxiliary_flags_ptr.read_unaligned() };
         unsafe { auxiliary_flags_ptr.write_unaligned(auxiliary_flags | INITIALIZED_BIT) };
 
         let byte_state_ptr =
-            lf_checker_rt::relocated(this_ptr).wrapping_add(BYTE_STATE_OFFSET) as *mut u8;
+            this_ptr.wrapping_add(BYTE_STATE_OFFSET) as *mut u8;
         unsafe { byte_state_ptr.write_unaligned(u8::MAX) };
         this_ptr
     }
