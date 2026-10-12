@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Devlog: a contract that set its globals in the wrong place, and how many others may have",
+    "commit": null,
+    "summary": "A proof passed because its contract set two globals at addresses inside the code section, so the function never read them. The entry records the cause, corrects an earlier statement that blamed the checker, and gives the first count of other contracts with the same condition.",
+    "changes": [
+      "With the two addresses corrected the withdrawn rewrite fails on the stock worker and a copy with one float comparison corrected passes: the withdrawal made an hour earlier on the ground that the proof did not reach the code is now a shown difference.",
+      "A scan of 16,381 contracts of record finds 54 functions whose contract places a value or a range in code, 148 that write to data the contract neither declares nor compares in full, and 288 with the same signature as the one that started this. None of those rewrites is shown wrong; what is established is that their proofs cover less than they appear to. The investigation lane is now correcting each contract and running the verified rewrite through it.",
+      "Decided: a check in the driver that refuses a contract which sets a value in code, in a gap or outside the image, and warns for read-only data; a paragraph in the production brief on turning an image address into the offset a contract wants."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 5 files from lanes (627 unverified rewrites, 442 in review)",
     "commit": "8684e63a0bd7956b468c82edaa62368739fba766",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
