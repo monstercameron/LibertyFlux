@@ -1,3 +1,4 @@
+use core::hint::black_box;
 use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global, relocated};
 
 export!(
