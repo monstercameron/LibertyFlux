@@ -103527,6 +103527,51 @@
   "lane": "a-G38"
  },
  {
+  "address": "0x00B79C10",
+  "name": "CTaskComplexScreamInCarThenLeave::CTaskComplexScreamInCarThenLeave",
+  "kind": "function",
+  "file": "functions/fn_00b79c10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B79C60",
+  "name": "CTaskComplexShuffleBetweenSeats::CTaskComplexShuffleBetweenSeats",
+  "kind": "function",
+  "file": "functions/fn_00b79c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B79C90",
+  "name": "CTaskComplexStealCar::CTaskComplexStealCar",
+  "kind": "function",
+  "file": "functions/fn_00b79c90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B79CE0",
+  "name": "CTaskComplexCarDrive::~CTaskComplexCarDrive",
+  "kind": "function",
+  "file": "functions/fn_00b79ce0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B79D10",
+  "name": "CTaskComplexCarDriveBasic::~CTaskComplexCarDriveBasic",
+  "kind": "function",
+  "file": "functions/fn_00b79d10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
   "address": "0x00B79D70",
   "name": "CTaskComplexCarDriveTimed::~CTaskComplexCarDriveTimed",
   "kind": "function",
@@ -103788,6 +103833,69 @@
   "lane": "r-s714"
  },
  {
+  "address": "0x00B7B030",
+  "name": "CTaskComplexCarDriveTimed::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7b030.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7B060",
+  "name": "CTaskComplexCarDriveWander::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7b060.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7B0A0",
+  "name": "CTaskComplexCarSetTempAction::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7b0a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7B1B0",
+  "name": "CTaskComplexGetOffBoat::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7b1b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7B1D0",
+  "name": "CTaskComplexLeaveCarAndFlee::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7b1d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7B200",
+  "name": "CTaskComplexLeaveCarAndWander::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7b200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7B230",
+  "name": "CTaskComplexPlayerDrive::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7b230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
   "address": "0x00B7B2D0",
   "name": "CTaskComplexShuffleBetweenSeats::vf1",
   "kind": "function",
@@ -103885,6 +103993,42 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-b669"
+ },
+ {
+  "address": "0x00B7E600",
+  "name": "CTaskComplexCarDrive::get_follow_on_task",
+  "kind": "function",
+  "file": "functions/fn_00b7e600.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7E620",
+  "name": "CTaskComplexCarDriveWander::get_follow_on_task",
+  "kind": "function",
+  "file": "functions/fn_00b7e620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7E9A0",
+  "name": "clear_task_reference_if_equal",
+  "kind": "function",
+  "file": "functions/fn_00b7e9a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7EA00",
+  "name": "get_car_drive_status_label",
+  "kind": "function",
+  "file": "functions/fn_00b7ea00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
  },
  {
   "address": "0x00B80430",
