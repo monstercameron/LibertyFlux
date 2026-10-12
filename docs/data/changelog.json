@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Rust in progress: 328 files from lanes (984 unverified rewrites, 1598 in review)",
+    "title": "Rules: Luna does the work whenever Muse is unavailable",
     "commit": null,
+    "summary": "The owner's second instruction of the night is written into the agent rules: while Muse is unavailable the lanes are Luna lanes, and they switch back to Muse when it is available.",
+    "changes": [
+      "Muse lanes ended together at 01:25 and no lane ran for an hour while the choice was put to the owner. Luna lanes were started again at 02:28 on his answer.",
+      "The rules also say how a launcher is switched: with its stop file, so that lanes already running finish. Stopping the launcher's window stops the lanes it started, which is how thirty lanes were cut at the first switch."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Rust in progress: 328 files from lanes (984 unverified rewrites, 1598 in review)",
+    "commit": "cd1a379cbca818372196eaaebc138ebbc68e2e5a",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 984 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",

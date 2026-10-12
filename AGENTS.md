@@ -446,8 +446,10 @@ Neither page may contain decompiled code, disassembly, game function addresses o
 
 - The coordinator assigns work, reviews evidence and integrates results; lanes never commit.
 - Muse at maximum reasoning effort does the work from 12 October 2026 (Cam, that day: Muse lanes
-  from now on). New lanes of every kind are Muse lanes; lanes of other models that were running
-  at the switch finish their work. Give every lane explicit instructions, its script-assigned
+  from now on), and Luna does it whenever Muse is unavailable (Cam, two hours later: while Muse
+  is unavailable use Luna, and switch back to Muse when it is available). A launcher is switched
+  with its stop file, so that lanes already running finish their work; stopping a launcher's
+  window stops the lanes it started. Give every lane explicit instructions, its script-assigned
   task, its output paths, the checker and wrong-version requirements, process limits and a time
   budget. That hard functions and class lifts, which Haiku lanes had been taking, also go to Muse
   is the coordinator's reading of that instruction, not Cam's words. Measure Muse's throughput and
