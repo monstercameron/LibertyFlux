@@ -153,6 +153,13 @@ impl MirrorHost for Fake {
     }
 }
 
+fn seeded(target: u32, params: u32) -> Fake {
+    let mut host = Fake::default();
+    host.words.insert((0, 0, 0x938), target);
+    host.words.insert((0, 0, 0x940), params);
+    host
+}
+
 /// Globals with every gate open and nothing else set.
 fn open_globals() -> MirrorGlobals {
     MirrorGlobals {
@@ -212,7 +219,7 @@ fn render_does_nothing_behind_either_gate_or_without_a_target() {
 #[test]
 fn render_selector_is_one_when_either_flag_is_set() {
     for (a, b, selector) in [(0, 0, 2), (1, 0, 1), (0, 1, 1), (1, 1, 1)] {
-        let mut host = Fake::default();
+        let mut host = seeded(7, 0);
         let mut g = open_globals();
         g.select_flag_a = a;
         g.select_flag_b = b;
@@ -224,7 +231,7 @@ fn render_selector_is_one_when_either_flag_is_set() {
 
 #[test]
 fn render_stamps_two_blocks_and_advances_the_counter_twice() {
-    let mut host = Fake::default();
+    let mut host = seeded(7, 0);
     host.answer("query", &[0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80]);
     let mut g = open_globals();
     g.stamp_counter = 41;
@@ -234,7 +241,7 @@ fn render_stamps_two_blocks_and_advances_the_counter_twice() {
 
 #[test]
 fn render_with_a_null_query_block_stamps_nothing() {
-    let mut host = Fake::default();
+    let mut host = seeded(7, 0);
     let mut g = open_globals();
     g.stamp_counter = 9;
     phase(7, 0).render(&mut host, &mut g);
@@ -266,7 +273,7 @@ fn refresh_panics_on_a_null_parameter_block_as_the_original_faults() {
 
 #[test]
 fn refresh_swap_saves_and_restores_the_block_around_the_commit() {
-    let mut host = Fake::default();
+    let mut host = seeded(0, 0x3000);
     host.words.insert((2, 0x3000, 0x30), 0x11);
     host.words.insert((2, 0x3000, 0x38), 0x22);
     let mut g = open_globals();
@@ -289,7 +296,7 @@ fn refresh_swap_saves_and_restores_the_block_around_the_commit() {
 #[test]
 #[should_panic(expected = "outside the table")]
 fn refresh_swap_entry_outside_the_table_panics() {
-    let mut host = Fake::default();
+    let mut host = seeded(0, 0x3000);
     host.words.insert((2, 0x3000, 0x30), 1);
     host.words.insert((2, 0x3000, 0x38), 1);
     let mut g = open_globals();
@@ -301,7 +308,7 @@ fn refresh_swap_entry_outside_the_table_panics() {
 
 #[test]
 fn refresh_remembers_the_flag_bit_of_the_object_for_the_second_hook() {
-    let mut host = Fake::default();
+    let mut host = seeded(0, 0x3000);
     host.words.insert((2, 0x3000, 0x30), 1);
     host.words.insert((2, 0x3000, 0x38), 1);
     host.answer("lookup_object", &[0x4000]);
@@ -334,7 +341,7 @@ fn reflect_with_a_null_block_takes_the_fallback_and_copies_status_bit_two() {
 
 #[test]
 fn reflect_publishes_the_block_then_latches_it_when_usable() {
-    let mut host = Fake::default();
+    let mut host = seeded(0, 0x3000);
     host.words.insert((2, 0x3000, 0x30), 0x77);
     host.words.insert((2, 0x3000, 0x38), 4);
     host.words.insert((1, 0, 0x538), 0x99);
@@ -386,4 +393,5 @@ fn registry_pins_four_proven_methods_in_slot_order() {
     assert_eq!(slots, vec![0, 3, 4, 8]);
     assert!(registry::METHODS.iter().all(|m| m.state == LiftState::Proven));
 }
+
 

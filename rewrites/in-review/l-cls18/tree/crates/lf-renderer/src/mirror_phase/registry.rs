@@ -46,7 +46,7 @@ pub const METHODS: &[MethodRecord] = &[
         narrowed: &[
             "the parameter block must be non-null on the gated path; the original faults on a null one",
             "the early returns answer zero; the original answers its accumulator there. The inventory lists no direct caller (reached only through the virtual table), so the answer is unchecked, not read",
-            "the phase's own words are held in the struct for the call; the host is assumed not to write them",
+            "the target and parameter-block handle are re-read after the rebuild, which is given the phase; a collaborator not given the phase or one of its members is assumed not to write those words",
             "the remembered word is named as the identity with its low byte replaced, not computed from the address",
             "the parameter table is a slice; an entry outside it panics rather than reading the image; the proof draws swap indices 0 to 20 of a 64-word table",
         ],
@@ -58,7 +58,7 @@ pub const METHODS: &[MethodRecord] = &[
         narrowed: &[
             "returns the status bit only; the original returns the snapshot pointer with its low byte replaced",
             "the snapshot's selector and status are read through the host at the points the original reads them",
-            "the phase's own words are held in the struct for the call; the host is assumed not to write them",
+            "the target and parameter-block handle are re-read after the binds, which are given a member of the phase; a call given no member of the phase is assumed not to write those words",
             "the verified rewrite's contract sets the unused-stack fill to zero; this lift does not change that",
             "the scaled matrix's multiply pins both operands (black_box); the rewrite's own operand order is compared, not assumed",
         ],
@@ -69,7 +69,7 @@ pub const METHODS: &[MethodRecord] = &[
         state: LiftState::Proven,
         narrowed: &[
             "returns nothing; the original returns zero",
-            "the phase's own words are held in the struct for the call; the host is assumed not to write them",
+            "the target is re-read after the probe, which is given a member of the phase; a call given no member of the phase is assumed not to write it",
             "the staged float is chosen by the probe's low byte; its high bytes are compared as values",
         ],
     },
@@ -83,4 +83,5 @@ pub fn proven_count() -> usize {
         .filter(|m| m.state == LiftState::Proven)
         .count()
 }
+
 

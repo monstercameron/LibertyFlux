@@ -1,7 +1,7 @@
 // original: 0x00AF55F0 pad_is_device_enabled
 
-/// Test the enabled byte for a device slot referenced by the controller. The
-/// The controller points to a device record; a null record is disabled. Its
+/// Test the enabled byte for the device record referenced by the controller.
+/// A null record is disabled. Its
 /// slot number is multiplied by the 0x98-byte record stride and added to the
 /// relocated device table. The result is consumed from AL.
 lf_checker_rt::export!(thiscall, rw_00af55f0(controller: u32) -> u32 {

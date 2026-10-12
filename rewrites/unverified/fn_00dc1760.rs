@@ -418,15 +418,18 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
             let point = task
                 .wrapping_add(TASK_POINTS)
                 .wrapping_add(point_count.wrapping_mul(16));
-            let dx = sub_f32(
-                f32::from_bits(read_u32(point)),
+            let delta_x = sub_f32(
+                f32::from_bits(read_u32(point.wrapping_add(4))),
                 global_f32(GLOBAL_POSITION_B + 4),
             );
-            let dy = sub_f32(
-                f32::from_bits(read_u32(point.wrapping_add(4))),
+            let delta_y = sub_f32(
+                f32::from_bits(read_u32(point)),
                 global_f32(GLOBAL_POSITION_B),
             );
-            let distance_squared = add_f32(mul_f32(dx, dx), mul_f32(dy, dy));
+            let distance_squared = add_f32(
+                mul_f32(delta_x, delta_x),
+                mul_f32(delta_y, delta_y),
+            );
             if distance_squared > global_f32(FRAME_OFFSET) {
                 let marker = task
                     .wrapping_add(PATH_POINT_FLAGS)
