@@ -95778,6 +95778,15 @@
   "lane": "a-G33"
  },
  {
+  "address": "0x00B42C70",
+  "name": "physical_frag_update",
+  "kind": "function",
+  "file": "functions/fn_00b42c70.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-b701"
+ },
+ {
   "address": "0x00B42E70",
   "name": "take_slot_and_tail_dispatch",
   "kind": "function",
@@ -95839,6 +95848,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G33"
+ },
+ {
+  "address": "0x00B43E00",
+  "name": "spatial_box_query",
+  "kind": "function",
+  "file": "functions/fn_00b43e00.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-b701"
+ },
+ {
+  "address": "0x00B44290",
+  "name": "line_box_query",
+  "kind": "function",
+  "file": "functions/fn_00b44290.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-b701"
  },
  {
   "address": "0x00B44890",

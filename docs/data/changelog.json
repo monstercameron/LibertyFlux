@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 3 more functions pass the checker (19256 in total)",
+    "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "3 rewrites added under rewrites/verified: 0 script native handlers and 3 other functions.",
+      "The tree now holds 19256 rewrites, 19253 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Devlog: a contract that set its globals in the wrong place, and how many others may have",
     "commit": "8611f5da4a1ee42306d96c4f2fea79731b0674b1",
     "summary": "A proof passed because its contract set two globals at addresses inside the code section, so the function never read them. The entry records the cause, corrects an earlier statement that blamed the checker, and gives the first count of other contracts with the same condition.",
