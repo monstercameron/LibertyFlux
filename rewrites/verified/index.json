@@ -37764,6 +37764,15 @@
   "lane": "a-U139"
  },
  {
+  "address": "0x00607910",
+  "name": "streaming_get_optional_state_byte",
+  "kind": "function",
+  "file": "functions/fn_00607910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U147"
+ },
+ {
   "address": "0x006098D0",
   "name": "physics_copy_record",
   "kind": "function",
@@ -37951,6 +37960,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s683"
+ },
+ {
+  "address": "0x006142E0",
+  "name": "streaming_sample_trace_record",
+  "kind": "function",
+  "file": "functions/fn_006142e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U147"
  },
  {
   "address": "0x00615770",
@@ -107127,6 +107145,15 @@
   "lane": "a-04"
  },
  {
+  "address": "0x00B8AD90",
+  "name": "NativeImpl_IS_POS_IN_CUTSCENE_BLOCKING_BOUNDS",
+  "kind": "function",
+  "file": "functions/fn_00b8ad90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U147"
+ },
+ {
   "address": "0x00B8AF80",
   "name": "ADD_TEXT_WIDGET",
   "kind": "native",
@@ -128853,6 +128880,51 @@
   "lane": "r-s100"
  },
  {
+  "address": "0x00BDFF90",
+  "name": "CTaskSimpleWaitForBus::~CTaskSimpleWaitForBus__deleting",
+  "kind": "function",
+  "file": "functions/fn_00bdff90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U147"
+ },
+ {
+  "address": "0x00BDFFC0",
+  "name": "CTaskSimpleWaitUntilAreaCodesMatch::~CTaskSimpleWaitUntilAreaCodesMatch__deleting",
+  "kind": "function",
+  "file": "functions/fn_00bdffc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U147"
+ },
+ {
+  "address": "0x00BDFFF0",
+  "name": "task_child_subtask_register_check",
+  "kind": "function",
+  "file": "functions/fn_00bdfff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U147"
+ },
+ {
+  "address": "0x00BE0020",
+  "name": "UnknownTaskHelper1",
+  "kind": "function",
+  "file": "functions/fn_00be0020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U147"
+ },
+ {
+  "address": "0x00BE0050",
+  "name": "task_child_list_insert_or_notify",
+  "kind": "function",
+  "file": "functions/fn_00be0050.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U147"
+ },
+ {
   "address": "0x00BE05D0",
   "name": "CTaskComplexControlMovement::vf1",
   "kind": "function",
@@ -140605,6 +140677,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s615"
+ },
+ {
+  "address": "0x00CA4C60",
+  "name": "CEventDamage::vf20",
+  "kind": "function",
+  "file": "functions/fn_00ca4c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U147"
  },
  {
   "address": "0x00CA4D60",
@@ -155077,6 +155158,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s675"
+ },
+ {
+  "address": "0x00DA2370",
+  "name": "copy_stream_payload",
+  "kind": "function",
+  "file": "functions/fn_00da2370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U147"
  },
  {
   "address": "0x00DA23B0",
