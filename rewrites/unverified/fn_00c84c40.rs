@@ -30,11 +30,11 @@ lf_checker_rt::export!(cdecl, rw_00c84c40() -> u32 {
 
     let mut selected_entry = 0;
     for index in 0..entry_count {
-        let candidate = table
-            .wrapping_add(ENTRY_START_OFFSET)
-            .wrapping_add(index.wrapping_mul(ENTRY_STRIDE));
+        let candidate = table.wrapping_add(index.wrapping_mul(ENTRY_STRIDE));
         let entry_type = unsafe {
-            (candidate.wrapping_add(ENTRY_TYPE_OFFSET) as *const u32).read_unaligned()
+            (candidate.wrapping_add(ENTRY_START_OFFSET).wrapping_add(ENTRY_TYPE_OFFSET)
+                as *const u32)
+                .read_unaligned()
         };
         if entry_type == MATCH_TYPE {
             selected_entry = candidate;

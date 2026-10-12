@@ -10,7 +10,7 @@
 /// time-of-day object dirty when either selector differs from its cached
 /// value, stores both selector words, and reads a signed forecast byte at the
 /// requested index. Both paths then compute
-/// `(selected_hour + minute * scale) * scale`, where the two integer inputs
+/// `(selected_minute + selected_hour * scale) * scale`, where the two integer inputs
 /// are converted as signed 32-bit values and `scale` is read from the image.
 /// The function writes the selected forecast byte and the exact `f32` bits to
 /// separate globals; its return is the immediate-apply answer or the signed
@@ -40,7 +40,7 @@ lf_checker_rt::export!(cdecl, rw_00a2e740(weather_selector: u32, forecast_index:
         let returned = if apply_immediately as u8 != 0 {
             lf_checker_rt::callee_cdecl!(APPLY_WEATHER, u32, weather_selector)
         } else {
-            let _update_answer = lf_checker_rt::callee_cdecl!(UPDATE_WEATHER, u32);
+            let _update_answer = lf_checker_rt::callee_cdecl!(UPDATE_WEATHER, u32,);
 
             let previous_weather =
                 lf_checker_rt::global::<u32>(WEATHER_SELECTOR_CACHE).read_unaligned();
@@ -59,7 +59,7 @@ lf_checker_rt::export!(cdecl, rw_00a2e740(weather_selector: u32, forecast_index:
             lf_checker_rt::global::<u32>(WEATHER_SELECTOR_CACHE)
                 .write_unaligned(weather_selector);
 
-            let table = lf_checker_rt::callee_cdecl!(SELECT_FORECAST_TABLE, u32);
+            let table = lf_checker_rt::callee_cdecl!(SELECT_FORECAST_TABLE, u32,);
             let value = (table as *const u8)
                 .wrapping_add(forecast_index as usize)
                 .read();
@@ -77,9 +77,9 @@ lf_checker_rt::export!(cdecl, rw_00a2e740(weather_selector: u32, forecast_index:
             lf_checker_rt::global::<i32>(SELECTED_MINUTE).read_unaligned()
         } as f32;
 
-        let scaled_minute =
-            core::hint::black_box(minute) * core::hint::black_box(scale);
-        let total = core::hint::black_box(hour) + core::hint::black_box(scaled_minute);
+        let scaled_hour =
+            core::hint::black_box(hour) * core::hint::black_box(scale);
+        let total = core::hint::black_box(minute) + core::hint::black_box(scaled_hour);
         let time_scalar = core::hint::black_box(total) * core::hint::black_box(scale);
         lf_checker_rt::global::<u32>(TIME_SCALAR_CACHE)
             .write_unaligned(time_scalar.to_bits());

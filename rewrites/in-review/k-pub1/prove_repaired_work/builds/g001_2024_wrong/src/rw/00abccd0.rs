@@ -445,3 +445,58 @@ const TABLE_INDEX: u32 = 0x150E244;
 
 /// Current subsystem value; written to the table and returned.
 const TABLE_VALUE: u32 = 0x154CBBC;
+
+#[inline(always)]
+fn fabsf(x: f32, mask: u32) -> f32 {
+    f32::from_bits(x.to_bits() & mask)
+}
+
+#[inline(always)]
+fn fadd(a: f32, b: f32) -> f32 {
+    black_box(black_box(a) + black_box(b))
+}
+
+#[inline(always)]
+fn fconst(va: u32) -> f32 {
+    unsafe { (relocated(va) as *const f32).read_unaligned() }
+}
+
+#[inline(always)]
+fn fgt(a: f32, b: f32) -> bool {
+    black_box(a) > black_box(b)
+}
+
+#[inline(always)]
+fn flt(a: f32, b: f32) -> bool {
+    black_box(a) < black_box(b)
+}
+
+#[inline(always)]
+fn fmul(a: f32, b: f32) -> f32 {
+    black_box(black_box(a) * black_box(b))
+}
+
+#[inline(always)]
+fn fneg(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+#[inline(always)]
+fn fsub(a: f32, b: f32) -> f32 {
+    black_box(black_box(a) - black_box(b))
+}
+
+#[inline(always)]
+fn rd_f(base: u32, off: u32) -> f32 {
+    unsafe { (base.wrapping_add(off) as *const f32).read_unaligned() }
+}
+
+#[inline(always)]
+fn rd_gu(va: u32) -> u32 {
+    unsafe { global::<u32>(va).read() }
+}
+
+#[inline(always)]
+fn rd_u(base: u32, off: u32) -> u32 {
+    unsafe { (base.wrapping_add(off) as *const u32).read_unaligned() }
+}
