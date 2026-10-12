@@ -13,7 +13,7 @@
   "stages": {
     "identified": 37413,
     "named": 37258,
-    "rewritten": 20093,
+    "rewritten": 20098,
     "verified": 19885
   },
   "structures": 340,
@@ -129,13 +129,13 @@
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
-      "value": 550,
+      "value": 587,
       "unit": "methods",
-      "source": "rows marked proven in the registries of 23 lifted modules (crates/*/src/*/registry.rs); each is tested against its verified rewrite on every push"
+      "source": "rows marked proven in the registries of 24 lifted modules (crates/*/src/*/registry.rs); each is tested against its verified rewrite on every push"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 20093,
+      "value": 20098,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
@@ -937,12 +937,12 @@
       "verified": 26
     },
     {
-      "stage": "named",
+      "stage": "rewritten",
       "from": "0x005E5A6A",
       "to": "0x005EB38A",
       "count": 164,
       "named": 164,
-      "rewritten": 80,
+      "rewritten": 82,
       "verified": 80
     },
     {
@@ -3228,7 +3228,7 @@
       "to": "0x00B722DE",
       "count": 156,
       "named": 156,
-      "rewritten": 89,
+      "rewritten": 91,
       "verified": 89
     },
     {
@@ -4272,7 +4272,7 @@
       "to": "0x00DF8617",
       "count": 44,
       "named": 44,
-      "rewritten": 22,
+      "rewritten": 23,
       "verified": 8
     },
     {
@@ -4482,7 +4482,7 @@
     "large_functions_verified": 820489
   },
   "lifted": {
-    "methods": 550,
-    "modules": 23
+    "methods": 587,
+    "modules": 24
   }
 }

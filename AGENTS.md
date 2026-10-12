@@ -445,13 +445,17 @@ Neither page may contain decompiled code, disassembly, game function addresses o
 ## Models
 
 - The coordinator assigns work, reviews evidence and integrates results; lanes never commit.
-- Luna (`gpt-6-luna`) at maximum reasoning effort does the work (Cam, 7 October 2026).
-  Give every lane explicit instructions, its script-assigned task, its output paths, the checker
-  and wrong-version requirements, process limits and a time budget. Do not launch Muse lanes.
-  Historical throughput measurements for Muse do not establish Luna's throughput or accuracy;
-  measure those from Luna's own accepted results and logs.
-- Claude Haiku 5.5 subagents take the higher difficulties when Luna is struggling (Cam, 10 October
-  2026): a function Luna has deferred, failed or made no progress on, and the larger functions, go
+- Muse at maximum reasoning effort does the work from 12 October 2026 (Cam, that day: Muse lanes
+  from now on). New lanes of every kind are Muse lanes; lanes of other models that were running
+  at the switch finish their work. Give every lane explicit instructions, its script-assigned
+  task, its output paths, the checker and wrong-version requirements, process limits and a time
+  budget. That hard functions and class lifts, which Haiku lanes had been taking, also go to Muse
+  is the coordinator's reading of that instruction, not Cam's words. Measure Muse's throughput and
+  accuracy under the current brief and checker from its own accepted results; its figures from
+  3 to 6 October were made under an earlier brief and checker.
+- Luna (`gpt-6-luna`) did the work from 7 to 12 October 2026 while Muse was unavailable, and
+  Claude Haiku 5.5 subagents took the higher difficulties from 10 October: a function Luna had
+  deferred, failed or made no progress on, and the larger functions, went
   to a Haiku lane. The same rules apply to it as to any lane: the stock checker decides, every
   function gets its own wrong version, and what a proof does not cover is listed. Measure Haiku's
   throughput and accuracy from its own accepted results; one lane on small functions does not
