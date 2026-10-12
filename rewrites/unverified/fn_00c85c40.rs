@@ -10,7 +10,6 @@ lf_checker_rt::export!(thiscall, rw_00c85c40(this: u32) -> u32 {
     const ENTRY_COUNT_OFFSET: u32 = 0x216;
     const ENTRY_STRIDE: u32 = 0x6C;
     const FRAGMENT_VTABLE: u32 = 0x00ED_63BC;
-    const DESTROY_ENTRY: u32 = 1;
     const NOTIFY_LIST: u32 = 2;
     const DESTROY_BASE: u32 = 3;
 
@@ -36,6 +35,5 @@ lf_checker_rt::export!(thiscall, rw_00c85c40(this: u32) -> u32 {
         let _ = lf_checker_rt::callee_cdecl!(NOTIFY_LIST, u32, entries);
     }
 
-    let _ = DESTROY_ENTRY;
     lf_checker_rt::callee_thiscall!(DESTROY_BASE, u32, this)
 });
