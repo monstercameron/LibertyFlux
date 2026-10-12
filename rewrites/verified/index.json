@@ -129474,6 +129474,51 @@
   "lane": "r-b33"
  },
  {
+  "address": "0x00C2F190",
+  "name": "vehicle_dynamics_parameters_reset",
+  "kind": "function",
+  "file": "functions/fn_00c2f190.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C2F1C0",
+  "name": "vehicle_dynamics_parameters_set_scalar",
+  "kind": "function",
+  "file": "functions/fn_00c2f1c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C2F620",
+  "name": "aud_placeable_tracker_state_init",
+  "kind": "function",
+  "file": "functions/fn_00c2f620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C30C40",
+  "name": "vehicle_heading_clear_state",
+  "kind": "function",
+  "file": "functions/fn_00c30c40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C321B0",
+  "name": "vehicle_speed_in_handling_range",
+  "kind": "function",
+  "file": "functions/fn_00c321b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
   "address": "0x00C3A3F0",
   "name": "train_tail_car_via_prev",
   "kind": "function",
