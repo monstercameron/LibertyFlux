@@ -9,6 +9,33 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Base sound class (audSound family) lifted: nine verified methods proven against their rewrites</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls16"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls16</id>
+    <published>2026-10-12T00:00:00Z</published>
+    <updated>2026-10-12T00:00:00Z</updated>
+    <summary>From lane l-cls16.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-cls16.&lt;/p&gt;
+&lt;time datetime="2026-10-12"&gt;12 October 2026&lt;/time&gt;
+&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the base class of the audio engine's sounds, the interface every kind of sound implements, from its verified 32-bit rewrites into portable Rust, and prove each lifted method against its rewrite on the same generated inputs.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Found.&lt;/strong&gt; The class has a nine-slot virtual table. Nine of the thirteen listed methods are verified and lifted: the second constructor, the deleting destructor, the lookups by hash and by name, the store and forwarding helpers, the link forwarding method, the attach method and the advance method. The always-false slot is verified but has no behaviour to lift. The default constructor and the two playback-time getters have no verified rewrite yet.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Meaning&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Methods lifted and proven&lt;/td&gt;&lt;td data-label="Value"&gt;9 of 13&lt;/td&gt;&lt;td data-label="Meaning"&gt;Each against its verified rewrite, 300 generated cases&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Wrong versions caught&lt;/td&gt;&lt;td data-label="Value"&gt;9 of 9&lt;/td&gt;&lt;td data-label="Meaning"&gt;Each lifted method has one deliberately wrong copy; each is caught&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Host tests&lt;/td&gt;&lt;td data-label="Value"&gt;20 pass&lt;/td&gt;&lt;td data-label="Meaning"&gt;Edge cases on the 64-bit host against a scripted world&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Differential tests&lt;/td&gt;&lt;td data-label="Value"&gt;19 pass&lt;/td&gt;&lt;td data-label="Meaning"&gt;Nine proofs and nine wrong lifts, on the 32-bit target&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Unsafe in lifted code&lt;/td&gt;&lt;td data-label="Value"&gt;0&lt;/td&gt;&lt;td data-label="Meaning"&gt;The module forbids unsafe code; the test runtime alone allows it&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;How the proof works.&lt;/strong&gt; The lifted method and the verified rewrite run in one test memory at real 32-bit addresses. The check compares the return value, every engine call in order with its arguments, and every byte of the memory afterwards. Engine globals, numbered callees and virtual slots sit behind one trait; the lifted code calls it with the original's arguments in the original's order.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Narrowed.&lt;/strong&gt; The proofs cover what the test memory can hold: voice rows are limited to the first five, the init table to its first 44 entries, and the attached voice's scratch frame is recorded by position only. The advance routine's proof covers divisor entries from 3 to 7, because the rewrite has no timer wait for entries 0 to 2 and its contract pins them to three or more.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; The lifted methods make no operating-system call. Every engine interaction is a trait method, so a port implements it over its own object model. The advance routine's timer wait is not in the verified rewrite and is not in the lift.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Checks for the coordinator.&lt;/strong&gt; Two verified contracts (the attach and advance routines) set the stack fill to zero. The advance rewrite's own comment says it defines an uninitialised word below the stack as zero, which is the pattern the stack-fill rule warns about. The advance routine's evidence entry also lists five callees that its rewrite does not call. Neither was resolved in this lane.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Reproduce.&lt;/strong&gt; From the lane's tree: the host tests with cargo test on the lf-audio crate's sound_base_host test; the differential tests with cargo test on the lf-soundbase-diff crate for the i686-pc-windows-msvc target, with two test threads (about one minute).&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Hourly reviews, 12 October</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-2026-10-12"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-2026-10-12</id>
@@ -1319,18 +1346,5 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;p&gt;Verified: interrupted native tasks were resumed and produced interface repair packets. These unbuilt preparations earned no new portable credit. The dashboard showed current worker log lines but an expired registry, so active states were unknown rather than counted. The monitor was instructed to refresh actual native states immediately and replace finished reviews with distinct implementation tasks. Historical supervisor counts are not native activity measurements.&lt;/p&gt;
 &lt;p&gt;Verified workstation check: physical memory free was 2.5 GB, commit headroom 8.2 GB, and non-paged kernel memory 21.3 GB. No large abandoned project process was found. The three-job cap and fresh memory checks remain required for every build or checker run; the Muse supervisor remains paused.&lt;/p&gt;
 &lt;p&gt;Decision: serialize reservations through one dispatcher until the shared claim-ledger race is repaired and tested. Move from repeated proposal reviews to narrowly scoped harness implementations and guarded tests. Refresh the dashboard registry before reporting pipeline health; reservations alone never count as launches.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Hourly review: proof progress resumed; repeated blocked dispatches stop</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0554"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0554</id>
-    <published>2026-10-08T00:00:00Z</published>
-    <updated>2026-10-08T00:00:00Z</updated>
-    <summary>Verified: since the previous 04:54 review, four complete-body proofs were accepted within explicit collaborator fixtures. Verified functions increased from 16,928 to 16,932; effective verified bytes increased by 461 to 2,494,123. Portable counterparts remain 483 routines and 45,417 bytes, with no increase. These proofs establish the declared observations, not arbitrary engine states or native helper implementations. Reproduce by joining the verified index to the inventory using effective_size and deriving portable counterparts from differential-test imports.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Verified: since the previous 04:54 review, four complete-body proofs were accepted within explicit collaborator fixtures. Verified functions increased from 16,928 to 16,932; effective verified bytes increased by 461 to 2,494,123. Portable counterparts remain 483 routines and 45,417 bytes, with no increase. These proofs establish the declared observations, not arbitrary engine states or native helper implementations. Reproduce by joining the verified index to the inventory using effective_size and deriving portable counterparts from differential-test imports.&lt;/p&gt;
-&lt;p&gt;Verified: independent reviews and root checks bound the accepted source, build, preserved binary, contract and stock positive/negative records. The most recent proof passed 1,000 completed originals across all nine comparisons; its deliberately wrong version failed three of four completed cases. Earlier semantic and setup failures remain excluded. Candidate projections remove mutant exports while retaining tested positive helper bytes.&lt;/p&gt;
-&lt;p&gt;Verified: native dispatch repeatedly fell below the requested 15 tasks as completions arrived. Reservations were sometimes recorded minutes before actual launches. Wrong prompt digests, wrong reviewer references and a misplaced result file caused avoidable work. Corrections and misplaced artifacts were preserved. One root instruction requested a cross-lane binary path that the runner ownership guard correctly rejects; that rejection remains recorded, with no guard bypass.&lt;/p&gt;
-&lt;p&gt;Verified workstation check: physical memory free was 2.8 GB and commit headroom 5.8 GB, below the 6 GB start guard; non-paged kernel memory was 21.3 GB. No large abandoned project process required stopping. The health report includes two previously stuck processes. Historical supervisor lane counts and error totals do not measure the native workers; the Muse supervisor remains paused. The three-job cap and ownership guards remain enforced.&lt;/p&gt;
-&lt;p&gt;Decision: brief version luna-recovery-v6 requires machine-derived task pins, explicit absolute output paths, target-matched reviewer references and actual native launch confirmation. Stop replacing memory-blocked workers with repeated guard-only retries. Fill vacancies with distinct preparation and final integration packets, and allocate a portable-counterpart preparation task so progress serves the portable game goal. Preparation and unbuilt projections earn no new proof or portable credit.&lt;/p&gt;</content>
   </entry>
 </feed>
