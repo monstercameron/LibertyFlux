@@ -1680,14 +1680,6 @@
   "reason": null
  },
  {
-  "address": "0x00A0B720",
-  "name": "mission_cleanup_contains_live_handle",
-  "file": "fn_00a0b720.rs",
-  "lane": "r-s738",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A2D7F0",
   "name": "SaveHouse_RegisterInternal",
   "file": "fn_00a2d7f0.rs",
@@ -2128,22 +2120,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x00AFA630",
-  "name": "circular_index_with_direction",
-  "file": "fn_00afa630.rs",
-  "lane": "r-s747",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
-  "address": "0x00AFA670",
-  "name": "fn_00afa670",
-  "file": "fn_00afa670.rs",
-  "lane": "r-s747",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00AFED00",
   "name": null,
   "file": "fn_00afed00.rs",
@@ -2381,14 +2357,6 @@
   "file": "fn_00b126a0.rs",
   "lane": "r-s658",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B13FF0",
-  "name": "world_pools_function_00b13ff0",
-  "file": "fn_00b13ff0.rs",
-  "lane": "r-s741",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2976,6 +2944,14 @@
   "reason": null
  },
  {
+  "address": "0x00BAEA50",
+  "name": null,
+  "file": "fn_00baea50.rs",
+  "lane": "r-s744",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00BAF7C0",
   "name": null,
   "file": "fn_00baf7c0.rs",
@@ -3264,14 +3240,6 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00C24C00",
-  "name": "pending",
-  "file": "fn_00c24c00.rs",
-  "lane": "a-U122",
-  "outcome": "failed_v8",
-  "reason": "Trial 238 timed out in the stock worker with no original or rewrite status; 999 of 1,000 trials completed, so this run is not accepted."
- },
- {
   "address": "0x00C2E810",
   "name": "audio_emitter_update",
   "file": "fn_00c2e810.rs",
@@ -3456,10 +3424,42 @@
   "reason": null
  },
  {
-  "address": "0x00C687C0",
-  "name": "request_list_rebuild",
-  "file": "fn_00c687c0.rs",
-  "lane": "a-U121",
+  "address": "0x00C60E60",
+  "name": null,
+  "file": "fn_00c60e60.rs",
+  "lane": "r-s749",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C61D60",
+  "name": null,
+  "file": "fn_00c61d60.rs",
+  "lane": "r-s749",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C61EA0",
+  "name": null,
+  "file": "fn_00c61ea0.rs",
+  "lane": "r-s749",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C62D00",
+  "name": null,
+  "file": "fn_00c62d00.rs",
+  "lane": "r-s749",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C62D40",
+  "name": null,
+  "file": "fn_00c62d40.rs",
+  "lane": "r-s749",
   "outcome": "not yet run",
   "reason": null
  },
@@ -3544,17 +3544,17 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00C7F0F0",
-  "name": "CTaskComplexMobileChatScenario::create_next_sub_task",
-  "file": "fn_00c7f0f0.rs",
+  "address": "0x00C7F110",
+  "name": "CTaskComplexMobileMakeCall::create_next_sub_task",
+  "file": "fn_00c7f110.rs",
   "lane": "r-s746",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00C7F110",
-  "name": "CTaskComplexMobileMakeCall::create_next_sub_task",
-  "file": "fn_00c7f110.rs",
+  "address": "0x00C7F140",
+  "name": "CTaskComplexMoveBetweenPointsScenario::create_next_sub_task",
+  "file": "fn_00c7f140.rs",
   "lane": "r-s746",
   "outcome": "not_reached",
   "reason": null
@@ -4640,14 +4640,6 @@
   "reason": null
  },
  {
-  "address": "0x00E620F0",
-  "name": "initialize_network_thread_pool_and_register_cleanup",
-  "file": "fn_00e620f0.rs",
-  "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00E62120",
   "name": "initialize_network_thread_pool_lock_a",
   "file": "fn_00e62120.rs",
@@ -4803,14 +4795,6 @@
   "address": "0x00E62B50",
   "name": "initialize_audio_link_head_and_register_cleanup_d",
   "file": "fn_00e62b50.rs",
-  "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E62BB0",
-  "name": "register_audio_high_end_footprint_setting",
-  "file": "fn_00e62bb0.rs",
   "lane": "r-s745",
   "outcome": "not_reached",
   "reason": null

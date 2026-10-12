@@ -5,14 +5,14 @@
 /// a descriptor whose record count is a zero-extended 16-bit word at `+0x14`
 /// and whose contiguous records start at the pointer stored at `+0`. Each
 /// record is `0xe0` bytes; byte `+0x1b` contributes one unit and byte `+0x1a`
-/// contributes another whenever nonzero. The third cdecl argument adds one
+/// contributes another whenever nonzero. The second cdecl argument adds one
 /// to both counts when its low byte is nonzero; the middle argument is unused.
 /// A null record pointer skips the loop even when the count is nonzero.
 ///
 /// The original uses a cdecl stack frame with three words and returns
 /// `(count_1b + count_1a) << 5` in EAX. The 16-bit count is zero-extended
 /// before its signed-positive test, so every nonzero word value is positive.
-lf_checker_rt::export!(cdecl, rw_00685E90(descriptor: u32, _unused: u32, include_one: u32) -> u32 {
+lf_checker_rt::export!(cdecl, rw_00685E90(descriptor: u32, include_one: u32, _unused: u32) -> u32 {
     unsafe {
         const RECORDS_POINTER: u32 = 0x00;
         const RECORD_COUNT: u32 = 0x14;

@@ -1,11 +1,13 @@
 // original: 0x00AE8800 collect_timing_visible
-// Specification of the corrections (lane a-S29). Three causes were found in the earlier form.
+// Specification of the corrections (lane a-S29). Four causes were found in the earlier form.
 // (1) LIMIT is a signed global: the original's two conditionals on the reject counter are `jg`
 // (signed), so a negative limit takes the other branch. Both comparisons are signed here.
 // (2) Two float-to-integer conversions truncate with cvttss2si: NaN and values outside the
 // signed 32-bit range give 0x80000000. `cvtt_s32` returns that; Rust's saturating `as` does not.
 // (3) An empty range is not an early return: the original jumps past both loops to the overflow
 // compare, so that compare runs with a reject count of zero. The early return is removed.
+// (4) An entry with no uncovered bits still reaches the range and angular test when bit 30 of its
+// +0x8 word is set: the original tests that bit (0x00AE8AB8) before the bit-7 gate.
 // The reject counter is a dword; the original's byte store at 0x00AE882C is overwritten by a
 // dword zero at 0x00AE892E before any read, so no stack byte reaches a comparison, a store or a
 // call. The rewrite starts the counter at zero, as the original does after that store.
@@ -332,11 +334,13 @@ lf_checker_rt::export!(cdecl, rw_00AE8800(_a0: u32, start: u32, end: u32, ctx: u
                                 }
                             }
                             // An entry with no uncovered bits is done
-                            // (it still runs the mask-clear below) unless
+                            // (it still runs the mask-clear below) unless bit 30 of +0x8 is set,
+                            // or
                             // loop one counted something and its bit 7 is
                             // set. ([E+0x12] is always 0: the only store
                             // writes 0 and no stub writes the slot.)
                             let scored = uncovered != 0
+                                || rd32(obj + BITS) & 0x4000_0000 != 0
                                 || (any_counted && rd8(obj + OPTS) & 0x80 != 0);
                             if scored {
                                 let parent = rd32(obj + PARENT);
