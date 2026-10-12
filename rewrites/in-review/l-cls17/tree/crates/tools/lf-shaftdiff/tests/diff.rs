@@ -305,7 +305,7 @@ mod x86 {
         engine: Engine,
         tally: &mut Tally,
     ) -> Option<String> {
-        let mut rewritten = start.clone();
+        let rewritten = start.clone();
         let mut lift = lifted(start);
         for (n, &(ch, dt)) in steps.iter().enumerate() {
             tally.steps += 1;
@@ -386,7 +386,7 @@ mod x86 {
     }
 
     fn setup() {
-        set_callee1(root_stub as usize as u32);
+        set_callee1(root_stub as *const () as usize as u32);
     }
 
     #[test]
@@ -406,19 +406,6 @@ mod x86 {
         assert!(tally.rooted > 0, "no root-taking step ran");
         assert!(tally.zero_length > 0, "no zero-length step ran");
         assert!(tally.nan_seed > 0, "no not-a-number seed ran");
-    }
-
-    /// Probe: does the order of two not-a-number operands show in the result
-    /// bits under this build's code generation?
-    #[test]
-    fn probe_operand_order() {
-        let a = f32::from_bits(0x7FC0_1234);
-        let b = f32::from_bits(0xFFC0_5678);
-        let ab = core::hint::black_box(a) * core::hint::black_box(b);
-        let ba = core::hint::black_box(b) * core::hint::black_box(a);
-        let ab_add = core::hint::black_box(a) + core::hint::black_box(b);
-        let ba_add = core::hint::black_box(b) + core::hint::black_box(a);
-        println!("probe mul ab {:#010x} ba {:#010x} | add ab {:#010x} ba {:#010x}", ab.to_bits(), ba.to_bits(), ab_add.to_bits(), ba_add.to_bits());
     }
 
     #[test]
@@ -442,6 +429,7 @@ mod x86 {
         setup();
         let mut rng = Rng(0x5AF7_0003);
         let mut lines = Vec::new();
+        let mut missed = Vec::new();
         for &mutant in &WRONG {
             let mut row = Vec::new();
             for ch in 0..4 {

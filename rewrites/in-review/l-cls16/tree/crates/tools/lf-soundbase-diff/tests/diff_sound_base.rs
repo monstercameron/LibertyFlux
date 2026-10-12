@@ -36,7 +36,6 @@ const CASES: u32 = 300;
 /// whose later entries alias other globals in the test's mapping, so sub-ids
 /// at and above 44 are not generated (see the registry narrowing).
 const SUB_IDS: u32 = 44;
-/// Arena offset of the object's virtual table pointer, class-side.
 /// Size of the sound object in bytes (the fields and the bytes around them).
 const OBJECT_SIZE: u32 = 0xB0;
 

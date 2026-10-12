@@ -18,6 +18,10 @@
     clippy::pedantic
 )]
 
+pub use crate::callee_addr;
+pub use crate::global;
+pub use crate::relocated;
+
 // One module per verified rewrite: files share top-level helper names, so
 // each lives in its own scope. Files that use the bare macro names import
 // them here.

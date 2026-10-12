@@ -1368,14 +1368,6 @@
   "reason": null
  },
  {
-  "address": "0x0087F750",
-  "name": "rage::miniheapAllocator::get_bytes_remaining",
-  "file": "fn_0087f750.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0087F770",
   "name": "rage::miniheapAllocator::contains",
   "file": "fn_0087f770.rs",
@@ -1908,30 +1900,6 @@
   "name": "vehicle_ray_pick_b",
   "file": "fn_00a54510.rs",
   "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A66910",
-  "name": "heap_pop_frag_pairs",
-  "file": "fn_00a66910.rs",
-  "lane": "r-s770",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A66950",
-  "name": "sort_frag_pairs",
-  "file": "fn_00a66950.rs",
-  "lane": "r-s770",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A66C40",
-  "name": "physics_state_reset",
-  "file": "fn_00a66c40.rs",
-  "lane": "r-s770",
   "outcome": "not_reached",
   "reason": null
  },
@@ -3078,14 +3046,6 @@
   "lane": "r-s292",
   "outcome": "deferred",
   "reason": "needs_encrypted_code"
- },
- {
-  "address": "0x00B7AFA0",
-  "name": "CTaskComplexCarDriveMission::clone",
-  "file": "fn_00b7afa0.rs",
-  "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00B7B030",
@@ -4816,14 +4776,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00DB63C0",
-  "name": "input_get_button_state_mask",
-  "file": "fn_00db63c0.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DCB980",
   "name": "vehicle_collision_response_is_allowed",
   "file": "fn_00dcb980.rs",
@@ -5021,14 +4973,6 @@
   "file": "fn_00df3aa0.rs",
   "lane": "r-s780",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00E39EC0",
-  "name": "UIMontageMoviePlayer::configure_texture_source_and_hud_colour",
-  "file": "fn_00e39ec0.rs",
-  "lane": "r-s773",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -5310,29 +5254,5 @@
   "lane": "r-s589",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00E709A0",
-  "name": "initialize_record_set_00e709a0",
-  "file": "fn_00e709a0.rs",
-  "lane": "r-s769",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00E710C0",
-  "name": "initialize_record_set_00e710c0",
-  "file": "fn_00e710c0.rs",
-  "lane": "r-s769",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00E71120",
-  "name": "timing_buffer_release",
-  "file": "fn_00e71120.rs",
-  "lane": "r-s769",
-  "outcome": "not_reached",
-  "reason": ""
  }
 ]
