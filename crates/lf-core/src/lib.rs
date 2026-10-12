@@ -19,15 +19,21 @@
 
 pub mod arena;
 pub mod boundary;
+pub mod byte_flag_test;
 pub mod const_fill;
 pub mod constant_writes;
+pub mod field_compare;
+pub mod field_pair_store;
 pub mod field_predicate;
+pub mod field_slot_copy;
 pub mod field_store;
 pub mod indexed_read;
 pub mod layout_assert;
 pub mod object_cookie;
 pub mod object_rows;
+pub mod packed_flag;
 pub mod ptr32;
+pub mod row_address;
 pub mod slot_store;
 pub mod static_list;
 pub mod static_row;

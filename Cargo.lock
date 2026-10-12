@@ -119,6 +119,90 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
+name = "lf-24-cmpdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-constdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-filldiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-globwrdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-indexdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-maskdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-packdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-pairdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-rowdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-slotdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-storediff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-24-testdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
 name = "lf-25-cookiediff"
 version = "0.1.0"
 dependencies = [
