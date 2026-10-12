@@ -110,6 +110,7 @@ pub fn encode(ped: &CPlayerPed, img: &mut [u32]) {
         put32(img, offsets::TRANSFORM + 4 * k, ped.transform[k as usize]);
     }
     put32(img, offsets::JOB_WORD, ped.job_word);
+    put32(img, offsets::CHAIN_BASE, ped.chain_base);
 }
 
 /// Reads every field the native pedestrian owns from the image.
@@ -125,6 +126,7 @@ pub fn decode(img: &[u32]) -> CPlayerPed {
         mode: get16(img, offsets::MODE),
         motion_value: f32::from_bits(get32(img, offsets::MOTION_VALUE)),
         job_word: get32(img, offsets::JOB_WORD),
+        chain_base: get32(img, offsets::CHAIN_BASE),
         ..CPlayerPed::default()
     };
     for k in 0..2u32 {
@@ -256,6 +258,18 @@ impl PlayerPedWorld for TestWorld {
 
     fn model_state(&mut self, model_id: u32) -> u8 {
         rt::model_state_byte(model_id)
+    }
+
+    fn chain_reset(&mut self, sub: u32) {
+        rt::script_call(2, vec![sub]);
+    }
+
+    fn chain_flag(&mut self, sub: u32, flag: u32) {
+        rt::script_call(3, vec![sub, flag]);
+    }
+
+    fn chain_main(&mut self, sub: u32) -> u32 {
+        rt::script_call(4, vec![sub])
     }
 
     fn lookup_model(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>, model_id: u32) -> u32 {

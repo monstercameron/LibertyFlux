@@ -25,9 +25,12 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Mutex, OnceLock};
 
 use lf_gotopoint_diff::rewrites::{
-    fn_00B791F0, fn_00CAF720, fn_00CB7480, fn_00CB8AC0, fn_00CBBB90, fn_00CBC000, fn_00CBC0D0,
+    fn_00B791F0, fn_00CAF720, fn_00CAFC10, fn_00CB7480, fn_00CB8AC0, fn_00CBBB90, fn_00CBC000,
+    fn_00CBC0D0,
 };
-use lf_peds_tasks::go_to_point_on_route::{CopyArgs, GoToPointOnRouteHost, GoToPointOnRouteTask};
+use lf_peds_tasks::go_to_point_on_route::{
+    CopyArgs, GoToPointOnRouteHost, GoToPointOnRouteTask, ProgressCache,
+};
 
 // Number of generated cases per method.
 const CASES: usize = 20_000;
@@ -43,7 +46,15 @@ const O_VALUE_8C: usize = 0x8C;
 const O_WORD_A0: usize = 0xA0;
 const O_FLAGS_B0: usize = 0xB0;
 const O_FLAGS_C4: usize = 0xC4;
+const O_ENTRY_VALUE: usize = 0x24;
+const O_ANCHOR: usize = 0xD0;
 const O_ACTIVE: usize = 0xE0;
+
+// The advance's shared cache words, as the executable's data addresses.
+const CACHE_WEIGHT_A_VA: u32 = 0x0171_BF64;
+const CACHE_FLAGS_VA: u32 = 0x0171_BF68;
+const CACHE_WEIGHT_B_VA: u32 = 0x0171_BF6C;
+const CACHE_SCALE_VA: u32 = 0x0171_BF70;
 
 // The allocator manager word in the executable's data, and the offset that
 // places it in test memory (see `setup_globals`).
@@ -71,6 +82,8 @@ thread_local! {
     static CTOR_ANSWER: Cell<u32> = const { Cell::new(0) };
     /// The bits the route refresh stub sets in the flag word, as a script.
     static REFRESH_MASK: Cell<u32> = const { Cell::new(0) };
+    /// What the scale helper stub answers.
+    static HELPER_ANSWER: Cell<u64> = const { Cell::new(0) };
 }
 
 /// One call a method made, in the form both sides log it. Block addresses
@@ -79,6 +92,7 @@ thread_local! {
 enum Ev {
     Refresh { recv: u32, arg: u32 },
     Alloc { manager: u32 },
+    Helper { lo: u32, hi: u32 },
     Construct {
         new_task: u32,
         progress: u32,
@@ -142,12 +156,19 @@ extern "thiscall" fn stub_ctor(
     CTOR_ANSWER.with(Cell::get)
 }
 
+/// The scale helper's stub: called with the two words of its double argument
+/// and answers with the script's double.
+extern "cdecl" fn stub_helper(lo: u32, hi: u32) -> u64 {
+    LOG.with(|l| l.borrow_mut().push(Ev::Helper { lo, hi }));
+    HELPER_ANSWER.with(Cell::get)
+}
+
 /// Points the checker runtime at the test memory: the callee table holds the
 /// stubs in the slots the rewrites use, and the base address is set so that
 /// the allocator global resolves to the leaked area.
 fn setup_runtime(stub1: u32, stub2: u32) -> u32 {
     let area = *GLOBAL_AREA.get_or_init(|| {
-        let v: &'static mut [u32] = Box::leak(vec![0u32; 0x1000].into_boxed_slice());
+        let v: &'static mut [u32] = Box::leak(vec![0u32; 0x1_0000].into_boxed_slice());
         v.as_mut_ptr() as usize as u32
     });
     CALLEE_TABLE[1].store(stub1, Ordering::SeqCst);
@@ -282,6 +303,16 @@ struct Input {
     alloc_answer: u32,
     ctor_answer: u32,
     refresh_mask: u32,
+    /// The advance's target point, as two float words.
+    target: [u32; 2],
+    /// The flag word of the ped's link, as the advance reads it.
+    ped_link: u32,
+    /// The ped's position block, as two float words.
+    ped_pos: [u32; 2],
+    /// The scale helper's answer.
+    helper_answer: u64,
+    /// The shared cache: flags, first weight, second weight, scale.
+    cache: [u32; 4],
 }
 
 /// The fields of the task object, as the lifted type reads them.
@@ -303,6 +334,11 @@ fn make_input(g: &mut Gen, m: Method) -> Input {
         alloc_answer: if g.below(10) < 3 { 0 } else { g.u32() | 1 },
         ctor_answer: g.u32(),
         refresh_mask: [0, 0x1, 0x2, 0x3, 0x10, 0x20, 0x8000_0000, g.u32() & 0xFF][g.below(8) as usize],
+        target: [pick_f32(g), pick_f32(g)],
+        ped_link: g.u32(),
+        ped_pos: [pick_f32(g), pick_f32(g)],
+        helper_answer: g.next(),
+        cache: [pick_f32(g), g.u32() & 0x7, pick_f32(g), pick_f32(g)],
     };
     // Position and progress words.
     for k in 0..4 {
@@ -349,6 +385,31 @@ fn make_input(g: &mut Gen, m: Method) -> Input {
                 _ => pick_f32(g),
             };
         }
+        Method::Advance => {
+            // Mostly active, mostly not held, and an entry value above the
+            // idle bound, so that the blend runs in most cases.
+            inp.init[O_ACTIVE] = if g.below(10) < 9 { 1 + (g.u32() as u8 % 255) } else { 0 };
+            inp.ped_link = if g.below(10) < 8 { inp.ped_link & !0b10 } else { inp.ped_link | 0b10 };
+            let entry = if g.below(10) < 6 {
+                (1.0f32 + (g.below(3_000_001) as f32) / 1_000_000.0).to_bits()
+            } else {
+                pick_f32(g)
+            };
+            put_u32(&mut inp.init, O_ENTRY_VALUE, entry);
+            put_u32(&mut inp.init, O_ANCHOR, pick_f32(g));
+            put_u32(&mut inp.init, O_ANCHOR + 4, pick_f32(g));
+            // Points near the origin, so that the distances fall on both
+            // sides of the thresholds.
+            inp.target = [small_f32(g), small_f32(g)];
+            inp.ped_pos = [small_f32(g), small_f32(g)];
+            // Cache flags: any combination of fill bits, sometimes a zero scale.
+            inp.cache = [
+                pick_f32(g),
+                g.u32() & 0x7,
+                pick_f32(g),
+                if g.below(5) == 0 { 0 } else { pick_f32(g) },
+            ];
+        }
         Method::Refresh => {
             inp.word2 = match g.below(10) {
                 0..=6 => WORD_EDGE[g.below(WORD_EDGE.len() as u32) as usize],
@@ -357,6 +418,15 @@ fn make_input(g: &mut Gen, m: Method) -> Input {
         }
     }
     inp
+}
+
+/// A float in `[-2, 4)` with a quarter-step grid, or an edge value one in
+/// eight times.
+fn small_f32(g: &mut Gen) -> u32 {
+    if g.below(8) == 0 {
+        return pick_f32(g);
+    }
+    ((g.below(25) as f32) * 0.25 - 2.0).to_bits()
 }
 
 fn read_u32(b: &[u8; OBJ_LEN], off: usize) -> u32 {
@@ -373,6 +443,7 @@ enum Method {
     Set8c,
     Refresh,
     Clone,
+    Advance,
 }
 
 /// Which side of the comparison a run exercises: the lift itself, or one of
@@ -389,7 +460,29 @@ struct Outcome {
     ret: Option<u32>,
     mem: [u8; OBJ_LEN],
     out: Option<[u32; 3]>,
+    cache: Option<[u32; 4]>,
     log: Vec<Ev>,
+}
+
+/// Reads the shared cache words from the test memory.
+fn read_cache() -> [u32; 4] {
+    [CACHE_WEIGHT_A_VA, CACHE_FLAGS_VA, CACHE_WEIGHT_B_VA, CACHE_SCALE_VA].map(|va| {
+        let p = lf_checker_rt::global::<u32>(va);
+        // SAFETY: the address resolves into the leaked area set up by `setup_runtime`.
+        unsafe { p.read_unaligned() }
+    })
+}
+
+/// Writes the shared cache words into the test memory.
+fn write_cache(words: [u32; 4]) {
+    for (va, w) in [CACHE_WEIGHT_A_VA, CACHE_FLAGS_VA, CACHE_WEIGHT_B_VA, CACHE_SCALE_VA]
+        .into_iter()
+        .zip(words)
+    {
+        let p = lf_checker_rt::global::<u32>(va);
+        // SAFETY: as above.
+        unsafe { p.write_unaligned(w) }
+    }
 }
 
 // The rewrite side.
@@ -402,8 +495,24 @@ fn run_rewrite(m: Method, inp: &Input) -> Outcome {
     let mut outbuf = Box::new([0u32; 3]);
     let out_addr = outbuf.as_mut_ptr() as usize as u32;
 
+    // The advance's ped: a link object and a position block, placed in test
+    // memory where the rewrite's pointer reads find them.
+    let mut ped = Box::new([0u8; 0xB00]);
+    let mut link = Box::new([0u8; 0x60]);
+    let mut posblk = Box::new([0u8; 0x40]);
+    put_u32_slice(&mut ped[..], 0xA80, link.as_mut_ptr() as usize as u32);
+    put_u32_slice(&mut ped[..], 0x20, posblk.as_mut_ptr() as usize as u32);
+    put_u32_slice(&mut link[..], 0x50, inp.ped_link);
+    put_u32_slice(&mut posblk[..], 0x30, inp.ped_pos[0]);
+    put_u32_slice(&mut posblk[..], 0x34, inp.ped_pos[1]);
+    let mut target = Box::new(inp.target);
+    let target_addr = target.as_mut_ptr() as usize as u32;
+    let ped_addr = ped.as_mut_ptr() as usize as u32;
+    write_cache(inp.cache);
+
     set_manager_word(inp.manager);
     SRC.with(|s| s.set(addr));
+    HELPER_ANSWER.with(|h| h.set(inp.helper_answer));
     ALLOC_ANSWER.with(|a| a.set(inp.alloc_answer));
     CTOR_ANSWER.with(|c| c.set(inp.ctor_answer));
     REFRESH_MASK.with(|r| r.set(inp.refresh_mask));
@@ -429,14 +538,22 @@ fn run_rewrite(m: Method, inp: &Input) -> Outcome {
         }
         Method::Refresh => Some(fn_00CB8AC0::rw_00cb8ac0(addr, inp.word1, inp.word2, 0x5A5A_5A5A)),
         Method::Clone => Some(fn_00CAF720::rw_00caf720(addr)),
+        Method::Advance => Some(fn_00CAFC10::rw_00CAFC10(addr, ped_addr, target_addr)),
     };
     let out = if m == Method::Copy3 { Some(*outbuf) } else { None };
+    let cache = if m == Method::Advance { Some(read_cache()) } else { None };
     Outcome {
         ret,
         mem: *obj,
         out,
+        cache,
         log: LOG.with(|l| std::mem::take(&mut *l.borrow_mut())),
     }
+}
+
+/// Writes a word into a byte buffer at an offset.
+fn put_u32_slice(b: &mut [u8], off: usize, v: u32) {
+    b[off..off + 4].copy_from_slice(&v.to_le_bytes());
 }
 
 // The lifted side: the host records the calls the lifted method makes.
@@ -447,6 +564,9 @@ struct Host {
     alloc_answer: u32,
     ctor_answer: u32,
     refresh_mask: u32,
+    ped_link: u32,
+    ped_pos: [f32; 2],
+    helper_answer: u64,
 }
 
 impl GoToPointOnRouteHost for Host {
@@ -476,6 +596,22 @@ impl GoToPointOnRouteHost for Host {
         });
         self.ctor_answer
     }
+
+    fn ped_link_flags(&mut self, _ped: u32) -> u32 {
+        self.ped_link
+    }
+
+    fn ped_position(&mut self, _ped: u32) -> [f32; 2] {
+        self.ped_pos
+    }
+
+    fn double_helper(&mut self, arg_bits: u64) -> u64 {
+        self.log.push(Ev::Helper {
+            lo: arg_bits as u32,
+            hi: (arg_bits >> 32) as u32,
+        });
+        self.helper_answer
+    }
 }
 
 fn decode(b: &[u8; OBJ_LEN]) -> GoToPointOnRouteTask {
@@ -489,6 +625,11 @@ fn decode(b: &[u8; OBJ_LEN]) -> GoToPointOnRouteTask {
             f32::from_bits(read_u32(b, O_POSITION + 12)),
         ],
         value_8c: f32::from_bits(read_u32(b, O_VALUE_8C)),
+        entry_value: f32::from_bits(read_u32(b, O_ENTRY_VALUE)),
+        anchor: [
+            f32::from_bits(read_u32(b, O_ANCHOR)),
+            f32::from_bits(read_u32(b, O_ANCHOR + 4)),
+        ],
         word_a0: read_u32(b, O_WORD_A0),
         flags_b0: read_u32(b, O_FLAGS_B0),
         flags_c4: read_u32(b, O_FLAGS_C4),
@@ -503,6 +644,9 @@ fn encode(t: &GoToPointOnRouteTask, b: &mut [u8; OBJ_LEN]) {
         put_u32(b, O_POSITION + 4 * k, w.to_bits());
     }
     put_u32(b, O_VALUE_8C, t.value_8c.to_bits());
+    put_u32(b, O_ENTRY_VALUE, t.entry_value.to_bits());
+    put_u32(b, O_ANCHOR, t.anchor[0].to_bits());
+    put_u32(b, O_ANCHOR + 4, t.anchor[1].to_bits());
     put_u32(b, O_WORD_A0, t.word_a0);
     put_u32(b, O_FLAGS_B0, t.flags_b0);
     put_u32(b, O_FLAGS_C4, t.flags_c4);
@@ -585,6 +729,21 @@ fn wrong_clone<H: GoToPointOnRouteHost>(t: &GoToPointOnRouteTask, host: &mut H) 
     )
 }
 
+fn wrong_advance<H: GoToPointOnRouteHost>(
+    t: &mut GoToPointOnRouteTask,
+    host: &mut H,
+    cache: &mut ProgressCache,
+    target: [f32; 2],
+) {
+    // The idle test is negated: a NaN entry value takes the idle store and
+    // leaves the cache unfilled.
+    if !(t.entry_value > 1.0) && t.active != 0 {
+        t.progress = t.entry_value;
+        return;
+    }
+    t.advance_progress(host, cache, 0x1234, target);
+}
+
 fn run_lift(m: Method, v: Variant, inp: &Input) -> Outcome {
     let mut mem = inp.init;
     let mut t = decode(&mem);
@@ -594,6 +753,15 @@ fn run_lift(m: Method, v: Variant, inp: &Input) -> Outcome {
         alloc_answer: inp.alloc_answer,
         ctor_answer: inp.ctor_answer,
         refresh_mask: inp.refresh_mask,
+        ped_link: inp.ped_link,
+        ped_pos: inp.ped_pos.map(f32::from_bits),
+        helper_answer: inp.helper_answer,
+    };
+    let mut cache = ProgressCache {
+        flags: inp.cache[1],
+        weight_a: inp.cache[0],
+        weight_b: inp.cache[2],
+        scale: inp.cache[3],
     };
     let mut out = None;
     let ret = match (m, v) {
@@ -637,12 +805,26 @@ fn run_lift(m: Method, v: Variant, inp: &Input) -> Outcome {
         (Method::Refresh, Variant::Wrong) => Some(wrong_refresh(&mut t, &mut host, inp.word1, inp.word2)),
         (Method::Clone, Variant::Lift) => Some(t.clone_task(&mut host)),
         (Method::Clone, Variant::Wrong) => Some(wrong_clone(&t, &mut host)),
+        (Method::Advance, Variant::Lift) => {
+            t.advance_progress(&mut host, &mut cache, 0x1234, inp.target.map(f32::from_bits));
+            None
+        }
+        (Method::Advance, Variant::Wrong) => {
+            wrong_advance(&mut t, &mut host, &mut cache, inp.target.map(f32::from_bits));
+            None
+        }
     };
     encode(&t, &mut mem);
+    let cache_out = if m == Method::Advance {
+        Some([cache.weight_a, cache.flags, cache.weight_b, cache.scale])
+    } else {
+        None
+    };
     Outcome {
         ret,
         mem,
         out,
+        cache: cache_out,
         log: host.log,
     }
 }
@@ -664,6 +846,9 @@ fn install(m: Method) {
         Method::Clone => {
             setup_runtime(stub_alloc as *const () as usize as u32, stub_ctor as *const () as usize as u32);
         }
+        Method::Advance => {
+            setup_runtime(stub_helper as *const () as usize as u32, 0);
+        }
         _ => {
             setup_runtime(0, 0);
         }
@@ -684,7 +869,11 @@ fn compare(m: Method, v: Variant, seed: u64) -> (usize, Option<String>) {
             (None, None) => true,
             _ => false,
         };
-        let same = ret_ok && rw.mem == lf.mem && rw.out == lf.out && rw.log == lf.log;
+        let same = ret_ok
+            && rw.mem == lf.mem
+            && rw.out == lf.out
+            && rw.cache == lf.cache
+            && rw.log == lf.log;
         if !same {
             bad += 1;
             if first.is_none() {
@@ -860,6 +1049,22 @@ fn branch(m: Method, inp: &Input) -> &'static str {
                 "allocated"
             }
         }
+        Method::Advance => {
+            let entry = f(O_ENTRY_VALUE);
+            if inp.init[O_ACTIVE] == 0 {
+                "idle"
+            } else if (inp.ped_link & 0b10) != 0 {
+                "held"
+            } else if entry.is_nan() {
+                "nan-entry"
+            } else if entry <= 1.0 {
+                "entry-at-or-below-one"
+            } else if inp.cache[3] == 0 {
+                "zero-scale"
+            } else {
+                "blend"
+            }
+        }
     }
 }
 
@@ -874,8 +1079,9 @@ fn every_branch_is_reached_by_generated_cases() {
         Method::Set8c,
         Method::Refresh,
         Method::Clone,
+        Method::Advance,
     ];
-    let expected: [(Method, &[&str]); 7] = [
+    let expected: [(Method, &[&str]); 8] = [
         (Method::Positive, &["nan", "positive", "zero", "negative"]),
         (Method::Clamp, &["nan", "below", "above", "inside"]),
         (Method::Copy3, &["copy"]),
@@ -889,6 +1095,10 @@ fn every_branch_is_reached_by_generated_cases() {
         ),
         (Method::Refresh, &["mode-one-or-two", "other-mode"]),
         (Method::Clone, &["null-allocation", "allocated"]),
+        (
+            Method::Advance,
+            &["idle", "held", "nan-entry", "entry-at-or-below-one", "zero-scale", "blend"],
+        ),
     ];
     for (m, want) in expected {
         install(m);
@@ -915,4 +1125,14 @@ fn every_branch_is_reached_by_generated_cases() {
             );
         }
     }
+}
+
+#[test]
+fn advance_progress_matches_rewrite() {
+    check(Method::Advance, 0x6008);
+}
+
+#[test]
+fn advance_progress_wrong_is_caught() {
+    check_wrong_caught(Method::Advance, 0x6008);
 }

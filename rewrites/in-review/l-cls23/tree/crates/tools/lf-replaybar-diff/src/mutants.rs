@@ -112,11 +112,12 @@ pub fn update(
     world.setup_inner(bar.inner, 0);
     let [_, produced_b, produced_c] = world.produce(bar.handle);
     bar.mark = u32::MAX;
-    let (token, first, second) = world.fill_pair();
+    let (token, mut first, mut second) = world.fill_pair();
     if m == UpdateMutant::ConsumeSwapped {
-        world.consume(bar.handle, token, second, first);
+        let (mut x, mut y) = (second, first);
+        world.consume(bar.handle, token, &mut x, &mut y);
     } else {
-        world.consume(bar.handle, token, first, second);
+        world.consume(bar.handle, token, &mut first, &mut second);
     }
     let measured = world.measure();
     bar.total = if m == UpdateMutant::TotalFromFirst {

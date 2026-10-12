@@ -237,12 +237,16 @@ impl ReplayBarWorld for FakeWorld {
         (answer.ret, answer.outs[0], answer.outs[1])
     }
 
-    fn consume(&mut self, bar: Handle32<BarTag>, token: u32, first: u32, second: u32) {
+    fn consume(
+        &mut self,
+        bar: Handle32<BarTag>,
+        token: u32,
+        _first: &mut u32,
+        _second: &mut u32,
+    ) {
         let a = self.handle_bar(bar);
         let t = self.word(token);
-        let f = self.word(first);
-        let s = self.word(second);
-        self.record("consume", &[a, t, f, s]);
+        self.record("consume", &[a, t]);
     }
 
     fn measure(&mut self) -> u32 {
@@ -355,7 +359,7 @@ pub fn normalise(ctx: &Ctx, table: &[CallSpec], calls: &[(u32, Vec<u32>)]) -> Ve
             let names: Vec<String> = args
                 .iter()
                 .enumerate()
-                .filter(|(index, _)| !spec.outs.contains(index))
+                .filter(|(index, _)| !spec.outs.contains(index) && !(spec.name == "consume" && **index >= 2))
                 .map(|(_, value)| sym(ctx, *value))
                 .collect();
             format!("{}({})", spec.name, names.join(","))

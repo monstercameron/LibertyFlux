@@ -140,8 +140,8 @@ impl ReplayProgressBar {
         world.setup_inner(self.inner, 0);
         let [_, produced_b, produced_c] = world.produce(self.handle);
         self.mark = u32::MAX;
-        let (token, first, second) = world.fill_pair();
-        world.consume(self.handle, token, first, second);
+        let (token, mut first, mut second) = world.fill_pair();
+        world.consume(self.handle, token, &mut first, &mut second);
         self.total = world.measure().wrapping_add(second);
 
         if !(self.phase == PHASE_SKIP_A || self.phase == PHASE_SKIP_B) {

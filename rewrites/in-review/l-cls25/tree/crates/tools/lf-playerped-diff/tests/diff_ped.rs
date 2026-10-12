@@ -17,9 +17,10 @@ use core::hint::black_box;
 use lf_core::Handle32;
 use lf_playerped_diff::rewrites::{
     fn_009e54c0, fn_009e5940, fn_009eaee0, fn_009f0fc0, fn_00a2a620, fn_00a2d300, fn_00a2d3a0,
-    fn_00a2d3e0, fn_00a29e40,
+    fn_00a2d3e0, fn_00a29e40, fn_009edb70,
 };
 use lf_playerped_diff::rt::{Effect, Kind, SLOT8_ID};
+use lf_world::player_ped::offsets;
 use lf_world::player_ped::offsets::{
     CURRENT_SLOT, JOB_WORD, LINK, MODE, MOTION_VALUE, SETUP_RESULT, SUB_A, SUB_B,
 };
@@ -482,6 +483,42 @@ fn trial_vf79(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     compare("vf79", &rw, &lf)
 }
 
+fn trial_vf32(rng: &mut Rng, variant: Variant) -> Result<(), String> {
+    let mut init = random_image(rng);
+    put32(&mut init, offsets::CHAIN_BASE, rng.next_u32());
+    if rng.below(4) == 0 {
+        put32(&mut init, offsets::CHAIN_BASE, 0);
+    }
+    let answers = vec![
+        (2, vec![rng.next_u32()]),
+        (3, vec![rng.next_u32()]),
+        (4, vec![rng.next_u32()]),
+    ];
+    let c = case(
+        init,
+        &[(2, Kind::T1), (3, Kind::T2), (4, Kind::T1)],
+        answers,
+        None,
+    );
+    let (rw, lf) = run_both(
+        &c,
+        |this| fn_009edb70::rw_009edb70(this),
+        |ped, _this, world| match variant {
+            Variant::Lifted => ped.run_entry_chain(world),
+            Variant::Wrong => wrong_vf32(ped, world),
+        },
+    );
+    compare("vf32", &rw, &lf)
+}
+
+/// Wrong: the entry chain runs on the chain base itself, without the offset.
+fn wrong_vf32(ped: &mut CPlayerPed, world: &mut TestWorld) -> u32 {
+    let sub = ped.chain_base;
+    world.chain_reset(sub);
+    world.chain_flag(sub, 1);
+    world.chain_main(sub)
+}
+
 /// The slot-8 stub's address, as a word.
 fn rt_slot8() -> u32 {
     lf_playerped_diff::rt::slot8_stub_addr()
@@ -595,4 +632,14 @@ fn vf79_lift_matches_rewrite() {
 #[test]
 fn vf79_wrong_lift_is_caught() {
     expect_wrong_caught("vf79", trial_vf79, 0x79);
+}
+
+#[test]
+fn vf32_lift_matches_rewrite() {
+    expect_agreement("vf32", trial_vf32, 0x32);
+}
+
+#[test]
+fn vf32_wrong_lift_is_caught() {
+    expect_wrong_caught("vf32", trial_vf32, 0x32);
 }

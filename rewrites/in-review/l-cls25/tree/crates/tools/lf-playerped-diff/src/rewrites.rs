@@ -110,3 +110,13 @@ pub mod fn_00a2d3a0 {
         "/../../../../../../../rewrites/verified/functions/fn_00a2d3a0.rs"
     ));
 }
+
+pub mod fn_009edb70 {
+    #![allow(unused_imports)]
+    use super::{callee_addr, global};
+    use crate::{callee_thiscall, export};
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_009edb70.rs"
+    ));
+}
