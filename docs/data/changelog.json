@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Devlog: the lift lane's entry on the go-to-point-on-route task",
+    "title": "Rewrites: 1 more functions pass the checker (20072 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
+      "The tree now holds 20072 rewrites, 20069 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Devlog: the lift lane's entry on the go-to-point-on-route task",
+    "commit": "f0143be50b91e6a99670f0609839b9c527bc50ec",
     "summary": "The lane's own account of lifting eight methods of the go-to-point-on-route task is added to the devlog.",
     "changes": [
       "The entry gives the family and its two virtual tables, the lifted form and its host calls, what the proofs compare and what they do not, and the findings about literal constants, an unread data word and two comments in the verified rewrites."
