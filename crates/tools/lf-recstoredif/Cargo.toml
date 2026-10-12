@@ -1,0 +1,14 @@
+[package]
+name = "lf-recstoredif"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: the lifted slot-record store (slot_store::SlotStore) against its verified 32-bit rewrites"
+publish = false
+
+[dependencies]
+lf-core = { path = "../../lf-core" }
+
+[lints]
+workspace = true

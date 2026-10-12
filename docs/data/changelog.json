@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Lift: 58 small routines in seven families",
+    "commit": null,
+    "summary": "The fourth list chosen by shape, the verified functions of 24 to 33 bytes that call nothing, gives seven more families. Each is lifted once and proved against every instance.",
+    "changes": [
+      "crates/lf-core gains seven modules: a row lookup by flag, base and stride (10 instances), a copy of a block of three or four words with a rule for what is returned (22), one source word written to three targets (8), a store into a record chosen through an eight-entry selector (4), a test of one flag bit reached through a table of signed ids (4), one constant written to three globals (4) and a yes-or-no over two or three fields of an object (6). No unsafe code and no addresses; the 50 rewrite files they stand for hold 107 uses of unsafe.",
+      "Seven new test crates run each lifted routine against its tracked verified rewrites on the 32-bit target, 1,000 generated cases per instance, with three or four deliberately wrong versions per family caught by every instance. The coordinator read the seven modules and ran the core crate's host tests (84) and the seven crates' 60 tests on the 32-bit target before committing; none failed.",
+      "Three of the seven are weak lifts by the lane's own account (the block copy, the fan-out and the constant fill). Only two families had their parameters extracted by script with a shape assertion; the other five were transcribed by hand, and what checks the transcription is the differential test. The next lanes are told to extract every family's parameters by script.",
+      "Five of the test crates bring the rewrites in as modules by path, because two verified files open with a doc comment that an include cannot take. The integration script did not shorten those paths to the repository's depth; the coordinator did it by hand, and marked the modules so that the formatter does not descend into verified rewrites. A workspace-wide format run by the coordinator had first reformatted four verified rewrites and three other tracked files through those modules; they were restored to their committed state before anything was committed.",
+      "128 functions on the list are not lifted: families of fewer than four, singletons, and several shapes named for a later lane. Verified routines with a lifted counterpart proven in the pipeline: 1,063, up from 1,005."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 2 files from lanes (634 unverified rewrites, 590 in review)",
     "commit": "8a341514aa86d52ecbc60d8d14d1ce50ddce9c7d",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

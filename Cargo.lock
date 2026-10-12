@@ -187,6 +187,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-blockdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
 name = "lf-checker-proofs"
 version = "2.0.0"
 dependencies = [
@@ -212,6 +219,13 @@ dependencies = [
 
 [[package]]
 name = "lf-constdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-constfilldiff"
 version = "0.1.0"
 dependencies = [
  "lf-core",
@@ -283,6 +297,13 @@ version = "0.1.0"
 dependencies = [
  "lf-core",
  "lf-peds-tasks",
+]
+
+[[package]]
+name = "lf-fanoutdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
 ]
 
 [[package]]
@@ -501,6 +522,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-predicatediff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
 name = "lf-proxy"
 version = "0.1.0"
 dependencies = [
@@ -534,6 +562,13 @@ name = "lf-ratiodiff-d"
 version = "0.1.0"
 dependencies = [
  "lf-vehicles",
+]
+
+[[package]]
+name = "lf-recstoredif"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
 ]
 
 [[package]]
@@ -571,6 +606,13 @@ dependencies = [
  "lf-checker-rt",
  "lf-core",
  "lf-registry",
+]
+
+[[package]]
+name = "lf-rowdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
 ]
 
 [[package]]
@@ -656,6 +698,13 @@ version = "0.1.0"
 dependencies = [
  "lf-core",
  "lf-peds-tasks",
+]
+
+[[package]]
+name = "lf-taskflagdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
 ]
 
 [[package]]

@@ -19,13 +19,20 @@
 
 pub mod arena;
 pub mod boundary;
+pub mod const_fill;
 pub mod constant_writes;
+pub mod field_predicate;
 pub mod field_store;
 pub mod indexed_read;
 pub mod layout_assert;
+pub mod object_rows;
 pub mod ptr32;
+pub mod slot_store;
 pub mod static_list;
+pub mod task_flags;
+pub mod word_block;
 pub mod word_copy;
+pub mod word_fanout;
 pub mod word_test;
 
 pub use arena::{Arena, Handle};
