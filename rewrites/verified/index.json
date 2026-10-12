@@ -82908,6 +82908,15 @@
   "lane": "a-18"
  },
  {
+  "address": "0x00A325E0",
+  "name": "CEntity::update_physics_instance",
+  "kind": "function",
+  "file": "functions/fn_00a325e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
   "address": "0x00A32610",
   "name": "CEntity::vf18",
   "kind": "function",
@@ -85291,6 +85300,105 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "a-S10"
+ },
+ {
+  "address": "0x00A661E0",
+  "name": "make_heap_frag_pairs",
+  "kind": "function",
+  "file": "functions/fn_00a661e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
+  "address": "0x00A66500",
+  "name": "insertion_sort_frag_pairs_unguarded",
+  "kind": "function",
+  "file": "functions/fn_00a66500.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
+  "address": "0x00A668D0",
+  "name": "make_heap_frag_pairs_default",
+  "kind": "function",
+  "file": "functions/fn_00a668d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
+  "address": "0x00A668F0",
+  "name": "heapsort_frag_pairs_default",
+  "kind": "function",
+  "file": "functions/fn_00a668f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
+  "address": "0x00A66910",
+  "name": "heap_pop_frag_pairs",
+  "kind": "function",
+  "file": "functions/fn_00a66910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
+  "address": "0x00A66950",
+  "name": "sort_frag_pairs",
+  "kind": "function",
+  "file": "functions/fn_00a66950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
+  "address": "0x00A66C40",
+  "name": "physics_state_reset",
+  "kind": "function",
+  "file": "functions/fn_00a66c40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
+  "address": "0x00A66D10",
+  "name": "phInstBehaviorExplosionGta::~phInstBehaviorExplosionGta",
+  "kind": "function",
+  "file": "functions/fn_00a66d10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
+  "address": "0x00A66D70",
+  "name": "CEventOnFire::~CEventOnFire__deleting",
+  "kind": "function",
+  "file": "functions/fn_00a66d70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
+  "address": "0x00A67720",
+  "name": "teardown_all_active_explosions",
+  "kind": "function",
+  "file": "functions/fn_00a67720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
+ },
+ {
+  "address": "0x00A67740",
+  "name": "CEventOnFire::~CEventOnFire",
+  "kind": "function",
+  "file": "functions/fn_00a67740.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s770"
  },
  {
   "address": "0x00A6CB30",

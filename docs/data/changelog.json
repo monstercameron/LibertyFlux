@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Devlog: the lift lanes' entries on the move-between-points task and the mirror render phase",
+    "title": "Rewrites: 12 more functions pass the checker (19906 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "12 rewrites added under rewrites/verified: 0 script native handlers and 12 other functions.",
+      "The tree now holds 19906 rewrites, 19903 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Devlog: the lift lanes' entries on the move-between-points task and the mirror render phase",
+    "commit": "a23d37c8e79a50cd2a399290bd8ca4c50078604b",
     "summary": "The two lanes' own accounts of lifting five methods of a move-between-points task and four methods of the mirror render phase are added to the devlog.",
     "changes": [
       "Each entry gives the class as the dossier and the rewrites establish it, the lifted form, what the proofs compare, and what the lane found about the proofs of record while reading them."
