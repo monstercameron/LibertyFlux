@@ -49,6 +49,8 @@ fn case(
         player_context: 0,
         aim_state: 0,
         dist_threshold: 0,
+        cells: [0; rt::CELL_COUNT],
+        poses: [0; 16],
         model_entries: [0; 8],
         keep: Vec::new(),
     }
@@ -725,6 +727,152 @@ fn trial_vf45(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     compare("vf45", &rw, &lf)
 }
 
+
+/// Wrong: the attachment step is left out of the refresh gate.
+fn wrong_vf33(ped: &mut CPlayerPed, this: Handle32<PedTag>, world: &mut TestWorld) -> u32 {
+    let argument = world.hook_argument();
+    let hooked = world.hook_call(argument) != 0
+        || (world.global_byte(ByteGlobal::FlagA) != 0 && world.global_byte(ByteGlobal::FlagB) != 0);
+    let mut acc = u8::from(hooked);
+    acc |= world.global_byte(ByteGlobal::OrFirst);
+    acc |= world.global_byte(ByteGlobal::OrSecond);
+    if acc != 0 && world.global_byte(ByteGlobal::Guard) == 0 {
+        return 0;
+    }
+    let got = world.refresh_virtual(ped, this);
+    world.refresh_follow(got);
+    if world.global_word(WordGlobal::State) == 1 {
+        return 0;
+    }
+    if world.global_word(WordGlobal::PairA) != world.global_word(WordGlobal::PairB) {
+        return 0;
+    }
+    if world.global_word(WordGlobal::Mode) == 0x12 {
+        return 0;
+    }
+    let obj = ped.chain_base;
+    if (world.probe_first(obj) & 0xFF) != 0 {
+        ped.relink_flags &= !2;
+    }
+    if (world.probe_second(obj) & 0xFF) == 0 {
+        if (ped.relink_flags >> 1) & 1 != 0 {
+            if (world.deep_refresh_gate() & 0xFF) == 0 && ped.status_28 & 0x0080_0000 == 0 {
+                world.deep_refresh_entry(this.get().wrapping_add(0xBB0));
+            }
+        } else if ped.marker_219 == 0 {
+            let current = f32::from_bits(ped.fval_bits);
+            let constant = f32::from_bits(world.global_word(WordGlobal::FloatConst));
+            if current != constant
+                && (world.deep_refresh_gate() & 0xFF) == 0
+                && ped.status_28 & 0x0080_0000 == 0
+            {
+                world.deep_refresh_entry(this.get().wrapping_add(0xBB0));
+            }
+        }
+    }
+    if ped.flag_f4 & 2 != 0 {
+        world.sub_virtual(this.get().wrapping_add(0xBB0));
+    }
+    ped.status_29c |= 0x0100_0000;
+    let ready = world.ready_probe(ped, this);
+    if ready == 0 {
+        world.tail_virtual(ped, this);
+    }
+    ready
+}
+
+fn trial_vf33(rng: &mut Rng, variant: Variant) -> Result<(), String> {
+    // The pedestrian's table: the refresh slot at byte 0xD0 and the tail slot
+    // at byte 0xCC; every other word holds the two-argument trap.
+    let mut ped_table = vec![rt::trap_stub_addr(); 53];
+    ped_table[51] = rt::tail_stub_addr();
+    ped_table[52] = rt::refresh_stub_addr();
+    let ped_table_addr = ped_table.as_ptr() as usize as u32;
+    // The inner object's table: the attach slot at byte 0x0C.
+    let mut inner_table = vec![rt::trap_stub_addr(); 4];
+    inner_table[3] = rt::attach_stub_addr();
+    let mut inner_rec = vec![0u32; 0x10];
+    inner_rec[0] = inner_table.as_ptr() as usize as u32;
+    let inner_addr = inner_rec.as_ptr() as usize as u32;
+    // The outer object: its inner pointer at byte 0x58.
+    let mut outer_rec = vec![0u32; 0x30];
+    outer_rec[0x58 / 4] = inner_addr;
+    let outer_addr = outer_rec.as_ptr() as usize as u32;
+    // The sub-object's table: the entry at byte 4 is the sub-object slot.
+    let mut sub_table = vec![rt::trap_one_addr(); 2];
+    sub_table[1] = rt::vsub_stub_addr();
+    let sub_table_addr = sub_table.as_ptr() as usize as u32;
+
+    // Pose records: one per table entry, each with a state byte at 0x8C.
+    let mut poses = [0u32; 16];
+    let mut pose_recs: Vec<Vec<u32>> = Vec::new();
+    for slot in &mut poses {
+        let mut rec = vec![0u32; 0x30];
+        let state = if rng.below(3) == 0 { 0 } else { (1 + rng.below(255)) as u8 };
+        put8(&mut rec, 0x8C, state);
+        *slot = if rng.below(5) == 0 { 0 } else { rec.as_ptr() as usize as u32 };
+        pose_recs.push(rec);
+    }
+
+    let mut init = random_image(rng);
+    put32(&mut init, 0, ped_table_addr);
+    put32(&mut init, offsets::SUB_OBJECT, sub_table_addr);
+    put32(&mut init, offsets::OUTER, outer_addr);
+    let index = rng.below(16) as i32 - 8;
+    put16(&mut init, offsets::CHAIN_INDEX, index as i16 as u16);
+    put8(&mut init, offsets::MARKER_219, if rng.coin() { 0 } else { 1 + rng.below(255) as u8 });
+    put32(&mut init, offsets::FVAL, float_bits(rng));
+    put32(&mut init, offsets::CHAIN_BASE, handle_pick(rng));
+    put8(&mut init, offsets::FLAG_F4, rng.next_u32() as u8);
+
+    let mut cells = [0u32; rt::CELL_COUNT];
+    cells[cells_index::HOOK_ARG] = rng.next_u32();
+    cells[cells_index::HOOK_SLOT] = rt::hook_stub_addr();
+    cells[cells_index::FLAG_A] = if rng.below(3) == 0 { 0 } else { rng.below(256) };
+    cells[cells_index::FLAG_B] = if rng.coin() { 0 } else { rng.below(256) };
+    cells[cells_index::OR_FIRST] = if rng.below(4) == 0 { 1 } else { 0 };
+    cells[cells_index::OR_SECOND] = if rng.below(4) == 0 { 2 } else { 0 };
+    cells[cells_index::GUARD] = if rng.below(3) == 0 { 0 } else { 1 };
+    cells[cells_index::STATE] = if rng.below(4) == 0 { 1 } else { rng.below(4) };
+    cells[cells_index::PAIR_A] = rng.below(3);
+    cells[cells_index::PAIR_B] = if rng.coin() { cells[cells_index::PAIR_A] } else { rng.below(3) };
+    cells[cells_index::MODE] = if rng.below(5) == 0 { 0x12 } else { rng.below(0x20) };
+    cells[cells_index::FLOAT_CONST] = float_bits(rng);
+
+    let answers = vec![
+        (3, vec![rng.next_u32()]),
+        (5, vec![rng.next_u32()]),
+        (6, vec![rng.next_u32()]),
+        (7, vec![rng.next_u32()]),
+        (8, vec![rng.next_u32()]),
+        (10, vec![rng.next_u32()]),
+        (rt::HOOK_ID, vec![rng.next_u32()]),
+        (rt::REFRESH_ID, vec![rng.next_u32()]),
+        (rt::ATTACH_ID, vec![rng.next_u32()]),
+        (rt::TAIL_ID, vec![rng.next_u32()]),
+        (rt::VSUB_ID, vec![rng.next_u32()]),
+    ];
+    let mut c = case(
+        init,
+        &[(3, Kind::T1), (5, Kind::T1), (6, Kind::T1), (7, Kind::C0), (8, Kind::T1), (10, Kind::T1)],
+        answers,
+        None,
+    );
+    c.cells = cells;
+    c.poses = poses;
+    c.keep = vec![ped_table, inner_table, inner_rec, outer_rec, sub_table];
+    c.keep.extend(pose_recs);
+    let (rw, lf) = run_both(
+        &mut c,
+        |this| fn_009ebed0::rw_009EBED0(this),
+        |ped, this, world| match variant {
+            Variant::Lifted => ped.refresh_gate(this, world),
+            Variant::Wrong => wrong_vf33(ped, this, world),
+        },
+    );
+    compare("vf33", &rw, &lf)
+}
+
 /// The slot-8 stub's address, as a word.
 fn rt_slot8() -> u32 {
     lf_playerped_diff::rt::slot8_stub_addr()
@@ -868,4 +1016,14 @@ fn vf45_lift_matches_rewrite() {
 #[test]
 fn vf45_wrong_lift_is_caught() {
     expect_wrong_caught("vf45", trial_vf45, 0x45);
+}
+
+#[test]
+fn vf33_lift_matches_rewrite() {
+    expect_agreement("vf33", trial_vf33, 0x33);
+}
+
+#[test]
+fn vf33_wrong_lift_is_caught() {
+    expect_wrong_caught("vf33", trial_vf33, 0x33);
 }

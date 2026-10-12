@@ -207,3 +207,89 @@ pub trait PlayerPedWorld {
     /// Callee 4 of the model change: loads the bundle named by the job word.
     fn load_bundle(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>, bundle: u32) -> u32;
 }
+
+/// A word-sized shared global the gate block reads.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WordGlobal {
+    /// The state word: the gate refuses when it reads one.
+    State,
+    /// The first of the pair words, compared with the second.
+    PairA,
+    /// The second of the pair words.
+    PairB,
+    /// The mode word: the gate refuses when it reads its refusal value.
+    Mode,
+    /// The float constant the gate compares the float word with, as bits.
+    FloatConst,
+}
+
+/// A byte-sized shared global the gate block reads.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ByteGlobal {
+    /// The first flag byte.
+    FlagA,
+    /// The second flag byte.
+    FlagB,
+    /// The first of the two or-bytes.
+    OrFirst,
+    /// The second of the two or-bytes.
+    OrSecond,
+    /// The guard byte.
+    Guard,
+}
+
+/// The collaborators of the gate block: the hook through a global slot, the
+/// pose table, the virtual slots of the pedestrian, the inner and sub-objects,
+/// and the probes and deep refresh.
+pub trait GateWorld: PlayerPedWorld {
+    /// The hook's argument, read from a shared global.
+    fn hook_argument(&mut self) -> u32;
+
+    /// The hook: the stdcall target a shared global slot holds. Answers the
+    /// gate's first test.
+    fn hook_call(&mut self, argument: u32) -> u32;
+
+    /// A shared word global the gate reads.
+    fn global_word(&mut self, which: WordGlobal) -> u32;
+
+    /// A shared byte global the gate reads.
+    fn global_byte(&mut self, which: ByteGlobal) -> u8;
+
+    /// The pose table entry at a signed index.
+    fn pose_entry(&mut self, index: i32) -> u32;
+
+    /// The flag byte of a pose entry.
+    fn entry_flag(&mut self, entry: u32) -> u8;
+
+    /// The pedestrian's refresh slot (its table's slot, with the pedestrian
+    /// and the pedestrian as arguments). Answers the object refreshed.
+    fn refresh_virtual(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>) -> u32;
+
+    /// Callee 3 of the gate: the follow-up on the object the refresh answered.
+    fn refresh_follow(&mut self, refreshed: u32);
+
+    /// The attach slot of the inner object's table, with the pedestrian as
+    /// its argument.
+    fn attach_virtual(&mut self, inner: u32, this: Handle32<PedTag>);
+
+    /// Callee 5 of the gate: the first probe on the chain base.
+    fn probe_first(&mut self, obj: u32) -> u32;
+
+    /// Callee 6 of the gate: the second probe on the chain base.
+    fn probe_second(&mut self, obj: u32) -> u32;
+
+    /// Callee 7 of the gate: the deep refresh's gate, which takes no argument.
+    fn deep_refresh_gate(&mut self) -> u32;
+
+    /// Callee 8 of the gate: the deep refresh of the sub-object.
+    fn deep_refresh_entry(&mut self, sub: u32);
+
+    /// The sub-object's slot 4, called with the sub-object.
+    fn sub_virtual(&mut self, sub: u32);
+
+    /// Callee 10 of the gate: the readiness probe on the pedestrian.
+    fn ready_probe(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>) -> u32;
+
+    /// The pedestrian's tail slot, called with the pedestrian.
+    fn tail_virtual(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>);
+}

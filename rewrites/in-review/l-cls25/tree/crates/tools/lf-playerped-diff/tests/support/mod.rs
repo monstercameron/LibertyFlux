@@ -15,7 +15,7 @@
 use lf_core::Handle32;
 use lf_playerped_diff::rt::{self, Call, Effect, Kind};
 use lf_world::player_ped::offsets;
-use lf_world::player_ped::{CPlayerPed, ObjRef, ObjTag, PedTag, PlayerPedWorld};
+use lf_world::player_ped::{ByteGlobal, CPlayerPed, GateWorld, ObjRef, ObjTag, PedTag, PlayerPedWorld, WordGlobal};
 
 /// Words in a pedestrian image: four kilobytes, past the last field the
 /// rewrites touch.
@@ -115,6 +115,12 @@ pub fn encode(ped: &CPlayerPed, img: &mut [u32]) {
     put32(img, offsets::SOURCE, ped.source);
     put8(img, offsets::MARKER_219, ped.marker_219);
     put32(img, offsets::RELINK_FLAGS, ped.relink_flags);
+    put16(img, offsets::CHAIN_INDEX, ped.chain_index as u16);
+    put32(img, offsets::STATUS_28, ped.status_28);
+    put8(img, offsets::FLAG_F4, ped.flag_f4);
+    put32(img, offsets::OUTER, ped.outer);
+    put32(img, offsets::FVAL, ped.fval_bits);
+    put32(img, offsets::STATUS_29C, ped.status_29c);
     for (k, off) in offsets::RELINK_BLOCK.iter().enumerate() {
         put32(img, *off, ped.relink_block[k]);
     }
@@ -138,6 +144,12 @@ pub fn decode(img: &[u32]) -> CPlayerPed {
         source: get32(img, offsets::SOURCE),
         marker_219: get8(img, offsets::MARKER_219),
         relink_flags: get32(img, offsets::RELINK_FLAGS),
+        chain_index: get16(img, offsets::CHAIN_INDEX) as i16,
+        status_28: get32(img, offsets::STATUS_28),
+        flag_f4: get8(img, offsets::FLAG_F4),
+        outer: get32(img, offsets::OUTER),
+        fval_bits: get32(img, offsets::FVAL),
+        status_29c: get32(img, offsets::STATUS_29C),
         ..CPlayerPed::default()
     };
     for k in 0..2u32 {
@@ -388,6 +400,10 @@ pub struct Case {
     pub player_context: u32,
     pub aim_state: u32,
     pub dist_threshold: u32,
+    /// The gate block's global cells, in the runtime's order.
+    pub cells: [u32; rt::CELL_COUNT],
+    /// The pose table entries, from index -8 to 7.
+    pub poses: [u32; 16],
     pub model_entries: [u32; 8],
     /// Test-owned memory the image's addresses name; kept alive for the run.
     pub keep: Vec<Vec<u32>>,
@@ -409,6 +425,10 @@ pub fn run_both(
     rt::set_player_context(case.player_context);
     rt::set_aim_state(case.aim_state);
     rt::set_dist_threshold(case.dist_threshold);
+    rt::set_cells(&case.cells);
+    for (i, value) in case.poses.iter().enumerate() {
+        rt::set_pose_entry(i as i32 - 8, *value);
+    }
     for (i, record) in case.model_entries.iter().enumerate() {
         rt::set_model_entry(i, *record);
     }
@@ -545,4 +565,97 @@ pub fn run_trials(
         }
     }
     (failures, first)
+}
+
+/// Positions of the gate block's globals in the runtime's cell table.
+pub mod cells {
+    pub const HOOK_ARG: usize = 0;
+    pub const FLAG_A: usize = 2;
+    pub const FLAG_B: usize = 3;
+    pub const OR_FIRST: usize = 4;
+    pub const OR_SECOND: usize = 5;
+    pub const GUARD: usize = 6;
+    pub const STATE: usize = 7;
+    pub const PAIR_A: usize = 8;
+    pub const PAIR_B: usize = 9;
+    pub const MODE: usize = 10;
+    pub const FLOAT_CONST: usize = 11;
+}
+
+impl GateWorld for TestWorld {
+    fn hook_argument(&mut self) -> u32 {
+        rt::cell_value(cells::HOOK_ARG)
+    }
+
+    fn hook_call(&mut self, argument: u32) -> u32 {
+        rt::script_call(rt::HOOK_ID, vec![argument])
+    }
+
+    fn global_word(&mut self, which: WordGlobal) -> u32 {
+        rt::cell_value(match which {
+            WordGlobal::State => cells::STATE,
+            WordGlobal::PairA => cells::PAIR_A,
+            WordGlobal::PairB => cells::PAIR_B,
+            WordGlobal::Mode => cells::MODE,
+            WordGlobal::FloatConst => cells::FLOAT_CONST,
+        })
+    }
+
+    fn global_byte(&mut self, which: ByteGlobal) -> u8 {
+        rt::cell_value(match which {
+            ByteGlobal::FlagA => cells::FLAG_A,
+            ByteGlobal::FlagB => cells::FLAG_B,
+            ByteGlobal::OrFirst => cells::OR_FIRST,
+            ByteGlobal::OrSecond => cells::OR_SECOND,
+            ByteGlobal::Guard => cells::GUARD,
+        }) as u8
+    }
+
+    fn pose_entry(&mut self, index: i32) -> u32 {
+        rt::pose_entry(index)
+    }
+
+    fn entry_flag(&mut self, entry: u32) -> u8 {
+        rt::read_u8(entry.wrapping_add(0x8C))
+    }
+
+    fn refresh_virtual(&mut self, _ped: &mut CPlayerPed, this: Handle32<PedTag>) -> u32 {
+        rt::script_call(rt::REFRESH_ID, vec![this.get(), this.get()])
+    }
+
+    fn refresh_follow(&mut self, refreshed: u32) {
+        rt::script_call(3, vec![refreshed]);
+    }
+
+    fn attach_virtual(&mut self, inner: u32, this: Handle32<PedTag>) {
+        rt::script_call(rt::ATTACH_ID, vec![inner, this.get()]);
+    }
+
+    fn probe_first(&mut self, obj: u32) -> u32 {
+        rt::script_call(5, vec![obj])
+    }
+
+    fn probe_second(&mut self, obj: u32) -> u32 {
+        rt::script_call(6, vec![obj])
+    }
+
+    fn deep_refresh_gate(&mut self) -> u32 {
+        rt::script_call(7, Vec::new())
+    }
+
+    fn deep_refresh_entry(&mut self, sub: u32) {
+        rt::script_call(8, vec![sub]);
+    }
+
+    fn sub_virtual(&mut self, sub: u32) {
+        rt::script_call(rt::VSUB_ID, vec![sub]);
+    }
+
+    fn ready_probe(&mut self, _ped: &mut CPlayerPed, this: Handle32<PedTag>) -> u32 {
+        rt::script_call(10, vec![this.get()])
+    }
+
+    fn tail_virtual(&mut self, _ped: &mut CPlayerPed, this: Handle32<PedTag>) {
+        rt::script_call(rt::TAIL_ID, vec![this.get()]);
+    }
 }

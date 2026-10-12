@@ -9,7 +9,7 @@ use core::hint::black_box;
 
 use lf_core::Handle32;
 
-use super::world::{ObjTag, PedTag, PlayerPedWorld};
+use super::world::{ByteGlobal, GateWorld, ObjTag, PedTag, PlayerPedWorld, WordGlobal};
 
 /// An object identity the pedestrian stores: a pointer in the original.
 /// `None` stands for the original's zero.
@@ -162,7 +162,150 @@ fn scaled_threshold(initial: f32, aim: f32) -> f32 {
     }
 }
 
+/// The state word value that refuses the gate.
+const STATE_REFUSE: u32 = 1;
+/// The mode word value that refuses the gate.
+const MODE_REFUSE: u32 = 0x12;
+/// The busy bit a probe clears in the relink word.
+const BIT_BUSY: u32 = 0x2;
+/// The bit the gate block arms in its status word.
+const BIT_ARMED: u32 = 0x0100_0000;
+/// The lock bit of the status word that blocks the deep refresh.
+const BIT_LOCK: u32 = 0x0080_0000;
+/// The offset of the sub-object the gate block refreshes.
+const SUB_OFFSET: u32 = 0xBB0;
+/// The offset of the inner object pointer inside the outer object.
+const OUTER_INNER: u32 = 0x58;
+
+/// Which of the two probes a gate step runs.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ProbeId {
+    First,
+    Second,
+}
+
+/// The gate's hook step: the hook answers with its argument, else the first
+/// flag byte must be set, and then the second flag byte decides.
+fn hook_gate<W: GateWorld + ?Sized>(world: &mut W) -> bool {
+    let argument = world.hook_argument();
+    if world.hook_call(argument) != 0 {
+        return true;
+    }
+    if world.global_byte(ByteGlobal::FlagA) == 0 {
+        return false;
+    }
+    world.global_byte(ByteGlobal::FlagB) != 0
+}
+
 impl CPlayerPed {
+    /// The sub-object the gate block refreshes: the pedestrian's address plus a
+    /// fixed offset.
+    fn sub_address(&self, this: Handle32<PedTag>) -> u32 {
+        this.get().wrapping_add(SUB_OFFSET)
+    }
+
+    /// Runs the attachment step when the indexed pose entry is present, its
+    /// flag byte is set and the marker byte is set: the outer object's inner
+    /// object is attached to the pedestrian.
+    fn attach_indexed<W: GateWorld + ?Sized>(&mut self, this: Handle32<PedTag>, world: &mut W) {
+        let entry = world.pose_entry(i32::from(self.chain_index));
+        if entry == 0 || world.entry_flag(entry) == 0 || self.marker_219 == 0 {
+            return;
+        }
+        let inner = world.read_word(self.outer.wrapping_add(OUTER_INNER));
+        world.attach_virtual(inner, this);
+    }
+
+    /// Runs one probe on the chain base and, when it answers with a set low
+    /// byte, clears the busy bit of the relink word. Returns the low byte.
+    fn probe_and_clear<W: GateWorld + ?Sized>(&mut self, which: ProbeId, world: &mut W) -> u8 {
+        let obj = self.chain_base;
+        let answer = match which {
+            ProbeId::First => world.probe_first(obj),
+            ProbeId::Second => world.probe_second(obj),
+        };
+        if (answer & 0xFF) != 0 {
+            self.relink_flags &= !BIT_BUSY;
+        }
+        (answer & 0xFF) as u8
+    }
+
+    /// The deep refresh: runs when the deep gate passes and the lock bit of the
+    /// status word is clear; then refreshes the sub-object.
+    fn deep_refresh<W: GateWorld + ?Sized>(&mut self, this: Handle32<PedTag>, world: &mut W) {
+        if (world.deep_refresh_gate() & 0xFF) != 0 {
+            return;
+        }
+        if self.status_28 & BIT_LOCK != 0 {
+            return;
+        }
+        world.deep_refresh_entry(self.sub_address(this));
+    }
+
+    /// Refreshes the pedestrian's state, and reports its readiness.
+    ///
+    /// The gate runs in order. Gate A is the hook answer, or the first flag
+    /// byte set with the second clear. The two or-bytes join gate A's answer;
+    /// when any is set the guard byte must also be set, or the method returns
+    /// zero. The pedestrian's own refresh entry runs on its result, then the
+    /// attachment step. Gate C then refuses on the state word, on the unequal
+    /// pair, or on the mode word. Two probes run next and clear the busy bit
+    /// when they answer with a set low byte; when the second answers zero, the
+    /// deep refresh runs if the relink bit is set, or else when the marker byte
+    /// is clear and the float word differs from the global constant. The
+    /// sub-object's entry runs when the flag byte has its second bit set. The
+    /// status word gets its armed bit, and the readiness probe's answer is
+    /// returned; when that answer is zero, the tail entry runs first.
+    ///
+    /// Gate C and the float compare use the words as they are read: the float
+    /// compare is an ordinary inequality, so a not-a-number on either side
+    /// differs.
+    pub fn refresh_gate<W: GateWorld + ?Sized>(
+        &mut self,
+        this: Handle32<PedTag>,
+        world: &mut W,
+    ) -> u32 {
+        let mut acc = u8::from(hook_gate(world));
+        acc |= world.global_byte(ByteGlobal::OrFirst);
+        acc |= world.global_byte(ByteGlobal::OrSecond);
+        if acc != 0 && world.global_byte(ByteGlobal::Guard) == 0 {
+            return 0;
+        }
+        let got = world.refresh_virtual(self, this);
+        world.refresh_follow(got);
+        self.attach_indexed(this, world);
+        if world.global_word(WordGlobal::State) == STATE_REFUSE {
+            return 0;
+        }
+        if world.global_word(WordGlobal::PairA) != world.global_word(WordGlobal::PairB) {
+            return 0;
+        }
+        if world.global_word(WordGlobal::Mode) == MODE_REFUSE {
+            return 0;
+        }
+        self.probe_and_clear(ProbeId::First, world);
+        if self.probe_and_clear(ProbeId::Second, world) == 0 {
+            if (self.relink_flags >> 1) & 1 != 0 {
+                self.deep_refresh(this, world);
+            } else if self.marker_219 == 0 {
+                let current = f32::from_bits(self.fval_bits);
+                let constant = f32::from_bits(world.global_word(WordGlobal::FloatConst));
+                if current != constant {
+                    self.deep_refresh(this, world);
+                }
+            }
+        }
+        if self.flag_f4 & 2 != 0 {
+            world.sub_virtual(self.sub_address(this));
+        }
+        self.status_29c |= BIT_ARMED;
+        let ready = world.ready_probe(self, this);
+        if ready == 0 {
+            world.tail_virtual(self, this);
+        }
+        ready
+    }
+
     /// Adds a single-precision amount to the motion value, stores the sum
     /// and hands its bit pattern to the motion helper, whose answer is the
     /// method's answer.

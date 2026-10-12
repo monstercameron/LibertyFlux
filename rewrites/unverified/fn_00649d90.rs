@@ -7,11 +7,13 @@
 /// `+0x0` and `+0x4` past a 0xc header). The stored value is the 1-based
 /// index of the first matching row, or zero when the count is not positive
 /// or no row matches. Returns the last resolved id. Thiscall, one stack
-/// argument. The key words are the immediates the original pushes, kept
-/// literally so the outgoing calls compare.
+/// argument. The keys are relocated file addresses: the original's
+/// immediates carry relocation entries, so the pushed values are the
+/// relocated ones on both sides.
 lf_checker_rt::export!(thiscall, rw_00649d90(this: u32, arg: u32) -> u32 {
     unsafe {
-        const KEYS: [u32; 4] = [0x00f9_9d68, 0x00f9_9d74, 0x00f9_9d20, 0x00f9_9d2c];
+        const KEY_VAS: [u32; 4] =
+            [0x00f9_9d68, 0x00f9_9d74, 0x00f9_9d20, 0x00f9_9d2c];
         const GROUP_TABLE: u32 = 0x18;
         const ROW_BASE: u32 = 0x08;
         const ROW_COUNT: u32 = 0x0c;
@@ -27,7 +29,8 @@ lf_checker_rt::export!(thiscall, rw_00649d90(this: u32, arg: u32) -> u32 {
 
         let mut last_id = 0u32;
         let mut out = this.wrapping_add(OUT_BASE);
-        for key in KEYS {
+        for va in KEY_VAS {
+            let key = lf_checker_rt::relocated(va);
             let id = lf_checker_rt::callee_cdecl!(NAME_CALLEE, u32, key, 0);
             last_id = id;
             let group = read_word(arg.wrapping_add(GROUP_TABLE));

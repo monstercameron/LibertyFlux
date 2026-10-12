@@ -33,7 +33,7 @@ lf_checker_rt::export!(thiscall, rw_00649240(this: u32) -> u32 {
             table,
             count as u32,
             KEY_SIZE,
-            SEARCH_KEY
+            lf_checker_rt::relocated(SEARCH_KEY)
         );
         if found == 0 {
             return 0;

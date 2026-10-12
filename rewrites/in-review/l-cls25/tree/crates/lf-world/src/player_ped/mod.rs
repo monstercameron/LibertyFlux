@@ -42,4 +42,4 @@ pub mod registry;
 pub mod world;
 
 pub use ped::{CPlayerPed, ObjRef, offsets};
-pub use world::{ObjTag, PedTag, PlayerPedWorld};
+pub use world::{ByteGlobal, GateWorld, ObjTag, PedTag, PlayerPedWorld, WordGlobal};
