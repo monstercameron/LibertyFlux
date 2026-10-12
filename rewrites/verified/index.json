@@ -112761,6 +112761,69 @@
   "lane": "r-s673"
  },
  {
+  "address": "0x00BAC280",
+  "name": "NativeImpl_SET_CHAR_PROOFS",
+  "kind": "function",
+  "file": "functions/fn_00bac280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
+ },
+ {
+  "address": "0x00BAD6C0",
+  "name": "NativeImpl_SET_NM_MESSAGE_VEC3_2",
+  "kind": "function",
+  "file": "functions/fn_00bad6c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
+ },
+ {
+  "address": "0x00BADA30",
+  "name": "NativeImpl_SET_PED_NON_CREATION_AREA_2",
+  "kind": "function",
+  "file": "functions/fn_00bada30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
+ },
+ {
+  "address": "0x00BADA90",
+  "name": "NativeImpl_SET_PED_NON_REMOVAL_AREA_2",
+  "kind": "function",
+  "file": "functions/fn_00bada90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
+ },
+ {
+  "address": "0x00BADF40",
+  "name": "NativeImpl_SET_SCRIPTED_CONVERSION_CENTRE",
+  "kind": "function",
+  "file": "functions/fn_00badf40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
+ },
+ {
+  "address": "0x00BAEA50",
+  "name": "NativeImpl_GET_CHAR_LAST_DAMAGE_BONE_2",
+  "kind": "function",
+  "file": "functions/fn_00baea50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
+ },
+ {
+  "address": "0x00BAF7C0",
+  "name": "world_pool_fn_BAF7C0",
+  "kind": "function",
+  "file": "functions/fn_00baf7c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
+ },
+ {
   "address": "0x00BB1A70",
   "name": "ADD_SCORE",
   "kind": "native",
@@ -114201,6 +114264,15 @@
   "lane": "a-01"
  },
  {
+  "address": "0x00BB3370",
+  "name": "NativeImpl_CREATE_PLAYER",
+  "kind": "function",
+  "file": "functions/fn_00bb3370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
+ },
+ {
   "address": "0x00BB5F90",
   "name": "DESTROY_THREAD",
   "kind": "native",
@@ -114714,6 +114786,15 @@
   "lane": "a-01"
  },
  {
+  "address": "0x00BB71C0",
+  "name": "NativeImpl_ADD_NEEDED_AT_POSN",
+  "kind": "function",
+  "file": "functions/fn_00bb71c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
+ },
+ {
   "address": "0x00BB7250",
   "name": "ACTIVATE_INTERIOR",
   "kind": "native",
@@ -115063,6 +115144,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-14"
+ },
+ {
+  "address": "0x00BB79E0",
+  "name": "NativeImpl_LOAD_SCENE_2",
+  "kind": "function",
+  "file": "functions/fn_00bb79e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
+ },
+ {
+  "address": "0x00BB8100",
+  "name": "NativeImpl_START_LOAD_SCENE",
+  "kind": "function",
+  "file": "functions/fn_00bb8100.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s744"
  },
  {
   "address": "0x00BB8640",
