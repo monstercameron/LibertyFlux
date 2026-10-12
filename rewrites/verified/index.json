@@ -83178,6 +83178,15 @@
   "lane": "r-s743"
  },
  {
+  "address": "0x00A33C50",
+  "name": "CEntity::detach_pool_link",
+  "kind": "function",
+  "file": "functions/fn_00a33c50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U151"
+ },
+ {
   "address": "0x00A33C80",
   "name": "matrix_release_to_placement_locked",
   "kind": "function",
@@ -96964,6 +96973,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1F960",
+  "name": "cell_grid_a_clear",
+  "kind": "function",
+  "file": "functions/fn_00b1f960.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U151"
  },
  {
   "address": "0x00B1FC00",
