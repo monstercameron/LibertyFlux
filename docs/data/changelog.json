@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-12",
+    "title": "Devlog: hourly review, 04:40 on 12 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "The last thirty lanes ended by themselves and are imported: 35,421 bytes verified in the final ninety minutes, 22,609 bytes an hour, with the share recorded on the current checker up to 55%.",
+      "The run is parked: no lane, launcher, guard or timer is running, and the pick-up note says how to resume."
+    ]
+  },
+  {
+    "date": "2026-10-12",
     "title": "Rewrites: 19 more functions pass the checker (20534 in total)",
     "commit": "52619e1c6cc2f2010021a9ee5ef8630765f02251",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
