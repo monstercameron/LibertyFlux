@@ -13,19 +13,6 @@ const SECOND_FLAG_OFFSET: usize = 0x26;
 const ALLOCATOR_OFFSET: usize = 8;
 const RELEASE_SLOT_OFFSET: usize = 12;
 
-unsafe fn release_group(allocator_owner: *const u32, group: u32) {
-    let allocator = unsafe {
-        core::ptr::read_volatile(allocator_owner.add(ALLOCATOR_OFFSET / 4))
-    };
-    let vtable = unsafe { core::ptr::read_volatile(allocator as *const u32) };
-    let release_address = unsafe {
-        core::ptr::read_volatile((vtable as *const u32).add(RELEASE_SLOT_OFFSET / 4))
-    };
-    let release: extern "thiscall" fn(u32, u32) -> u32 =
-        unsafe { core::mem::transmute(release_address as usize) };
-    let _release_result = release(allocator, group);
-}
-
 #[no_mangle]
 pub unsafe extern "thiscall" fn fn_006801E0(animation: *mut u8) {
     unsafe {
@@ -45,7 +32,16 @@ pub unsafe extern "thiscall" fn fn_006801E0(animation: *mut u8) {
             core::ptr::read_volatile((animation.add(SECOND_GROUP_OFFSET)) as *const u32)
         };
         if group != 0 {
-            unsafe { release_group(allocator_owner, group) };
+            let allocator = unsafe {
+                core::ptr::read_volatile(allocator_owner.add(ALLOCATOR_OFFSET / 4))
+            };
+            let vtable = unsafe { core::ptr::read_volatile(allocator as *const u32) };
+            let release_address = unsafe {
+                core::ptr::read_volatile((vtable as *const u32).add(RELEASE_SLOT_OFFSET / 4))
+            };
+            let release: extern "thiscall" fn(u32, u32) -> u32 =
+                unsafe { core::mem::transmute(release_address as usize) };
+            let _release_result = release(allocator, group);
         }
     }
 
@@ -57,7 +53,16 @@ pub unsafe extern "thiscall" fn fn_006801E0(animation: *mut u8) {
             core::ptr::read_volatile((animation.add(FIRST_GROUP_OFFSET)) as *const u32)
         };
         if group != 0 {
-            unsafe { release_group(allocator_owner, group) };
+            let allocator = unsafe {
+                core::ptr::read_volatile(allocator_owner.add(ALLOCATOR_OFFSET / 4))
+            };
+            let vtable = unsafe { core::ptr::read_volatile(allocator as *const u32) };
+            let release_address = unsafe {
+                core::ptr::read_volatile((vtable as *const u32).add(RELEASE_SLOT_OFFSET / 4))
+            };
+            let release: extern "thiscall" fn(u32, u32) -> u32 =
+                unsafe { core::mem::transmute(release_address as usize) };
+            let _release_result = release(allocator, group);
         }
     }
 

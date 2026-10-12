@@ -2,10 +2,10 @@
 
 /// Selects a latched-door action from a character's vehicle, seat class,
 /// model flags, and current door value. A missing door returns zero. The
-/// special model/seat combination or a matching vehicle state uses the
-/// unit-valued door action; otherwise a positive ordered door value uses the
-/// zero-valued action. The ordered-positive test preserves the original
-/// unordered-float behavior: a NaN does not take the positive action.
+/// special model flag combined with seat code 1 or 3 uses the unit-valued
+/// door action. Vehicle state 4 also selects it for other seat codes. In
+/// remaining cases, a positive ordered door value uses the zero-valued
+/// action. A NaN does not take the positive action.
 #[unsafe(no_mangle)]
 pub extern "stdcall" fn rw_00c5eb50(_unused: u32, ped: u32) -> u32 {
     unsafe {

@@ -640,6 +640,14 @@
   "reason": "indirect_call"
  },
  {
+  "address": "0x005D7160",
+  "name": "html_subtree_set_link_active",
+  "file": "fn_005d7160.rs",
+  "lane": "r-s822",
+  "outcome": "deferred",
+  "reason": "other"
+ },
+ {
   "address": "0x005DA100",
   "name": "fn_005da100",
   "file": "fn_005da100.rs",
@@ -2640,6 +2648,14 @@
   "reason": null
  },
  {
+  "address": "0x0097E1D0",
+  "name": "ped_say_taxi_hail",
+  "file": "fn_0097e1d0.rs",
+  "lane": "r-s827",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0098CD60",
   "name": "audVehicleAudioEntity::bind_vehicle",
   "file": "fn_0098cd60.rs",
@@ -3312,9 +3328,9 @@
   "reason": null
  },
  {
-  "address": "0x00A84D10",
-  "name": "CJackTaskInfo::deserialize",
-  "file": "fn_00a84d10.rs",
+  "address": "0x00A84E40",
+  "name": "CMeleeTaskInfo::deserialize",
+  "file": "fn_00a84e40.rs",
   "lane": "r-s823",
   "outcome": "not_reached",
   "reason": null
@@ -5760,6 +5776,14 @@
   "reason": null
  },
  {
+  "address": "0x00C0D720",
+  "name": "UILayoutFrame::is_child_value_mismatched",
+  "file": "fn_00c0d720.rs",
+  "lane": "r-s815",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C1DAD0",
   "name": "m:/textures/coronas",
   "file": "fn_00c1dad0.rs",
@@ -6008,22 +6032,6 @@
   "reason": null
  },
  {
-  "address": "0x00C553B0",
-  "name": "unnamed_00c553b0",
-  "file": "fn_00c553b0.rs",
-  "lane": "r-s825",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C553F0",
-  "name": "unnamed_00c553f0",
-  "file": "fn_00c553f0.rs",
-  "lane": "r-s825",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C55420",
   "name": "unnamed_00c55420",
   "file": "fn_00c55420.rs",
@@ -6072,11 +6080,131 @@
   "reason": null
  },
  {
+  "address": "0x00C5DF10",
+  "name": null,
+  "file": "fn_00c5df10.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5DF60",
+  "name": null,
+  "file": "fn_00c5df60.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5DF90",
+  "name": null,
+  "file": "fn_00c5df90.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5DFC0",
+  "name": null,
+  "file": "fn_00c5dfc0.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E000",
+  "name": null,
+  "file": "fn_00c5e000.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E030",
+  "name": null,
+  "file": "fn_00c5e030.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E060",
+  "name": null,
+  "file": "fn_00c5e060.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E150",
+  "name": null,
+  "file": "fn_00c5e150.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E230",
+  "name": null,
+  "file": "fn_00c5e230.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E2F0",
+  "name": null,
+  "file": "fn_00c5e2f0.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E390",
+  "name": null,
+  "file": "fn_00c5e390.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E6A0",
+  "name": null,
+  "file": "fn_00c5e6a0.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E790",
+  "name": null,
+  "file": "fn_00c5e790.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E850",
+  "name": null,
+  "file": "fn_00c5e850.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C5E940",
+  "name": null,
+  "file": "fn_00c5e940.rs",
+  "lane": "r-s814",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00C5EB50",
-  "name": "proposed_00c5eb50",
+  "name": null,
   "file": "fn_00c5eb50.rs",
   "lane": "r-s814",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -7648,9 +7776,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00DB2860",
-  "name": "UITexture::release_texture_resource",
-  "file": "fn_00db2860.rs",
+  "address": "0x00DB28A0",
+  "name": "UITexture::get_class_name_hash",
+  "file": "fn_00db28a0.rs",
   "lane": "r-s824",
   "outcome": "not_reached",
   "reason": null
@@ -7844,6 +7972,14 @@
   "name": "UIFileViewer::bind_controller_frame",
   "file": "fn_00df7b70.rs",
   "lane": "r-s780",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E48880",
+  "name": "function_00E48880",
+  "file": "fn_00e48880.rs",
+  "lane": "r-s818",
   "outcome": "not_reached",
   "reason": null
  },
