@@ -17,7 +17,7 @@ use core::hint::black_box;
 use lf_core::Handle32;
 use lf_playerped_diff::rewrites::{
     fn_009e54c0, fn_009e5940, fn_009eaee0, fn_009f0fc0, fn_00a2a620, fn_00a2d300, fn_00a2d3a0,
-    fn_00a2d3e0, fn_00a29e40, fn_009edb70, fn_00a2a870,
+    fn_00a2d3e0, fn_00a29e40, fn_009edb70, fn_00a2a870, fn_009f0e20,
 };
 use lf_playerped_diff::rt::{Effect, Kind, SLOT8_ID};
 use lf_world::player_ped::offsets;
@@ -48,6 +48,7 @@ fn case(
         effect,
         player_context: 0,
         aim_state: 0,
+        dist_threshold: 0,
         model_entries: [0; 8],
         keep: Vec::new(),
     }
@@ -628,6 +629,102 @@ fn trial_acquire(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     compare("acquire_aim_target", &rw, &lf)
 }
 
+/// Wrong: the marker bits are never set on the relink word.
+fn wrong_vf45(
+    ped: &mut CPlayerPed,
+    this: Handle32<PedTag>,
+    flag: u32,
+    world: &mut TestWorld,
+) -> u32 {
+    world.base_entry(ped, this, flag);
+    let mut answer = Handle32::raw_or_zero(ped.link);
+    let target = Handle32::raw_or_zero(ped.sub_b);
+    if answer != target && target != 0 {
+        let src = ped.source;
+        let s_x = f32::from_bits(world.read_word(src.wrapping_add(0x30)));
+        let s_y = f32::from_bits(world.read_word(src.wrapping_add(0x34)));
+        let s_z = f32::from_bits(world.read_word(src.wrapping_add(0x38)));
+        let t_x = f32::from_bits(world.read_word(target.wrapping_add(0x40)));
+        let t_y = f32::from_bits(world.read_word(target.wrapping_add(0x44)));
+        let t_z = f32::from_bits(world.read_word(target.wrapping_add(0x48)));
+        let dx = black_box(s_x) - black_box(t_x);
+        let dy = black_box(s_y) - black_box(t_y);
+        let dz = black_box(s_z) - black_box(t_z);
+        let dist_sq = black_box(black_box(dx * dx) + black_box(dy * dy)) + black_box(dz * dz);
+        let threshold = f32::from_bits(world.distance_threshold_bits());
+        if (flag & 0xFF) != 0 || dist_sq > threshold {
+            answer = world.relink(ped, this, 1);
+        } else {
+            return src;
+        }
+    }
+    if (flag & 0xFF) == 0 {
+        return answer;
+    }
+    ped.relink_block = [0; 9];
+    answer
+}
+
+/// A coordinate: mostly small values near the threshold range, sometimes any
+/// bit pattern (not-a-number and infinities included).
+fn coordinate_bits(rng: &mut Rng) -> u32 {
+    if rng.coin() {
+        float_bits(rng)
+    } else {
+        ((rng.below(2000) as f32) / 100.0 - 10.0).to_bits()
+    }
+}
+
+fn trial_vf45(rng: &mut Rng, variant: Variant) -> Result<(), String> {
+    // The source and target points are kept records at fixed addresses.
+    let mut src_rec = vec![0u32; 0x20];
+    for off in [0x30u32, 0x34, 0x38] {
+        put32(&mut src_rec, off, coordinate_bits(rng));
+    }
+    let mut tgt_rec = vec![0u32; 0x20];
+    for off in [0x40u32, 0x44, 0x48] {
+        put32(&mut tgt_rec, off, coordinate_bits(rng));
+    }
+    let src_addr = src_rec.as_ptr() as usize as u32;
+    let tgt_addr = tgt_rec.as_ptr() as usize as u32;
+
+    let mut init = random_image(rng);
+    put32(&mut init, offsets::SOURCE, src_addr);
+    // The target is dereferenced by the original, so it is either absent or
+    // the kept point; the link is only compared, so any identity will do.
+    let target = if rng.coin() { 0 } else { tgt_addr };
+    put32(&mut init, offsets::SUB_B, target);
+    let link = match rng.below(3) {
+        0 => 0,
+        1 => tgt_addr,
+        _ => 0x0040_1000,
+    };
+    put32(&mut init, LINK, link);
+    put8(&mut init, offsets::MARKER_219, rng.next_u32() as u8);
+    let flag = if rng.below(3) == 0 {
+        rng.next_u32() & !0xFF
+    } else {
+        rng.next_u32() | 1
+    };
+    let answers = vec![(2, vec![rng.next_u32()]), (3, vec![rng.next_u32()])];
+    let mut c = case(init, &[(2, Kind::T2), (3, Kind::T2)], answers, None);
+    c.dist_threshold = if rng.coin() {
+        float_bits(rng)
+    } else {
+        ((rng.below(4000) as f32) / 10.0).to_bits()
+    };
+    c.keep = vec![src_rec, tgt_rec];
+    let (rw, lf) = run_both(
+        &mut c,
+        |this| fn_009f0e20::rw_009f0e20(this, flag),
+        |ped, this, world| match variant {
+            Variant::Lifted => ped.relink_on_move(this, flag, world),
+            Variant::Wrong => wrong_vf45(ped, this, flag, world),
+        },
+    );
+    compare("vf45", &rw, &lf)
+}
+
 /// The slot-8 stub's address, as a word.
 fn rt_slot8() -> u32 {
     lf_playerped_diff::rt::slot8_stub_addr()
@@ -761,4 +858,14 @@ fn acquire_aim_target_lift_matches_rewrite() {
 #[test]
 fn acquire_aim_target_wrong_lift_is_caught() {
     expect_wrong_caught("acquire_aim_target", trial_acquire, 0xA1);
+}
+
+#[test]
+fn vf45_lift_matches_rewrite() {
+    expect_agreement("vf45", trial_vf45, 0x45);
+}
+
+#[test]
+fn vf45_wrong_lift_is_caught() {
+    expect_wrong_caught("vf45", trial_vf45, 0x45);
 }

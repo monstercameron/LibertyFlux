@@ -952,6 +952,14 @@
   "reason": null
  },
  {
+  "address": "0x00601000",
+  "name": "fn_00601000",
+  "file": "fn_00601000.rs",
+  "lane": "r-s794",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x0061B150",
   "name": "net_session_desc_init",
   "file": "fn_0061b150.rs",
@@ -1494,6 +1502,54 @@
   "lane": "a-U105",
   "outcome": "deferred",
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
+ },
+ {
+  "address": "0x008B9050",
+  "name": null,
+  "file": "fn_008b9050.rs",
+  "lane": "r-s801",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x008B9600",
+  "name": null,
+  "file": "fn_008b9600.rs",
+  "lane": "r-s801",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x008BA580",
+  "name": null,
+  "file": "fn_008ba580.rs",
+  "lane": "r-s801",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x008C23A0",
+  "name": null,
+  "file": "fn_008c23a0.rs",
+  "lane": "r-s801",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x008C24C0",
+  "name": null,
+  "file": "fn_008c24c0.rs",
+  "lane": "r-s801",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x008C28C0",
+  "name": null,
+  "file": "fn_008c28c0.rs",
+  "lane": "r-s801",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x008DBF60",
@@ -2576,6 +2632,14 @@
   "reason": null
  },
  {
+  "address": "0x00B22D80",
+  "name": "interior_id_tables_reset",
+  "file": "fn_00b22d80.rs",
+  "lane": "a-U160",
+  "outcome": "not yet run",
+  "reason": ""
+ },
+ {
   "address": "0x00B25FB0",
   "name": "entity_replace_physics_reference",
   "file": "fn_00b25fb0.rs",
@@ -2629,6 +2693,110 @@
   "file": "fn_00b3bbd0.rs",
   "lane": "r-s383",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B49BF0",
+  "name": "CEventBuildingCollision::vf4",
+  "file": "fn_00b49bf0.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49C40",
+  "name": "CEventCarUndriveable::vf4",
+  "file": "fn_00b49c40.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49C70",
+  "name": "CEventClimbLadderOnRoute::vf4",
+  "file": "fn_00b49c70.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49CB0",
+  "name": "CEventClimbNavMeshOnRoute::vf4",
+  "file": "fn_00b49cb0.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49D50",
+  "name": "CEventCopCarBeingStolen::vf4",
+  "file": "fn_00b49d50.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49DC0",
+  "name": "CEventInAir::vf4",
+  "file": "fn_00b49dc0.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49DE0",
+  "name": "CEventInWater::vf4",
+  "file": "fn_00b49de0.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49E10",
+  "name": "CEventMustLeaveBoat::vf4",
+  "file": "fn_00b49e10.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49E40",
+  "name": "CEventObjectCollision::vf4",
+  "file": "fn_00b49e40.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49EA0",
+  "name": "CEventPedCollisionWithPed::vf4",
+  "file": "fn_00b49ea0.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49EF0",
+  "name": "CEventPedOnCarRoof::vf4",
+  "file": "fn_00b49ef0.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49F20",
+  "name": "CEventPedToChase::vf4",
+  "file": "fn_00b49f20.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49F50",
+  "name": "CEventPedToFlee::vf4",
+  "file": "fn_00b49f50.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -3225,9 +3393,9 @@
  },
  {
   "address": "0x00BCD5B0",
-  "name": "NativeImpl_SET_ALL_CARS_CAN_BE_DAMAGED_4",
+  "name": "physics_notify_pending_action",
   "file": "fn_00bcd5b0.rs",
-  "lane": "a-U147",
+  "lane": "a-U158",
   "outcome": "not yet run",
   "reason": null
  },
@@ -3293,6 +3461,110 @@
   "file": "fn_00bde5b0.rs",
   "lane": "r-b326",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFAC0",
+  "name": "CTaskComplexControlMovement::vf0",
+  "file": "fn_00bdfac0.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFAF0",
+  "name": "CTaskComplexInWater::vf0",
+  "file": "fn_00bdfaf0.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFB50",
+  "name": "CTaskComplexReact::vf0",
+  "file": "fn_00bdfb50.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFB80",
+  "name": "CTaskComplexSequence::vf0",
+  "file": "fn_00bdfb80.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFBB0",
+  "name": "CTaskComplexSitDownThenIdleThenStandUp::vf0",
+  "file": "fn_00bdfbb0.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFBE0",
+  "name": "CTaskComplexSitIdle::vf0",
+  "file": "fn_00bdfbe0.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFC10",
+  "name": "CTaskComplexUseAttractor::vf0",
+  "file": "fn_00bdfc10.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFC40",
+  "name": "CTaskComplexUseEffect::vf0",
+  "file": "fn_00bdfc40.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFC70",
+  "name": "CTaskComplexUseMobilePhone::vf0",
+  "file": "fn_00bdfc70.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFCA0",
+  "name": "CTaskComplexUseSequence::vf0",
+  "file": "fn_00bdfca0.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFCD0",
+  "name": "CTaskComplexWaitAtAttractor::vf0",
+  "file": "fn_00bdfcd0.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFD00",
+  "name": "CTaskComplexWaitForBus::vf0",
+  "file": "fn_00bdfd00.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BDFD30",
+  "name": "CTaskComplexWaitForDryWeather::vf0",
+  "file": "fn_00bdfd30.rs",
+  "lane": "r-s796",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4302,6 +4574,78 @@
   "lane": "r-s581",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x00CDB020",
+  "name": "CTaskSimpleNMHighFall::vf0",
+  "file": "fn_00cdb020.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CDB050",
+  "name": "CTaskSimpleNMJumpRollFromRoadVehicle::vf0",
+  "file": "fn_00cdb050.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CDB080",
+  "name": "CTaskSimpleNMOnFire::vf0",
+  "file": "fn_00cdb080.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CDB0B0",
+  "name": "CTaskSimpleNMPose::vf0",
+  "file": "fn_00cdb0b0.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CDB0E0",
+  "name": "CTaskSimpleNMRelax::vf0",
+  "file": "fn_00cdb0e0.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CDB110",
+  "name": "CTaskSimpleNMRollUpAndRelax::vf0",
+  "file": "fn_00cdb110.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CDB140",
+  "name": "CTaskSimpleNMScriptControl::vf0",
+  "file": "fn_00cdb140.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CDB170",
+  "name": "CTaskSimpleNMShot::vf0",
+  "file": "fn_00cdb170.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CDB1A0",
+  "name": "CTaskSimpleNMSit::vf0",
+  "file": "fn_00cdb1a0.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00CDC6B0",

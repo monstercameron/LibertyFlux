@@ -105,6 +105,12 @@ static MODEL_TABLE: [AtomicU32; 8] = [const { AtomicU32::new(0) }; 8];
 /// The shared aim state word the aim acquisition reads.
 static AIM_STATE_CELL: AtomicU32 = AtomicU32::new(0);
 
+/// The shared squared-distance threshold the relink reads.
+static DIST_THRESHOLD_CELL: AtomicU32 = AtomicU32::new(0);
+
+/// File address of the squared-distance threshold.
+pub const DIST_THRESHOLD_VA: u32 = 0x00FE_8B40;
+
 /// File address of the aim state word.
 pub const AIM_STATE_VA: u32 = 0x011D_6FD4;
 
@@ -361,6 +367,9 @@ pub fn global<T>(file_va: u32) -> *mut T {
     if file_va == PLAYER_CONTEXT_VA {
         return PLAYER_CONTEXT_CELL.as_ptr().cast::<T>();
     }
+    if file_va == DIST_THRESHOLD_VA {
+        return DIST_THRESHOLD_CELL.as_ptr().cast::<T>();
+    }
     if file_va == AIM_STATE_VA {
         return AIM_STATE_CELL.as_ptr().cast::<T>();
     }
@@ -411,4 +420,15 @@ macro_rules! __ty {
     ($e:expr) => {
         u32
     };
+}
+
+/// Sets the squared-distance threshold the relink reads.
+pub fn set_dist_threshold(bits: u32) {
+    DIST_THRESHOLD_CELL.store(bits, Ordering::SeqCst);
+}
+
+/// The squared-distance threshold, as the lifted side reads it.
+#[must_use]
+pub fn dist_threshold() -> u32 {
+    DIST_THRESHOLD_CELL.load(Ordering::SeqCst)
 }

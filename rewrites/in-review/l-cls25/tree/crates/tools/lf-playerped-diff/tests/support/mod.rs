@@ -112,6 +112,12 @@ pub fn encode(ped: &CPlayerPed, img: &mut [u32]) {
     put32(img, offsets::JOB_WORD, ped.job_word);
     put32(img, offsets::CHAIN_BASE, ped.chain_base);
     put32(img, offsets::AIM_CONTEXT, ped.aim_context);
+    put32(img, offsets::SOURCE, ped.source);
+    put8(img, offsets::MARKER_219, ped.marker_219);
+    put32(img, offsets::RELINK_FLAGS, ped.relink_flags);
+    for (k, off) in offsets::RELINK_BLOCK.iter().enumerate() {
+        put32(img, *off, ped.relink_block[k]);
+    }
 }
 
 /// Reads every field the native pedestrian owns from the image.
@@ -129,6 +135,9 @@ pub fn decode(img: &[u32]) -> CPlayerPed {
         job_word: get32(img, offsets::JOB_WORD),
         chain_base: get32(img, offsets::CHAIN_BASE),
         aim_context: get32(img, offsets::AIM_CONTEXT),
+        source: get32(img, offsets::SOURCE),
+        marker_219: get8(img, offsets::MARKER_219),
+        relink_flags: get32(img, offsets::RELINK_FLAGS),
         ..CPlayerPed::default()
     };
     for k in 0..2u32 {
@@ -138,6 +147,9 @@ pub fn decode(img: &[u32]) -> CPlayerPed {
     for k in 0..4u32 {
         ped.descriptor[k as usize] = get32(img, offsets::DESCRIPTOR + 4 * k);
         ped.transform[k as usize] = get32(img, offsets::TRANSFORM + 4 * k);
+    }
+    for (k, off) in offsets::RELINK_BLOCK.iter().enumerate() {
+        ped.relink_block[k] = get32(img, *off);
     }
     ped
 }
@@ -262,6 +274,22 @@ impl PlayerPedWorld for TestWorld {
         rt::model_state_byte(model_id)
     }
 
+    fn base_entry(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>, flag: u32) -> u32 {
+        Self::call(ped, 2, vec![this.get(), flag])
+    }
+
+    fn read_word(&mut self, address: u32) -> u32 {
+        rt::read_u32(address)
+    }
+
+    fn distance_threshold_bits(&mut self) -> u32 {
+        rt::dist_threshold()
+    }
+
+    fn relink(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>, one: u32) -> u32 {
+        Self::call(ped, 3, vec![this.get(), one])
+    }
+
     fn get_context(&mut self, targeting: u32) -> u32 {
         rt::script_call(1, vec![targeting])
     }
@@ -359,6 +387,7 @@ pub struct Case {
     pub effect: Option<Effect>,
     pub player_context: u32,
     pub aim_state: u32,
+    pub dist_threshold: u32,
     pub model_entries: [u32; 8],
     /// Test-owned memory the image's addresses name; kept alive for the run.
     pub keep: Vec<Vec<u32>>,
@@ -379,6 +408,7 @@ pub fn run_both(
     let _guard = rt::lock();
     rt::set_player_context(case.player_context);
     rt::set_aim_state(case.aim_state);
+    rt::set_dist_threshold(case.dist_threshold);
     for (i, record) in case.model_entries.iter().enumerate() {
         rt::set_model_entry(i, *record);
     }

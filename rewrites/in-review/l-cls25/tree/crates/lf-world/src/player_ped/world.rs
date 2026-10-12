@@ -119,6 +119,21 @@ pub trait PlayerPedWorld {
     /// and the entry's fixed offset. The lift does not read the table.
     fn model_state(&mut self, model_id: u32) -> u8;
 
+    /// Callee 2 of the relink: the base entry, called with the flag word.
+    fn base_entry(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>, flag: u32) -> u32;
+
+    /// One word of a record the pedestrian points at (a point's component),
+    /// read from memory. Only the lifted method's reads use it.
+    fn read_word(&mut self, address: u32) -> u32;
+
+    /// The squared-distance threshold of the relink, read from a shared
+    /// global, as the bits of a float.
+    fn distance_threshold_bits(&mut self) -> u32;
+
+    /// Callee 3 of the relink: the relink entry, called with the pedestrian
+    /// and the constant one.
+    fn relink(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>, one: u32) -> u32;
+
     /// Callee 1 of the aim acquisition: the targeting component's context
     /// lookup, called with the component's identity. Zero when there is no
     /// context.

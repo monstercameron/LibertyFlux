@@ -47,6 +47,14 @@ pub mod offsets {
     pub const CHAIN_BASE: u32 = 0x224;
     /// The aim context the pedestrian holds: a pointer, zero when absent.
     pub const AIM_CONTEXT: u32 = 0x228;
+    /// The source point pointer the relink measures from.
+    pub const SOURCE: u32 = 0x20;
+    /// The byte that, when set, marks the relink word at [`RELINK_FLAGS`].
+    pub const MARKER_219: u32 = 0x219;
+    /// The word the relink marks with its two low bits.
+    pub const RELINK_FLAGS: u32 = 0xBE0;
+    /// The nine words the relink clears when its flag byte is set.
+    pub const RELINK_BLOCK: [u32; 9] = [0xAD0, 0xAD4, 0xAD8, 0xAE0, 0xAE4, 0xAE8, 0xAF0, 0xAF4, 0xAF8];
 }
 
 /// The offset of the targeting component inside the pedestrian.
@@ -100,6 +108,15 @@ pub struct CPlayerPed {
     pub chain_base: u32,
     /// The aim context pointer; zero when there is none.
     pub aim_context: u32,
+    /// The source point pointer the relink measures from.
+    pub source: u32,
+    /// The marker byte the relink reads.
+    pub marker_219: u8,
+    /// The relink word the marker sets bits in.
+    pub relink_flags: u32,
+    /// The nine words the relink clears, in the order of
+    /// [`offsets::RELINK_BLOCK`].
+    pub relink_block: [u32; 9],
 }
 
 /// The scaled aim threshold: the aim factor times the property threshold.
@@ -339,6 +356,58 @@ impl CPlayerPed {
         }
         world.mark_selected(self.aim_context);
         true
+    }
+
+    /// Relinks the pedestrian toward its target when it has moved far enough,
+    /// clears the relink block when the flag byte is set, and returns the
+    /// relink answer or the source pointer on a short miss.
+    ///
+    /// The base entry runs first. The link is compared with the target; when
+    /// they differ and the target is present, the squared distance between the
+    /// source point and the target point is measured in the original's order,
+    /// (dx*dx + dy*dy) + dz*dz. A set flag byte, or a distance above the
+    /// threshold, runs the relink entry with one; otherwise the source pointer
+    /// is returned at once. A set flag byte then clears the relink block and,
+    /// when the marker byte is set, sets two bits of the relink word.
+    ///
+    /// The answer is the link when no relink ran. A distance that is not a
+    /// number fails the threshold test, as the original's compare does.
+    pub fn relink_on_move<W: PlayerPedWorld + ?Sized>(
+        &mut self,
+        this: Handle32<PedTag>,
+        flag: u32,
+        world: &mut W,
+    ) -> u32 {
+        world.base_entry(self, this, flag);
+        let mut answer = Handle32::raw_or_zero(self.link);
+        let target = Handle32::raw_or_zero(self.sub_b);
+        if answer != target && target != 0 {
+            let src = self.source;
+            let s_x = f32::from_bits(world.read_word(src.wrapping_add(0x30)));
+            let s_y = f32::from_bits(world.read_word(src.wrapping_add(0x34)));
+            let s_z = f32::from_bits(world.read_word(src.wrapping_add(0x38)));
+            let t_x = f32::from_bits(world.read_word(target.wrapping_add(0x40)));
+            let t_y = f32::from_bits(world.read_word(target.wrapping_add(0x44)));
+            let t_z = f32::from_bits(world.read_word(target.wrapping_add(0x48)));
+            let dx = black_box(s_x) - black_box(t_x);
+            let dy = black_box(s_y) - black_box(t_y);
+            let dz = black_box(s_z) - black_box(t_z);
+            let dist_sq = black_box(black_box(dx * dx) + black_box(dy * dy)) + black_box(dz * dz);
+            let threshold = f32::from_bits(world.distance_threshold_bits());
+            if (flag & 0xFF) != 0 || dist_sq > threshold {
+                answer = world.relink(self, this, 1);
+            } else {
+                return src;
+            }
+        }
+        if (flag & 0xFF) == 0 {
+            return answer;
+        }
+        self.relink_block = [0; 9];
+        if self.marker_219 != 0 {
+            self.relink_flags |= 0x0C;
+        }
+        answer
     }
 
     /// Runs the entry chain of the sub-object the chain base names: the
