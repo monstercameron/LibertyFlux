@@ -143640,6 +143640,24 @@
   "lane": "a-S05"
  },
  {
+  "address": "0x00D158F0",
+  "name": "CTaskSimpleLoadAnimPlayAnim::make_abortable",
+  "kind": "function",
+  "file": "functions/fn_00d158f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D15920",
+  "name": "CTaskSimplePlayUpperCombatAnim::make_abortable",
+  "kind": "function",
+  "file": "functions/fn_00d15920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
   "address": "0x00D15950",
   "name": "gather_filtered_position_average",
   "kind": "function",
@@ -143656,6 +143674,24 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G34"
+ },
+ {
+  "address": "0x00D16180",
+  "name": "CTaskComplexCombatAdvanceSubtask::select_sub_task_id",
+  "kind": "function",
+  "file": "functions/fn_00d16180.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D16210",
+  "name": "CTaskComplexCombatBustPed::select_sub_task_id",
+  "kind": "function",
+  "file": "functions/fn_00d16210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
  },
  {
   "address": "0x00D16870",
@@ -145314,6 +145350,51 @@
   "lane": "r-s728"
  },
  {
+  "address": "0x00D38710",
+  "name": "CTaskComplexClearVehicleSeat::get_status_name",
+  "kind": "function",
+  "file": "functions/fn_00d38710.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D38760",
+  "name": "CTaskComplexClimbIntoVehicle::get_status_name",
+  "kind": "function",
+  "file": "functions/fn_00d38760.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D387F0",
+  "name": "CTaskComplexNewExitVehicle::get_status_name",
+  "kind": "function",
+  "file": "functions/fn_00d387f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D38910",
+  "name": "CTaskComplexNewGetInVehicle::get_status_name",
+  "kind": "function",
+  "file": "functions/fn_00d38910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D38A80",
+  "name": "CTaskComplexOpenVehicleDoor::get_status_name",
+  "kind": "function",
+  "file": "functions/fn_00d38a80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
   "address": "0x00D38B10",
   "name": "gate_owner_target",
   "kind": "function",
@@ -145791,6 +145872,24 @@
   "lane": "r-b44"
  },
  {
+  "address": "0x00D3DDB0",
+  "name": "anim_request_manager_init",
+  "kind": "function",
+  "file": "functions/fn_00d3ddb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D3DDE0",
+  "name": "reset_request_holder",
+  "kind": "function",
+  "file": "functions/fn_00d3dde0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
   "address": "0x00D3DE60",
   "name": "CAnimRequestHelper::vf0",
   "kind": "function",
@@ -146203,6 +146302,51 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s652"
+ },
+ {
+  "address": "0x00D421A0",
+  "name": "set_subtask_destination",
+  "kind": "function",
+  "file": "functions/fn_00d421a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D42330",
+  "name": "task_node_44_init",
+  "kind": "function",
+  "file": "functions/fn_00d42330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D42370",
+  "name": "task_node_a8_reset",
+  "kind": "function",
+  "file": "functions/fn_00d42370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D42390",
+  "name": "task_node_12_init",
+  "kind": "function",
+  "file": "functions/fn_00d42390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
+ },
+ {
+  "address": "0x00D423B0",
+  "name": "task_node_676_reset",
+  "kind": "function",
+  "file": "functions/fn_00d423b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s751"
  },
  {
   "address": "0x00D425A0",
