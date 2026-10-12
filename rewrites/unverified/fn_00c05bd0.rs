@@ -1,6 +1,9 @@
 // original: 0x00C05BD0 stream_gain_to_byte
-/// Writes a tagged stream item, computes a level byte from a float input and
-/// a double helper, then stores two flag bits and returns the level byte.
+/// Writes a tagged stream item and returns a level byte. Inputs at or above
+/// one produce 0xFF; lower or unordered inputs use the double helper unless
+/// their offset from the lower bound is negative or unordered, which yields 0.
+/// The helper result is scaled and truncated to the low byte; two flag bits
+/// are then stored with the copied item fields.
 lf_checker_rt::export!(thiscall, rw_00c05bd0(this: u32, a0: u32, a1: u32, a2: u32, a3: u32, a4: u32) -> u32 {
     unsafe {
         #[inline(always)]
@@ -53,9 +56,7 @@ lf_checker_rt::export!(thiscall, rw_00c05bd0(this: u32, a0: u32, a1: u32, a2: u3
 
         let input = f32::from_bits(a2);
         let one = f32::from_bits(rd32(lf_checker_rt::relocated(ONE_VA)));
-        let level = if !(input >= one) {
-            0xFF
-        } else {
+        let level = if input.is_nan() || input < one {
             let back = f32::from_bits(rd32(lf_checker_rt::relocated(BACK_VA)));
             let distance = fsub(input, back);
             if !(distance >= 0.0) {
@@ -77,6 +78,8 @@ lf_checker_rt::export!(thiscall, rw_00c05bd0(this: u32, a0: u32, a1: u32, a2: u3
                 let scaled_answer = fmul(answer as f32, full);
                 cvtt_to_low_byte(scaled_answer)
             }
+        } else {
+            0xFF
         };
 
         wr8(this + 1, level);

@@ -5,8 +5,8 @@
 /// ECX is the destination and the one stack argument is the source; the
 /// original returns the destination in EAX and removes that argument. It
 /// copies 32-bit words at offsets 0x00..0x10, 0x1c..0x24 and 0x2c..0x40,
-/// bytes at 0x14..0x1a, 0x28..0x2a and 0x44, and deliberately leaves padding
-/// bytes 0x1b and 0x2b untouched. Loads and stores proceed in source order so
+/// bytes at 0x14..0x1a, 0x28..0x29 and 0x44, and deliberately leaves padding
+/// bytes 0x1b, 0x2a and 0x2b untouched. Loads and stores proceed in source order so
 /// overlapping buffers retain the original's forward-copy behavior.
 lf_checker_rt::export!(thiscall, rw_005ee5b0(destination: *mut u8, source: *const u8) -> *mut u8 {
     const FIRST_WORD_END: usize = 0x14;
@@ -15,7 +15,7 @@ lf_checker_rt::export!(thiscall, rw_005ee5b0(destination: *mut u8, source: *cons
     const SECOND_WORD_START: usize = 0x1c;
     const SECOND_WORD_END: usize = 0x28;
     const SECOND_BYTE_START: usize = 0x28;
-    const SECOND_BYTE_END: usize = 0x2b;
+    const SECOND_BYTE_END: usize = 0x2a;
     const THIRD_WORD_START: usize = 0x2c;
     const THIRD_WORD_END: usize = 0x44;
     const FINAL_BYTE_OFFSET: usize = 0x44;

@@ -57,9 +57,14 @@ pub const METHODS: &[Method] = &[
         note: "Output pointer answer narrowed to the returned point. Proven for indices inside the waypoint count; the lift panics past it.",
     },
     Method {
-        name: "CTaskComplexMoveFollowPointRoute::CTaskComplexMoveFollowPointRoute (both forms)",
+        name: "CTaskComplexMoveFollowPointRoute::CTaskComplexMoveFollowPointRoute",
         state: State::Unlifted,
-        note: "Writes the class's vtable words and calls the move-base constructor and the route constructor, which build the route table. Needs the callee effects modelled and the route table built from the constructor's arguments.",
+        note: "Writes the class's vtable words, calls the move-base constructor and the route constructor (which build the route table), and reads back a flag word after the base call. Needs the callee effects modelled and the route table built from the constructor's arguments.",
+    },
+    Method {
+        name: "CTaskComplexMoveFollowPointRoute::CTaskComplexMoveFollowPointRoute_2",
+        state: State::Unlifted,
+        note: "Same as the first constructor, with the speed word passed in rather than selected through a helper. Waits on the same constructor model.",
     },
     Method {
         name: "CTaskComplexMoveFollowPointRoute::vf1 (clone)",
@@ -79,7 +84,7 @@ pub const METHODS: &[Method] = &[
     Method {
         name: "CTaskComplexMoveFollowPointRoute::dtor_thunk",
         state: State::Unlifted,
-        note: "Forwarding thunk only; no behaviour of its own, so it is not lifted.",
+        note: "Not verified (the lane list marks it unverified), so not lifted.",
     },
     Method {
         name: "CTaskComplexMoveFollowPointRoute::control_sub_task",

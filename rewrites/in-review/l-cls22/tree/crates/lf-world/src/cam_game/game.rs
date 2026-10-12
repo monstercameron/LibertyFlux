@@ -7,7 +7,7 @@
 
 use lf_core::Handle32;
 
-use super::world::{CamGameWorld, CamOwnerTag, CamTag, WorkerTag};
+use super::world::{CamGameWorld, CamOwnerTag, CamTag};
 
 /// Mode word an idle camera holds (set by the idle reset).
 pub const IDLE_MODE: u32 = 3;

@@ -184,7 +184,8 @@ fn idle_reset_reads_flag_byte_after_the_reset_step() {
     };
     cam.reset_to_idle(&mut w, this());
     assert_eq!(cam.flags_1c4, (0xFF & 0xC7) | IDLE_MARKER);
-    assert_eq!(cam.flags_1c5, 0xFE);
+    // Bits 1 to 3 are cleared before the reset step, bit 0 after it.
+    assert_eq!(cam.flags_1c5, (0xFF & 0xF1) & 0xFE);
     assert_eq!(cam.default_word, 0xABCD);
     assert_eq!(cam.mode, IDLE_MODE);
     assert_eq!(cam.timer, IDLE_TIMER);
