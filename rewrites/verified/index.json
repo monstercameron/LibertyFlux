@@ -35181,6 +35181,42 @@
   "lane": "a-U137"
  },
  {
+  "address": "0x005C4260",
+  "name": "ped_tls_pool_descriptor_init_e",
+  "kind": "function",
+  "file": "functions/fn_005c4260.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
+ },
+ {
+  "address": "0x005C42E0",
+  "name": "ped_factory_try_add_ped",
+  "kind": "function",
+  "file": "functions/fn_005c42e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
+ },
+ {
+  "address": "0x005C4350",
+  "name": "ped_factory_dispatch_service_call",
+  "kind": "function",
+  "file": "functions/fn_005c4350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
+ },
+ {
+  "address": "0x005C43C0",
+  "name": "ped_task_global_category_bit",
+  "kind": "function",
+  "file": "functions/fn_005c43c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
+ },
+ {
   "address": "0x005C43E0",
   "name": "ped_task_enabled_positive_count_predicate",
   "kind": "function",
@@ -35190,6 +35226,15 @@
   "lane": "r-s630"
  },
  {
+  "address": "0x005C4400",
+  "name": "ped_task_record_type_status_predicate",
+  "kind": "function",
+  "file": "functions/fn_005c4400.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
+ },
+ {
   "address": "0x005C4420",
   "name": "ped_task_resource_tag_predicate",
   "kind": "function",
@@ -35197,6 +35242,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s630"
+ },
+ {
+  "address": "0x005C4460",
+  "name": "ped_task_item_matches_virtual_identifier",
+  "kind": "function",
+  "file": "functions/fn_005c4460.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
+ },
+ {
+  "address": "0x005C6170",
+  "name": "ped_task_hud_flags_update",
+  "kind": "function",
+  "file": "functions/fn_005c6170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
  },
  {
   "address": "0x005C8390",
@@ -35224,6 +35287,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-b653"
+ },
+ {
+  "address": "0x005CBD10",
+  "name": "HUD_WEAPON_SCOPE_BIT_3",
+  "kind": "function",
+  "file": "functions/fn_005cbd10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
  },
  {
   "address": "0x005D2BD0",
@@ -37645,6 +37717,33 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b541"
+ },
+ {
+  "address": "0x00606E90",
+  "name": "streaming_initialize_type_one_payload",
+  "kind": "function",
+  "file": "functions/fn_00606e90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
+ },
+ {
+  "address": "0x00607180",
+  "name": "rage_ptxSprite_set_vector_scalars",
+  "kind": "function",
+  "file": "functions/fn_00607180.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
+ },
+ {
+  "address": "0x006073B0",
+  "name": "streaming_copy_matrix_block",
+  "kind": "function",
+  "file": "functions/fn_006073b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
  },
  {
   "address": "0x006098D0",
@@ -56068,6 +56167,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s678"
+ },
+ {
+  "address": "0x008C5CC0",
+  "name": "n:/text",
+  "kind": "function",
+  "file": "functions/fn_008c5cc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
+ },
+ {
+  "address": "0x008C5DF0",
+  "name": "file_mode_label_pointer",
+  "kind": "function",
+  "file": "functions/fn_008c5df0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
  },
  {
   "address": "0x008C5EC0",
@@ -153601,6 +153718,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9E950",
+  "name": "stream_global_record_value",
+  "kind": "function",
+  "file": "functions/fn_00d9e950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U139"
  },
  {
   "address": "0x00D9EC20",
