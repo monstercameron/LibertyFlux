@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Lift: the replay progress bar, three methods",
+    "title": "Devlog: the lift lane's entry on the replay progress bar",
     "commit": null,
+    "summary": "The lane's own account of lifting three methods of the replay editor's progress bar is added to the devlog.",
+    "changes": [
+      "The entry gives the class's slots, the lifted form and its world trait, what the proofs compare and what they do not, and the findings about two sizes in the inventory, a misnamed teardown and a contract that leaves a callee-filled word at zero."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Lift: the replay progress bar, three methods",
+    "commit": "869bceac39fd661b935b0222e97f8e764f6934c7",
     "summary": "Three of the four verified methods of the replay editor's progress bar are lifted into portable Rust in the front-end crate and proven against their 32-bit rewrites.",
     "changes": [
       "Lifted: the teardown, the deleting destructor and the per-frame update. Everything the bar reaches outside itself is one method each on a world trait of 31 methods. The lifted module forbids unsafe code.",
