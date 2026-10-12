@@ -18,8 +18,9 @@ lf_checker_rt::export!(cdecl, rw_00c80e10(point: u32) -> u32 {
         return 0;
     }
 
+    let entry_table = lf_checker_rt::relocated(ENTRY_TABLE);
     for index in 0..entry_count as u32 {
-        let candidate = ENTRY_TABLE.wrapping_add(index.wrapping_mul(ENTRY_STRIDE));
+        let candidate = entry_table.wrapping_add(index.wrapping_mul(ENTRY_STRIDE));
         let matched = lf_checker_rt::callee_thiscall!(
             MATCH_CANDIDATE,
             u32,
