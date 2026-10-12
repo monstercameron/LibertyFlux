@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Rust in progress: 242 files from lanes (1045 unverified rewrites, 1527 in review)",
+    "title": "Devlog: hourly review, 03:05 on 12 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "One rewrite withdrawn after its proof of record failed when run again unchanged; no lane ended in the hour and the verified count went down by one.",
+      "The stack-fill audit finished: of 2,085 proofs that zero the stack, 200 depend on the zero in what the function returns or stores.",
+      "On the owner's instruction the running Luna lanes finish and nothing new starts; the coordinator parks when the last is imported."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Rust in progress: 242 files from lanes (1045 unverified rewrites, 1527 in review)",
+    "commit": "cb279e6b1007373d4e8975ba1bb0b52c0025d07f",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 1045 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
