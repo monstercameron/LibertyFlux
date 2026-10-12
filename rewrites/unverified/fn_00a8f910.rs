@@ -8,7 +8,7 @@
 /// 96-byte group. X, Y, and Z are subtracted in that order, squared, summed as
 /// Y²+X² then +Z², and compared with the 0.5625 threshold using ordered `>`.
 /// The local corner pointer is skipped at the first helper call and all 16
-/// words are snapshotted and scripted. The function uses stdcall with two
+/// words are snapshotted. The function uses stdcall with two
 /// stack words. The return register is not part of this routine's output.
 lf_checker_rt::export!(stdcall, rw_00a8f910(source_point: u32, entity: u32) -> u32 {
     unsafe {

@@ -42,14 +42,14 @@ lf_checker_rt::export!(thiscall, rw_audvehicleaudioentity_bind_vehicle(
                 core::mem::transmute(lf_checker_rt::callee_addr(2));
             let shaper_table = lf_checker_rt::global::<u32>(SHAPER_TABLE);
 
+            let first_index = random_first(0, 2) as usize;
+            let first_shaper = shaper_table.add(first_index).read_unaligned();
+            (entity.wrapping_add(SHAPER_A) as *mut u32).write_unaligned(first_shaper);
             loop {
-                let first_index = random_first(0, 2) as usize;
-                let first_shaper = shaper_table.add(first_index).read_unaligned();
                 let second_index = random_second(0, 2) as usize;
                 let second_shaper = shaper_table.add(second_index).read_unaligned();
-                (entity.wrapping_add(SHAPER_A) as *mut u32).write_unaligned(first_shaper);
                 (entity.wrapping_add(SHAPER_B) as *mut u32).write_unaligned(second_shaper);
-                if first_shaper != second_shaper {
+                if first_shaper == second_shaper {
                     break;
                 }
             }
