@@ -86589,6 +86589,24 @@
   "lane": "a-U101"
  },
  {
+  "address": "0x00A7F740",
+  "name": "CSimpleThrowProjectileInfo::create_default_task",
+  "kind": "function",
+  "file": "functions/fn_00a7f740.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A7F760",
+  "name": "CSitDownIdleThenStandTaskInfo::create_default_task",
+  "kind": "function",
+  "file": "functions/fn_00a7f760.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
   "address": "0x00A801A0",
   "name": "CAnimTaskInfo::vf9",
   "kind": "function",
@@ -86751,6 +86769,15 @@
   "lane": "r-s467"
  },
  {
+  "address": "0x00A804D0",
+  "name": "CSimpleMeleeActionResultTaskInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a804d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
   "address": "0x00A80520",
   "name": "CSimpleNMBalanceTaskInfo::vf9",
   "kind": "function",
@@ -86758,6 +86785,177 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80550",
+  "name": "CSimpleNMBraceTaskInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a80550.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A80580",
+  "name": "CSimpleNMExplosionTaskInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a80580.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A805B0",
+  "name": "CSimpleNMFlinchTaskInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a805b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A805F0",
+  "name": "CSimpleNMOnFireTaskInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a805f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A80620",
+  "name": "CSimpleNMRelaxTaskInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a80620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A80650",
+  "name": "CSimpleNMShotTaskInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a80650.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A80690",
+  "name": "CSimpleSidewaysDiveTaskInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a80690.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A806C0",
+  "name": "CSimpleThrowProjectileInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a806c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A806F0",
+  "name": "CSitDownIdleThenStandTaskInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a806f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A80740",
+  "name": "create_task_for_ped_by_info_id",
+  "kind": "function",
+  "file": "functions/fn_00a80740.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A80760",
+  "name": "CDeadInfo::create_task_for_ped",
+  "kind": "function",
+  "file": "functions/fn_00a80760.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A80C60",
+  "name": "CMedicTaskInfo::create_task_for_ped",
+  "kind": "function",
+  "file": "functions/fn_00a80c60.rs",
+  "trials": 2000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A80D40",
+  "name": "create_and_init_task_info",
+  "kind": "function",
+  "file": "functions/fn_00a80d40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A80D90",
+  "name": "CScenarioTaskInfo::ensure_target_entity",
+  "kind": "function",
+  "file": "functions/fn_00a80d90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A81E00",
+  "name": "slide_cover_subtask_index_to_id",
+  "kind": "function",
+  "file": "functions/fn_00a81e00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A81E20",
+  "name": "slide_cover_subtask_id_to_index",
+  "kind": "function",
+  "file": "functions/fn_00a81e20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A81F70",
+  "name": "CSimpleNMBraceTaskInfo::get_brace_entity",
+  "kind": "function",
+  "file": "functions/fn_00a81f70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A82160",
+  "name": "TaskList_FindByStage",
+  "kind": "function",
+  "file": "functions/fn_00a82160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
+ },
+ {
+  "address": "0x00A82190",
+  "name": "CSimpleNMFlinchTaskInfo::get_flinch_entity",
+  "kind": "function",
+  "file": "functions/fn_00a82190.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s762"
  },
  {
   "address": "0x00A82C90",
