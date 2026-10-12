@@ -105012,6 +105012,24 @@
   "lane": "r-s714"
  },
  {
+  "address": "0x00B7AF10",
+  "name": "CTaskComplexCarDrive::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7af10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7AF60",
+  "name": "CTaskComplexCarDriveBasic::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7af60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
   "address": "0x00B7B030",
   "name": "CTaskComplexCarDriveTimed::clone",
   "kind": "function",
@@ -105034,6 +105052,15 @@
   "name": "CTaskComplexCarSetTempAction::clone",
   "kind": "function",
   "file": "functions/fn_00b7b0a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7B190",
+  "name": "CTaskComplexEnterAnyCarAsDriver::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7b190.rs",
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s771"
@@ -105070,6 +105097,15 @@
   "name": "CTaskComplexPlayerDrive::clone",
   "kind": "function",
   "file": "functions/fn_00b7b230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s771"
+ },
+ {
+  "address": "0x00B7B2A0",
+  "name": "CTaskComplexScreamInCarThenLeave::clone",
+  "kind": "function",
+  "file": "functions/fn_00b7b2a0.rs",
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s771"
