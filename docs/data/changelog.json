@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 1 more withdrawn because its proof does not reach the code in doubt",
+    "title": "Rewrites: 1 more functions pass the checker (19194 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
+      "The tree now holds 19194 rewrites, 19191 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 1 more withdrawn because its proof does not reach the code in doubt",
+    "commit": "bdcb689daeb4447a26e6f4db7e6c7f6c8e49c903",
     "summary": "The verified count goes down by one. The lane sent to make the checker observe three suspect float comparisons has reported: one shown wrong and proven again, one with no observable difference, and one whose proof turns out not to exercise the code at all.",
     "changes": [
       "A pedestrian task's probe of a grid of regions rounds a float down with a comparison whose predicate differs from the original's instruction, the same fault shown on the checker in three other rewrites today. For this one the lane could not show it: two globals the contract sets, a divisor and a size, read back as minus one on the rewrite's side whatever value is written, in the contract of record as well, so the grid index never leaves zero and the rounding's result is never used. The rewrite is withdrawn on that ground: not because a difference was shown, but because the proof of record does not reach the code in doubt. Why the two globals do not take the contract's values is with a checker investigation lane; if the cause is in the checker, other proofs that set those globals are narrower than they say.",
