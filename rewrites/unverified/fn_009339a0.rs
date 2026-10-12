@@ -4,7 +4,7 @@
 /// `0x10`. The object pointer comes from a global pointer table, its first
 /// word points to a vtable, and the original index is forwarded as the
 /// method's one stack argument. The method is thiscall: the object pointer is
-/// in ECX, its return value is returned in EAX, and the callee cleans the
+/// in ECX, its return value is returned in EAX, and the caller later cleans the
 /// stack argument. The table, object, and vtable slot are read before dispatch
 /// so invalid pointers fault at the same stage as the original.
 lf_checker_rt::export!(cdecl, rw_009339A0(object_index: u32) -> u32 {

@@ -624,9 +624,9 @@
   "reason": null
  },
  {
-  "address": "0x005CBD10",
-  "name": "HUD_WEAPON_SCOPE_BIT_3",
-  "file": "fn_005cbd10.rs",
+  "address": "0x005C4350",
+  "name": "ped_factory_dispatch_service_call",
+  "file": "fn_005c4350.rs",
   "lane": "a-U139",
   "outcome": "not yet run",
   "reason": null
@@ -1208,30 +1208,6 @@
   "reason": null
  },
  {
-  "address": "0x0065EFD0",
-  "name": "rage::snMsgMigrateHostResponse::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065efd0.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065F060",
-  "name": "rage::snMsgStartMatchCmd::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065f060.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065F0F0",
-  "name": "rage::snMsgChangeSessionAttributesCmd::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065f0f0.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0065F180",
   "name": "rage::snMsgSetInvitableCmd::AutoIdDesc__::AutoIdDesc__",
   "file": "fn_0065f180.rs",
@@ -1715,6 +1691,14 @@
   "address": "0x006A4CD0",
   "name": null,
   "file": "fn_006a4cd0.rs",
+  "lane": "r-s760",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x006A4D30",
+  "name": null,
+  "file": "fn_006a4d30.rs",
   "lane": "r-s760",
   "outcome": "not yet run",
   "reason": null
@@ -2358,6 +2342,14 @@
   "lane": "r-s738",
   "outcome": "deferred",
   "reason": "partly_proven"
+ },
+ {
+  "address": "0x00A2A870",
+  "name": "CPlayerPed::acquire_aim_target",
+  "file": "fn_00a2a870.rs",
+  "lane": "a-U134",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00A2D7F0",
@@ -3176,9 +3168,9 @@
   "reason": null
  },
  {
-  "address": "0x00B31500",
-  "name": "peds_task_function_00B31500",
-  "file": "fn_00b31500.rs",
+  "address": "0x00B31810",
+  "name": "peds_task_function_00B31810",
+  "file": "fn_00b31810.rs",
   "lane": "r-b705",
   "outcome": "not_reached",
   "reason": null
@@ -3358,6 +3350,14 @@
   "lane": "r-s292",
   "outcome": "deferred",
   "reason": "needs_encrypted_code"
+ },
+ {
+  "address": "0x00B7E9A0",
+  "name": "clear_task_reference_if_equal",
+  "file": "fn_00b7e9a0.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00B82B80",
@@ -5016,9 +5016,9 @@
   "reason": null
  },
  {
-  "address": "0x00D5AEF0",
-  "name": "CLoaderDirect::cancel_stream_request",
-  "file": "fn_00d5aef0.rs",
+  "address": "0x00D5B2F0",
+  "name": "CLoaderDirect::process_request_queue",
+  "file": "fn_00d5b2f0.rs",
   "lane": "a-U140",
   "outcome": "not yet run",
   "reason": null
@@ -5073,7 +5073,7 @@
  },
  {
   "address": "0x00DB3BA0",
-  "name": "UIGalleryFileViewer::vf9",
+  "name": "UILayoutFrame::set_child_flag_a",
   "file": "fn_00db3ba0.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
@@ -5081,7 +5081,7 @@
  },
  {
   "address": "0x00DB3BF0",
-  "name": "UIGalleryFileViewer::vf11",
+  "name": "UILayoutFrame::set_child_flag_b",
   "file": "fn_00db3bf0.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
@@ -5089,7 +5089,7 @@
  },
  {
   "address": "0x00DB3C40",
-  "name": "UIGalleryFileViewer::vf13",
+  "name": "UILayoutFrame::set_child_flag_c",
   "file": "fn_00db3c40.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
@@ -5097,7 +5097,7 @@
  },
  {
   "address": "0x00DB3C90",
-  "name": "UIGalleryFileViewer::vf77",
+  "name": "UILayoutFrame::set_child_flag_d",
   "file": "fn_00db3c90.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
@@ -5105,7 +5105,7 @@
  },
  {
   "address": "0x00DB3CE0",
-  "name": "UIGalleryFileViewer::vf28",
+  "name": "UILayoutFrame::set_child_mode",
   "file": "fn_00db3ce0.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
@@ -5113,8 +5113,24 @@
  },
  {
   "address": "0x00DB63C0",
-  "name": "pending_00db63c0",
+  "name": "input_get_button_state_mask",
   "file": "fn_00db63c0.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DB6C50",
+  "name": "input_control_state_set_first_enabled",
+  "file": "fn_00db6c50.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DB6C70",
+  "name": "input_control_state_set_second_enabled",
+  "file": "fn_00db6c70.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
   "reason": null
@@ -5814,6 +5830,14 @@
   "lane": "r-s589",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00E6ED40",
+  "name": "unclassified_00e6ed40",
+  "file": "fn_00e6ed40.rs",
+  "lane": "r-s769",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00E6EFA0",

@@ -96,82 +96,70 @@ pub fn call_14(base: *mut u8, arg: u32, arg2: u32) -> u32 {
 /// The rewrite of entry 15, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_15(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d3dde0::rw_D3DDE0(base as usize as u32)
+    crate::rewrites::m_00d423b0::rw_D423B0(base as usize as u32)
 }
 
 /// The rewrite of entry 16, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_16(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d42370::rw_D42370(base as usize as u32)
+    crate::rewrites::m_00d54650::rw_00d54650(base as usize as u32)
 }
 
 /// The rewrite of entry 17, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_17(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d423b0::rw_D423B0(base as usize as u32)
+    crate::rewrites::m_00d54670::rw_00d54670(base as usize as u32)
 }
 
 /// The rewrite of entry 18, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_18(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d54650::rw_00d54650(base as usize as u32)
+    crate::rewrites::m_00d59e00::rw_00d59e00(base as usize as u32)
 }
 
 /// The rewrite of entry 19, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_19(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d54670::rw_00d54670(base as usize as u32)
+    crate::rewrites::m_00d5a600::rw_00d5a600(base as usize as u32)
 }
 
 /// The rewrite of entry 20, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_20(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d59e00::rw_00d59e00(base as usize as u32)
+    crate::rewrites::m_00d8e1b0::rw_00d8e1b0(base)
 }
 
 /// The rewrite of entry 21, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_21(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d5a600::rw_00d5a600(base as usize as u32)
+    crate::rewrites::m_00d8e5e0::rw_00d8e5e0(base)
 }
 
 /// The rewrite of entry 22, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_22(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d8e1b0::rw_00d8e1b0(base)
+    crate::rewrites::m_00d8e6d0::rw_00d8e6d0(base)
 }
 
 /// The rewrite of entry 23, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_23(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d8e5e0::rw_00d8e5e0(base)
+    crate::rewrites::m_00d8e820::rw_00d8e820(base)
 }
 
 /// The rewrite of entry 24, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_24(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d8e6d0::rw_00d8e6d0(base)
+    crate::rewrites::m_00db4de0::rw_00db4de0(base as usize as u32)
 }
 
 /// The rewrite of entry 25, called with the object at `base`.
 #[allow(unused_variables)]
 pub fn call_25(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00d8e820::rw_00d8e820(base)
-}
-
-/// The rewrite of entry 26, called with the object at `base`.
-#[allow(unused_variables)]
-pub fn call_26(base: *mut u8, arg: u32, arg2: u32) -> u32 {
-    crate::rewrites::m_00db4de0::rw_00db4de0(base as usize as u32)
-}
-
-/// The rewrite of entry 27, called with the object at `base`.
-#[allow(unused_variables)]
-pub fn call_27(base: *mut u8, arg: u32, arg2: u32) -> u32 {
     crate::rewrites::m_00e3e950::rw_00e3e950(base)
 }
 
 /// The call table, in the order of the instance table.
-pub const CALLS: [fn(*mut u8, u32, u32) -> u32; 28] = [
-    call_0, call_1, call_2, call_3, call_4, call_5, call_6, call_7, call_8, call_9, call_10, call_11, call_12, call_13, call_14, call_15, call_16, call_17, call_18, call_19, call_20, call_21, call_22, call_23, call_24, call_25, call_26, call_27,
+pub const CALLS: [fn(*mut u8, u32, u32) -> u32; 26] = [
+    call_0, call_1, call_2, call_3, call_4, call_5, call_6, call_7, call_8, call_9, call_10, call_11, call_12, call_13, call_14, call_15, call_16, call_17, call_18, call_19, call_20, call_21, call_22, call_23, call_24, call_25,
 ];

@@ -1,5 +1,5 @@
 // original: 0x0065bcb0 rage::EnviromentDomeLighting::vf3
-use lf_checker_rt::export;
+use lf_checker_rt::{export, relocated};
 
 /// Search a counted table of fixed-size rows for the supplied resource key.
 /// The stack argument points to an owner whose +0x18 field points to a
@@ -7,6 +7,7 @@ use lf_checker_rt::export;
 /// the row storage. Each 0x30-byte row has two candidate keys at offsets 0 and
 /// 4. A direct helper call supplies the lookup key.
 export!(stdcall, rw_0065bcb0(table: *const u8) -> u8 {
+    const RESOURCE_VA: u32 = 0x00FE2F08;
     const TABLE_FIELD: usize = 0x18;
     const COUNT_FIELD: usize = 0x0C;
     const ROWS_FIELD: usize = 0x08;
@@ -16,7 +17,7 @@ export!(stdcall, rw_0065bcb0(table: *const u8) -> u8 {
 
     unsafe {
         let collection = table.add(TABLE_FIELD).cast::<*const u8>().read_unaligned();
-        let wanted = lf_checker_rt::callee_cdecl!(1, u32, 0x00FE_2F08u32, 0u32);
+        let wanted = lf_checker_rt::callee_cdecl!(1, u32, lf_checker_rt::relocated(RESOURCE_VA), 0u32);
         let count = collection.add(COUNT_FIELD).cast::<u16>().read_unaligned() as usize;
         if count == 0 {
             return 0;

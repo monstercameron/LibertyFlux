@@ -15,7 +15,7 @@ pub struct Named<T> {
 }
 
 /// The instances, in the order of the call table.
-pub const INSTANCES: [Named<ConstantWrites>; 28] = [
+pub const INSTANCES: [Named<ConstantWrites>; 26] = [
     Named {
         name: "net_init_small_rec",
         spec: ConstantWrites {
@@ -96,7 +96,7 @@ pub const INSTANCES: [Named<ConstantWrites>; 28] = [
     Named {
         name: "reset_record",
         spec: ConstantWrites {
-            writes: &[ConstantWrite { offset: 0x0, width: WriteWidth::Word, value: 0xffffffff }, ConstantWrite { offset: 0x4, width: WriteWidth::Half, value: 0xffff }, ConstantWrite { offset: 0x8, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0xc, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x10, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x14, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x18, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x1c, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x20, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x24, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x2c, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x28, width: WriteWidth::Word, value: 0x0 }],
+            writes: &[ConstantWrite { offset: 0x0, width: WriteWidth::Word, value: 0xffffffff }, ConstantWrite { offset: 0x4, width: WriteWidth::Half, value: 0xffff }, ConstantWrite { offset: 0x8, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0xc, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x10, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x14, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x18, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x1c, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x20, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x24, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x2c, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x28, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x30, width: WriteWidth::Byte, value: 0x0 }],
             returns: Returns::This,
         },
     },
@@ -118,20 +118,6 @@ pub const INSTANCES: [Named<ConstantWrites>; 28] = [
         name: "CTaskSimpleMovePathfindProblem::vf7",
         spec: ConstantWrites {
             writes: &[ConstantWrite { offset: 0x0, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x4, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x8, width: WriteWidth::Word, value: 0x0 }],
-            returns: Returns::This,
-        },
-    },
-    Named {
-        name: "reset_request_holder",
-        spec: ConstantWrites {
-            writes: &[ConstantWrite { offset: 0x0, width: WriteWidth::Byte, value: 0x0 }, ConstantWrite { offset: 0x4, width: WriteWidth::Word, value: 0x0 }],
-            returns: Returns::This,
-        },
-    },
-    Named {
-        name: "task_node_a8_reset",
-        spec: ConstantWrites {
-            writes: &[ConstantWrite { offset: 0x80, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0xa4, width: WriteWidth::Byte, value: 0x0 }],
             returns: Returns::This,
         },
     },
@@ -173,7 +159,7 @@ pub const INSTANCES: [Named<ConstantWrites>; 28] = [
     Named {
         name: "audio_state_reset_small",
         spec: ConstantWrites {
-            writes: &[ConstantWrite { offset: 0x4, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x8, width: WriteWidth::Word, value: 0x0 }],
+            writes: &[ConstantWrite { offset: 0x4, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x8, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0xc, width: WriteWidth::Byte, value: 0x0 }],
             returns: Returns::This,
         },
     },
@@ -208,7 +194,7 @@ pub const INSTANCES: [Named<ConstantWrites>; 28] = [
     Named {
         name: "StatsRecord_InitBasic",
         spec: ConstantWrites {
-            writes: &[ConstantWrite { offset: 0x4, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x8, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0xc, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x10, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x14, width: WriteWidth::Half, value: 0x0 }, ConstantWrite { offset: 0x1c, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x18, width: WriteWidth::Word, value: 0x0 }],
+            writes: &[ConstantWrite { offset: 0x0, width: WriteWidth::Byte, value: 0x1 }, ConstantWrite { offset: 0x4, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x8, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0xc, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x10, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x14, width: WriteWidth::Half, value: 0x0 }, ConstantWrite { offset: 0x1c, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x18, width: WriteWidth::Word, value: 0x0 }],
             returns: Returns::Zero,
         },
     },

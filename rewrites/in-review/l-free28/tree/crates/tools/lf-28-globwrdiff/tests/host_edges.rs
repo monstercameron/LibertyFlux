@@ -1,10 +1,10 @@
 //! Host tests of the instance table. These run on every host and do not need the 32-bit rewrites.
 
-use lf_28_indexdiff::instances::INSTANCES;
+use lf_28_globwrdiff::instances::INSTANCES;
 
 #[test]
-fn the_table_lists_1_instances() {
-    assert_eq!(INSTANCES.len(), 1);
+fn the_table_lists_5_instances() {
+    assert_eq!(INSTANCES.len(), 5);
 }
 
 #[test]
