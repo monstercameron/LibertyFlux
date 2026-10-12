@@ -35001,10 +35001,118 @@
   "lane": "r-s756"
  },
  {
+  "address": "0x005C0990",
+  "name": "CViewport3DScene::~CViewport3DScene__deleting",
+  "kind": "function",
+  "file": "functions/fn_005c0990.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C09C0",
+  "name": "active_record_lookup",
+  "kind": "function",
+  "file": "functions/fn_005c09c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C09E0",
+  "name": "active_record_forward",
+  "kind": "function",
+  "file": "functions/fn_005c09e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C0A10",
+  "name": "game_mode_2_7_flag_check",
+  "kind": "function",
+  "file": "functions/fn_005c0a10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C0A40",
+  "name": "CViewportRadar::vf0",
+  "kind": "function",
+  "file": "functions/fn_005c0a40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C0A80",
+  "name": "CViewportPrimaryOrtho::CViewportPrimaryOrtho",
+  "kind": "function",
+  "file": "functions/fn_005c0a80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C0AF0",
+  "name": "CViewportPrimaryOrtho::vf0",
+  "kind": "function",
+  "file": "functions/fn_005c0af0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C1950",
+  "name": "load_control_map_if_initialized",
+  "kind": "function",
+  "file": "functions/fn_005c1950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C22F0",
+  "name": "release_active_control_slot",
+  "kind": "function",
+  "file": "functions/fn_005c22f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C2340",
+  "name": "release_default_control_slot",
+  "kind": "function",
+  "file": "functions/fn_005c2340.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
   "address": "0x005C31F0",
   "name": "poll_time_and_window_state",
   "kind": "function",
   "file": "functions/fn_005c31f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C32E0",
+  "name": "string_holder_delete",
+  "kind": "function",
+  "file": "functions/fn_005c32e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005C3330",
+  "name": "string_array_holder_delete",
+  "kind": "function",
+  "file": "functions/fn_005c3330.rs",
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s774"
@@ -35307,6 +35415,15 @@
   "lane": "a-U139"
  },
  {
+  "address": "0x005D2050",
+  "name": "player_is_wanted",
+  "kind": "function",
+  "file": "functions/fn_005d2050.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
   "address": "0x005D2BD0",
   "name": "blip_slot_assign",
   "kind": "function",
@@ -35404,6 +35521,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s731"
+ },
+ {
+  "address": "0x005D4470",
+  "name": "network_array_object_is_idle",
+  "kind": "function",
+  "file": "functions/fn_005d4470.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
+ },
+ {
+  "address": "0x005D45F0",
+  "name": "CBaseDC::vf0",
+  "kind": "function",
+  "file": "functions/fn_005d45f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s774"
  },
  {
   "address": "0x005D4720",
