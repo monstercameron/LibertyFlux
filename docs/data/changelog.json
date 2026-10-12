@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 17 more functions pass the checker (19440 in total)",
+    "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "17 rewrites added under rewrites/verified: 0 script native handlers and 17 other functions.",
+      "The tree now holds 19440 rewrites, 19437 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Devlog: the lift lane's entry on three families of mid-size routines",
     "commit": "fd15e1413bce83988c61f5bad54a696ccd7e9bac",
     "summary": "The lane's own account of lifting 36 mid-size routines in three families is added to the devlog.",

@@ -41904,6 +41904,51 @@
   "lane": "a-U101"
  },
  {
+  "address": "0x00685E40",
+  "name": "crFrame::destroy_element",
+  "kind": "function",
+  "file": "functions/fn_00685e40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
+  "address": "0x00685E60",
+  "name": "crFrameBuffer::alloc_dof",
+  "kind": "function",
+  "file": "functions/fn_00685e60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
+  "address": "0x00685E90",
+  "name": "frame_buffer_calc_size",
+  "kind": "function",
+  "file": "functions/fn_00685e90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
+  "address": "0x00685ED0",
+  "name": "track_apply_request",
+  "kind": "function",
+  "file": "functions/fn_00685ed0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
+  "address": "0x00685F00",
+  "name": "frame_entries_write_pair",
+  "kind": "function",
+  "file": "functions/fn_00685f00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
   "address": "0x00685FE0",
   "name": "dof_pair_combine",
   "kind": "function",
@@ -41922,6 +41967,42 @@
   "lane": "r-b295"
  },
  {
+  "address": "0x006862A0",
+  "name": "dof_array_read_entry",
+  "kind": "function",
+  "file": "functions/fn_006862a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
+  "address": "0x006862F0",
+  "name": "dof_array_write_entry",
+  "kind": "function",
+  "file": "functions/fn_006862f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
+  "address": "0x00686340",
+  "name": "dof_array_read_entry_raw",
+  "kind": "function",
+  "file": "functions/fn_00686340.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
+  "address": "0x00686380",
+  "name": "dof_array_write_entry_raw",
+  "kind": "function",
+  "file": "functions/fn_00686380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
   "address": "0x006863C0",
   "name": "lookup_quat_to_matrix",
   "kind": "function",
@@ -41931,6 +42012,24 @@
   "lane": "r-b295"
  },
  {
+  "address": "0x006864D0",
+  "name": "dof_array_checksum",
+  "kind": "function",
+  "file": "functions/fn_006864d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
+  "address": "0x006865A0",
+  "name": "dof_array_append_slot",
+  "kind": "function",
+  "file": "functions/fn_006865a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
   "address": "0x006866B0",
   "name": "frame_dispatcher",
   "kind": "function",
@@ -41938,6 +42037,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b295"
+ },
+ {
+  "address": "0x00687350",
+  "name": "locked_ref_release",
+  "kind": "function",
+  "file": "functions/fn_00687350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
  },
  {
   "address": "0x006893E0",
@@ -42615,6 +42723,15 @@
   "lane": "r-s579"
  },
  {
+  "address": "0x00694E10",
+  "name": "rage::crFrameFilterMover::construct",
+  "kind": "function",
+  "file": "functions/fn_00694e10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
   "address": "0x00694E40",
   "name": "filter_set_params",
   "kind": "function",
@@ -42660,6 +42777,15 @@
   "lane": "r-s80"
  },
  {
+  "address": "0x00694F60",
+  "name": "rage::crWeightSet::~crWeightSet__deleting",
+  "kind": "function",
+  "file": "functions/fn_00694f60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
   "address": "0x00694F90",
   "name": "filter_init_attach",
   "kind": "function",
@@ -42667,6 +42793,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s80"
+ },
+ {
+  "address": "0x00694FC0",
+  "name": "rage::crWeightSet::~crWeightSet",
+  "kind": "function",
+  "file": "functions/fn_00694fc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
  },
  {
   "address": "0x00695030",
@@ -42714,6 +42849,15 @@
   "lane": "r-s80"
  },
  {
+  "address": "0x006954F0",
+  "name": "id_table_init",
+  "kind": "function",
+  "file": "functions/fn_006954f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
+ },
+ {
   "address": "0x00695600",
   "name": "anim_rebase_block",
   "kind": "function",
@@ -42721,6 +42865,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s80"
+ },
+ {
+  "address": "0x00695700",
+  "name": "id_table_search",
+  "kind": "function",
+  "file": "functions/fn_00695700.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s750"
  },
  {
   "address": "0x006957C0",
