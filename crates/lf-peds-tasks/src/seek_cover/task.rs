@@ -330,7 +330,8 @@ impl SeekCoverTask {
         self.slot[0] = args.slot_src[0];
         self.slot[1] = args.slot_src[1];
         self.slot[2] = args.slot_src[2];
-        self.flags = ((args.mode & 7) << MODE_SHIFT) | (self.flags & FULL_KEPT_FLAG_BITS) | FULL_FLAG_SET;
+        self.flags =
+            ((args.mode & 7) << MODE_SHIFT) | (self.flags & FULL_KEPT_FLAG_BITS) | FULL_FLAG_SET;
         self.latch = fold_latch_bit(self.latch, args.latch_src);
         self.weight = args.weight;
         self.tail = [0, 0, 0];
@@ -344,7 +345,11 @@ impl SeekCoverTask {
     /// scalars, and then either takes the row's query answer (when the
     /// row's flag byte has a low bit set) or clears the slot and the
     /// index. Finishes through the shared re-initialiser either way.
-    pub fn construct_cover_row<W: SeekCoverWorld>(&mut self, world: &mut W, args: &CoverRowArgs<'_>) {
+    pub fn construct_cover_row<W: SeekCoverWorld>(
+        &mut self,
+        world: &mut W,
+        args: &CoverRowArgs<'_>,
+    ) {
         world.base_construct(self);
         world.set_stamp(self, Stamp::SeekCover);
         self.dir = *args.dir_src;
@@ -434,7 +439,10 @@ impl SeekCoverTask {
     /// zero plus its offset). This port returns `None` at those points
     /// instead of reading. That difference is outside every proof and is
     /// listed in the registry.
-    pub fn route_to_sub_task<W: SeekCoverWorld>(&mut self, world: &mut W) -> Option<Handle32<CoverSubTask>> {
+    pub fn route_to_sub_task<W: SeekCoverWorld>(
+        &mut self,
+        world: &mut W,
+    ) -> Option<Handle32<CoverSubTask>> {
         let route = CoverRoute::from_flags(self.flags)?;
         let worker = world.fetch_worker(self)?;
         let extra = match route {
@@ -462,10 +470,20 @@ impl SeekCoverTask {
     /// constructor, and fills in the small-node fields with the argument.
     /// Returns the node, or `None` when the pool has none. The object is
     /// not read, so this takes no receiver.
-    pub fn allocate_node_for_arg<W: SeekCoverWorld>(world: &mut W, arg: u32) -> Option<Handle32<TaskNode>> {
+    pub fn allocate_node_for_arg<W: SeekCoverWorld>(
+        world: &mut W,
+        arg: u32,
+    ) -> Option<Handle32<TaskNode>> {
         let node = world.allocate_node()?;
         world.construct_node(node);
-        world.store_small_node(node, &SmallNode { arg, flag: 0, tail: 0 });
+        world.store_small_node(
+            node,
+            &SmallNode {
+                arg,
+                flag: 0,
+                tail: 0,
+            },
+        );
         Some(node)
     }
 }

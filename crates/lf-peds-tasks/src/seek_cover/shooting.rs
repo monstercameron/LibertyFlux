@@ -68,7 +68,6 @@ pub struct PursuitTarget;
 #[derive(Debug)]
 pub struct InitArg;
 
-
 /// The words of a shooting task that the lifted methods own.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub struct ShootingTask {
@@ -107,7 +106,13 @@ pub trait ShootingWorld {
     /// Stores the flag word of a subject.
     fn set_subject_flags(&mut self, subject: Handle32<ShotSubject>, flags: u32);
     /// Calls the subject's virtual slot that takes three arguments.
-    fn ask_subject(&mut self, subject: Handle32<ShotSubject>, a0: Handle32<InitArg>, a1: u32, a2: u32) -> u32;
+    fn ask_subject(
+        &mut self,
+        subject: Handle32<ShotSubject>,
+        a0: Handle32<InitArg>,
+        a1: u32,
+        a2: u32,
+    ) -> u32;
     /// Runs the subject initialiser's first member initialiser on the object.
     fn init_member_60(&mut self, this: &mut ShootingTask);
     /// Runs the subject initialiser's second member initialiser on the object.
@@ -149,13 +154,24 @@ impl ShootingTask {
     /// its node bit set, takes a pursuit node from the pool, constructs it
     /// and returns it (zero when the pool is empty). Otherwise runs the
     /// pursuit solver and dispatches through the object's virtual slot.
-    pub fn pursuit_action<W: ShootingWorld>(&mut self, world: &mut W, target: Handle32<PursuitTarget>) -> u32 {
+    pub fn pursuit_action<W: ShootingWorld>(
+        &mut self,
+        world: &mut W,
+        target: Handle32<PursuitTarget>,
+    ) -> u32 {
         if world.target_flags(target) & TARGET_NODE_BIT != 0 {
             let Some(node) = world.fetch_node() else {
                 return 0;
             };
             world.construct_node(node);
-            world.store_pursuit_node(node, &PursuitNode { arg: 0, flag16: 1, flag8: 1 });
+            world.store_pursuit_node(
+                node,
+                &PursuitNode {
+                    arg: 0,
+                    flag16: 1,
+                    flag8: 1,
+                },
+            );
             return node.get();
         }
         world.solve(self, target);
@@ -176,7 +192,12 @@ impl ShootingTask {
         let scaled = (arg as i32 as f32) * f32::from_bits(world.scale_factor());
         world.construct_shot_node(
             node,
-            &ShotNodeArgs { kind: SHOT_KIND, pos: self.base.pos, scaled_bits: scaled.to_bits(), tail: SHOT_TAIL },
+            &ShotNodeArgs {
+                kind: SHOT_KIND,
+                pos: self.base.pos,
+                scaled_bits: scaled.to_bits(),
+                tail: SHOT_TAIL,
+            },
         )
     }
 

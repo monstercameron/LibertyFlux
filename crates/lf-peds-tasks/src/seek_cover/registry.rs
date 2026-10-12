@@ -103,9 +103,7 @@ pub const ROWS: &[Row] = &[
         method: "vf0",
         rust: "ShootingTask::scalar_delete",
         state: State::Proven,
-        narrows: &[
-            "the pool object is named in the call log and not otherwise checked",
-        ],
+        narrows: &["the pool object is named in the call log and not otherwise checked"],
     },
     Row {
         class: "CTaskComplexSeekCoverShooting",

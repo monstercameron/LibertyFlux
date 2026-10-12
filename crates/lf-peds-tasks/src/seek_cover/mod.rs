@@ -21,6 +21,6 @@ pub use shooting::{
     InitArg, PursuitNode, PursuitTarget, ShootingTask, ShootingWorld, ShotNodeArgs, ShotSubject,
 };
 pub use task::{
-    CoverRowArgs, CoverRoute, CoverSubTask, CoverWorker, FullArgs, OwnedSlot, RouteArgs,
+    CoverRoute, CoverRowArgs, CoverSubTask, CoverWorker, FullArgs, OwnedSlot, RouteArgs,
     RouteExtra, SeekCoverTask, SeekCoverWorld, ShortArgs, SmallNode, Stamp, TaskNode,
 };
