@@ -92304,6 +92304,15 @@
   "lane": "a-G39"
  },
  {
+  "address": "0x00B01C60",
+  "name": "update_view_and_children",
+  "kind": "function",
+  "file": "functions/fn_00b01c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U121"
+ },
+ {
   "address": "0x00B01D20",
   "name": "reset_channel_pair",
   "kind": "function",
@@ -132714,6 +132723,15 @@
   "lane": "a-S07"
  },
  {
+  "address": "0x00C687C0",
+  "name": "request_list_rebuild",
+  "kind": "function",
+  "file": "functions/fn_00c687c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U121"
+ },
+ {
   "address": "0x00C68990",
   "name": "sample_tick_and_decay_counters",
   "kind": "function",
@@ -153790,6 +153808,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G02"
+ },
+ {
+  "address": "0x00DFC344",
+  "name": "__atof_l",
+  "kind": "function",
+  "file": "functions/fn_00dfc344.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U121"
  },
  {
   "address": "0x00DFC3E0",
