@@ -15,7 +15,7 @@ pub struct Named<T> {
 }
 
 /// The instances, in the order of the call table.
-pub const INSTANCES: [Named<ConstantWrites>; 29] = [
+pub const INSTANCES: [Named<ConstantWrites>; 28] = [
     Named {
         name: "net_init_small_rec",
         spec: ConstantWrites {
@@ -28,13 +28,6 @@ pub const INSTANCES: [Named<ConstantWrites>; 29] = [
         spec: ConstantWrites {
             writes: &[ConstantWrite { offset: 0x110, width: WriteWidth::Word, value: 0x0 }],
             returns: Returns::This,
-        },
-    },
-    Named {
-        name: "audio_curve_copy_desc_fields",
-        spec: ConstantWrites {
-            writes: &[ConstantWrite { offset: 0x26, width: WriteWidth::Byte, value: 0x1 }],
-            returns: Returns::One,
         },
     },
     Named {

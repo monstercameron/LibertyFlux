@@ -464,14 +464,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x0059EB10",
-  "name": "fn_0059eb10",
-  "file": "fn_0059eb10.rs",
-  "lane": "r-s756",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005A6940",
   "name": "com_variant_state_init",
   "file": "fn_005a6940.rs",
@@ -628,6 +620,14 @@
   "name": "ped_tls_pool_descriptor_init_d",
   "file": "fn_005c41e0.rs",
   "lane": "a-U137",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005CBD10",
+  "name": "HUD_WEAPON_SCOPE_BIT_3",
+  "file": "fn_005cbd10.rs",
+  "lane": "a-U139",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1136,6 +1136,22 @@
   "reason": null
  },
  {
+  "address": "0x0065BCB0",
+  "name": "rage::EnviromentDomeLighting::vf3",
+  "file": "fn_0065bcb0.rs",
+  "lane": "r-s765",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065BE80",
+  "name": "rage::DayLighting::vf3",
+  "file": "fn_0065be80.rs",
+  "lane": "r-s765",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0065BEE0",
   "name": "rage::DayLighting::vf5",
   "file": "fn_0065bee0.rs",
@@ -1188,30 +1204,6 @@
   "name": "create_day_lighting",
   "file": "fn_0065e130.rs",
   "lane": "r-s765",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065EE00",
-  "name": "rage::snMsgRemoveGamersFromSessionCmd::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065ee00.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065EE90",
-  "name": "rage::snMsgNotMigrating::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065ee90.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065EF20",
-  "name": "rage::snMsgMigrateHostRequest::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065ef20.rs",
-  "lane": "r-s764",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1478,6 +1470,14 @@
   "lane": "r-s584",
   "outcome": "deferred",
   "reason": "out_of_time"
+ },
+ {
+  "address": "0x0066C590",
+  "name": null,
+  "file": "fn_0066c590.rs",
+  "lane": "r-s758",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x0066CC90",
@@ -2500,14 +2500,6 @@
   "name": "CSimpleNMHighFallTaskInfo::vf9",
   "file": "fn_00a7f6a0.rs",
   "lane": "r-s596",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80D40",
-  "name": "create_and_init_task_info",
-  "file": "fn_00a80d40.rs",
-  "lane": "r-s762",
   "outcome": "not_reached",
   "reason": null
  },
@@ -5072,14 +5064,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00DB3320",
-  "name": "pending_00db3320",
-  "file": "fn_00db3320.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DB3BA0",
   "name": "UIGalleryFileViewer::vf9",
   "file": "fn_00db3ba0.rs",
@@ -5123,22 +5107,6 @@
   "address": "0x00DB63C0",
   "name": "pending_00db63c0",
   "file": "fn_00db63c0.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DB6C30",
-  "name": "pending_00db6c30",
-  "file": "fn_00db6c30.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DB6CA0",
-  "name": "pending_00db6ca0",
-  "file": "fn_00db6ca0.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
   "reason": null
@@ -5360,9 +5328,321 @@
   "reason": "partly_proven"
  },
  {
+  "address": "0x00E62CD0",
+  "name": "pending-name",
+  "file": "fn_00e62cd0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00E62CF0",
   "name": "pending-name",
   "file": "fn_00e62cf0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62D00",
+  "name": "pending-name",
+  "file": "fn_00e62d00.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62D10",
+  "name": "pending-name",
+  "file": "fn_00e62d10.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62D30",
+  "name": "pending-name",
+  "file": "fn_00e62d30.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E62D50",
+  "name": "pending-name",
+  "file": "fn_00e62d50.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63A80",
+  "name": "CLOUD",
+  "file": "fn_00e63a80.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63B90",
+  "name": "pending-name",
+  "file": "fn_00e63b90.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63BE0",
+  "name": "pending-name",
+  "file": "fn_00e63be0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63C20",
+  "name": "pending-name",
+  "file": "fn_00e63c20.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63C50",
+  "name": "pending-name",
+  "file": "fn_00e63c50.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63DD0",
+  "name": "pending-name",
+  "file": "fn_00e63dd0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63E00",
+  "name": "pending-name",
+  "file": "fn_00e63e00.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63E40",
+  "name": "pending-name",
+  "file": "fn_00e63e40.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63E60",
+  "name": "pending-name",
+  "file": "fn_00e63e60.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63E80",
+  "name": "pending-name",
+  "file": "fn_00e63e80.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63EA0",
+  "name": "pending-name",
+  "file": "fn_00e63ea0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63EB0",
+  "name": "pending-name",
+  "file": "fn_00e63eb0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63EF0",
+  "name": "pending-name",
+  "file": "fn_00e63ef0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63F10",
+  "name": "pending-name",
+  "file": "fn_00e63f10.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63F30",
+  "name": "pending-name",
+  "file": "fn_00e63f30.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63F50",
+  "name": "pending-name",
+  "file": "fn_00e63f50.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63F70",
+  "name": "pending-name",
+  "file": "fn_00e63f70.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63F90",
+  "name": "pending-name",
+  "file": "fn_00e63f90.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63FB0",
+  "name": "pending-name",
+  "file": "fn_00e63fb0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E63FD0",
+  "name": "pending-name",
+  "file": "fn_00e63fd0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E64000",
+  "name": "pending-name",
+  "file": "fn_00e64000.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E642B0",
+  "name": "pending-name",
+  "file": "fn_00e642b0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E642D0",
+  "name": "pending-name",
+  "file": "fn_00e642d0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E642F0",
+  "name": "pending-name",
+  "file": "fn_00e642f0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E64310",
+  "name": "pending-name",
+  "file": "fn_00e64310.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E64330",
+  "name": "pending-name",
+  "file": "fn_00e64330.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E644C0",
+  "name": "pending-name",
+  "file": "fn_00e644c0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E644E0",
+  "name": "ANIM_COVER_HIT_WALL",
+  "file": "fn_00e644e0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E64520",
+  "name": "ANIM_COVER_HIT_WALL_IMPACT",
+  "file": "fn_00e64520.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E64540",
+  "name": "pending-name",
+  "file": "fn_00e64540.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E64560",
+  "name": "pending-name",
+  "file": "fn_00e64560.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E64580",
+  "name": "pending-name",
+  "file": "fn_00e64580.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E645A0",
+  "name": "pending-name",
+  "file": "fn_00e645a0.rs",
+  "lane": "r-s768",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E645C0",
+  "name": "PED_ON_PED_BUMP",
+  "file": "fn_00e645c0.rs",
   "lane": "r-s768",
   "outcome": "not_reached",
   "reason": null

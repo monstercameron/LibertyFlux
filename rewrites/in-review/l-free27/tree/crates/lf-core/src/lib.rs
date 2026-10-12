@@ -36,6 +36,7 @@ pub mod object_rows;
 pub mod packed_flag;
 pub mod ptr32;
 pub mod row_address;
+pub mod record_word_read;
 pub mod sentinel_table;
 pub mod slot_store;
 pub mod static_list;

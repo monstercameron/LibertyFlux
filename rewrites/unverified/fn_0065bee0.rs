@@ -3,9 +3,8 @@ use lf_checker_rt::{export, relocated, tls_slot};
 
 /// Allocate a 0x14-byte record through TLS slot 0's allocator vtable.
 /// The allocator receives the byte size, 16-byte alignment, and a zero flag.
-/// A null allocation is returned unchanged. Otherwise, the list links at
-/// +0x08 and +0x0C point to the head at +0x08; the vtable and fields at
-/// no additional fields are initialized before the allocation pointer is returned.
+/// A null allocation is returned unchanged. Otherwise, only its vtable
+/// word is initialized before the allocation pointer is returned.
 /// The external entry is a zero-argument cdecl function.
 export!(cdecl, rw_0065bee0() -> *mut u8 {
     const ALLOCATOR_SLOT: usize = 2;
@@ -31,9 +30,6 @@ export!(cdecl, rw_0065bee0() -> *mut u8 {
         if object.is_null() {
             return object;
         }
-        let head = object.add(LIST_HEAD_OFFSET);
-        head.add(NEXT_LINK_OFFSET).cast::<u32>().write_unaligned(head as u32);
-        head.add(PREVIOUS_LINK_OFFSET).cast::<u32>().write_unaligned(head as u32);
         object.add(OBJECT_VTABLE_OFFSET).cast::<u32>().write_unaligned(relocated(OBJECT_VTABLE_VA));
         object
     }
