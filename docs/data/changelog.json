@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 53 proofs re-run on the current checker and recorded on it",
+    "commit": null,
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "53 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Devlog: the lift lane's entry on twelve families of small routines",
     "commit": "6ab968e90ea1738c96ec5e9b4366039423432652",
     "summary": "The lane's own account of proving 78 small routines in twelve families is added to the devlog.",
