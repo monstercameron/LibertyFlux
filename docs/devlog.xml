@@ -9,6 +9,35 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Shaft channel steps (spdShaft) lifted from their verified rewrites and proven</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls17"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls17</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>From lane l-cls17.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-cls17.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Lift the shaft class of the engine's spatial library, the family named by the executable's type information, from its verified 32-bit rewrites to portable Rust that owns its data. Lift only what is verified, and prove each lifted method against its rewrite.&lt;/p&gt;
+&lt;h3&gt;What the family is&lt;/h3&gt;
+&lt;p&gt;The class has four step methods, all verified: each advances one of four channels by a step length and returns the channel's third direction seed. Each step stores the length, works out three direction seeds from one gain, one of two calibration pairs and a table of twelve floats, mixes the seeds with the table, and clears a pending byte. The seeds are normalised unless a flag byte is set, in which case each channel uses a fixed unit axis. The constructor and the matrix update are unverified and are not lifted. The physical meaning of the step is not established (Unknown).&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Verified step methods&lt;/td&gt;&lt;td data-label="Value"&gt;4 of 6 listed methods&lt;/td&gt;&lt;td data-label="Status"&gt;Verified: rewrites and their checker contracts&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Lifted and proven&lt;/td&gt;&lt;td data-label="Value"&gt;4 of 4&lt;/td&gt;&lt;td data-label="Status"&gt;Verified: differential test on the 32-bit target&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Steps compared bit for bit&lt;/td&gt;&lt;td data-label="Value"&gt;160,101 over 20,000 objects&lt;/td&gt;&lt;td data-label="Status"&gt;Verified: test run&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Deliberate faults caught&lt;/td&gt;&lt;td data-label="Value"&gt;5 faults, each on all 4 channels&lt;/td&gt;&lt;td data-label="Status"&gt;Verified: test run&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Unsafe code in the lifted module&lt;/td&gt;&lt;td data-label="Value"&gt;0 (the rewrites had 52 tokens)&lt;/td&gt;&lt;td data-label="Status"&gt;Verified: count&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;The header comments of the verified rewrites for three of the four channels give the fixed seeds when the flag is set as the unit vector on the first axis. The code, which the checker's contracts compare with the original, uses a different axis for each channel. The contracts exercise that path, so the comments are the error. Verified by reading the rewrites and their contracts.&lt;/p&gt;
+&lt;p&gt;The square-root helper that every step calls is a callee outside the game-function database. A port must supply a root that matches the original's helper bit for bit. Whether the helper is correctly rounded is not established.&lt;/p&gt;
+&lt;p&gt;Two of the first mutants were equivalent: swapping the operands of the cross-seed product changes no result, because the two operands carry the same not-a-number. A table product swap is observable, and a probe confirmed that a not-a-number takes its payload from the first operand under this build's code generation.&lt;/p&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;p&gt;The lifted methods take a host trait for the square-root callee and return the third seed. Each product and sum pins its operand order with a value barrier. Wrong versions are a second writing of the steps with one deliberate fault each, run on every channel; a control writing with no fault must agree with the rewrites before the faults count.&lt;/p&gt;
+&lt;h3&gt;How to reproduce&lt;/h3&gt;
+&lt;p&gt;Run the host tests of the shaft module in the maths crate, then the differential test crate on the 32-bit target with a time limit. The test crate includes the tracked rewrite files by path and needs the game's constants read from the executable's mapped image.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Lifting the motion composer: combining filter, data block and sequencing methods</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls14"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls14</id>
@@ -1297,20 +1326,5 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;p&gt;Verified: the dispatcher repeatedly fell below the requested 15 active tasks as workers completed. Root directly launched ten distinct replacement tasks and restored the roster temporarily. Continuous refill remains necessary; proposals and independent audits are not counted as new proofs. Historical supervisor measurements do not describe the native workers.&lt;/p&gt;
 &lt;p&gt;Verified workstation check: no large abandoned project process required stopping. Physical memory free was 3.0 GB, commit headroom 5.8 GB, and non-paged kernel memory 21.3 GB. The existing three-job limit and memory guards remain enforced. Production waits below the commit guard rather than bypassing it.&lt;/p&gt;
 &lt;p&gt;Decision: integrate only exact reviewed evidence and unchanged positive-source projections, preserve exclusions and failures, keep the native roster filled with distinct useful work, and test the reservation proposal before adopting it. The historical supervisor stays paused.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Hourly reliability and integration review</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0352"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0352</id>
-    <published>2026-10-08T00:00:00Z</published>
-    <updated>2026-10-08T00:00:00Z</updated>
-    <summary>Asked whether native workers are producing accepted progress and whether the allocation loop stays filled. Verified from the review snapshot: the preceding 1.01 hours added zero integrated functions and zero verified bytes. The total at that snapshot was 16,924 functions and 2,493,471 bytes. Portable counterparts remained 483 routines and 45,417 bytes, with zero increase.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Asked whether native workers are producing accepted progress and whether the allocation loop stays filled. Verified from the review snapshot: the preceding 1.01 hours added zero integrated functions and zero verified bytes. The total at that snapshot was 16,924 functions and 2,493,471 bytes. Portable counterparts remained 483 routines and 45,417 bytes, with zero increase.&lt;/p&gt;
-&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Time&lt;/th&gt;&lt;th&gt;Main finding&lt;/th&gt;&lt;th&gt;Decision&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;03:52&lt;/td&gt;&lt;td&gt;Completed candidate runs were awaiting evidence review; repeated dispatcher hesitation left vacancies. Legacy supervisor totals do not measure native worker throughput.&lt;/td&gt;&lt;td&gt;Refill from distinct proof reviews, source projections and concrete repairs without waiting for renewed permission. Review raw evidence before importing; keep fixture limits and failed attempts explicit.&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;p&gt;Verified process changes: the Cargo lock preparation fix passed 39 merged tests and a real fresh build. The dashboard review-activity and recent-finished changes passed 39 tests and visual inspection. A wrong support dependency caused one recorded checker startup stall; cleanup was checked by owned process identity. A separate candidate formula mismatch remains failed evidence while a fresh generation repairs it.&lt;/p&gt;
-&lt;p&gt;Trust: some top-level preparation records conflicted with final generation evidence. Preserve the original records and reconcile current fields against immutable build and run receipts. The later dated brief confirmed an earlier build-gate release; do not backdate it or interpret its append time as the initial authorization. Missing invocation-time wrapper hashes remain explicit gaps.&lt;/p&gt;
-&lt;p&gt;Direction: a stock comparison of a complete function body under scripted collaborators does not establish a portable engine or collaborator behavior. The largest unmeasured risk remains end-to-end native game execution. Stop repeatedly reading the full historical agent tree and waiting for another task list when useful completed evidence already awaits review.&lt;/p&gt;
-&lt;p&gt;Verified health at the snapshot: 4.0 GB physical memory free, 6.7 GB commit headroom, 130 GB disk free and no large, old busy or abandoned project processes found. Kernel nonpaged memory was 21.1 GB. User applications were left untouched, and the historical Muse supervisor remained paused. Local jobs retain the global three-job cap and memory guards.&lt;/p&gt;
-&lt;p&gt;Reproduction: run the coordinator review metrics and health check, inspect the fresh native registry and slot-owner records, then compare raw positive and same-contract negative verdicts with build and stock-input receipts. The first accepted wrapper after this snapshot was committed separately and does not alter this hourly measurement.&lt;/p&gt;</content>
   </entry>
 </feed>
