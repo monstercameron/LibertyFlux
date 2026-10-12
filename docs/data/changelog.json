@@ -2,7 +2,7 @@
   {
     "date": "2026-10-11",
     "title": "Devlog: the published files that do not build alone, 706 down to 218",
-    "commit": null,
+    "commit": "d1e891b5d0b66666ee24af8c416238d0b32a5a58",
     "summary": "The entry on the evening's pipeline failure gains its outcome: after 488 repaired files went in, the assembled library takes 19,414 of 19,632 verified rewrites and leaves out 218.",
     "changes": [
       "The update gives how the repaired files were proven before they replaced the published ones (built alone, run against the proving lane's contract of record, 130 with a wrong version rejected and 371 where no wrong version can still be run), the measured effect on the assembled library from a pipeline run on the result, and what the remaining 218 are.",
