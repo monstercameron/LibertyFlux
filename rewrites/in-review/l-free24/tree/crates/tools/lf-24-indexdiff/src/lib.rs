@@ -8,6 +8,8 @@
 // The crate root re-exports the runtime surface under the checker's names so `lf_checker_rt::...`
 // paths in the included verified files resolve here.
 extern crate self as lf_checker_rt;
+// One rewrite of this family was written against a second runtime name; it resolves to this crate too.
+extern crate self as lf_rs89_rt;
 
 #[cfg(target_arch = "x86")]
 pub mod rt;

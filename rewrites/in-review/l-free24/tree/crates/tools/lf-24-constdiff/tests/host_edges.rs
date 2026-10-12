@@ -3,8 +3,8 @@
 use lf_24_constdiff::instances::INSTANCES;
 
 #[test]
-fn the_table_lists_16_instances() {
-    assert_eq!(INSTANCES.len(), 16);
+fn the_table_lists_18_instances() {
+    assert_eq!(INSTANCES.len(), 18);
 }
 
 #[test]

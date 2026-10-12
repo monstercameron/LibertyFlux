@@ -131,8 +131,7 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
 
     #[inline(always)]
     fn scripted_sqrt(value: f32) -> f32 {
-        let bits = lf_checker_rt::callee_cdecl!(CAL_SQRT, u32, value.to_bits());
-        f32::from_bits(bits)
+        lf_checker_rt::callee_cdecl!(CAL_SQRT, f32, value.to_bits())
     }
 
     fn write_sample_pair(output: &mut [u32; 4], channel: u32, key: f32, node_field: u32) {
@@ -253,7 +252,7 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
                 u32,
                 node.wrapping_add(NODE_TANGENT),
                 record,
-                move_scale_bits,
+                input_threshold.to_bits(),
                 local_address(&mut key_vector),
                 local_address(&mut workspace),
                 local_address(&mut scratch_vector),
@@ -342,7 +341,7 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
         noise_range = add_f32(mul_f32(sub_f32(sample_b1, sample_b0), noise_range), sample_b0);
 
         if noise_range != 0.0 {
-            let rng = unsafe { read_u32(RNG_POINTER_VA) };
+            let rng = unsafe { read_image_word(RNG_POINTER_VA) };
             let (random_mid, random_low, random_high) = next_random_words(rng);
             let negative_range = f32::from_bits(noise_range.to_bits() ^ sign_mask);
             let span = sub_f32(noise_range, negative_range);
@@ -431,7 +430,7 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
         }
 
         if unsafe { read_u32(manager.wrapping_add(MANAGER_FLAGS)) } & 1 != 0 {
-            let rng = unsafe { read_u32(RNG_POINTER_VA) };
+            let rng = unsafe { read_image_word(RNG_POINTER_VA) };
             let random_value = advance_random_state(rng) & 0x7FFF_FFFF;
             let chance = random_value % RNG_CHANCE_MODULUS;
             if chance <= u32::from(unsafe { read_u8(manager.wrapping_add(MANAGER_RANDOM_CHANCE)) }) {

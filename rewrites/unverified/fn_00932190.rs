@@ -1,10 +1,10 @@
 // original: 0x00932190 imposter_cache_find_free_slot
 
-/// Return the first cache-record address whose key or value is the empty
-/// sentinel. The fixed cache has sixteen 64-byte records. A record is free
-/// when either of its first two words is `u32::MAX`; if none is free, return
-/// null. The function takes no arguments and returns the relocated record
-/// pointer in EAX.
+/// Return the first cache-record address whose value word is the empty
+/// sentinel. The fixed cache has sixteen 64-byte records. A key word equal to
+/// `u32::MAX` marks an occupied record to skip; otherwise, a value word equal
+/// to that sentinel marks a free record. Return null when the scan finds none.
+/// The function takes no arguments and returns the relocated record pointer.
 lf_checker_rt::export!(cdecl, rw_00932190() -> u32 {
     const CACHE_BASE_VA: u32 = 0x011A_2A70;
     const RECORD_COUNT: u32 = 16;

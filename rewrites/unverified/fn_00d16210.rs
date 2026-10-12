@@ -40,30 +40,22 @@ lf_checker_rt::export!(thiscall, rw_D16210(this: u32, target: u32, _unused: u32)
     let virtual_call: extern "thiscall" fn(u32) -> u8 =
         unsafe { core::mem::transmute(virtual_entry as usize) };
     if virtual_call(ped) != 0 {
-        let target_position = unsafe {
-            let target_contents = core::ptr::read_unaligned((target + POSITION_POINTER) as *const u32);
-            core::ptr::read_unaligned((target_contents + POSITION_X) as *const f32)
-        };
-        let target_y = unsafe {
-            let target_contents = core::ptr::read_unaligned((target + POSITION_POINTER) as *const u32);
-            core::ptr::read_unaligned((target_contents + POSITION_Y) as *const f32)
-        };
-        let target_z = unsafe {
-            let target_contents = core::ptr::read_unaligned((target + POSITION_POINTER) as *const u32);
-            core::ptr::read_unaligned((target_contents + POSITION_Z) as *const f32)
-        };
+        let target_position = unsafe { core::ptr::read_unaligned((target + POSITION_POINTER) as *const u32) };
         let ped_position = unsafe { core::ptr::read_unaligned((ped + POSITION_POINTER) as *const u32) };
-        let ped_x = unsafe { core::ptr::read_unaligned((ped_position + POSITION_X) as *const f32) };
         let ped_y = unsafe { core::ptr::read_unaligned((ped_position + POSITION_Y) as *const f32) };
+        let target_y = unsafe { core::ptr::read_unaligned((target_position + POSITION_Y) as *const f32) };
+        let ped_x = unsafe { core::ptr::read_unaligned((ped_position + POSITION_X) as *const f32) };
+        let target_x = unsafe { core::ptr::read_unaligned((target_position + POSITION_X) as *const f32) };
         let ped_z = unsafe { core::ptr::read_unaligned((ped_position + POSITION_Z) as *const f32) };
+        let target_z = unsafe { core::ptr::read_unaligned((target_position + POSITION_Z) as *const f32) };
 
-        let dx = core::hint::black_box(ped_x) - core::hint::black_box(target_position);
         let dy = core::hint::black_box(ped_y) - core::hint::black_box(target_y);
+        let dx = core::hint::black_box(ped_x) - core::hint::black_box(target_x);
         let dz = core::hint::black_box(ped_z) - core::hint::black_box(target_z);
-        let dx_squared = core::hint::black_box(dx) * core::hint::black_box(dx);
         let dy_squared = core::hint::black_box(dy) * core::hint::black_box(dy);
+        let dx_squared = core::hint::black_box(dx) * core::hint::black_box(dx);
         let dz_squared = core::hint::black_box(dz) * core::hint::black_box(dz);
-        let xy_squared = core::hint::black_box(dx_squared) + core::hint::black_box(dy_squared);
+        let xy_squared = core::hint::black_box(dy_squared) + core::hint::black_box(dx_squared);
         let distance_squared = core::hint::black_box(xy_squared) + core::hint::black_box(dz_squared);
         let limit = unsafe {
             core::ptr::read(lf_checker_rt::relocated(DISTANCE_LIMIT) as *const f32)
