@@ -1120,14 +1120,6 @@
   "reason": null
  },
  {
-  "address": "0x0065A880",
-  "name": "rage::ProceduralTextureRenderTargetDef::vf0",
-  "file": "fn_0065a880.rs",
-  "lane": "r-s765",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0065A8C0",
   "name": "rage::ProceduralTextureShaderDef::vf0",
   "file": "fn_0065a8c0.rs",
@@ -1139,30 +1131,6 @@
   "address": "0x0065BC30",
   "name": "rage::EnviromentDomeLighting::vf5",
   "file": "fn_0065bc30.rs",
-  "lane": "r-s765",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065BCB0",
-  "name": "rage::EnviromentDomeLighting::vf3",
-  "file": "fn_0065bcb0.rs",
-  "lane": "r-s765",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065BE80",
-  "name": "rage::DayLighting::vf3",
-  "file": "fn_0065be80.rs",
-  "lane": "r-s765",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065BEE0",
-  "name": "rage::DayLighting::vf5",
-  "file": "fn_0065bee0.rs",
   "lane": "r-s765",
   "outcome": "not_reached",
   "reason": null
@@ -2528,14 +2496,6 @@
   "reason": null
  },
  {
-  "address": "0x00AAC030",
-  "name": "list_pop_and_reset_node",
-  "file": "fn_00aac030.rs",
-  "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00AB5350",
   "name": "stream_process_slot",
   "file": "fn_00ab5350.rs",
@@ -2550,78 +2510,6 @@
   "lane": "r-s436",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00AB9280",
-  "name": "variation_record_init_new",
-  "file": "fn_00ab9280.rs",
-  "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00AB9290",
-  "name": "slot_table_reset_all",
-  "file": "fn_00ab9290.rs",
-  "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00ABE0B0",
-  "name": "target_records_validate",
-  "file": "fn_00abe0b0.rs",
-  "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00ABE2C0",
-  "name": "bounds_collector_init",
-  "file": "fn_00abe2c0.rs",
-  "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00ABEC40",
-  "name": "T_CB_Generic_1Arg::invoke",
-  "file": "fn_00abec40.rs",
-  "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00ABEC60",
-  "name": "T_CB_Generic_2Args_CBox::invoke",
-  "file": "fn_00abec60.rs",
-  "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00ABEC80",
-  "name": "T_CB_Generic_2Args_Vec::invoke",
-  "file": "fn_00abec80.rs",
-  "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00ABEC90",
-  "name": "T_CB_Generic_6Args::invoke",
-  "file": "fn_00abec90.rs",
-  "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00ABED30",
-  "name": "CUseLightsInAreaDC::invoke",
-  "file": "fn_00abed30.rs",
-  "lane": "r-s767",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00AC7090",
@@ -5286,54 +5174,6 @@
   "lane": "r-s745",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00E62CD0",
-  "name": "initialize_network_state_object_b",
-  "file": "fn_00e62cd0.rs",
-  "lane": "r-s768",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00E62CF0",
-  "name": "register_network_global_pointer_initializer_d",
-  "file": "fn_00e62cf0.rs",
-  "lane": "r-s768",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00E62D00",
-  "name": "register_network_global_pointer_initializer_e",
-  "file": "fn_00e62d00.rs",
-  "lane": "r-s768",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00E62D10",
-  "name": "initialize_network_state_object_c",
-  "file": "fn_00e62d10.rs",
-  "lane": "r-s768",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00E62D30",
-  "name": "initialize_network_state_object_d",
-  "file": "fn_00e62d30.rs",
-  "lane": "r-s768",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00E62D50",
-  "name": "register_rgl_language_override_setting",
-  "file": "fn_00e62d50.rs",
-  "lane": "r-s768",
-  "outcome": "deferred",
-  "reason": "other"
  },
  {
   "address": "0x00E63A80",
