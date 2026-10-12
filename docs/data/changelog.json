@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Lift: the player pedestrian class, fourteen methods",
+    "title": "Devlog: the lift lane's entry on the player pedestrian class",
     "commit": null,
+    "summary": "The lane's own account of lifting fourteen methods of the player pedestrian class is added to the devlog.",
+    "changes": [
+      "The entry gives the class's methods and their proofs, the lifted form, what the proofs do not cover, and the findings: two verified methods whose proofs depend on a zero stack fill without saying so, and two points about not-a-number handling in other rewrites."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Lift: the player pedestrian class, fourteen methods",
+    "commit": "6ba1ff1a671a416c9f2cfb95c0ce4774e199ef68",
     "summary": "Fourteen of the 21 verified methods of the player pedestrian class are lifted into portable Rust in the world crate and proven against their 32-bit rewrites.",
     "changes": [
       "Lifted, among others: the model change, the aim-target acquisition, the relink on movement, the transform and descriptor sets, the refresh gate and the budget step. The lifted module forbids unsafe code and reads no virtual tables; the host does the dispatch.",
