@@ -135594,6 +135594,69 @@
   "lane": "r-s475"
  },
  {
+  "address": "0x00C0D800",
+  "name": "UILayoutFrame::vf58",
+  "kind": "function",
+  "file": "functions/fn_00c0d800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C0D840",
+  "name": "UILayoutFrame::vf41",
+  "kind": "function",
+  "file": "functions/fn_00c0d840.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C0D850",
+  "name": "UILayoutFrame::vf74",
+  "kind": "function",
+  "file": "functions/fn_00c0d850.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C0E3B0",
+  "name": "UIMusicContainer::vf107",
+  "kind": "function",
+  "file": "functions/fn_00c0e3b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C0E880",
+  "name": "UIMusicContainer::vf108",
+  "kind": "function",
+  "file": "functions/fn_00c0e880.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C0E8F0",
+  "name": "UIMusicContainer::vf112",
+  "kind": "function",
+  "file": "functions/fn_00c0e8f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C0F1D0",
+  "name": "UIMusicContainer::vf86",
+  "kind": "function",
+  "file": "functions/fn_00c0f1d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
   "address": "0x00C0F2B0",
   "name": "UIFrame::vf119",
   "kind": "function",
@@ -135772,6 +135835,51 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-18"
+ },
+ {
+  "address": "0x00C0F920",
+  "name": "UILayoutFrame::vf30",
+  "kind": "function",
+  "file": "functions/fn_00c0f920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C0F980",
+  "name": "UILayoutFrame::vf31",
+  "kind": "function",
+  "file": "functions/fn_00c0f980.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C0F9E0",
+  "name": "UILayoutFrame::vf72",
+  "kind": "function",
+  "file": "functions/fn_00c0f9e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C0F9F0",
+  "name": "UILayoutFrame::vf37",
+  "kind": "function",
+  "file": "functions/fn_00c0f9f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C0FA20",
+  "name": "UILayoutFrame::vf36",
+  "kind": "function",
+  "file": "functions/fn_00c0fa20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
  },
  {
   "address": "0x00C10B50",
@@ -136240,6 +136348,33 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-U142"
+ },
+ {
+  "address": "0x00C221B0",
+  "name": "initialize_file_sphere_record",
+  "kind": "function",
+  "file": "functions/fn_00c221b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C22470",
+  "name": "point_inside_halfspace_quad",
+  "kind": "function",
+  "file": "functions/fn_00c22470.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C224E0",
+  "name": "point_inside_sphere_strict",
+  "kind": "function",
+  "file": "functions/fn_00c224e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
  },
  {
   "address": "0x00C22930",
@@ -137961,6 +138096,33 @@
   "lane": "r-s424"
  },
  {
+  "address": "0x00C4CD70",
+  "name": "convert_motion_parameters",
+  "kind": "function",
+  "file": "functions/fn_00c4cd70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C4CDC0",
+  "name": "CCamFpsWeapon::vf7",
+  "kind": "function",
+  "file": "functions/fn_00c4cdc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C4CDE0",
+  "name": "task_pool_entry_at_index",
+  "kind": "function",
+  "file": "functions/fn_00c4cde0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
   "address": "0x00C4CDF0",
   "name": "task_rows_load",
   "kind": "function",
@@ -137986,6 +138148,42 @@
   "trials": 1200,
   "checker": "version 7",
   "lane": "r-b646"
+ },
+ {
+  "address": "0x00C4DEB0",
+  "name": "CTaskComplexAimAndThrowProjectile::CTaskComplexAimAndThrowProjectile",
+  "kind": "function",
+  "file": "functions/fn_00c4deb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C4DF60",
+  "name": "CTaskComplexThrowProjectile::CTaskComplexThrowProjectile",
+  "kind": "function",
+  "file": "functions/fn_00c4df60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C4E0A0",
+  "name": "initialize_dual_vector_record_with_word_clear",
+  "kind": "function",
+  "file": "functions/fn_00c4e0a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C4E110",
+  "name": "CTaskComplexAimAndThrowProjectile::~CTaskComplexAimAndThrowProjectile",
+  "kind": "function",
+  "file": "functions/fn_00c4e110.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
  },
  {
   "address": "0x00C4E170",
@@ -138112,6 +138310,105 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s707"
+ },
+ {
+  "address": "0x00C54EB0",
+  "name": "initialize_world_pool_header",
+  "kind": "function",
+  "file": "functions/fn_00c54eb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C54EF0",
+  "name": "initialize_sized_pool_record",
+  "kind": "function",
+  "file": "functions/fn_00c54ef0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C54F60",
+  "name": "initialize_world_pool_record",
+  "kind": "function",
+  "file": "functions/fn_00c54f60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C55020",
+  "name": "CEventAcquaintancePedHateBadlyLit::CEventAcquaintancePedHateBadlyLit",
+  "kind": "function",
+  "file": "functions/fn_00c55020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C55090",
+  "name": "CEventLeaderEnteredCarAsDriver::CEventLeaderEnteredCarAsDriver",
+  "kind": "function",
+  "file": "functions/fn_00c55090.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C553B0",
+  "name": "initialize_ped_scanner",
+  "kind": "function",
+  "file": "functions/fn_00c553b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C553D0",
+  "name": "reset_event_scan_record",
+  "kind": "function",
+  "file": "functions/fn_00c553d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C553F0",
+  "name": "initialize_vehicle_scanner",
+  "kind": "function",
+  "file": "functions/fn_00c553f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C55420",
+  "name": "destroy_entity_scanner",
+  "kind": "function",
+  "file": "functions/fn_00c55420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C55440",
+  "name": "CEventLeaderEnteredCarAsDriver::CEventLeaderEnteredCarAsDriver_2",
+  "kind": "function",
+  "file": "functions/fn_00c55440.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
+ },
+ {
+  "address": "0x00C55510",
+  "name": "release_world_pool_record_reference",
+  "kind": "function",
+  "file": "functions/fn_00c55510.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
  },
  {
   "address": "0x00C55560",
@@ -138508,6 +138805,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G78"
+ },
+ {
+  "address": "0x00C56FE0",
+  "name": "remove_scanner_entry_and_reset_matching_index",
+  "kind": "function",
+  "file": "functions/fn_00c56fe0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s825"
  },
  {
   "address": "0x00C57040",
