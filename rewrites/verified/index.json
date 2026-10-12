@@ -155673,6 +155673,15 @@
   "lane": "r-b233"
  },
  {
+  "address": "0x00DB3320",
+  "name": "UITexture::set_cached_source_bounds",
+  "kind": "function",
+  "file": "functions/fn_00db3320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
   "address": "0x00DB3340",
   "name": "UITexture::vf82",
   "kind": "function",
@@ -155680,6 +155689,132 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b233"
+ },
+ {
+  "address": "0x00DB3500",
+  "name": "UIFrame::UIFrame",
+  "kind": "function",
+  "file": "functions/fn_00db3500.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB35B0",
+  "name": "UIFrame::vf2",
+  "kind": "function",
+  "file": "functions/fn_00db35b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB35D0",
+  "name": "UIFrame::vf120",
+  "kind": "function",
+  "file": "functions/fn_00db35d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB3620",
+  "name": "UIFrame::vf121",
+  "kind": "function",
+  "file": "functions/fn_00db3620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB3680",
+  "name": "UIStackLayout::vf0",
+  "kind": "function",
+  "file": "functions/fn_00db3680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB3BA0",
+  "name": "UIGalleryFileViewer::vf9",
+  "kind": "function",
+  "file": "functions/fn_00db3ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB3BF0",
+  "name": "UIGalleryFileViewer::vf11",
+  "kind": "function",
+  "file": "functions/fn_00db3bf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB3C40",
+  "name": "UIGalleryFileViewer::vf13",
+  "kind": "function",
+  "file": "functions/fn_00db3c40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB3C90",
+  "name": "UIGalleryFileViewer::vf77",
+  "kind": "function",
+  "file": "functions/fn_00db3c90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB3CE0",
+  "name": "UIGalleryFileViewer::vf28",
+  "kind": "function",
+  "file": "functions/fn_00db3ce0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB3F30",
+  "name": "UIMouseCursor::UIMouseCursor",
+  "kind": "function",
+  "file": "functions/fn_00db3f30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB3F90",
+  "name": "UIMouseCursor::UIMouseCursor_2",
+  "kind": "function",
+  "file": "functions/fn_00db3f90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB3FB0",
+  "name": "UIMouseCursor::~UIMouseCursor__deleting",
+  "kind": "function",
+  "file": "functions/fn_00db3fb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB4830",
+  "name": "UITexture::set_mapping_parameter_and_refresh_extent",
+  "kind": "function",
+  "file": "functions/fn_00db4830.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
  },
  {
   "address": "0x00DB4B90",
@@ -155851,6 +155986,60 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB63C0",
+  "name": "input_get_button_state_mask",
+  "kind": "function",
+  "file": "functions/fn_00db63c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB6470",
+  "name": "input_get_action_mapping_flags",
+  "kind": "function",
+  "file": "functions/fn_00db6470.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB6C30",
+  "name": "input_control_state_clear_events",
+  "kind": "function",
+  "file": "functions/fn_00db6c30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB6C50",
+  "name": "input_control_state_set_first_enabled",
+  "kind": "function",
+  "file": "functions/fn_00db6c50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB6C70",
+  "name": "input_control_state_set_second_enabled",
+  "kind": "function",
+  "file": "functions/fn_00db6c70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB6CA0",
+  "name": "input_control_state_initialize",
+  "kind": "function",
+  "file": "functions/fn_00db6ca0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
  },
  {
   "address": "0x00DB6E90",
@@ -156040,6 +156229,42 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB77C0",
+  "name": "UIMusicViewer::UIMusicViewer",
+  "kind": "function",
+  "file": "functions/fn_00db77c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB77E0",
+  "name": "UIMusicClip::UIMusicClip_2",
+  "kind": "function",
+  "file": "functions/fn_00db77e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB7800",
+  "name": "UIMusicViewer::UIMusicViewer_2",
+  "kind": "function",
+  "file": "functions/fn_00db7800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
+ },
+ {
+  "address": "0x00DB7820",
+  "name": "UIMusicClip::vf2",
+  "kind": "function",
+  "file": "functions/fn_00db7820.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s766"
  },
  {
   "address": "0x00DB78D0",
