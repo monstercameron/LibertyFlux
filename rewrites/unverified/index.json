@@ -1032,6 +1032,14 @@
   "reason": null
  },
  {
+  "address": "0x00667520",
+  "name": null,
+  "file": "fn_00667520.rs",
+  "lane": "r-s758",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00668240",
   "name": "ptx_event_emitter_release_owned_resources",
   "file": "fn_00668240.rs",
@@ -1222,6 +1230,14 @@
   "lane": "r-s585",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x0087A050",
+  "name": null,
+  "file": "fn_0087a050.rs",
+  "lane": "r-s755",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x008834A0",
@@ -2421,7 +2437,7 @@
   "file": "fn_00b2c910.rs",
   "lane": "a-U126",
   "outcome": "not yet run",
-  "reason": null
+  "reason": "60-trial probe did not pass: stack: n orig=1 rw=0"
  },
  {
   "address": "0x00B2F8A0",
@@ -2574,22 +2590,6 @@
   "lane": "a-U129",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00B464D0",
-  "name": "",
-  "file": "fn_00b464d0.rs",
-  "lane": "a-U131",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00B46500",
-  "name": "",
-  "file": "fn_00b46500.rs",
-  "lane": "a-U131",
-  "outcome": "not yet run",
-  "reason": ""
  },
  {
   "address": "0x00B46530",
@@ -3457,74 +3457,34 @@
  },
  {
   "address": "0x00C602F0",
-  "name": null,
+  "name": "CTaskSimpleBeHit::vf17",
   "file": "fn_00c602f0.rs",
   "lane": "r-s749",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C60E60",
-  "name": null,
-  "file": "fn_00c60e60.rs",
-  "lane": "r-s749",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C61580",
-  "name": null,
+  "name": "CTaskSimpleNewGangDriveBy::vf19",
   "file": "fn_00c61580.rs",
   "lane": "r-s749",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C61630",
-  "name": null,
+  "name": "free_driveby_flag_store_1",
   "file": "fn_00c61630.rs",
   "lane": "r-s749",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C61650",
-  "name": null,
+  "name": "free_driveby_flag_store_2",
   "file": "fn_00c61650.rs",
   "lane": "r-s749",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C61D60",
-  "name": null,
-  "file": "fn_00c61d60.rs",
-  "lane": "r-s749",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C61EA0",
-  "name": null,
-  "file": "fn_00c61ea0.rs",
-  "lane": "r-s749",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C62D00",
-  "name": null,
-  "file": "fn_00c62d00.rs",
-  "lane": "r-s749",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C62D40",
-  "name": null,
-  "file": "fn_00c62d40.rs",
-  "lane": "r-s749",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {

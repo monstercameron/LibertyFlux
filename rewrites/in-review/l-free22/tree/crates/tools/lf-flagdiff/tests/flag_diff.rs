@@ -24,6 +24,9 @@ use lf_flagdiff::rt;
 
 /// Bytes in the generated object. Every field the instances read lies below this.
 const OBJECT_BYTES: usize = 0x2000;
+/// One lock for the whole program: every test below writes the same runtime words, so they must not interleave.
+static RUNTIME_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
 /// Cases per instance for the differential comparison.
 const CASES: u32 = 1000;
 /// Cases per instance and wrong version; a wrong version must be caught by one of them.
@@ -227,6 +230,7 @@ fn wrong_is_caught(wrong: Wrong, named: &NamedPredicate, instance: usize) -> boo
 
 #[test]
 fn every_instance_matches_its_verified_rewrite() {
+    let _guard = RUNTIME_LOCK.lock().unwrap_or_else(|poison| poison.into_inner());
     let mut failures = Vec::new();
     for (instance, named) in PREDICATES.iter().enumerate() {
         if let Some(detail) = first_difference(named, instance, CASES) {
@@ -238,6 +242,7 @@ fn every_instance_matches_its_verified_rewrite() {
 
 #[test]
 fn every_instance_catches_every_wrong_version() {
+    let _guard = RUNTIME_LOCK.lock().unwrap_or_else(|poison| poison.into_inner());
     let mut escaped = Vec::new();
     for (instance, named) in PREDICATES.iter().enumerate() {
         for wrong in WRONG_KINDS {
@@ -254,3 +259,4 @@ fn the_call_table_and_the_instance_table_have_the_same_length() {
     assert_eq!(CALLS.len(), PREDICATES.len());
     assert_eq!(rt::WORD_COUNT, GLOBAL_WORDS);
 }
+

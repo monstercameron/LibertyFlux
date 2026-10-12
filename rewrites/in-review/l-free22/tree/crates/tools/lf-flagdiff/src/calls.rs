@@ -3,13 +3,13 @@
 //! Entry `i` calls the rewrite of entry `i` of `lf_core::word_test::instances::PREDICATES`. The result
 //! is the rewrite's return value, widened to a word.
 
-/// The rewrite of `audPoliceScanner::is_scanning`, called with the object at `base` and the parameter.
-pub fn call_0(base: *mut u8, parameter: u32) -> u32 {
+/// The rewrite of `audPoliceScanner::is_scanning`, called with the object at `base`; its test takes no parameter.
+pub fn call_0(base: *mut u8, _parameter: u32) -> u32 {
     u32::from(crate::rewrites::m_0098c170::rw_aud_police_scanner_is_scanning(base as usize as u32))
 }
 
-/// The rewrite of `check_state_equals_one`, called with the object at `base` and the parameter.
-pub fn call_1(base: *mut u8, parameter: u32) -> u32 {
+/// The rewrite of `check_state_equals_one`, called with the object at `base`; its test takes no parameter.
+pub fn call_1(base: *mut u8, _parameter: u32) -> u32 {
     u32::from(crate::rewrites::m_009fbac0::rw_rs227_009fbac0(base as usize as u32))
 }
 
@@ -18,8 +18,8 @@ pub fn call_2(base: *mut u8, parameter: u32) -> u32 {
     u32::from(crate::rewrites::m_00985d60::rw_00985d60(base as usize as u32, parameter))
 }
 
-/// The rewrite of `object_field_10_not_200`, called with the object at `base` and the parameter.
-pub fn call_3(base: *mut u8, parameter: u32) -> u32 {
+/// The rewrite of `object_field_10_not_200`, called with the object at `base`; its test takes no parameter.
+pub fn call_3(base: *mut u8, _parameter: u32) -> u32 {
     u32::from(crate::rewrites::m_00b4bad0::rw_00B4BAD0(base as usize as u32))
 }
 

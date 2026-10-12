@@ -9,7 +9,8 @@
 /// query two compares the scripted float against the image's `-0.5` limit,
 /// query three compares it against the image's `0.5` limit, and query four
 /// uses the `-0.5` limit again. The ordered comparisons return false for NaN.
-/// This rewrite makes the same intercepted calls in the same branch order.
+/// The result is a boolean in AL; upper EAX bytes are left over on several
+/// branches. This rewrite makes the same intercepted calls in branch order.
 lf_checker_rt::export!(stdcall, rw_00cf4210(object: u32, query: u32) -> u32 {
     unsafe {
         const OBJECT_READY: u32 = 0x218;

@@ -8,7 +8,7 @@
 /// `this` in EAX and uses thiscall cleanup for its one stack argument.
 lf_checker_rt::export!(thiscall, rw_fn_00cf1f20(this: u32, category: u32) -> u32 {
     const VTABLE_VA: u32 = 0x00ed_e574;
-    const CATEGORY: u32 = 0x08;
+    const CATEGORY: usize = 0x08;
     const CLEARED_WORDS: [u32; 3] = [0x04, 0x0c, 0x30];
     unsafe {
         let object = this as *mut u8;
