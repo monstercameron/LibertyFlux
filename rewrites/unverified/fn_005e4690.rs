@@ -21,15 +21,13 @@ lf_checker_rt::export!(thiscall, rw_005e4690(this: u32) -> () {
         let height_limit = (object.add(0x0c) as *const f32).read_unaligned();
 
         let did_flush = !jbe32(new_height, height_limit) && old_height != 0.0;
-        let mut result_register = incoming_height;
+        let result_register = incoming_height;
         let stored_height = if did_flush {
             let _: u32 = lf_checker_rt::callee_thiscall!(1, u32, this);
             let refreshed_limit = (object.add(0x0c) as *const f32).read_unaligned();
             let cap = lf_checker_rt::global::<f32>(0x00FE_8BF4).read_unaligned();
             if !jbe32(refreshed_limit, cap) {
-                let recomputed_height = add32(incoming_height, old_height);
-                result_register = recomputed_height;
-                recomputed_height
+                add32(incoming_height, old_height)
             } else if !jbe32(incoming_height, old_height) {
                 incoming_height
             } else {
