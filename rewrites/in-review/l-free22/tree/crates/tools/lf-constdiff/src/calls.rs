@@ -42,5 +42,15 @@ pub fn call_7(base: *mut u8) -> u32 {
     crate::rewrites::m_00d29770::rw_00d29770(base as usize as u32)
 }
 
+/// The rewrite of `rage::crCreatureComponent::vf2`, called with the object at `base`; the result is widened to a word.
+pub fn call_8(base: *mut u8) -> u32 {
+    crate::rewrites::m_006935d0::rw_006935D0(base as usize as u32)
+}
+
+/// The rewrite of `rage::crFrameFilterN::vf6`, called with the object at `base`; the result is widened to a word.
+pub fn call_9(base: *mut u8) -> u32 {
+    crate::rewrites::m_00694e00::rw_00694E00(base as usize as u32)
+}
+
 /// The call table, in the order of the instances table.
-pub const CALLS: [fn(*mut u8) -> u32; 8] = [call_0, call_1, call_2, call_3, call_4, call_5, call_6, call_7];
+pub const CALLS: [fn(*mut u8) -> u32; 10] = [call_0, call_1, call_2, call_3, call_4, call_5, call_6, call_7, call_8, call_9];

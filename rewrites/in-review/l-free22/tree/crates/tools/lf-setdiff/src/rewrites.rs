@@ -449,6 +449,15 @@ pub mod m_00897f90 {
     ));
 }
 
+pub mod m_00b82f60 {
+    #![allow(unused_imports)]
+    use crate::export;
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../rewrites/verified/functions/fn_00b82f60.rs"
+    ));
+}
+
 pub mod m_00b25230 {
     #![allow(unused_imports)]
     use crate::export;

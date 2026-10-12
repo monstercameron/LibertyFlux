@@ -51,9 +51,14 @@ impl Rng {
     }
 }
 
+/// The bit patterns planted in a word entry for cases 3 to 6: a signalling not-a-number of each sign, a quiet
+/// not-a-number and an infinity. A float entry comes back through the floating-point return register, and these
+/// are the values where that register changes the bits.
+const PLANTED: [u32; 4] = [0x7F80_0001, 0xFF80_0001, 0x7FC0_0000, 0x7F80_0000];
+
 /// One case's inputs: a random object and an index below `MAX_INDEX`. Cases 0 to 2 read the first entry, the
-/// second entry and the last entry.
-fn case_inputs(instance: usize, case: u32) -> (Object, u32) {
+/// second entry and the last entry. For a word entry, cases 3 to 6 plant the patterns above in the entry.
+fn case_inputs(read: IndexedRead, instance: usize, case: u32) -> (Object, u32) {
     let seed = ((instance as u32) + 1).wrapping_mul(0x9E37_79B9) ^ (case + 1).wrapping_mul(0x85EB_CA6B);
     let mut rng = Rng::new(seed);
     let mut object = Object([0; OBJECT_BYTES]);
@@ -67,6 +72,10 @@ fn case_inputs(instance: usize, case: u32) -> (Object, u32) {
         2 => MAX_INDEX - 1,
         _ => rng.next_u32() % MAX_INDEX,
     };
+    if read.width == EntryWidth::Word && (3..=6).contains(&case) {
+        let at = read.offset(index) as usize;
+        object.0[at..at + 4].copy_from_slice(&PLANTED[(case - 3) as usize].to_le_bytes());
+    }
     (object, index)
 }
 
@@ -121,7 +130,7 @@ fn run_wrong(wrong: Wrong, named: &NamedRead, object: &Object, index: u32) -> (u
 /// The first case, if any, at which the lifted read and the rewrite disagree.
 fn first_difference(named: &NamedRead, instance: usize, cases: u32) -> Option<String> {
     for case in 0..cases {
-        let (object, index) = case_inputs(instance, case);
+        let (object, index) = case_inputs(named.read, instance, case);
         let (want, want_object) = run_rewrite(instance, &object, index);
         let (got, got_object) = run_lifted(named.read, &object, index);
         if want != got {
@@ -137,7 +146,7 @@ fn first_difference(named: &NamedRead, instance: usize, cases: u32) -> Option<St
 /// True when a wrong version differs from the rewrite on at least one case.
 fn wrong_is_caught(wrong: Wrong, named: &NamedRead, instance: usize) -> bool {
     for case in 0..WRONG_CASES {
-        let (object, index) = case_inputs(instance, case);
+        let (object, index) = case_inputs(named.read, instance, case);
         let (want, want_object) = run_rewrite(instance, &object, index);
         let (got, got_object) = run_wrong(wrong, named, &object, index);
         if want != got || want_object.0 != got_object.0 {

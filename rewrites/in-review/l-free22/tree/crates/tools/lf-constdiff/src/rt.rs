@@ -11,6 +11,10 @@ macro_rules! export {
         /// Rewrite export, called by the differential test by name (cdecl).
         pub extern "cdecl" fn $name($($arg : $ty),*) -> $ret $body
     };
+    (stdcall, $name:ident ($($arg:ident : $ty:ty),* $(,)?) -> $ret:ty $body:block) => {
+        /// Rewrite export, called by the differential test by name (stdcall).
+        pub extern "stdcall" fn $name($($arg : $ty),*) -> $ret $body
+    };
     (thiscall, $name:ident ($($arg:ident : $ty:ty),* $(,)?) -> $ret:ty $body:block) => {
         /// Rewrite export, called by the differential test by name (thiscall).
         pub extern "thiscall" fn $name($($arg : $ty),*) -> $ret $body

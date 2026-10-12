@@ -16,7 +16,7 @@ pub struct NamedStore {
 }
 
 /// The instances, in the order the test crate calls their rewrites.
-pub const STORES: [NamedStore; 49] = [
+pub const STORES: [NamedStore; 50] = [
     NamedStore {
         name: "UILayoutFrame::vf9",
         store: FieldStore {
@@ -399,6 +399,14 @@ pub const STORES: [NamedStore; 49] = [
             offset: 0xC8,
             width: FieldWidth::Word,
             result: StoreResult::Nothing,
+        },
+    },
+    NamedStore {
+        name: "flag_set_1810",
+        store: FieldStore {
+            offset: 0x1810,
+            width: FieldWidth::Byte,
+            result: StoreResult::Zero,
         },
     },
     NamedStore {

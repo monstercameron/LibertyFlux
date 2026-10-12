@@ -6,8 +6,8 @@ use lf_core::constant_writes::{ConstantWrite, Returns, WriteWidth, apply_writes}
 use lf_core::field_store::ObjectBytes;
 
 #[test]
-fn the_table_lists_eight_instances() {
-    assert_eq!(INSTANCES.len(), 8);
+fn the_table_lists_ten_instances() {
+    assert_eq!(INSTANCES.len(), 10);
 }
 
 #[test]

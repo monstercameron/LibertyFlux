@@ -24,6 +24,7 @@ pub mod object_rows;
 pub mod ptr32;
 pub mod static_list;
 pub mod word_block;
+pub mod word_fanout;
 
 pub use arena::{Arena, Handle};
 pub use boundary::Handle32;

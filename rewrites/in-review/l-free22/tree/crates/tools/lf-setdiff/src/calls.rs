@@ -248,11 +248,16 @@ pub fn call_47(base: *mut u8, value: u32) -> Option<u32> {
     None
 }
 
-/// The rewrite of `CPhysical::vf60`, called with the object at `base` and the value bits `value`.
+/// The rewrite of `flag_set_1810`, called with the object at `base` and the value bits `value`.
 pub fn call_48(base: *mut u8, value: u32) -> Option<u32> {
+    Some(crate::rewrites::m_00b82f60::rw_00B82F60(base as usize as u32, value))
+}
+
+/// The rewrite of `CPhysical::vf60`, called with the object at `base` and the value bits `value`.
+pub fn call_49(base: *mut u8, value: u32) -> Option<u32> {
     crate::rewrites::m_00b25230::rw_b25230(base, f32::from_bits(value));
     None
 }
 
 /// The call table, in the order of the instances table.
-pub const CALLS: [fn(*mut u8, u32) -> Option<u32>; 49] = [call_0, call_1, call_2, call_3, call_4, call_5, call_6, call_7, call_8, call_9, call_10, call_11, call_12, call_13, call_14, call_15, call_16, call_17, call_18, call_19, call_20, call_21, call_22, call_23, call_24, call_25, call_26, call_27, call_28, call_29, call_30, call_31, call_32, call_33, call_34, call_35, call_36, call_37, call_38, call_39, call_40, call_41, call_42, call_43, call_44, call_45, call_46, call_47, call_48];
+pub const CALLS: [fn(*mut u8, u32) -> Option<u32>; 50] = [call_0, call_1, call_2, call_3, call_4, call_5, call_6, call_7, call_8, call_9, call_10, call_11, call_12, call_13, call_14, call_15, call_16, call_17, call_18, call_19, call_20, call_21, call_22, call_23, call_24, call_25, call_26, call_27, call_28, call_29, call_30, call_31, call_32, call_33, call_34, call_35, call_36, call_37, call_38, call_39, call_40, call_41, call_42, call_43, call_44, call_45, call_46, call_47, call_48, call_49];

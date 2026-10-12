@@ -10,7 +10,10 @@
 //! - The offset is computed as the original computes an address: the index times the stride, plus the base,
 //!   in 32-bit wrapping arithmetic. [`IndexedRead::offset`] returns it.
 //! - A byte read returns that byte as a word. A word read returns the 32-bit word, least significant byte
-//!   first, and a floating-point word is returned as its 32 bits.
+//!   first.
+//! - A [ReadResult::Float] read is returned through the floating-point return register of the original's
+//!   calling convention, which quiets a signalling not-a-number: the returned word has the quiet bit set in
+//!   that case, and every other bit as read.
 //! - Nothing else is read, and nothing is written.
 //! - An offset whose field does not lie inside the object is a caller error and panics. The original would
 //!   have read outside the object; the lift fails loudly instead of guessing. The wrapped offset is what is
@@ -29,7 +32,17 @@ pub enum EntryWidth {
     Word,
 }
 
-/// One indexed read, as data: the base offset of the table, the entry size and the width read.
+/// What the read hands back: the word as read, or a floating-point value returned through the x87 register.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ReadResult {
+    /// The word as read.
+    Integer,
+    /// A 32-bit float, returned through the floating-point return register: a signalling not-a-number comes
+    /// back with its quiet bit set.
+    Float,
+}
+
+/// One indexed read, as data: the base offset of the table, the entry size, the width read and what it returns.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct IndexedRead {
     /// Byte offset of the table from the start of the object.
@@ -38,6 +51,8 @@ pub struct IndexedRead {
     pub stride: u32,
     /// Width of the entry read.
     pub width: EntryWidth,
+    /// What the read hands back.
+    pub result: ReadResult,
 }
 
 impl IndexedRead {
@@ -57,14 +72,31 @@ impl IndexedRead {
         let offset = self.offset(index) as usize;
         match self.width {
             EntryWidth::Byte => u32::from(object.byte(offset)),
-            EntryWidth::Word => object.word(offset),
+            EntryWidth::Word => match self.result {
+                ReadResult::Integer => object.word(offset),
+                ReadResult::Float => quiet_signalling_nan(object.word(offset)),
+            },
         }
+    }
+}
+
+/// The bits a 32-bit float comes back with through the floating-point return register: a signalling
+/// not-a-number has its quiet bit set; every other word is returned unchanged.
+#[must_use]
+pub fn quiet_signalling_nan(bits: u32) -> u32 {
+    const EXPONENT: u32 = 0x7F80_0000;
+    const MANTISSA: u32 = 0x007F_FFFF;
+    const QUIET: u32 = 0x0040_0000;
+    if bits & EXPONENT == EXPONENT && bits & MANTISSA != 0 {
+        bits | QUIET
+    } else {
+        bits
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{EntryWidth, IndexedRead};
+    use super::{EntryWidth, IndexedRead, ReadResult};
     use crate::field_store::ObjectBytes;
 
     #[test]
@@ -73,6 +105,7 @@ mod tests {
             base: 4,
             stride: 12,
             width: EntryWidth::Word,
+            result: ReadResult::Integer,
         };
         assert_eq!(read.offset(0), 4);
         assert_eq!(read.offset(3), 40);
@@ -84,6 +117,7 @@ mod tests {
             base: 2,
             stride: 1,
             width: EntryWidth::Byte,
+            result: ReadResult::Integer,
         };
         let object = ObjectBytes::from_bytes(&[0, 0, 0xFE, 0, 0]);
         assert_eq!(read.read(&object, 0), 0xFE);
@@ -95,6 +129,7 @@ mod tests {
             base: 8,
             stride: 16,
             width: EntryWidth::Word,
+            result: ReadResult::Integer,
         };
         // 0x1000_0000 * 16 is 2^32, which wraps to zero; the entry is then at the base.
         assert_eq!(read.offset(0x1000_0000), 8);
@@ -107,6 +142,7 @@ mod tests {
             base: 0,
             stride: 4,
             width: EntryWidth::Word,
+            result: ReadResult::Integer,
         };
         let object = ObjectBytes::zeroed(8);
         let _ = read.read(&object, 2);

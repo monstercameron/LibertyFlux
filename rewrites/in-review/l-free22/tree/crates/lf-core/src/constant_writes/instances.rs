@@ -15,7 +15,7 @@ pub struct NamedWrites {
 }
 
 /// The instances, in the order the test crate calls their rewrites.
-pub const INSTANCES: [NamedWrites; 8] = [
+pub const INSTANCES: [NamedWrites; 10] = [
     NamedWrites {
         name: "reset_state_b",
         writes: ConstantWrites {
@@ -165,6 +165,37 @@ pub const INSTANCES: [NamedWrites; 8] = [
                 offset: 0x224,
                 width: WriteWidth::Word,
                 value: 0x40800000,
+            },
+            ],
+            returns: Returns::Zero,
+        },
+    },
+    NamedWrites {
+        name: "rage::crCreatureComponent::vf2",
+        writes: ConstantWrites {
+            writes: &[
+            ConstantWrite {
+                offset: 0x4,
+                width: WriteWidth::Word,
+                value: 0x00000000,
+            },
+            ConstantWrite {
+                offset: 0x8,
+                width: WriteWidth::Word,
+                value: 0x00000000,
+            },
+            ],
+            returns: Returns::Zero,
+        },
+    },
+    NamedWrites {
+        name: "rage::crFrameFilterN::vf6",
+        writes: ConstantWrites {
+            writes: &[
+            ConstantWrite {
+                offset: 0x0,
+                width: WriteWidth::Word,
+                value: 0x00000000,
             },
             ],
             returns: Returns::Zero,
