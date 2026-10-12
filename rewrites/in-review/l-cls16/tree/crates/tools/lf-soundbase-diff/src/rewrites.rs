@@ -8,6 +8,7 @@
 // Byte-identical verified files; their style is not linted here.
 #![allow(
     unsafe_code,
+    dead_code,
     missing_docs,
     non_snake_case,
     unused_doc_comments,

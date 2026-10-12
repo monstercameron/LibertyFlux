@@ -11,8 +11,9 @@ lf_checker_rt::export!(thiscall, rw_00607910(this: u32) -> u32 {
         if child == 0 {
             0
         } else {
+            let retained_high = core::hint::black_box(child & 0xFFFF_FF00);
             let state = (child.wrapping_add(STATE_BYTE) as *const u8).read();
-            (child & 0xFFFF_FF00) | u32::from(state)
+            retained_high | u32::from(state)
         }
     }
 });

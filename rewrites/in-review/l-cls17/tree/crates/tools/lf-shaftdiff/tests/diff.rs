@@ -100,10 +100,6 @@ mod x86 {
     struct Obj([u8; OBJ_BYTES]);
 
     impl Obj {
-        fn addr(&self) -> u32 {
-            (self as *const Self as usize) as u32
-        }
-
         fn word(&self, off: usize) -> u32 {
             u32::from_le_bytes([
                 self.0[off],
@@ -305,13 +301,15 @@ mod x86 {
         engine: Engine,
         tally: &mut Tally,
     ) -> Option<String> {
-        let rewritten = start.clone();
+        let mut rewritten = start.clone();
+        let mut expected = start.clone();
         let mut lift = lifted(start);
         for (n, &(ch, dt)) in steps.iter().enumerate() {
             tally.steps += 1;
             let fixed = lift.seeds_fixed;
             ROOT_CALLS.with(|calls| calls.borrow_mut().clear());
-            let rw_ret = rewrite(ch, rewritten.addr(), dt.to_bits());
+            let rw_this = (&mut rewritten as *mut Obj) as usize as u32;
+            let rw_ret = rewrite(ch, rw_this, dt.to_bits());
             let rw_roots: Vec<u32> = ROOT_CALLS.with(|calls| calls.borrow().clone());
             let rw_words = channel_words(&rewritten, ch);
             let rw_pending = rewritten.byte(PENDING);
@@ -369,6 +367,27 @@ mod x86 {
             }
             if mismatch.is_some() {
                 return mismatch;
+            }
+            // Every other byte of the object: the rewrite may write only the
+            // words the lifted step stores and the pending byte.
+            expected.set_word(input_at(ch), got_channel.input.to_bits());
+            for (k, word) in lifted_words(&got_channel).iter().enumerate().skip(1) {
+                let off = match k {
+                    1..=3 => base(ch) + 4 * (k - 1),
+                    4 => base(ch) + 0xC,
+                    5..=7 => base(ch) + 0x60 + 4 * (k - 5),
+                    _ => base(ch) + 0x6C,
+                };
+                expected.set_word(off, *word);
+            }
+            expected.0[PENDING] = u8::from(got_pending);
+            if rewritten.0 != expected.0 {
+                let at = (0..OBJ_BYTES)
+                    .find(|&i| rewritten.0[i] != expected.0[i])
+                    .unwrap_or(0);
+                return Some(format!(
+                    "step {n} (channel {ch}): object byte {at:#x} differs from the lifted step's effects"
+                ));
             }
         }
         None

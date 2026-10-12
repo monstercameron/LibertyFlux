@@ -36,6 +36,8 @@ const CASES: u32 = 300;
 /// whose later entries alias other globals in the test's mapping, so sub-ids
 /// at and above 44 are not generated (see the registry narrowing).
 const SUB_IDS: u32 = 44;
+/// Voice-table rows the test maps: the rows that fit the test arena (each row is 0x6f40 bytes).
+const VOICE_ROWS: usize = 5;
 /// Size of the sound object in bytes (the fields and the bytes around them).
 const OBJECT_SIZE: u32 = 0xB0;
 
@@ -131,7 +133,7 @@ fn gen_case(rng: &mut Rng, kind: Method) -> Case {
     let base = rt::arena_base();
     let mut lookup_rows = [0u32; 32];
     let mut init_rows = [0u32; 32];
-    for v in 0..32 {
+    for v in 0..VOICE_ROWS {
         lookup_rows[v] = base + rt::OBJECTS_OFF + 0x40 * rng.below(8);
         init_rows[v] = rng.next();
     }
@@ -148,18 +150,27 @@ fn gen_case(rng: &mut Rng, kind: Method) -> Case {
         fast_flags: if rng.chance(2) { FAST_BIT | rng.next() as u8 } else { rng.next() as u8 & !FAST_BIT },
         init_flags: rng.next() as u8,
         sub_id: rng.below(SUB_IDS) as u8,
-        voice_id: rng.below(32) as u8,
+        voice_id: rng.below(VOICE_ROWS as u32) as u8,
         slot_ids,
         sequence: rng.next(),
         slot_a: if rng.chance(3) { 0 } else { arena_address(rng) },
         slot_b: if rng.chance(3) { 0 } else { arena_address(rng) },
     };
     let filler: Vec<u8> = (0..OBJECT_SIZE).map(|_| rng.next() as u8).collect();
+    // Half the cases answer no match on every lookup, so the scan runs all
+    // eight slots; the rest answer a match now and then.
+    let all_miss = rng.chance(2);
     let answers = vec![
         (
             "v0",
             (0..12)
-                .map(|_| if rng.chance(3) { 0 } else { aligned_arena_address(rng) })
+                .map(|_| {
+                    if all_miss || rng.chance(3) {
+                        0
+                    } else {
+                        aligned_arena_address(rng)
+                    }
+                })
                 .collect(),
         ),
         ("v2", (0..4).map(|_| rng.next()).collect()),
@@ -233,13 +244,13 @@ fn build_image(c: &Case) {
     }
 
     let table = rt::arena_base() + rt::TABLE_OFF;
-    for v in 0..32u32 {
+    for v in 0..VOICE_ROWS as u32 {
         let row = table + v * ROW_STRIDE;
         rt::write_u32(row + ROW_BIAS_LOOKUP, c.lookup_rows[v as usize]);
         rt::write_u32(row + ROW_BIAS_INIT, c.init_rows[v as usize]);
     }
     let mut rows_done: Vec<u32> = Vec::new();
-    for v in 0..32usize {
+    for v in 0..VOICE_ROWS {
         let r = c.lookup_rows[v];
         if rows_done.contains(&r) {
             continue;

@@ -480,14 +480,6 @@
   "reason": null
  },
  {
-  "address": "0x005D2050",
-  "name": "fn_005d2050",
-  "file": "fn_005d2050.rs",
-  "lane": "r-s774",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005D2E90",
   "name": "blip_slot_alloc",
   "file": "fn_005d2e90.rs",
@@ -1000,14 +992,6 @@
   "reason": "Stock 60-trial probes show an original-only heap write at offset 0x33E0 even with the record count pinned to zero; after adding the two omitted row-cache stores, the mismatch persists while return and ESP match, and the decoded zero-count path has no matching store."
  },
  {
-  "address": "0x0063B880",
-  "name": "rage::ptxModel::vf23",
-  "file": "fn_0063b880.rs",
-  "lane": "r-s779",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0063B890",
   "name": "rage::ptxModel::vf5",
   "file": "fn_0063b890.rs",
@@ -1460,6 +1444,14 @@
   "name": "audio_clamp_call_select",
   "file": "fn_008ad310.rs",
   "lane": "a-U146",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x008D6920",
+  "name": "paired_heading_blend",
+  "file": "fn_008d6920.rs",
+  "lane": "a-U144",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2525,14 +2517,6 @@
   "file": "fn_00ac85d0.rs",
   "lane": "r-s705",
   "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00ADA8A0",
-  "name": null,
-  "file": "fn_00ada8a0.rs",
-  "lane": "a-H43",
-  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -4400,6 +4384,14 @@
   "reason": null
  },
  {
+  "address": "0x00CDBC40",
+  "name": "CTaskSimpleNMBalance::vf21",
+  "file": "fn_00cdbc40.rs",
+  "lane": "r-s776",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00CF1D70",
   "name": "stat_passes_mode_check",
   "file": "fn_00cf1d70.rs",
@@ -4971,6 +4963,14 @@
   "address": "0x00DF3AA0",
   "name": null,
   "file": "fn_00df3aa0.rs",
+  "lane": "r-s780",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00DF3B00",
+  "name": null,
+  "file": "fn_00df3b00.rs",
   "lane": "r-s780",
   "outcome": "not yet run",
   "reason": null

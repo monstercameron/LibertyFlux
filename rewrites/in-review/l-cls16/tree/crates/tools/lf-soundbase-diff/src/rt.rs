@@ -1,4 +1,4 @@
-//! The 32-bit differential runtime for the base sound class.
+﻿//! The 32-bit differential runtime for the base sound class.
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `relocated`,
@@ -21,7 +21,7 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Mutex, MutexGuard};
 
 /// Length of the test arena in bytes: globals, objects, tables and stubs.
-pub const ARENA_LEN: usize = 0x3_0000;
+pub const ARENA_LEN: usize = 0x3_4000;
 /// The file address at which the mapped global window begins.
 pub const GLOBALS_VA: u32 = 0x115_D000;
 /// Length of the global window; it sits at the start of the arena.
@@ -34,10 +34,10 @@ pub const CLASS_VTABLE_OFF: u32 = 0x5000;
 pub const SOUND_OFF: u32 = 0x4000;
 /// Arena offset of the voice object's virtual table.
 pub const VOICE_VTABLE_OFF: u32 = 0x5100;
-/// Arena offset of the voice table (rows of `0x6f40` bytes).
+/// Arena offset of the voice table (rows of `0x6f40` bytes; the test maps the first five rows).
 pub const TABLE_OFF: u32 = 0x8000;
 /// Arena offset of the voice objects (cursor and link targets).
-pub const OBJECTS_OFF: u32 = 0x1_D000;
+pub const OBJECTS_OFF: u32 = 0x2_B000;
 
 /// The global cell of the scalar used by the lookup and the link.
 pub const GLOBAL_SCALAR_A: u32 = 0x115_D964;
