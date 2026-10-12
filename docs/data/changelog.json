@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 1 more withdrawn, a float comparison shown wrong at equality by a lane sent to make the checker see it",
+    "title": "Rewrites: 103 proofs re-run on the current checker and recorded on it",
     "commit": null,
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "103 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 1 more withdrawn, a float comparison shown wrong at equality by a lane sent to make the checker see it",
+    "commit": "c7fa0a620f80fcfa48049a4928fec10c9b07e20a",
     "summary": "The verified count goes down by one. An audit had read the original's instruction behind three float comparisons and found the predicate did not match; nothing was withdrawn on that reading. A strengthening lane has now shown one of the three on the stock checker.",
     "changes": [
       "A brightness update for the interface builds a mask with a float comparison. The original's instruction is \"not less than or equal\" and the rewrite wrote \"not less than\", which differ when the operands are equal. On a contract in which they are equal on a share of completed trials, the tracked rewrite fails the comparison of its calls and the corrected copy passes all 1,000 trials. It is withdrawn while the lane finishes proving the corrected copy. This is the third verified rewrite withdrawn for this predicate.",
