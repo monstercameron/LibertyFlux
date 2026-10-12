@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: the seek-cover tasks, eleven methods of two classes",
+    "title": "Devlog: the lift lane's entry on the seek-cover tasks",
     "commit": null,
+    "summary": "The lane's own account of lifting eleven methods of the two seek-cover task classes is added to the devlog.",
+    "changes": [
+      "The entry gives the classes' interface as far as the rewrites establish it, the lifted form and its traits, the proof design, the method left out and why, the virtual slots whose meaning is inferred from use, and the finding about the router's proof."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: the seek-cover tasks, eleven methods of two classes",
+    "commit": "5289945cbd79099807a06ab3b2e60ef526948115",
     "summary": "With the leaf functions used up, lifting returns to classes whose methods call other code. The first of the evening: the two pedestrian tasks that take a character to cover.",
     "changes": [
       "crates/lf-peds-tasks gains a seek_cover module: the plain seek-cover task with all six of its verified methods (three constructors, the destructor, the router that chooses the next sub-task, and the allocator of its nodes) and the shooting variant with five of its six (the deleting destructor, the pursuit action, the builder of the firing node, the subject initialiser and the check of its type chain). 714 lines with unsafe code forbidden in the module; the pool, the cover table, the subject and every virtual call are behind trait methods, and nothing calls the operating system. The twelve verified rewrites they stand for are 452 lines with 16 unsafe blocks.",
