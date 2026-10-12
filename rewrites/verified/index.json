@@ -146700,6 +146700,24 @@
   "lane": "r-s757"
  },
  {
+  "address": "0x00CF2BD0",
+  "name": "phMaterialMgrGta::vf8",
+  "kind": "function",
+  "file": "functions/fn_00cf2bd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s783"
+ },
+ {
+  "address": "0x00CF2BF0",
+  "name": "phMaterialMgrGta::vf13",
+  "kind": "function",
+  "file": "functions/fn_00cf2bf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s783"
+ },
+ {
   "address": "0x00CF4030",
   "name": "CTaskSimpleClimb::CTaskSimpleClimb",
   "kind": "function",
@@ -148030,6 +148048,78 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G34"
+ },
+ {
+  "address": "0x00D00CE0",
+  "name": "CTaskComplexArrestedAIPedAndDriveAway::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d00ce0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s783"
+ },
+ {
+  "address": "0x00D00D10",
+  "name": "CTaskComplexBackOff::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d00d10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s783"
+ },
+ {
+  "address": "0x00D00D40",
+  "name": "CTaskComplexBeArrestedAndDrivenAway::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d00d40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s783"
+ },
+ {
+  "address": "0x00D00D70",
+  "name": "CTaskComplexCombat::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d00d70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s783"
+ },
+ {
+  "address": "0x00D00E10",
+  "name": "CTaskComplexCombatAdditionalTask::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d00e10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s783"
+ },
+ {
+  "address": "0x00D00E50",
+  "name": "CTaskComplexCombatAdvanceSubtask::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d00e50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s783"
+ },
+ {
+  "address": "0x00D00E80",
+  "name": "CTaskComplexCombatBustPed::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d00e80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s783"
+ },
+ {
+  "address": "0x00D00EB0",
+  "name": "CTaskComplexCombatChargeSubtask::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d00eb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s783"
  },
  {
   "address": "0x00D01700",
