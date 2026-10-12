@@ -15,9 +15,10 @@ use std::collections::{HashMap, VecDeque};
 
 use lf_core::Handle32;
 use lf_input_frontend::montage_container::{
-    ActiveTag, AuxTag, CfgSubTag, CfgTag, ElemTag, HelperContextTag, InnerTag, ListTag,
-    LookupContextTag, MontageWorld, OutTag, OutputTag, OwnTag, ProbeTag, SessionTag, SrcTag,
-    StateTag, Tag, TailTag, ViewTag,
+    ActiveTag, AuxTag, CfgSubTag, CfgTag, ElemTag, GeometryObject, GeometryValue,
+    HelperContextTag, InnerTag, ItemTag, ItemWorld, ListenerTag, ListTag,
+    LookupContextTag, MontageWorld, NotifyContextTag, OutTag, OutputTag, OwnTag, ProbeTag,
+    RegistryTag, SessionTag, SrcTag, StateTag, Tag, TailContextTag, TailTag, ViewTag, EpilogueTag,
 };
 
 /// The addresses a case works with, so the record can name them.
@@ -43,6 +44,8 @@ pub struct Ctx {
     pub view: u32,
     /// The source object.
     pub src: u32,
+    /// Registry result object used for the item rectangle and tag reads.
+    pub resolved_source: u32,
     /// The opened session object.
     pub sess: u32,
     /// The refresh worker session object.
@@ -61,6 +64,10 @@ pub struct Ctx {
     pub actives: [u32; 2],
     /// The blend target object.
     pub target: u32,
+    /// The notification context used by the item-commit method.
+    pub notify_context: u32,
+    /// The tail-call context used by the item-commit method.
+    pub tail_context: u32,
 }
 
 /// Names a value in the record: a known address by its role, a tag
@@ -71,6 +78,10 @@ pub fn sym(ctx: &Ctx, value: u32) -> String {
         "helper_context".to_string()
     } else if value == ctx.lookup_context {
         "lookup_context".to_string()
+    } else if value == ctx.notify_context {
+        "notify_context".to_string()
+    } else if value == ctx.tail_context {
+        "tail_context".to_string()
     } else if value == ctx.state {
         "state".to_string()
     } else if value == ctx.own {
@@ -87,6 +98,8 @@ pub fn sym(ctx: &Ctx, value: u32) -> String {
         "view".to_string()
     } else if value == ctx.src {
         "src".to_string()
+    } else if value == ctx.resolved_source {
+        "resolved_source".to_string()
     } else if value == ctx.sess {
         "sess".to_string()
     } else if value == ctx.sess2 {
@@ -99,6 +112,10 @@ pub fn sym(ctx: &Ctx, value: u32) -> String {
         "cfgsub".to_string()
     } else if value == ctx.target {
         "target".to_string()
+    } else if value == ctx.notify_context {
+        "notify_context".to_string()
+    } else if value == ctx.tail_context {
+        "tail_context".to_string()
     } else if let Some(index) = ctx.probes.iter().position(|&p| p == value) {
         format!("probe{index}")
     } else if let Some(index) = ctx.elems.iter().position(|&e| e == value) {
@@ -107,6 +124,10 @@ pub fn sym(ctx: &Ctx, value: u32) -> String {
         format!("active{index}")
     } else {
         match value {
+            0x00EF_AD50 => "source_identity_2".to_string(),
+            0x00EF_AD68 => "source_identity".to_string(),
+            0x00EF_AD78 => "item_notification".to_string(),
+            0x00EF_AD90 => "float_configuration".to_string(),
             0x00EF_AF04 => "tag_a".to_string(),
             0x00EF_AF14 => "tag_b".to_string(),
             0x00EF_AF24 => "tag_c".to_string(),
@@ -490,6 +511,229 @@ impl MontageWorld for FakeWorld {
         let o = self.word(own.get());
         let p = self.word(pending);
         self.record("drop_pending", &[o, p]);
+    }
+}
+
+fn geometry_name(object: GeometryObject, value: GeometryValue) -> &'static str {
+    match (object, value) {
+        (GeometryObject::Source(_), GeometryValue::HalfWidth) => "geometry_source_half_width",
+        (GeometryObject::Source(_), GeometryValue::CenterX) => "geometry_source_center_x",
+        (GeometryObject::Source(_), GeometryValue::HalfHeight) => "geometry_source_half_height",
+        (GeometryObject::Source(_), GeometryValue::CenterY) => "geometry_source_center_y",
+        (GeometryObject::Container(_), GeometryValue::HalfWidth) => "geometry_container_half_width",
+        (GeometryObject::Container(_), GeometryValue::CenterX) => "geometry_container_center_x",
+        (GeometryObject::Container(_), GeometryValue::HalfHeight) => "geometry_container_half_height",
+        (GeometryObject::Container(_), GeometryValue::CenterY) => "geometry_container_center_y",
+    }
+}
+
+fn item_tag_name(tag: ItemTag) -> &'static str {
+    match tag {
+        ItemTag::SourceIdentity => "source_identity",
+        ItemTag::SourceIdentity2 => "source_identity_2",
+        ItemTag::Notification => "item_notification",
+        ItemTag::FloatConfiguration => "float_configuration",
+    }
+}
+
+impl ItemWorld for FakeWorld {
+    fn geometry(&mut self, object: GeometryObject, value: GeometryValue) -> f32 {
+        let name = geometry_name(object, value);
+        let receiver = match object {
+            GeometryObject::Source(handle) => handle.get(),
+            GeometryObject::Container(handle) => handle.get(),
+        };
+        let argument = self.word(receiver);
+        self.record(name, &[argument]);
+        f32::from_bits(self.answer(name))
+    }
+
+    fn lookup_source(&mut self, registry: Handle32<RegistryTag>, key: u32) -> Handle32<SrcTag> {
+        let r = self.word(registry.get());
+        let k = self.word(key);
+        self.record("lookup_source", &[r, k]);
+        Handle32::new(self.answer("lookup_source")).expect("the rewrite dereferences the result")
+    }
+
+    fn gatekeeper(&mut self, list: Handle32<ListTag>) -> u32 {
+        let l = self.word(list.get());
+        self.record("gatekeeper", &[l]);
+        self.answer("gatekeeper")
+    }
+
+    fn list_current_key(&mut self, list: Handle32<ListTag>) -> u32 {
+        let l = self.word(list.get());
+        self.record("list_current_key", &[l]);
+        self.answer("list_current_key")
+    }
+
+    fn list_subflag(&mut self, list: Handle32<ListTag>) -> u32 {
+        let l = self.word(list.get());
+        self.record("list_subflag", &[l]);
+        self.answer("list_subflag")
+    }
+
+    fn list_probe(&mut self, list: Handle32<ListTag>) -> u32 {
+        let l = self.word(list.get());
+        self.record("list_probe", &[l]);
+        self.answer("list_probe")
+    }
+
+    fn source_tag(&mut self, source: Handle32<SrcTag>) -> u32 {
+        let s = self.word(source.get());
+        self.record("source_tag", &[s]);
+        self.answer("source_tag")
+    }
+
+    fn tag_id(&mut self, tag: ItemTag) -> u32 {
+        let t = item_tag_name(tag).to_string();
+        self.record("item_tag_id", &[t]);
+        self.answer("item_tag_id")
+    }
+
+    fn source_subflag(&mut self, source: Handle32<SrcTag>) -> u32 {
+        let s = self.word(source.get());
+        self.record("source_subflag", &[s]);
+        self.answer("source_subflag")
+    }
+
+    fn notify(&mut self, context: Handle32<NotifyContextTag>, tag: ItemTag) {
+        let c = self.word(context.get());
+        self.record("notify", &[c, item_tag_name(tag).to_string()]);
+    }
+
+    fn listener_primary(&mut self, listener: Handle32<ListenerTag>) {
+        let l = self.word(listener.get());
+        self.record("listener_primary", &[l]);
+    }
+
+    fn listener_secondary(&mut self, listener: Handle32<ListenerTag>) {
+        let l = self.word(listener.get());
+        self.record("listener_secondary", &[l]);
+    }
+
+    fn own_fail(&mut self, own: Handle32<OwnTag>) {
+        let o = self.word(own.get());
+        self.record("own_fail", &[o]);
+    }
+
+    fn own_dismiss(&mut self, own: Handle32<OwnTag>) -> u32 {
+        let o = self.word(own.get());
+        self.record("own_dismiss", &[o]);
+        self.answer("own_dismiss")
+    }
+
+    fn source_index(&mut self, source: Handle32<SrcTag>) -> u32 {
+        let s = self.word(source.get());
+        self.record("source_index", &[s]);
+        self.answer("source_index")
+    }
+
+    fn random_word(&mut self) -> u32 {
+        self.record("random_word", &[]);
+        self.answer("random_word")
+    }
+
+    fn list_sink(&mut self, list: Handle32<ListTag>, key: u32) -> u32 {
+        let l = self.word(list.get());
+        let k = self.word(key);
+        self.record("list_sink", &[l, k]);
+        self.answer("list_sink")
+    }
+
+    fn post_index(&mut self, list: Handle32<ListTag>, index: u32, mode: u32) {
+        let l = self.word(list.get());
+        let i = self.word(index);
+        let m = self.word(mode);
+        self.record("post_index", &[l, i, m]);
+    }
+
+    fn tail_notify(&mut self, cfg: Handle32<CfgTag>, value: u32) {
+        let c = self.word(cfg.get());
+        let v = self.word(value);
+        self.record("tail_notify", &[c, v]);
+    }
+
+    fn listener_result(&mut self, listener: Handle32<ListenerTag>, value: u32) {
+        let l = listener.get();
+        let v = value.to_le_bytes();
+        let label = self.word(l);
+        let block = self
+            .effects
+            .get_mut(&l)
+            .unwrap_or_else(|| panic!("missing effect block for {label}"));
+        let end = 0x208usize + v.len();
+        let target = block
+            .get_mut(0x208..end)
+            .unwrap_or_else(|| panic!("listener result lies outside its effect block"));
+        target.copy_from_slice(&v);
+    }
+
+    fn list_inner(&mut self, list: Handle32<ListTag>) -> Handle32<InnerTag> {
+        let _list = list;
+        Handle32::new(self.ctx.inner).expect("the fixture's list has an inner object")
+    }
+
+    fn inner_done(&mut self, inner: Handle32<InnerTag>) -> u32 {
+        let i = self.word(inner.get());
+        self.record("inner_done", &[i]);
+        self.answer("inner_done")
+    }
+
+    fn measure(&mut self, source: Handle32<SrcTag>, value: u32) -> f32 {
+        let s = self.word(source.get());
+        let v = self.word(value);
+        self.record("measure", &[s, v]);
+        f32::from_bits(self.answer("measure"))
+    }
+
+    fn build_configuration(
+        &mut self,
+        registry: Handle32<RegistryTag>,
+        tag: ItemTag,
+        value_bits: u32,
+    ) -> u32 {
+        let r = self.word(registry.get());
+        let b = self.word(value_bits);
+        self.record("build_configuration", &[r, item_tag_name(tag).to_string(), b]);
+        self.answer("build_configuration")
+    }
+
+    fn release_configuration(&mut self, configuration: u32) {
+        let c = self.word(configuration);
+        self.record("release_configuration", &[c]);
+    }
+
+    fn tail_forward(&mut self, context: Handle32<TailContextTag>, value: u32) {
+        let t = self.word(context.get());
+        let v = self.word(value);
+        self.record("tail_forward", &[t, v]);
+    }
+
+    fn listener_refresh(&mut self, listener: Handle32<ListenerTag>, mode: u32) -> u32 {
+        let l = self.word(listener.get());
+        let m = self.word(mode);
+        self.record("listener_refresh", &[l, m]);
+        self.answer("listener_refresh")
+    }
+
+    fn epilogue_set(&mut self, object: Handle32<EpilogueTag>, mode: u32) {
+        let o = self.word(object.get());
+        let m = self.word(mode);
+        self.record("epilogue_set", &[o, m]);
+    }
+
+    fn epilogue_finish(
+        &mut self,
+        object: Handle32<EpilogueTag>,
+        first: u32,
+        second: u32,
+    ) -> u32 {
+        let o = self.word(object.get());
+        let a = self.word(first);
+        let b = self.word(second);
+        self.record("epilogue_finish", &[o, a, b]);
+        self.answer("epilogue_finish")
     }
 }
 

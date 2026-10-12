@@ -5,7 +5,7 @@
 use lf_core::boundary::Handle32;
 use lf_peds_tasks::melee::{
     CtorArgs, DISABLE_BIT, FLAG_BASE, FOLLOW_UP_ALT, KIND_MELEE, MeleeHost, MeleeTask,
-    SLOT_OFFSETS, StartArgs, SubTask,
+    SLOT_OFFSETS, StarterHandleTag, StartArgs, SubTask, TaskManagerTag,
 };
 
 /// A host that records the calls and answers from fixed values.
@@ -85,18 +85,21 @@ impl MeleeHost for FakeHost {
         self.destroys += 1;
     }
 
-    fn manager(&mut self) -> u32 {
+    fn manager(&mut self) -> Option<Handle32<TaskManagerTag>> {
         self.manager_reads += 1;
-        self.manager_word
+        Handle32::new(self.manager_word)
     }
 
-    fn free_task(&mut self, manager: u32) {
-        self.frees.push(manager);
+    fn free_task(&mut self, manager: Option<Handle32<TaskManagerTag>>) {
+        self.frees.push(Handle32::raw_or_zero(manager));
     }
 
-    fn task_handle(&mut self, manager: u32) -> u32 {
-        self.handles.push(manager);
-        self.handle_answer
+    fn task_handle(
+        &mut self,
+        manager: Option<Handle32<TaskManagerTag>>,
+    ) -> Option<Handle32<StarterHandleTag>> {
+        self.handles.push(Handle32::raw_or_zero(manager));
+        Handle32::new(self.handle_answer)
     }
 
     fn mode_value(&mut self, _task: &mut MeleeTask) -> u32 {
@@ -278,7 +281,7 @@ fn start_splits_flags_and_masks_the_mode_byte() {
     assert_eq!(host.flag_modes, vec![0xAB]);
     assert_eq!(host.starts.len(), 1);
     let s = &host.starts[0];
-    assert_eq!(s.handle, 0x6000);
+    assert_eq!(s.handle.get(), 0x6000);
     assert_eq!(s.mode_word, 0xDEAD_BEEF);
     // Bits arrive in the original's order: bit 1, bit 2, bit 0, bit 3.
     assert_eq!(s.flag_bit1, 1);

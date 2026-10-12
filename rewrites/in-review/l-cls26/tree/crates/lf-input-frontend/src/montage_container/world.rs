@@ -46,6 +46,8 @@ pub struct InnerTag;
 pub struct ProbeTag;
 /// Tag for the handle to a resolved blend target.
 pub struct OutputTag;
+/// Tag for the object used by the pick method's optional epilogue.
+pub struct EpilogueTag;
 /// Tag for the handle to the configuration's sub-object.
 pub struct CfgSubTag;
 

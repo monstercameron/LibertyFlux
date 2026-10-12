@@ -22,6 +22,6 @@ pub mod task;
 
 pub use host::{CtorArgs, InitWords, MeleeHost, StampWords, StartArgs};
 pub use task::{
-    DISABLE_BIT, FLAG_BASE, FOLLOW_UP_ALT, FREE_BIT, KIND_MELEE, MeleeTask, ResetSlot, SLOT_OFFSETS,
-    SubTask,
+    DISABLE_BIT, FLAG_BASE, FOLLOW_UP_ALT, FREE_BIT, KIND_MELEE, MeleeTask, ResetSlot,
+    SLOT_OFFSETS, StarterHandleTag, SubTask, TaskManagerTag,
 };

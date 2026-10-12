@@ -15,6 +15,7 @@
     unused_mut,
     unused_unsafe,
     unused_variables,
+    dead_code,
     clippy::all,
     clippy::pedantic
 )]
@@ -22,4 +23,14 @@
 include!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../../../../../../../rewrites/verified/functions/fn_00dd46c0.rs"
+));
+
+include!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../../../../../../../rewrites/verified/functions/fn_00dd3040.rs"
+));
+
+include!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../../../../../../../rewrites/verified/functions/fn_00dd37e0.rs"
 ));

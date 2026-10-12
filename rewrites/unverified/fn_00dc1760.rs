@@ -257,7 +257,7 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
         };
 
         let first_node = lf_checker_rt::callee_cdecl!(CALL_FIND_CELL, u32, first_cell);
-        let second_node = lf_checker_rt::callee_cdecl!(CALL_FIND_CELL, u32, second_cell);
+        let mut second_node = lf_checker_rt::callee_cdecl!(CALL_FIND_CELL, u32, second_cell);
 
         // Clear the matching weapon row when the first navigation node asks
         // for a fire response. The game stores each row 0x280 bytes apart.
@@ -320,8 +320,9 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
                 0,
                 0,
                 0,
-            ) as u8;
+            );
             if safe != 0 {
+                second_node = nearest;
                 for (index, value) in safe_output.iter().copied().enumerate() {
                     write_u32(task.wrapping_add(TASK_SECOND_POINT + index as u32 * 4), value);
                 }

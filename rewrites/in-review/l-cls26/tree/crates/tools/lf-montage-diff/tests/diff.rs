@@ -553,6 +553,8 @@ impl Scene {
         Ctx {
             helper_context: rt::relocated(0x0198_1A4C),
             lookup_context: rt::relocated(0x0117_6888),
+            notify_context: rt::relocated(0x0117_6888),
+            tail_context: rt::relocated(0x019D_2F18),
             state: self.state.addr(),
             own: self.obj.addr(),
             list: self.list.addr(),
@@ -561,6 +563,7 @@ impl Scene {
             out: self.out.addr(),
             view: self.view.addr(),
             src: self.src.addr(),
+            resolved_source: self.src.addr(),
             sess: self.sess.addr(),
             sess2: self.sess2.addr(),
             tail: self.tail.addr(),
@@ -609,6 +612,8 @@ fn decode(words: &[u32], own_addr: u32) -> MontageContainer {
         cursor: words[CURSOR_WORD],
         mode,
         phase,
+        epilogue: Handle32::new(words[0x1BC / 4]),
+        quotient_bits: words[0x220 / 4],
     }
 }
 
@@ -632,6 +637,8 @@ fn encode(container: &MontageContainer, words: &mut [u32]) {
     words[CURSOR_WORD] = container.cursor;
     words[MODE_WORD] = (words[MODE_WORD] & 0xFFFF_FF00) | u32::from(container.mode);
     words[PHASE_WORD] = (words[PHASE_WORD] & 0xFFFF_FF00) | u32::from(container.phase);
+    words[0x1BC / 4] = Handle32::raw_or_zero(container.epilogue);
+    words[0x220 / 4] = container.quotient_bits;
 }
 
 fn dispatch_table() -> Vec<(CallSpec, Kind)> {

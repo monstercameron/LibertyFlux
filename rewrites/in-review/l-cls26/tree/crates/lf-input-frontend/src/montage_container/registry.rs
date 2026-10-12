@@ -52,12 +52,10 @@ pub const METHODS: &[MethodRecord] = &[
     },
     MethodRecord {
         name: "UIMontageContainer::vf97",
-        lifted: false,
-        rewrite: "verified rewrite of the per-item visibility commit",
-        test: "",
-        narrowing: "not lifted yet: the function is 1,175 bytes with float
-                    rectangle geometry, a viewport gate, a tag check and a
-                    long notify chain through the global listener",
+        lifted: true,
+        rewrite: "verified vf97 rewrite; r-b608 v6 accepted the measured 1,122-byte function",
+        test: "lf-montage-diff: commit_item_matches_its_rewrite; x86, 900 trials over nine paths",
+        narrowing: "collaborator bodies are scripted; calls, arguments, order, container words, and listener bytes are compared. The accepted rewrite's stack-check narrowing remains: a dead incoming-argument slot is observed through the tail-call argument.",
     },
     MethodRecord {
         name: "UIMontageContainer::enter_montage_editor",
@@ -68,12 +66,10 @@ pub const METHODS: &[MethodRecord] = &[
     },
     MethodRecord {
         name: "UIMontageContainer::vf94",
-        lifted: false,
-        rewrite: "verified rewrite of the indexed pick/commit",
-        test: "",
-        narrowing: "not lifted yet: the function is 1,874 bytes with two
-                    float rectangle blocks, a quotient-gated index rule and
-                    a tag section over the global listener",
+        lifted: true,
+        rewrite: "verified vf94 rewrite; r-b608 v6 accepted the 1,874-byte function",
+        test: "lf-montage-diff: indexed_pick_matches_its_rewrite; x86, 1,300 trials over thirteen paths",
+        narrowing: "collaborator bodies are scripted; calls, arguments, order, return, container words, and listener bytes are compared. Getter answers are fixed per property within a trial, with one targeted changed-center second-gate case. Handles are non-null where the original dereferences them.",
     },
     MethodRecord {
         name: "UIMontageContainer::update_clip_view_state",
@@ -106,7 +102,7 @@ pub const METHODS: &[MethodRecord] = &[
     MethodRecord {
         name: "UIMontageContainer::vf114",
         lifted: true,
-        rewrite: "fn_00dd46c0.rs; a-S07 v6 accepted the signed rewrite",
+        rewrite: "verified vf114 rewrite; a-S07 v6 accepted the signed comparison",
         test: "lf-montage-diff: dispatch; x86, 2,400 trials over eight paths",
         narrowing: "collaborator bodies are scripted and are not executed; the proof compares every call and argument in order, consumed scripted answers, the container bytes, and the full helper/configuration blocks with direct writes. The shared state flag is passed as a value at the lift boundary. Handles must be non-null on paths where the original faults on null.",
     },
@@ -120,12 +116,9 @@ pub const METHODS: &[MethodRecord] = &[
     MethodRecord {
         name: "UIMontageContainer::vf88",
         lifted: false,
-        rewrite: "verified rewrite of the long update routine",
+        rewrite: "verified vf88 rewrite; a-S05 v6 accepted 1,200 trials",
         test: "",
-        narrowing: "not lifted yet: the function is 3,134 bytes with a list
-                    synchronisation block, a panel-selection block, a float
-                    measurement chain with a threshold maze, two tick-counter
-                    checks and a truncation tail",
+        narrowing: "verified rewrite available; not lifted in this lane: list synchronization, panel selection, float thresholds, tick checks, refresh and truncation remain unmodeled",
     },
     MethodRecord {
         name: "UIMontageContainer::cache_montage_timing_values",

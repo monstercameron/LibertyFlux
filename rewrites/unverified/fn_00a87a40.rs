@@ -4,7 +4,7 @@
 /// The table object is passed in ECX; both writers are intercepted thiscall
 /// callees with two stack arguments.
 #[unsafe(no_mangle)]
-pub extern "thiscall" fn rw_a87a40(table: u32) -> u32 {
+pub extern "thiscall" fn rw_00a87a40(table: u32) -> u32 {
     const FIRST_SLOT: u32 = 0;
     const SLOT_LIMIT: u32 = 4;
     const WRITE_FLAGS: u32 = 0;

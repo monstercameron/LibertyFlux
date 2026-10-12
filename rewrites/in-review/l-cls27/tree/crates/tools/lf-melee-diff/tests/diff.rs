@@ -29,7 +29,8 @@ use lf_melee_diff::rewrites::{
     fn_00ccefb0, fn_00ccf840, fn_00cd0450, fn_00cd0d00, fn_00cd0d40,
 };
 use lf_peds_tasks::melee::{
-    CtorArgs, InitWords, MeleeHost, MeleeTask, SLOT_OFFSETS, StampWords, StartArgs, SubTask,
+    CtorArgs, InitWords, MeleeHost, MeleeTask, SLOT_OFFSETS, StampWords, StarterHandleTag,
+    StartArgs, SubTask, TaskManagerTag,
 };
 
 // Number of generated cases per method.
@@ -386,13 +387,6 @@ fn setup_runtime(slots: &[(usize, u32)]) {
         lf_checker_rt::CHECKER_CTABLE = CALLEE_TABLE.as_ptr() as *const u32;
         lf_checker_rt::CHECKER_XBASE = area.wrapping_sub(AREA_LO_VA - IMAGE_BASE);
     }
-}
-
-/// Reads a test-memory word at a file VA.
-fn read_global(va: u32) -> u32 {
-    let p = lf_checker_rt::global::<u32>(va);
-    // SAFETY: the address resolves into the leaked area set up by `setup_runtime`.
-    unsafe { p.read_unaligned() }
 }
 
 /// Writes a test-memory word at a file VA.
@@ -843,17 +837,25 @@ impl MeleeHost for Host {
         self.log.push(Ev::Destroy { recv: 0 });
     }
 
-    fn manager(&mut self) -> u32 {
-        self.manager_word
+    fn manager(&mut self) -> Option<Handle32<TaskManagerTag>> {
+        Handle32::new(self.manager_word)
     }
 
-    fn free_task(&mut self, manager: u32) {
-        self.log.push(Ev::Free { manager, recv: 0 });
+    fn free_task(&mut self, manager: Option<Handle32<TaskManagerTag>>) {
+        self.log.push(Ev::Free {
+            manager: Handle32::raw_or_zero(manager),
+            recv: 0,
+        });
     }
 
-    fn task_handle(&mut self, manager: u32) -> u32 {
-        self.log.push(Ev::Handle { manager });
-        self.handle_answer
+    fn task_handle(
+        &mut self,
+        manager: Option<Handle32<TaskManagerTag>>,
+    ) -> Option<Handle32<StarterHandleTag>> {
+        self.log.push(Ev::Handle {
+            manager: Handle32::raw_or_zero(manager),
+        });
+        Handle32::new(self.handle_answer)
     }
 
     fn mode_value(&mut self, _task: &mut MeleeTask) -> u32 {
@@ -872,7 +874,7 @@ impl MeleeHost for Host {
 
     fn start_melee(&mut self, args: &StartArgs) {
         self.log.push(Ev::Starter {
-            handle: args.handle,
+            handle: args.handle.get(),
             mode: args.mode_word,
             b1: args.flag_bit1,
             b2: args.flag_bit2,
@@ -978,10 +980,9 @@ fn wrong_destroy(task: &mut MeleeTask, host: &mut Host, flags: u32) {
 fn wrong_start(task: &mut MeleeTask, host: &mut Host) {
     // Bits 1 and 2 are passed to the starter in swapped order.
     let manager = host.manager();
-    let handle = host.task_handle(manager);
-    if handle == 0 {
+    let Some(handle) = host.task_handle(manager) else {
         return;
-    }
+    };
     let flags = task.flags_f0;
     let mode = host.mode_value(task);
     let computed = host.flag_value(task, mode & 0xFF);

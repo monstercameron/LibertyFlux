@@ -8,7 +8,7 @@
 
 use lf_core::boundary::Handle32;
 
-use super::task::{MeleeTask, SubTask};
+use super::task::{MeleeTask, StarterHandleTag, SubTask, TaskManagerTag};
 
 /// The arguments of the constructor, in the order the verified constructor
 /// receives them, with the two words of the storage it is built in that it
@@ -58,10 +58,10 @@ pub struct InitWords {
 /// The arguments of the melee starter call, in the order the start method
 /// passes them. The flag bits keep the original's order: bit 1, bit 2,
 /// bit 0, bit 3.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct StartArgs {
-    /// The handle the task manager answered.
-    pub handle: u32,
+    /// The opaque handle the task manager answered.
+    pub handle: Handle32<StarterHandleTag>,
     /// The task's word at offset `0x30`, read after the mode calls.
     pub mode_word: u32,
     /// Bit 1 of the flag byte.
@@ -98,18 +98,21 @@ pub trait MeleeHost {
     /// The destructor: run by the destroy method on the task, always.
     fn destroy_task(&mut self, task: &mut MeleeTask);
 
-    /// The task allocator's manager word, read from global state. The
-    /// destroy method reads it only when the flags ask for the task to be
-    /// freed.
-    fn manager(&mut self) -> u32;
+    /// The task allocator's opaque manager handle, read from global state.
+    /// The destroy method reads it only when the flags ask for the task to
+    /// be freed.
+    fn manager(&mut self) -> Option<Handle32<TaskManagerTag>>;
 
-    /// The task allocator's free helper, run with the manager word. The
+    /// The task allocator's free helper, run with the manager handle. The
     /// freed task is the one being destroyed.
-    fn free_task(&mut self, manager: u32);
+    fn free_task(&mut self, manager: Option<Handle32<TaskManagerTag>>);
 
     /// The task manager's handle for the melee starter, asked of the
-    /// manager word. A null answer ends the start method quietly.
-    fn task_handle(&mut self, manager: u32) -> u32;
+    /// manager handle. A null answer ends the start method quietly.
+    fn task_handle(
+        &mut self,
+        manager: Option<Handle32<TaskManagerTag>>,
+    ) -> Option<Handle32<StarterHandleTag>>;
 
     /// The mode helper, run on the task. Only the low byte of its answer
     /// reaches the flag helper.

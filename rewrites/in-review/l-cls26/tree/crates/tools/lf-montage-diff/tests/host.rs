@@ -28,6 +28,8 @@ fn zero_state_flag_clears_only_cursor_and_pending_without_collaborator_calls() {
         cursor: 110,
         mode: 7,
         phase: 8,
+        epilogue: None,
+        quotient_bits: 0,
     };
     let mut world = FakeWorld::new(Ctx::default(), Script::new(), HashMap::new());
     let globals = MontageGlobals {

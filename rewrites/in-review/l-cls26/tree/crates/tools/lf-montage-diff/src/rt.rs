@@ -20,6 +20,8 @@ use std::collections::HashMap;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Mutex, MutexGuard};
 
+use lf_input_frontend::montage_container::Viewport;
+
 use crate::fake::{CallSpec, Script};
 
 /// Which stub shape serves a callee number.
@@ -35,6 +37,8 @@ pub enum Kind {
     T3,
     /// Thiscall with the object word and three arguments.
     T4,
+    /// Cdecl with no arguments.
+    C0,
     /// Cdecl with one argument.
     C1,
     /// Cdecl with two arguments.
@@ -118,6 +122,7 @@ pub fn callee_addr(id: u32) -> u32 {
         Kind::T2f32 => stub_t2f32 as *const () as usize,
         Kind::T3 => stub_t3 as *const () as usize,
         Kind::T4 => stub_t4 as *const () as usize,
+        Kind::C0 => stub_c0 as *const () as usize,
         Kind::C1 => stub_c1 as *const () as usize,
         Kind::C2 => stub_c2 as *const () as usize,
     };
@@ -159,6 +164,10 @@ extern "thiscall" fn stub_t4(a: u32, b: u32, c: u32, d: u32) -> u32 {
 
 extern "cdecl" fn stub_c1(a: u32) -> u32 {
     dispatch(current_id(), vec![a])
+}
+
+extern "cdecl" fn stub_c0() -> u32 {
+    dispatch(current_id(), vec![])
 }
 
 extern "cdecl" fn stub_c2(a: u32, b: u32) -> u32 {
@@ -237,6 +246,172 @@ virt1!(v_probe_set, VID_PROBE_SET);
 virt1!(v_view_set, VID_VIEW_SET);
 virt1!(v_cfg_sub_set, VID_CFG_SUB_SET);
 
+macro_rules! virt_f32 {
+    ($name:ident, $id:expr) => {
+        extern "thiscall" fn $name(this: u32) -> f32 {
+            f32::from_bits(dispatch($id, vec![this]))
+        }
+    };
+}
+
+macro_rules! virt_item0 {
+    ($name:ident, $id:expr) => {
+        extern "thiscall" fn $name(this: u32) -> u32 {
+            dispatch($id, vec![this])
+        }
+    };
+}
+
+const ITEM_VID_SOURCE_HALF_WIDTH: u32 = 0x2001;
+const ITEM_VID_SOURCE_CENTER_X: u32 = 0x2002;
+const ITEM_VID_SOURCE_HALF_HEIGHT: u32 = 0x2003;
+const ITEM_VID_SOURCE_CENTER_Y: u32 = 0x2004;
+const ITEM_VID_CONTAINER_HALF_WIDTH: u32 = 0x2005;
+const ITEM_VID_CONTAINER_CENTER_X: u32 = 0x2006;
+const ITEM_VID_CONTAINER_HALF_HEIGHT: u32 = 0x2007;
+const ITEM_VID_CONTAINER_CENTER_Y: u32 = 0x2008;
+const ITEM_VID_SOURCE_TAG: u32 = 0x2009;
+const ITEM_VID_SOURCE_SUBFLAG: u32 = 0x200A;
+const ITEM_VID_OWN_FAIL: u32 = 0x200B;
+const ITEM_VID_SOURCE_INDEX: u32 = 0x200C;
+const ITEM_VID_LIST_CURRENT_KEY: u32 = 0x200D;
+const ITEM_VID_LIST_SUBFLAG: u32 = 0x200E;
+const ITEM_VID_LIST_PROBE: u32 = 0x200F;
+
+virt_f32!(v_item_source_half_width, ITEM_VID_SOURCE_HALF_WIDTH);
+virt_f32!(v_item_source_center_x, ITEM_VID_SOURCE_CENTER_X);
+virt_f32!(v_item_source_half_height, ITEM_VID_SOURCE_HALF_HEIGHT);
+virt_f32!(v_item_source_center_y, ITEM_VID_SOURCE_CENTER_Y);
+virt_f32!(v_item_container_half_width, ITEM_VID_CONTAINER_HALF_WIDTH);
+virt_f32!(v_item_container_center_x, ITEM_VID_CONTAINER_CENTER_X);
+virt_f32!(v_item_container_half_height, ITEM_VID_CONTAINER_HALF_HEIGHT);
+virt_f32!(v_item_container_center_y, ITEM_VID_CONTAINER_CENTER_Y);
+virt_item0!(v_item_source_tag, ITEM_VID_SOURCE_TAG);
+virt_item0!(v_item_source_subflag, ITEM_VID_SOURCE_SUBFLAG);
+virt_item0!(v_item_own_fail, ITEM_VID_OWN_FAIL);
+virt_item0!(v_item_source_index, ITEM_VID_SOURCE_INDEX);
+virt_item0!(v_item_list_current_key, ITEM_VID_LIST_CURRENT_KEY);
+virt_item0!(v_item_list_subflag, ITEM_VID_LIST_SUBFLAG);
+virt_item0!(v_item_list_probe, ITEM_VID_LIST_PROBE);
+
+/// The item-commit method's virtual slots, for its isolated differential fixture.
+#[derive(Debug, Clone, Copy)]
+pub struct ItemVStubs {
+    /// Source horizontal half-extent getter.
+    pub source_half_width: u32,
+    /// Source horizontal center getter.
+    pub source_center_x: u32,
+    /// Source vertical half-extent getter.
+    pub source_half_height: u32,
+    /// Source vertical center getter.
+    pub source_center_y: u32,
+    /// Container horizontal half-extent getter.
+    pub container_half_width: u32,
+    /// Container horizontal center getter.
+    pub container_center_x: u32,
+    /// Container vertical half-extent getter.
+    pub container_half_height: u32,
+    /// Container vertical center getter.
+    pub container_center_y: u32,
+    /// Source identity getter.
+    pub source_tag: u32,
+    /// Source notification guard getter.
+    pub source_subflag: u32,
+    /// Container failure entry.
+    pub own_fail: u32,
+    /// Source list-index getter.
+    pub source_index: u32,
+    /// Container dismiss entry.
+    pub own_dismiss: u32,
+    /// List sink getter.
+    pub list_sink: u32,
+    /// Inner-object completion getter.
+    pub inner_done: u32,
+    /// List's current-key getter.
+    pub list_current_key: u32,
+    /// List's low-byte pre-gate getter.
+    pub list_subflag: u32,
+    /// List's pre-gate probe getter.
+    pub list_probe: u32,
+}
+
+impl ItemVStubs {
+    /// Collects the item-commit slot stub addresses.
+    #[must_use]
+    pub fn new() -> Self {
+        Self {
+            source_half_width: v_item_source_half_width as *const () as usize as u32,
+            source_center_x: v_item_source_center_x as *const () as usize as u32,
+            source_half_height: v_item_source_half_height as *const () as usize as u32,
+            source_center_y: v_item_source_center_y as *const () as usize as u32,
+            container_half_width: v_item_container_half_width as *const () as usize as u32,
+            container_center_x: v_item_container_center_x as *const () as usize as u32,
+            container_half_height: v_item_container_half_height as *const () as usize as u32,
+            container_center_y: v_item_container_center_y as *const () as usize as u32,
+            source_tag: v_item_source_tag as *const () as usize as u32,
+            source_subflag: v_item_source_subflag as *const () as usize as u32,
+            own_fail: v_item_own_fail as *const () as usize as u32,
+            source_index: v_item_source_index as *const () as usize as u32,
+            own_dismiss: v_own_open as *const () as usize as u32,
+            list_sink: v_list_rank as *const () as usize as u32,
+            inner_done: v_prop_read as *const () as usize as u32,
+            list_current_key: v_item_list_current_key as *const () as usize as u32,
+            list_subflag: v_item_list_subflag as *const () as usize as u32,
+            list_probe: v_item_list_probe as *const () as usize as u32,
+        }
+    }
+}
+
+impl Default for ItemVStubs {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// The item method's call mapping, kept separate from the dispatcher IDs.
+#[cfg(target_arch = "x86")]
+pub const ITEM_CALLS: &[CallSpec] = &[
+    CallSpec { id: 1, name: "lookup_source" },
+    CallSpec { id: 11, name: "item_tag_id" },
+    CallSpec { id: 12, name: "notify" },
+    CallSpec { id: 14, name: "gatekeeper" },
+    CallSpec { id: 18, name: "post_index" },
+    CallSpec { id: 19, name: "tail_notify" },
+    CallSpec { id: 20, name: "measure" },
+    CallSpec { id: 21, name: "build_configuration" },
+    CallSpec { id: 22, name: "release_configuration" },
+    CallSpec { id: 24, name: "listener_primary" },
+    CallSpec { id: 25, name: "listener_secondary" },
+    CallSpec { id: 27, name: "tail_forward" },
+    CallSpec { id: 34, name: "random_word" },
+    CallSpec { id: 35, name: "listener_refresh" },
+    CallSpec { id: 36, name: "epilogue_set" },
+    CallSpec { id: 37, name: "epilogue_finish" },
+];
+
+/// The item method's virtual slots, paired with the recorded operation names.
+#[cfg(target_arch = "x86")]
+pub const ITEM_VIRTUALS: &[CallSpec] = &[
+    CallSpec { id: ITEM_VID_SOURCE_HALF_WIDTH, name: "geometry_source_half_width" },
+    CallSpec { id: ITEM_VID_SOURCE_CENTER_X, name: "geometry_source_center_x" },
+    CallSpec { id: ITEM_VID_SOURCE_HALF_HEIGHT, name: "geometry_source_half_height" },
+    CallSpec { id: ITEM_VID_SOURCE_CENTER_Y, name: "geometry_source_center_y" },
+    CallSpec { id: ITEM_VID_CONTAINER_HALF_WIDTH, name: "geometry_container_half_width" },
+    CallSpec { id: ITEM_VID_CONTAINER_CENTER_X, name: "geometry_container_center_x" },
+    CallSpec { id: ITEM_VID_CONTAINER_HALF_HEIGHT, name: "geometry_container_half_height" },
+    CallSpec { id: ITEM_VID_CONTAINER_CENTER_Y, name: "geometry_container_center_y" },
+    CallSpec { id: ITEM_VID_SOURCE_TAG, name: "source_tag" },
+    CallSpec { id: ITEM_VID_SOURCE_SUBFLAG, name: "source_subflag" },
+    CallSpec { id: ITEM_VID_OWN_FAIL, name: "own_fail" },
+    CallSpec { id: ITEM_VID_SOURCE_INDEX, name: "source_index" },
+    CallSpec { id: VID_OWN_OPEN, name: "own_dismiss" },
+    CallSpec { id: VID_LIST_RANK, name: "list_sink" },
+    CallSpec { id: VID_PROP_READ, name: "inner_done" },
+    CallSpec { id: ITEM_VID_LIST_CURRENT_KEY, name: "list_current_key" },
+    CallSpec { id: ITEM_VID_LIST_SUBFLAG, name: "list_subflag" },
+    CallSpec { id: ITEM_VID_LIST_PROBE, name: "list_probe" },
+];
+
 /// The addresses of the virtual-slot stubs, for planting vtables.
 #[derive(Debug, Clone, Copy)]
 pub struct VStubs {
@@ -311,10 +486,30 @@ impl Default for VStubs {
 /// The state pointer cell: the case points it at the state object before
 /// the rewrite reads the flag word through it.
 static STATE_PTR: AtomicU32 = AtomicU32::new(0);
+static VIEWPORT_WIDTH: AtomicU32 = AtomicU32::new(0);
+static VIEWPORT_HEIGHT: AtomicU32 = AtomicU32::new(0);
+static VIEWPORT_WIDTH_SCALE: AtomicU32 = AtomicU32::new(0);
+static VIEWPORT_HEIGHT_SCALE: AtomicU32 = AtomicU32::new(0);
+static MASK_A: AtomicU32 = AtomicU32::new(0);
+static MASK_B: AtomicU32 = AtomicU32::new(0);
 
 /// Points the state cell at the case's state object.
 pub fn set_state_ptr(ptr: u32) {
     STATE_PTR.store(ptr, Ordering::SeqCst);
+}
+
+/// Installs the viewport cells read by the item method's rewrite.
+pub fn set_item_viewport(viewport: Viewport) {
+    VIEWPORT_WIDTH.store(viewport.width as u32, Ordering::SeqCst);
+    VIEWPORT_HEIGHT.store(viewport.height as u32, Ordering::SeqCst);
+    VIEWPORT_WIDTH_SCALE.store(viewport.width_scale_bits, Ordering::SeqCst);
+    VIEWPORT_HEIGHT_SCALE.store(viewport.height_scale_bits, Ordering::SeqCst);
+}
+
+/// Installs the mask words read by the indexed-pick pre-gate.
+pub fn set_item_masks(mask_a: u32, mask_b: u32) {
+    MASK_A.store(mask_a, Ordering::SeqCst);
+    MASK_B.store(mask_b, Ordering::SeqCst);
 }
 
 /// File VA to relocated address. Only the constants the proof set reads
@@ -323,7 +518,8 @@ pub fn set_state_ptr(ptr: u32) {
 #[must_use]
 pub fn relocated(file_va: u32) -> u32 {
     match file_va {
-        0x0198_1A4C | 0x0117_6888 | 0x00EF_AF04 | 0x00EF_AF14 | 0x00EF_AF24 | 0x00EF_AF44
+        0x0198_1A4C | 0x0117_6888 | 0x019D_2F18 | 0x00EF_AD68 | 0x00EF_AD78 | 0x00EF_AD90
+        | 0x00EF_AD50 | 0x00EF_AF04 | 0x00EF_AF14 | 0x00EF_AF24 | 0x00EF_AF44
         | 0x00EF_AF50 | 0x00EF_AF60 | 0x00EF_AF80 | 0x00EF_AF90 | 0x00EF_AF9C | 0x00EF_AFAC => {
             file_va
         }
@@ -340,6 +536,12 @@ pub fn relocated(file_va: u32) -> u32 {
 pub fn global<T>(file_va: u32) -> *mut T {
     match file_va {
         0x018B_6C8C => STATE_PTR.as_ptr().cast::<T>(),
+        0x018B_7A80 => VIEWPORT_WIDTH.as_ptr().cast::<T>(),
+        0x018B_7A8C => VIEWPORT_HEIGHT.as_ptr().cast::<T>(),
+        0x018B_7A84 => MASK_A.as_ptr().cast::<T>(),
+        0x018B_7A88 => MASK_B.as_ptr().cast::<T>(),
+        0x017A_CCE8 => VIEWPORT_WIDTH_SCALE.as_ptr().cast::<T>(),
+        0x017A_CCF0 => VIEWPORT_HEIGHT_SCALE.as_ptr().cast::<T>(),
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
 }

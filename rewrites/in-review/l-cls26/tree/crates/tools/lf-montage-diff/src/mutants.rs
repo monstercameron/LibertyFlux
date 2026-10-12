@@ -7,7 +7,9 @@
 //! cannot see that change.
 
 use lf_core::Handle32;
-use lf_input_frontend::montage_container::{MontageContainer, MontageGlobals, MontageWorld, Tag};
+use lf_input_frontend::montage_container::{
+    ItemGlobals, ItemWorld, MontageContainer, MontageGlobals, MontageWorld, Tag,
+};
 
 /// The wrong dispatcher variants.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -41,6 +43,22 @@ pub const ALL: &[DispatchMutant] = &[
     DispatchMutant::CountNotReread,
     DispatchMutant::AdjacentNeedsBoth,
 ];
+
+/// Wrong indexed-pick lift that takes the quotient branch at the exact bound.
+pub fn indexed_pick_inclusive_threshold(
+    container: &mut MontageContainer,
+    world: &mut impl ItemWorld,
+    globals: &ItemGlobals,
+    key: u32,
+) -> u32 {
+    let result = container.indexed_pick(world, globals, key);
+    if container.quotient_bits == 0x3F00_0000 {
+        let count = world.list_probe(container.list);
+        let index = container.want;
+        container.want = if index < count { index.wrapping_add(1) } else { u32::MAX };
+    }
+    result
+}
 
 /// The dispatcher with one wrong step.
 pub fn dispatch(

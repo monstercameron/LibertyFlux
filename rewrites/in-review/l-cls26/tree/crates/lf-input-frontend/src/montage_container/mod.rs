@@ -1,18 +1,18 @@
 //! Lifted montage container: the replay editor's clip-list panel, as ordinary Rust.
 //!
 //! The original's montage container is a user-interface class with eighteen
-//! named methods. One of them is lifted here: the state dispatcher, which
-//! reads the editor's state flag and runs one of three regions (a list
-//! walk that notifies two helpers per clip, a threshold-gated refresh
-//! sequence, or a pending-index reconciliation), falling through to the
-//! last lookup answer when no identity gate matches. The other seventeen
-//! methods are not lifted (see [`registry`]).
+//! named methods. Three methods with verified rewrites are lifted here: the
+//! state dispatcher, the per-item visibility commit, and the indexed pick
+//! with its optional epilogue. The other fifteen methods are not lifted (see
+//! [`registry`]); fourteen do not yet have verified rewrites, and the long
+//! update routine remains unlifted.
 //!
 //! [`MontageContainer`] owns the object's words as named fields. Its
-//! collaborators travel as opaque [`Handle32`] cookies, and every call to
-//! them is one method of [`MontageWorld`]. The shared state flag the
-//! dispatcher reads is passed in as [`MontageGlobals`]. Nothing here has
-//! an address, a virtual slot number, a pointer width or `unsafe`.
+//! collaborators travel as opaque [`Handle32`] cookies. Dispatcher calls
+//! use [`MontageWorld`]; item geometry, registry and listener calls use
+//! [`ItemWorld`]. Shared state is supplied through [`MontageGlobals`] and
+//! [`ItemGlobals`]. Nothing here has a native address, virtual slot number,
+//! pointer-width dependency or `unsafe`.
 //!
 //! Proof is differential: the lifted method runs against its verified
 //! 32-bit rewrite on the same generated inputs, comparing the result,
@@ -25,13 +25,20 @@
 #![forbid(unsafe_code)]
 
 mod container;
+mod item_commit;
+mod indexed_pick;
+pub mod item_world;
 mod world;
 
 pub mod registry;
 
 pub use container::{MontageContainer, MontageGlobals};
+pub use item_world::{
+    GeometryObject, GeometryValue, ItemGlobals, ItemTag, ItemWorld, ListenerTag,
+    NotifyContextTag, RegistryTag, TailContextTag, Viewport,
+};
 pub use world::{
-    ActiveTag, AuxTag, CfgSubTag, CfgTag, ElemTag, HelperContextTag, InnerTag, ListTag,
-    LookupContextTag, MontageWorld, OutTag, OutputTag, OwnTag, ProbeTag, SessionTag, SrcTag,
-    StateTag, Tag, TailTag, ViewTag,
+    ActiveTag, AuxTag, CfgSubTag, CfgTag, ElemTag, EpilogueTag, HelperContextTag, InnerTag,
+    ListTag, LookupContextTag, MontageWorld, OutTag, OutputTag, OwnTag, ProbeTag, SessionTag,
+    SrcTag, StateTag, Tag, TailTag, ViewTag,
 };

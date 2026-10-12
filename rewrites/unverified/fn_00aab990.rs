@@ -3,9 +3,9 @@
 /// whether the record's optional field is populated.
 ///
 /// The key tag is masked to the 0x3C0 bits. Only an exact 0x80 tag reads the
-/// global mode and then the optional word at record offset 0x38. Mode 2 with
-/// a nonzero optional word selects offset 0x34; every other path selects
-/// offset 0x30. The two pointers are 32-bit stack arguments.
+/// global mode and then the optional word at record offset 0x38. A mode other
+/// than 2, or a nonzero optional word when the mode is 2, selects offset 0x34;
+/// every other path selects offset 0x30. The two pointers are stack arguments.
 #[unsafe(no_mangle)]
 pub extern "stdcall" fn rw_aab990(record: u32, key_record: u32) -> u32 {
     const KEY_TAG_OFFSET: usize = 0x28 / 4;
@@ -21,8 +21,8 @@ pub extern "stdcall" fn rw_aab990(record: u32, key_record: u32) -> u32 {
     let item = record as *const u32;
     if key_tag & KEY_TAG_MASK == SELECTED_KEY_TAG {
         let mode = unsafe { lf_checker_rt::global::<u32>(MODE_GLOBAL_VA).read_unaligned() };
-        if mode == REQUIRED_MODE
-            && unsafe { item.add(OPTIONAL_VALUE_OFFSET).read_unaligned() != 0 }
+        if mode != REQUIRED_MODE
+            || unsafe { item.add(OPTIONAL_VALUE_OFFSET).read_unaligned() != 0 }
         {
             return unsafe { item.add(SELECTED_FIELD_OFFSET).read_unaligned() };
         }

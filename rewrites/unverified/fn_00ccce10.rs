@@ -152,20 +152,24 @@ lf_checker_rt::export!(thiscall, ped_task_update(this: u32, ped: u32, mode: u32)
             }
         }
 
+        let mut handle_slot = motion_words[0];
+        let mut chosen_object = 0u32;
         if receiver_flags.read() & 0x20 == 0 {
             let global_328 = lf_checker_rt::global::<f32>(0x01B4B328).read_unaligned();
             let global_320 = lf_checker_rt::global::<f32>(0x01B4B320).read_unaligned();
             let global_324 = lf_checker_rt::global::<f32>(0x01B4B324).read_unaligned();
-            let mut handle_slot = 0x3DCCCCCDu32;
             let mut handle_metadata = [global_328.to_bits(), 0u32];
             let mut request_block = [0u32; 102];
             request_block[0] = this;
             request_block[4] = global_320.to_bits();
             request_block[5] = global_324.to_bits();
+            request_block[6] = global_328.to_bits();
             request_block[8] = global_320.to_bits();
             request_block[9] = global_324.to_bits();
+            request_block[10] = global_328.to_bits();
             request_block[12] = global_320.to_bits();
             request_block[13] = global_324.to_bits();
+            request_block[14] = global_328.to_bits();
             request_block[16] = this;
             request_block[17] = this;
             request_block[19] = 0xFFFF;
@@ -173,7 +177,6 @@ lf_checker_rt::export!(thiscall, ped_task_update(this: u32, ped: u32, mode: u32)
             let request_address = request_block.as_mut_ptr() as usize as u32;
             let handle_address = core::ptr::addr_of_mut!(handle_slot) as usize as u32;
             let metadata_address = handle_metadata.as_mut_ptr() as usize as u32;
-            let manager = lf_checker_rt::global::<u32>(0x012B9C78).read_unaligned();
             let _created = lf_checker_rt::callee_cdecl!(
                 10,
                 u32,
@@ -188,7 +191,6 @@ lf_checker_rt::export!(thiscall, ped_task_update(this: u32, ped: u32, mode: u32)
                 0u32
             );
 
-            let mut chosen_object = 0u32;
             if (_created as u8) != 0 {
                 let candidate: u32 = lf_checker_rt::callee_cdecl!(11, u32, 0u32);
                 if candidate != 0 {
@@ -202,8 +204,9 @@ lf_checker_rt::export!(thiscall, ped_task_update(this: u32, ped: u32, mode: u32)
                 }
             }
             core::hint::black_box(global_328);
+        }
 
-            let mut animation_context = [0u32; 20];
+        let mut animation_context = [0u32; 20];
             animation_context[0] = adjusted_angle.to_bits();
             let animation_context_address = animation_context.as_mut_ptr() as usize as u32;
             let _animation: u32 = lf_checker_rt::callee_thiscall!(
@@ -238,21 +241,22 @@ lf_checker_rt::export!(thiscall, ped_task_update(this: u32, ped: u32, mode: u32)
                 1u32,
                 0u32
             );
+            let transform_tail = f32::from_bits(vector_context[10]);
 
             let matrix = read_u32(ped.wrapping_add(0x7B4));
             let matrix_values = [
                 0.0,
                 0.0,
                 0.0,
-                f32::from_bits(adjusted_angle.to_bits() ^ sign_words[0]),
+                f32::from_bits(cosine_bits ^ sign_words[0]),
                 0.0,
                 0.0,
                 0.0,
                 0.0,
-                1.0,
-                f32::from_bits(this),
+                transform_tail,
+                f32::from_bits(handle_slot),
                 f32::from_bits(motion_words[1]),
-                1.0,
+                f32::from_bits(vector_context[14]),
             ];
             for (index, value) in matrix_values.into_iter().enumerate() {
                 let destination = match index {
@@ -277,7 +281,6 @@ lf_checker_rt::export!(thiscall, ped_task_update(this: u32, ped: u32, mode: u32)
             let previous_component = read_f32(nested_leaf.wrapping_add(8));
             let _matrix_probe_a: u32 = lf_checker_rt::callee_thiscall!(8, u32, matrix);
             let _matrix_probe_b: u32 = lf_checker_rt::callee_thiscall!(8, u32, matrix);
-            let matrix_vtable = read_u32(matrix);
             let nested_matrix = read_u32(matrix.wrapping_add(4));
             let nested_leaf = read_u32(nested_matrix.wrapping_add(0xC));
             let current_component = read_f32(nested_leaf.wrapping_add(8));
@@ -304,7 +307,7 @@ lf_checker_rt::export!(thiscall, ped_task_update(this: u32, ped: u32, mode: u32)
             }
 
             let mut selected_task = read_u32(ped.wrapping_add(0xB94));
-            let mut task_kind: u32 = lf_checker_rt::callee_cdecl!(19, u32, selected_task, 0xFu32);
+            let task_kind: u32 = lf_checker_rt::callee_cdecl!(19, u32, selected_task, 0xFu32);
             if task_kind == 0 {
                 let fallback_task: u32 = lf_checker_rt::callee_thiscall!(20, u32, ped);
                 let fallback_kind: u32 = lf_checker_rt::callee_cdecl!(19, u32, fallback_task, 0xFu32);
@@ -313,7 +316,6 @@ lf_checker_rt::export!(thiscall, ped_task_update(this: u32, ped: u32, mode: u32)
                 } else {
                     selected_task = fallback_task;
                 }
-                task_kind = fallback_kind;
             }
             let _schedule: u32 = lf_checker_rt::callee_thiscall!(
                 21,
@@ -446,8 +448,6 @@ lf_checker_rt::export!(thiscall, ped_task_update(this: u32, ped: u32, mode: u32)
                     0u32
                 );
             }
-        }
-
         let receiver_flags = (this.wrapping_add(0x18)) as *mut u8;
         receiver_flags.write(receiver_flags.read() & !0x10);
         this

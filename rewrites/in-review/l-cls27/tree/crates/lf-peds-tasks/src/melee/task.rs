@@ -47,53 +47,11 @@ pub struct ResetSlot(pub [u8; 12]);
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct SubTask;
 
-/// Opaque handle target for the state object consulted by the per-tick method.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct TaskState;
+/// The task manager identity carried across the host boundary.
+pub struct TaskManagerTag;
 
-/// Opaque handle target for the pedestrian being advanced.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct PedestrianTag;
-
-/// Opaque handle target for a task returned by the pedestrian's lookup.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct RelatedTask;
-
-/// Opaque handle target for the resource held by a melee task.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct TickResource;
-
-/// Opaque handle target for a temporary action object.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct TickObject;
-
-/// Opaque handle target for the global action factory.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct TickFactory;
-
-/// Opaque handle target for the global task creator.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct TickCreator;
-
-/// Opaque handle target for the countdown state object.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct CountdownTarget;
-
-/// Opaque handle target for an event type supplied by the host.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct EventTag;
-
-/// Opaque handle target for the status table used by the task system.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct StatusTable;
-
-/// Opaque handle target for the status key used by the task system.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct StatusKey;
-
-/// Opaque handle target for the setup event used by the target action.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct ActionTag;
+/// The opaque identity the task manager passes to the melee starter.
+pub struct StarterHandleTag;
 
 /// The complex melee task: the words its lifted methods touch.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -106,9 +64,6 @@ pub struct MeleeTask {
     pub word_24: u32,
     /// See [`MeleeTask::word_20`].
     pub word_28: u32,
-    /// The word at offset `0x2C`, which the per-tick method updates from its
-    /// scratch data without interpreting the bits.
-    pub word_2c: u32,
     /// The word the start method forwards to the melee starter, stored by
     /// the constructor (offset `0x30`).
     pub mode_word: u32,
@@ -130,8 +85,8 @@ pub struct MeleeTask {
     pub word_48: u32,
     /// A half word the constructor zeroes (offset `0x4C`).
     pub half_4c: u16,
-    /// The state object consulted by the per-tick method (offset `0x50`).
-    pub state_context: Option<Handle32<TaskState>>,
+    /// A word the constructor zeroes (offset `0x50`).
+    pub word_50: u32,
     /// The ten sub-object slots (offsets `0x54` to `0xCC`, twelve bytes
     /// each, in the order of [`SLOT_OFFSETS`]).
     pub slots: [ResetSlot; 10],
@@ -219,10 +174,9 @@ impl MeleeTask {
     /// four bits and the flag helper's answer to the melee starter.
     pub fn start<H: MeleeHost>(&mut self, host: &mut H) {
         let manager = host.manager();
-        let handle = host.task_handle(manager);
-        if handle == 0 {
+        let Some(handle) = host.task_handle(manager) else {
             return;
-        }
+        };
         let flags = self.flags_f0;
         let mode = host.mode_value(self);
         let computed = host.flag_value(self, mode & 0xFF);

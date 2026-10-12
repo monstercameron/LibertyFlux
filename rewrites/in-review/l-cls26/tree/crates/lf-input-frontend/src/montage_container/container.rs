@@ -10,8 +10,8 @@
 use lf_core::Handle32;
 
 use super::world::{
-    AuxTag, CfgTag, HelperContextTag, ListTag, LookupContextTag, MontageWorld, OutTag, OwnTag,
-    SrcTag, StateTag, Tag, ViewTag,
+    AuxTag, CfgTag, EpilogueTag, HelperContextTag, ListTag, LookupContextTag, MontageWorld,
+    OutTag, OwnTag, SrcTag, StateTag, Tag, ViewTag,
 };
 
 /// The freshness value at and above which the refresh region tears down.
@@ -78,6 +78,10 @@ pub struct MontageContainer {
     pub mode: u8,
     /// The phase byte the reconcile region sets and clears.
     pub phase: u8,
+    /// The optional object used by the indexed-pick epilogue.
+    pub epilogue: Option<Handle32<EpilogueTag>>,
+    /// The last quotient bit pattern written by the indexed-pick method.
+    pub quotient_bits: u32,
 }
 
 impl MontageContainer {

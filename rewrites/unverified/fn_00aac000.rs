@@ -3,7 +3,7 @@
 /// prepends it to the destination queue and returns that node; otherwise it
 /// returns zero. Both queue addresses are derived from the 32-bit owner.
 #[unsafe(no_mangle)]
-pub extern "thiscall" fn rw_aac000(owner: u32) -> u32 {
+pub extern "thiscall" fn rw_00aac000(owner: u32) -> u32 {
     const SOURCE_QUEUE_OFFSET: u32 = 0xD010;
     const DESTINATION_QUEUE_OFFSET: u32 = 0x143044;
     let source_queue = owner.wrapping_add(SOURCE_QUEUE_OFFSET);
