@@ -160110,6 +160110,78 @@
   "lane": "r-b526"
  },
  {
+  "address": "0x00E39940",
+  "name": "rage::audEntity::acquire_slot_sound",
+  "kind": "function",
+  "file": "functions/fn_00e39940.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E39C20",
+  "name": "audio_set_entity_voice_channel_value",
+  "kind": "function",
+  "file": "functions/fn_00e39c20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E39C90",
+  "name": "audio_clear_entity_slot_flags",
+  "kind": "function",
+  "file": "functions/fn_00e39c90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E39E80",
+  "name": "UIMontageMoviePlayer::UIMontageMoviePlayer_2",
+  "kind": "function",
+  "file": "functions/fn_00e39e80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E39EA0",
+  "name": "UIMontageMoviePlayer::~UIMontageMoviePlayer__deleting",
+  "kind": "function",
+  "file": "functions/fn_00e39ea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E39EC0",
+  "name": "UIMontageMoviePlayer::configure_texture_source_and_hud_colour",
+  "kind": "function",
+  "file": "functions/fn_00e39ec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E39F70",
+  "name": "ui_input_name_copy_with_tag_suffix",
+  "kind": "function",
+  "file": "functions/fn_00e39f70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E39FB0",
+  "name": "ui_update_montage_player_visibility",
+  "kind": "function",
+  "file": "functions/fn_00e39fb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
   "address": "0x00E3A070",
   "name": "bind_input_source",
   "kind": "function",
@@ -160144,6 +160216,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b602"
+ },
+ {
+  "address": "0x00E3CA40",
+  "name": "UIMontageMoviePlayer::vf0",
+  "kind": "function",
+  "file": "functions/fn_00e3ca40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
  },
  {
   "address": "0x00E3D670",
@@ -160324,6 +160405,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s114"
+ },
+ {
+  "address": "0x00E3F350",
+  "name": "net_info_header_copy_fields",
+  "kind": "function",
+  "file": "functions/fn_00e3f350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
  },
  {
   "address": "0x00E3F3A0",
@@ -160695,6 +160785,60 @@
   "lane": "r-s120"
  },
  {
+  "address": "0x00E45EB0",
+  "name": "net_info_header_write_text_or_ellipsis",
+  "kind": "function",
+  "file": "functions/fn_00e45eb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E46590",
+  "name": "UIScreen::UIScreen_2",
+  "kind": "function",
+  "file": "functions/fn_00e46590.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E465B0",
+  "name": "UIScreen::~UIScreen__deleting",
+  "kind": "function",
+  "file": "functions/fn_00e465b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E465D0",
+  "name": "UIScreen::vf0",
+  "kind": "function",
+  "file": "functions/fn_00e465d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E466F0",
+  "name": "UIBenchMark::UIBenchMark_2",
+  "kind": "function",
+  "file": "functions/fn_00e466f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E46710",
+  "name": "UIBenchMark::~UIBenchMark__deleting",
+  "kind": "function",
+  "file": "functions/fn_00e46710.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
   "address": "0x00E46A00",
   "name": "MO_OFF",
   "kind": "function",
@@ -160713,6 +160857,15 @@
   "lane": "r-b199"
  },
  {
+  "address": "0x00E47DB0",
+  "name": "UIBenchMark::vf0",
+  "kind": "function",
+  "file": "functions/fn_00e47db0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
   "address": "0x00E48410",
   "name": "UIBenchMark::vf82",
   "kind": "function",
@@ -160720,6 +160873,24 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "a-S10"
+ },
+ {
+  "address": "0x00E48770",
+  "name": "UITitleMenu::UITitleMenu_2",
+  "kind": "function",
+  "file": "functions/fn_00e48770.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
+ },
+ {
+  "address": "0x00E48790",
+  "name": "UITitleMenu::~UITitleMenu__deleting",
+  "kind": "function",
+  "file": "functions/fn_00e48790.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s773"
  },
  {
   "address": "0x00E488A0",
