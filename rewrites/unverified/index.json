@@ -1624,52 +1624,12 @@
   "reason": null
  },
  {
-  "address": "0x00A09E20",
-  "name": null,
-  "file": "fn_00a09e20.rs",
-  "lane": "r-s465",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A0A330",
-  "name": null,
-  "file": "fn_00a0a330.rs",
-  "lane": "r-s465",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A0A420",
-  "name": null,
-  "file": "fn_00a0a420.rs",
-  "lane": "r-s465",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A0B1A0",
-  "name": null,
-  "file": "fn_00a0b1a0.rs",
-  "lane": "r-s465",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A0B420",
   "name": "mission_cleanup_save",
   "file": "fn_00a0b420.rs",
   "lane": "r-s738",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00A0B4B0",
-  "name": null,
-  "file": "fn_00a0b4b0.rs",
-  "lane": "r-s465",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00A2D7F0",
@@ -2357,14 +2317,6 @@
   "file": "fn_00b126a0.rs",
   "lane": "r-s658",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B151E0",
-  "name": "world_pools_function_00b151e0",
-  "file": "fn_00b151e0.rs",
-  "lane": "r-s741",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -3644,8 +3596,8 @@
   "name": "CTaskComplexMobileMakeCall::create_next_sub_task",
   "file": "fn_00c7f110.rs",
   "lane": "r-s746",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00C7F140",
