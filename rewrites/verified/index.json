@@ -152532,6 +152532,42 @@
   "lane": "a-Q41"
  },
  {
+  "address": "0x00D52310",
+  "name": "collect_nearby_entities",
+  "kind": "function",
+  "file": "functions/fn_00d52310.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D52800",
+  "name": "CCamAnimated::destructor",
+  "kind": "function",
+  "file": "functions/fn_00d52800.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D52820",
+  "name": "CCamAnimated::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d52820.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D52C30",
+  "name": "CCamAnimated::initialize_animation_state",
+  "kind": "function",
+  "file": "functions/fn_00d52c30.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
   "address": "0x00D52F90",
   "name": "CCamAnimated::vf4",
   "kind": "function",
@@ -152541,6 +152577,15 @@
   "lane": "r-b07"
  },
  {
+  "address": "0x00D53280",
+  "name": "camera_helper_update_float_fields",
+  "kind": "function",
+  "file": "functions/fn_00d53280.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
   "address": "0x00D532F0",
   "name": "CCamAnimated::pose_body",
   "kind": "function",
@@ -152548,6 +152593,51 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b07"
+ },
+ {
+  "address": "0x00D535C0",
+  "name": "CCamSkeleton::constructor",
+  "kind": "function",
+  "file": "functions/fn_00d535c0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D535E0",
+  "name": "CCamSkeleton::destructor",
+  "kind": "function",
+  "file": "functions/fn_00d535e0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D53600",
+  "name": "CCamSkeleton::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d53600.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D53630",
+  "name": "CCamFree::constructor",
+  "kind": "function",
+  "file": "functions/fn_00d53630.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D536A0",
+  "name": "CCamFree::initialize_default_state",
+  "kind": "function",
+  "file": "functions/fn_00d536a0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
  },
  {
   "address": "0x00D536C0",
@@ -155376,6 +155466,24 @@
   "lane": "a-S10"
  },
  {
+  "address": "0x00D87780",
+  "name": "input_stick_update_signs_and_emit",
+  "kind": "function",
+  "file": "functions/fn_00d87780.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D87810",
+  "name": "camera_update_distance_and_vector",
+  "kind": "function",
+  "file": "functions/fn_00d87810.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
   "address": "0x00D87A90",
   "name": "ui_pair_measure",
   "kind": "function",
@@ -155401,6 +155509,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b240"
+ },
+ {
+  "address": "0x00D88C10",
+  "name": "native_indexed_model_flag_bit6",
+  "kind": "function",
+  "file": "functions/fn_00d88c10.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
  },
  {
   "address": "0x00D88C30",
@@ -155493,6 +155610,15 @@
   "lane": "a-G37"
  },
  {
+  "address": "0x00D8AC10",
+  "name": "render_phase_tree_imposters_init",
+  "kind": "function",
+  "file": "functions/fn_00d8ac10.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
   "address": "0x00D8AC40",
   "name": "CRenderPhaseTreeImposters::vf8",
   "kind": "function",
@@ -155500,6 +155626,24 @@
   "trials": 6018,
   "checker": "version 8",
   "lane": "a-H06"
+ },
+ {
+  "address": "0x00D8B600",
+  "name": "T_CB_Generic_2Args::invoke",
+  "kind": "function",
+  "file": "functions/fn_00d8b600.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D8B790",
+  "name": "CRenderPhaseTreeImposters::update_imposter_range",
+  "kind": "function",
+  "file": "functions/fn_00d8b790.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
  },
  {
   "address": "0x00D8BB70",
@@ -156060,6 +156204,51 @@
   "lane": "r-s89"
  },
  {
+  "address": "0x00D92500",
+  "name": "audio_params_bind_if_present",
+  "kind": "function",
+  "file": "functions/fn_00d92500.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D92520",
+  "name": "audio_params_copy_if_present",
+  "kind": "function",
+  "file": "functions/fn_00d92520.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D92540",
+  "name": "audio_pair_initialize_if_present",
+  "kind": "function",
+  "file": "functions/fn_00d92540.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D92560",
+  "name": "audio_zone_recompute_max_entry_type",
+  "kind": "function",
+  "file": "functions/fn_00d92560.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
+  "address": "0x00D925D0",
+  "name": "audio_zone_publish_entry",
+  "kind": "function",
+  "file": "functions/fn_00d925d0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
+ },
+ {
   "address": "0x00D92990",
   "name": "tri_area_flag",
   "kind": "function",
@@ -156247,6 +156436,15 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G39"
+ },
+ {
+  "address": "0x00D97800",
+  "name": "CPedFormation::~CPedFormation",
+  "kind": "function",
+  "file": "functions/fn_00d97800.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
  },
  {
   "address": "0x00D97820",
@@ -156679,6 +156877,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s675"
+ },
+ {
+  "address": "0x00DA2E60",
+  "name": "move_16_byte_records",
+  "kind": "function",
+  "file": "functions/fn_00da2e60.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s826"
  },
  {
   "address": "0x00DA34D0",
