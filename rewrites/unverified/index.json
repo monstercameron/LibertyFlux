@@ -864,14 +864,6 @@
   "reason": null
  },
  {
-  "address": "0x00607910",
-  "name": null,
-  "file": "fn_00607910.rs",
-  "lane": "a-U147",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x0061B150",
   "name": "net_session_desc_init",
   "file": "fn_0061b150.rs",
@@ -902,14 +894,6 @@
   "lane": "r-b314",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x006349F0",
-  "name": "frag_parse_skeletontype_all",
-  "file": "fn_006349f0.rs",
-  "lane": "r-s777",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00635E60",
@@ -989,21 +973,13 @@
   "file": "fn_00638690.rs",
   "lane": "a-U140",
   "outcome": "deferred",
-  "reason": "Stock 60-trial probes show an original-only heap write at offset 0x33E0 even with the record count pinned to zero; after adding the two omitted row-cache stores, the mismatch persists while return and ESP match, and the decoded zero-count path has no matching store."
+  "reason": "The original stores the returned count byte at params+0x1e3; the earlier rewrite omitted it, causing the heap mismatch at 0x33E0. After adding the byte store, a 60-trial zero-count diagnostic passes 60/60 with all originals complete, but the required 1,000-trial record proof and same-contract wrong-version run remain unexecuted."
  },
  {
   "address": "0x006397A0",
   "name": "rage::ptxRule::set_name",
   "file": "fn_006397a0.rs",
   "lane": "r-s777",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x006428F0",
-  "name": "rage::ptxDomain::vf2",
-  "file": "fn_006428f0.rs",
-  "lane": "r-s779",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1360,14 +1336,6 @@
   "reason": null
  },
  {
-  "address": "0x0087F7A0",
-  "name": "rage::miniheapAllocator::allocate_aligned",
-  "file": "fn_0087f7a0.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00880BA0",
   "name": "audio_format_keys_equal",
   "file": "fn_00880ba0.rs",
@@ -1448,9 +1416,9 @@
   "reason": null
  },
  {
-  "address": "0x008D6920",
-  "name": "paired_heading_blend",
-  "file": "fn_008d6920.rs",
+  "address": "0x008D6810",
+  "name": "paired_polar_angles",
+  "file": "fn_008d6810.rs",
   "lane": "a-U144",
   "outcome": "not yet run",
   "reason": null
@@ -1912,14 +1880,6 @@
   "reason": null
  },
  {
-  "address": "0x00A67720",
-  "name": "teardown_all_active_explosions",
-  "file": "fn_00a67720.rs",
-  "lane": "r-s770",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A67740",
   "name": "CEventOnFire::~CEventOnFire",
   "file": "fn_00a67740.rs",
@@ -1934,30 +1894,6 @@
   "lane": "r-b446",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00A7D5F0",
-  "name": "CDeadInfo::CDeadInfo",
-  "file": "fn_00a7d5f0.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D610",
-  "name": "CDieInfo::CDieInfo",
-  "file": "fn_00a7d610.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D650",
-  "name": "CJackTaskInfo::CJackTaskInfo",
-  "file": "fn_00a7d650.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00A7D670",
@@ -4320,43 +4256,19 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00CDBB10",
-  "name": null,
-  "file": "fn_00cdbb10.rs",
-  "lane": "r-s776",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00CDBB80",
-  "name": null,
-  "file": "fn_00cdbb80.rs",
-  "lane": "r-s776",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00CDBC40",
-  "name": null,
-  "file": "fn_00cdbc40.rs",
-  "lane": "r-s776",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00CDBCB0",
-  "name": null,
+  "name": "CTaskSimpleNMBrace::vf21",
   "file": "fn_00cdbcb0.rs",
   "lane": "r-s776",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00CE0A30",
-  "name": null,
-  "file": "fn_00ce0a30.rs",
+  "address": "0x00CDBCE0",
+  "name": "CTaskSimpleNMFlinch::vf21",
+  "file": "fn_00cdbce0.rs",
   "lane": "r-s776",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4928,6 +4840,14 @@
   "reason": null
  },
  {
+  "address": "0x00DFBF26",
+  "name": null,
+  "file": "fn_00dfbf26.rs",
+  "lane": "a-U148",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00E39F70",
   "name": "ui_input_name_copy_with_tag_suffix",
   "file": "fn_00e39f70.rs",
@@ -5222,5 +5142,157 @@
   "lane": "r-s769",
   "outcome": "not_reached",
   "reason": ""
+ },
+ {
+  "address": "0x00E711E0",
+  "name": "send_audio_buffer_cleanup_message",
+  "file": "fn_00e711e0.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E71370",
+  "name": "clear_viewport_children_and_notify",
+  "file": "fn_00e71370.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E713E0",
+  "name": "release_audio_object_array_resources",
+  "file": "fn_00e713e0.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E71470",
+  "name": "notify_code_pointer_3",
+  "file": "fn_00e71470.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E71490",
+  "name": "drain_notification_table",
+  "file": "fn_00e71490.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E714B0",
+  "name": "initialize_array_256_entries",
+  "file": "fn_00e714b0.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E714E0",
+  "name": "drain_and_notify_streaming_entries",
+  "file": "fn_00e714e0.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E71570",
+  "name": "notify_streaming_block_b",
+  "file": "fn_00e71570.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E715B0",
+  "name": "destroy_audio_entity_static_instance",
+  "file": "fn_00e715b0.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E72370",
+  "name": "cleanup_global_stream_resource",
+  "file": "fn_00e72370.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E72410",
+  "name": "clear_stream_node_chain",
+  "file": "fn_00e72410.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E72560",
+  "name": "send_message_to_all_slots",
+  "file": "fn_00e72560.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E72920",
+  "name": "clear_navigation_work_tables",
+  "file": "fn_00e72920.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E72B60",
+  "name": "initialize_animation_vector_pair_array",
+  "file": "fn_00e72b60.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E72D60",
+  "name": "cleanup_flagged_pointer_a",
+  "file": "fn_00e72d60.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E72D80",
+  "name": "cleanup_flagged_pointer_b",
+  "file": "fn_00e72d80.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E72DA0",
+  "name": "cleanup_flagged_pointer_c",
+  "file": "fn_00e72da0.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E72DC0",
+  "name": "cleanup_flagged_pointer_d",
+  "file": "fn_00e72dc0.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E72E40",
+  "name": "release_global_entity_resource",
+  "file": "fn_00e72e40.rs",
+  "lane": "r-s778",
+  "outcome": "not_reached",
+  "reason": null
  }
 ]

@@ -2,8 +2,8 @@
 
 /// Clear the cache words belonging to every active effect record, set the two
 /// rule-parameter flags, clear the shared entry selected by the manager byte,
-/// clear the shared table's final word, and return the low byte of the current
-/// record count. The rule object stores its record list at `+0x130` and its
+/// clear the shared table's final word, save the low byte of the record count
+/// in the parameter object, and return that byte. The rule object stores its record list at `+0x130` and its
 /// 16-bit count at `+0x134`. The parameter object supplies the per-record rows
 /// at `+0x7c` and shared table at `+0x260`.
 
@@ -23,6 +23,11 @@ unsafe fn write_u32(address: u32, value: u32) {
 }
 
 #[inline(always)]
+unsafe fn write_u8(address: u32, value: u8) {
+    unsafe { (address as *mut u8).write(value) }
+}
+
+#[inline(always)]
 unsafe fn read_global_word(file_va: u32) -> u32 {
     unsafe { lf_checker_rt::global::<u32>(file_va).read_unaligned() }
 }
@@ -39,6 +44,7 @@ unsafe fn clear_rule_state(this: u32, params: u32, omit_first_row_word: bool) ->
     const ROW_STRIDE: u32 = 0x120;
     const PARAM_FLAGS_A: u32 = 0x1C4;
     const PARAM_FLAGS_B: u32 = 0x1C8;
+    const PARAM_COUNT_BYTE: u32 = 0x1E3;
     const SHARED_TABLE: u32 = 0x260;
     const SHARED_FINAL_WORD: u32 = 0x288;
     const MANAGER_GLOBAL_FILE_VA: u32 = 0x01BB_6678;
@@ -80,8 +86,10 @@ unsafe fn clear_rule_state(this: u32, params: u32, omit_first_row_word: bool) ->
     unsafe {
         write_u32(shared_table.wrapping_add(entry_index), 0);
         write_u32(shared_table.wrapping_add(SHARED_FINAL_WORD), 0);
-        core::ptr::read(this.wrapping_add(RECORD_COUNT) as *const u8)
     }
+    let count_byte = unsafe { core::ptr::read(this.wrapping_add(RECORD_COUNT) as *const u8) };
+    unsafe { write_u8(params.wrapping_add(PARAM_COUNT_BYTE), count_byte) };
+    count_byte
 }
 
 lf_checker_rt::export!(thiscall, rw_00638690(this: u32, params: u32) -> u8 {

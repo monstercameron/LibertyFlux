@@ -10,7 +10,7 @@
 /// the object unchanged. EAX is the end value on the skipped path and the new
 /// task-flags word on the blend-out path. This is an x86 thiscall method with
 /// no stack arguments.
-lf_checker_rt::export!(thiscall, rw_00cdbcb0(this: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00cdbcb0(this: u32, _arg_one: u32, _arg_two: u32) -> u32 {
     unsafe {
         const START_TICK: u32 = 0x20;
         const DURATION: u32 = 0x24;

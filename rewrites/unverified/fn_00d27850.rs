@@ -42,10 +42,13 @@ lf_checker_rt::export!(thiscall, rw_00d27850(
             0,
         );
 
-        // The original byte output sits immediately before its saved hash.
-        // Keep the surrounding three hash bytes visible to the call snapshot.
-        let mut effect_flag_and_hash = steam_hash.wrapping_shl(8) & 0xFFFF_FF00;
-        let effect_flag_ptr = (&mut effect_flag_and_hash as *mut u32) as u32;
+        // The output byte occupies the byte immediately before the saved hash.
+        // The helper writes one word there, so its upper three bytes replace
+        // the hash's low three bytes while the fifth byte retains the hash's
+        // original high byte.
+        let mut flag_and_hash = [0u8; 5];
+        flag_and_hash[1..5].copy_from_slice(&steam_hash.to_le_bytes());
+        let effect_flag_ptr = flag_and_hash.as_mut_ptr() as u32;
         let effect = lf_checker_rt::callee_thiscall!(
             2,
             u32,
@@ -59,6 +62,12 @@ lf_checker_rt::export!(thiscall, rw_00d27850(
         // The callee writes through effect_flag_ptr. The low byte is the
         // controlling output; reading that byte retains the original test.
         let effect_flag = (effect_flag_ptr as *const u8).read_volatile();
+        let final_hash = u32::from_le_bytes([
+            flag_and_hash[1],
+            flag_and_hash[2],
+            flag_and_hash[3],
+            flag_and_hash[4],
+        ]);
         if effect == 0 {
             return 0;
         }
@@ -97,7 +106,7 @@ lf_checker_rt::export!(thiscall, rw_00d27850(
         let _ = lf_checker_rt::callee_cdecl!(
             7,
             u32,
-            steam_hash,
+            final_hash,
             entity,
             strength_bits,
             0,

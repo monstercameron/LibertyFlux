@@ -23,11 +23,14 @@
 #![allow(unsafe_code)]
 
 use lf_audio::sound_base::{
-    AudSound, FallbackTag, ObjectTag, RegistryTag, SlotTag, SoundWorld, FAST_BIT, KIND_FAST,
+    AudSound, FallbackTag, FrameTag, ObjectTag, RegistryTag, SlotTag, SoundWorld, FAST_BIT, KIND_FAST,
     NO_VOICE, ROW_BIAS_INIT, ROW_BIAS_LOOKUP, ROW_STRIDE,
 };
 use lf_core::Handle32;
-use lf_soundbase_diff::rewrites::{fn_00890800, fn_00890870, fn_00891680, fn_008916A0, fn_00891E90, fn_0088F700, fn_0088F7C0};
+use lf_soundbase_diff::rewrites::{
+    fn_0088F700, fn_0088F7C0, fn_00890800, fn_00890870, fn_00891680, fn_008916A0, fn_00891E90, fn_008909C0,
+    fn_0088FFF0,
+};
 use lf_soundbase_diff::rt;
 
 /// Cases per method in the proof run.
@@ -70,9 +73,10 @@ enum Method {
     Dtor,
     Construct2,
     Attach,
+    Advance,
 }
 
-const ALL: [Method; 8] = [
+const ALL: [Method; 9] = [
     Method::Find,
     Method::FindByName,
     Method::StoreAtKey,
@@ -81,6 +85,7 @@ const ALL: [Method; 8] = [
     Method::Dtor,
     Method::Construct2,
     Method::Attach,
+    Method::Advance,
 ];
 
 /// One generated case: the object, the globals, the inputs and the scripts.
@@ -108,6 +113,13 @@ struct Case {
     extra_word: u32,
     memo_flag: u32,
     memo_value: u32,
+    /// The advance tick's stamp, and the voice record's stamp word before it.
+    stamp: u32,
+    prev_word: u32,
+    /// The voice record's lane selector byte.
+    lane_byte: u8,
+    /// The divisor table: eight lanes, each a counter word and a second word.
+    divisors: [u32; 16],
     answers: Vec<(&'static str, Vec<u32>)>,
     callees: Vec<(u32, u32)>,
 }
@@ -162,6 +174,9 @@ fn gen_case(rng: &mut Rng, kind: Method) -> Case {
         init_flags: rng.next() as u8,
         sub_id: rng.below(SUB_IDS) as u8,
         voice_id: rng.below(VOICE_ROWS as u32) as u8,
+        option: rng.next() as u8,
+        identity: rng.next(),
+        voice: rng.next(),
         slot_ids,
         sequence: rng.next(),
         slot_a: if rng.chance(3) { 0 } else { arena_address(rng) },
@@ -203,7 +218,7 @@ fn gen_case(rng: &mut Rng, kind: Method) -> Case {
         ("c7", (0..4).map(|_| rng.next()).collect()),
     ];
     let callees: Vec<(u32, u32)> = match kind {
-        Method::Find | Method::StoreAtKey => Vec::new(),
+        Method::Find | Method::StoreAtKey | Method::Advance => Vec::new(),
         Method::FindByName | Method::HashForward => vec![(1, rt::joaat as *const () as usize as u32)],
         Method::ForwardLink => vec![(1, rt::fallback as *const () as usize as u32)],
         Method::Dtor => vec![
@@ -230,6 +245,22 @@ fn gen_case(rng: &mut Rng, kind: Method) -> Case {
     let mut sound = sound;
     if kind == Method::Attach {
         sound.link = if rng.chance(2) { NO_VOICE } else { rng.next() as u8 };
+    }
+    // Advance: a voice column is always assigned (the original faults without one).
+    if kind == Method::Advance && sound.voice_column == NO_VOICE {
+        sound.voice_column = 0x7f;
+    }
+    let stamp = rng.next();
+    let prev_word = match rng.below(6) {
+        0 | 1 => 0,
+        2 => stamp,
+        _ => rng.next(),
+    };
+    // Divisor entries 3 to 7: the contract pins entries to three or more.
+    let mut divisors = [0u32; 16];
+    for lane in 0..8 {
+        divisors[2 * lane] = 3 + rng.below(5);
+        divisors[2 * lane + 1] = rng.next();
     }
     let mut desc = [0u8; 8];
     for b in desc.iter_mut() {
@@ -258,6 +289,10 @@ fn gen_case(rng: &mut Rng, kind: Method) -> Case {
         extra_word: rng.next(),
         memo_flag: rng.below(3),
         memo_value: rng.next(),
+        stamp,
+        prev_word,
+        lane_byte: rng.next() as u8,
+        divisors,
         answers,
         callees,
     }
@@ -309,6 +344,7 @@ fn build_image(c: &Case) {
         }
     }
 
+    let base = rt::arena_base();
     // Voice records: a patterned fill, so the option bits the attach method
     // compares differ from case to case.
     let records = base + rt::REC_OFF;
@@ -322,6 +358,17 @@ fn build_image(c: &Case) {
     }
     rt::write_u8(desc_block + 0x40, c.voice_byte);
     rt::write_u32(desc_block + 0x80, c.extra_word);
+    let divisor_table = rt::relocated(rt::DIVISOR_VA);
+    for (i, d) in c.divisors.iter().enumerate() {
+        rt::write_u32(divisor_table + 4 * i as u32, *d);
+    }
+    if c.kind == Method::Advance {
+        // The voice record the advance tick works on: its stamp word and lane selector.
+        let rec = c.init_rows[c.sound.voice_id as usize]
+            .wrapping_add(u32::from(c.sound.voice_column).wrapping_mul(c.scalar_b));
+        rt::write_u32(rec + 0xd0, c.prev_word);
+        rt::write_u8(rec + 0xe7, c.lane_byte);
+    }
     rt::write_u32(rt::relocated(rt::GLOBAL_MEMO_FLAG), c.memo_flag);
     rt::write_u32(rt::relocated(rt::GLOBAL_MEMO_VALUE), c.memo_value);
 }
@@ -577,6 +624,7 @@ fn run_rewrite(c: &Case) -> u32 {
                 base + rt::DESC_OFF + 0x80,
             )
         }
+        Method::Advance => fn_0088FFF0::rw_0088fff0(obj, c.stamp),
     }
 }
 
@@ -622,6 +670,12 @@ fn run_lifted(c: &Case) -> u32 {
             let mut s = decode(obj);
             let (voice, desc, extra) = attach_args();
             let r = s.attach_voice(handle(obj), voice, desc, extra, &mut w);
+            encode(&s, obj);
+            r
+        }
+        Method::Advance => {
+            let s = decode(obj);
+            let r = s.advance(c.stamp, &mut w);
             encode(&s, obj);
             r
         }
@@ -805,6 +859,70 @@ fn run_wrong(c: &Case) -> u32 {
             encode(&s, obj);
             ret
         }
+        Method::Advance => {
+            // WRONG: the velocity difference is taken against the row of the
+            // current rotation instead of the reference row.
+            let s = decode(obj);
+            let stride = w.scalar_b();
+            let word = w.voice_table_word(s.voice_id, ROW_BIAS_INIT);
+            let voice = word.wrapping_add(u32::from(s.voice_column).wrapping_mul(stride));
+            let lane = u32::from(w.record_byte(voice, 0xe7) & 7);
+            let count = w.divisor(lane, 0);
+            let rot = count.wrapping_add(1) % 3;
+            let rot2 = count.wrapping_add(2) % 3;
+            let tick_at = count.wrapping_mul(32).wrapping_add(0x5f);
+            let tick = w.record_byte(voice, tick_at);
+            w.set_record_byte(voice, tick_at, (tick & 0xe0) | (tick.wrapping_add(1) & 0x1f));
+            let prev = w.record_word(voice, 0xd0);
+            if prev == 0 {
+                w.set_record_word(voice, 0, 0);
+                w.set_record_word(voice, 4, 0);
+                w.set_record_word(voice, 8, 0);
+                w.set_record_word(voice, 0xd0, c.stamp);
+            } else {
+                let cur = count.wrapping_add(1).wrapping_mul(16);
+                let reference = rot.wrapping_add(1).wrapping_mul(16);
+                let _ = rot2;
+                let dv0 = f32::from_bits(w.record_word(voice, cur))
+                    - f32::from_bits(w.record_word(voice, reference));
+                let dv1 = f32::from_bits(w.record_word(voice, cur + 4))
+                    - f32::from_bits(w.record_word(voice, reference + 4));
+                let dv2 = f32::from_bits(w.record_word(voice, cur + 8))
+                    - f32::from_bits(w.record_word(voice, reference + 8));
+                let dt = c.stamp.wrapping_sub(prev);
+                w.set_record_word(voice, 0xd0, c.stamp);
+                let tag = w.record_byte(voice, tick_at);
+                w.set_record_byte(voice, tick_at, (tag & 0xe0) | (tag.wrapping_add(1) & 0x1f));
+                if dt == 0 {
+                    w.set_record_word(voice, 0, 0);
+                    w.set_record_word(voice, 4, 0);
+                    w.set_record_word(voice, 8, 0);
+                } else {
+                    let wide = f64::from(dt as i32)
+                        + if dt >> 31 == 0 { 0.0 } else { 4_294_967_296.0 };
+                    let rate = 1.0 / ((wide as f32) * lf_audio::sound_base::STEP_SCALE_FOR_TESTS);
+                    w.set_record_word(voice, 0, (dv0 * rate).to_bits());
+                    w.set_record_word(voice, 4, (dv1 * rate).to_bits());
+                    w.set_record_word(voice, 8, (dv2 * rate).to_bits());
+                    w.set_record_word(voice, 0xc, 0.0f32.to_bits());
+                }
+            }
+            let src_hist = voice.wrapping_add(count.wrapping_add(2).wrapping_mul(32));
+            let dst_hist = voice.wrapping_add(rot.wrapping_add(2).wrapping_mul(32));
+            for k in (0..32).step_by(4) {
+                let v = w.record_word(src_hist, k);
+                w.set_record_word(dst_hist, k, v);
+            }
+            let src_tag = voice.wrapping_add(count.wrapping_add(1).wrapping_mul(16));
+            let dst_tag = voice.wrapping_add(rot.wrapping_add(1).wrapping_mul(16));
+            for k in [0u32, 4, 8] {
+                let v = w.record_word(src_tag, k);
+                w.set_record_word(dst_tag, k, v);
+            }
+            let tagw = w.record_word(src_tag, 0xc);
+            w.set_record_word(dst_tag, 0xc, tagw);
+            tagw
+        }
     }
 }
 
@@ -950,7 +1068,7 @@ fn wrong_lift_of_construct_second_is_caught() {
 
 #[test]
 fn every_method_is_listed() {
-    assert_eq!(ALL.len(), 8);
+    assert_eq!(ALL.len(), 9);
 }
 
 #[test]

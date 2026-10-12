@@ -30,6 +30,10 @@ pub const DESC_OFF: u32 = 0x3_C400;
 pub const CONST_OFF: u32 = 0x3_C800;
 /// Arena offset of the scratch frame handle the attach callees receive.
 pub const FRAME_OFF: u32 = 0x3_C900;
+/// The file address of the divisor table (eight lanes of two words).
+pub const DIVISOR_VA: u32 = 0x115_F808;
+/// Arena offset of the divisor table.
+pub const DIV_OFF: u32 = 0x3_CA00;
 /// The file address of the category-key constant (mapped to `CONST_OFF`).
 pub const CATEGORY_KEY_VA: u32 = 0x00E7_84F8;
 /// The file address at which the mapped global window begins.
@@ -119,6 +123,9 @@ pub fn relocated(file_va: u32) -> u32 {
     }
     if file_va == CATEGORY_KEY_VA {
         return arena_base() + CONST_OFF;
+    }
+    if (DIVISOR_VA..DIVISOR_VA + 0x40).contains(&file_va) {
+        return arena_base() + DIV_OFF + (file_va - DIVISOR_VA);
     }
     panic!("unexpected relocated address {file_va:#x}");
 }

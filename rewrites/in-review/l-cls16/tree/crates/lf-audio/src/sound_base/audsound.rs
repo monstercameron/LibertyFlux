@@ -348,7 +348,116 @@ impl AudSound {
         self.fast_flags = ((df ^ self.fast_flags) & 0x7f) ^ df;
         1
     }
+
+    /// Advances the sound's voice record by one tick: rotates the record's
+    /// three history rows and tag rows by the lane's counter, and integrates
+    /// a new velocity from the position history scaled by the reciprocal of
+    /// the stamp delta. Returns the oldest tag word.
+    ///
+    /// The record is the voice column's row in the voice table. A lane
+    /// selector (the record's byte at `LANE_SELECTOR_FIELD`, low three bits)
+    /// picks the divisor-table entry that gives the counter. The lane's
+    /// tick byte advances once per call. With no previous stamp (zero word
+    /// at `STAMP_FIELD`) the velocity words are cleared; otherwise the
+    /// velocity comes from the history difference, and a zero delta clears
+    /// it. The reciprocal is taken of `delta * STEP_SCALE` in single
+    /// precision, with the 32-bit delta read as signed plus 2^32 when its
+    /// top bit is set.
+    ///
+    /// Narrowings, all from the verified rewrite: a sound with no voice column
+    /// makes the original read a null record and fault, and this method
+    /// panics at the same read (a trial the original faults on proves
+    /// nothing). The divisor entries are taken as given; the rewrite has no
+    /// timer wait for entries 0 to 2 (its contract pins them to 3 or more),
+    /// so a port must establish that range itself. The rewrite writes zero to
+    /// the record's word at `VELOCITY_PAD`, where the original reloads an
+    /// uninitialised word below the stack: the lift writes zero too, as the
+    /// rewrite defines it.
+    #[must_use]
+    pub fn advance(&self, stamp: u32, world: &mut impl SoundWorld) -> u32 {
+        let voice = if self.voice_column == NO_VOICE {
+            0
+        } else {
+            let stride = world.scalar_b();
+            let word = world.voice_table_word(self.voice_id, ROW_BIAS_INIT);
+            word.wrapping_add(u32::from(self.voice_column).wrapping_mul(stride))
+        };
+        assert!(
+            voice != 0,
+            "no voice column: the original reads a null voice record and faults"
+        );
+        let lane = u32::from(world.record_byte(voice, LANE_SELECTOR_FIELD) & 7);
+        let count = world.divisor(lane, 0);
+        let rot = count.wrapping_add(1) % 3;
+        let rot2 = count.wrapping_add(2) % 3;
+        let tick_at = count.wrapping_mul(32).wrapping_add(TICK_OFFSET);
+        let tick = world.record_byte(voice, tick_at);
+        world.set_record_byte(voice, tick_at, (tick & 0xe0) | (tick.wrapping_add(1) & 0x1f));
+        let prev = world.record_word(voice, STAMP_FIELD);
+        if prev == 0 {
+            world.set_record_word(voice, 0, 0);
+            world.set_record_word(voice, 4, 0);
+            world.set_record_word(voice, 8, 0);
+            world.set_record_word(voice, STAMP_FIELD, stamp);
+        } else {
+            let cur = count.wrapping_add(1).wrapping_mul(16);
+            let reference = rot2.wrapping_add(1).wrapping_mul(16);
+            let dv0 = f32::from_bits(world.record_word(voice, cur))
+                - f32::from_bits(world.record_word(voice, reference));
+            let dv1 = f32::from_bits(world.record_word(voice, cur + 4))
+                - f32::from_bits(world.record_word(voice, reference + 4));
+            let dv2 = f32::from_bits(world.record_word(voice, cur + 8))
+                - f32::from_bits(world.record_word(voice, reference + 8));
+            let dt = stamp.wrapping_sub(prev);
+            world.set_record_word(voice, STAMP_FIELD, stamp);
+            let tag = world.record_byte(voice, tick_at);
+            world.set_record_byte(voice, tick_at, (tag & 0xe0) | (tag.wrapping_add(1) & 0x1f));
+            if dt == 0 {
+                world.set_record_word(voice, 0, 0);
+                world.set_record_word(voice, 4, 0);
+                world.set_record_word(voice, 8, 0);
+            } else {
+                let wide = f64::from(dt as i32)
+                    + if dt >> 31 == 0 { 0.0 } else { 4_294_967_296.0 };
+                let rate = 1.0 / ((wide as f32) * STEP_SCALE);
+                world.set_record_word(voice, 0, (dv0 * rate).to_bits());
+                world.set_record_word(voice, 4, (dv1 * rate).to_bits());
+                world.set_record_word(voice, 8, (dv2 * rate).to_bits());
+                world.set_record_word(voice, VELOCITY_PAD, 0.0f32.to_bits());
+            }
+        }
+        let src_hist = voice.wrapping_add(count.wrapping_add(2).wrapping_mul(32));
+        let dst_hist = voice.wrapping_add(rot.wrapping_add(2).wrapping_mul(32));
+        for k in (0..32).step_by(4) {
+            let w = world.record_word(src_hist, k);
+            world.set_record_word(dst_hist, k, w);
+        }
+        let src_tag = voice.wrapping_add(count.wrapping_add(1).wrapping_mul(16));
+        let dst_tag = voice.wrapping_add(rot.wrapping_add(1).wrapping_mul(16));
+        let w0 = world.record_word(src_tag, 0);
+        world.set_record_word(dst_tag, 0, w0);
+        let w4 = world.record_word(src_tag, 4);
+        world.set_record_word(dst_tag, 4, w4);
+        let w8 = world.record_word(src_tag, 8);
+        world.set_record_word(dst_tag, 8, w8);
+        let tagw = world.record_word(src_tag, VELOCITY_PAD);
+        world.set_record_word(dst_tag, VELOCITY_PAD, tagw);
+        tagw
+    }
 }
+
+/// Offset of the lane selector byte in a voice record (low three bits).
+pub const LANE_SELECTOR_FIELD: u32 = 0xe7;
+/// Offset of the lane tick byte base: the tick byte of counter `c` is at
+/// `c * 32 + TICK_OFFSET`.
+pub const TICK_OFFSET: u32 = 0x5f;
+/// Offset of the stamp word of the voice record.
+pub const STAMP_FIELD: u32 = 0xd0;
+/// Offset of the word the velocity clears last, and the tag row's last word.
+pub const VELOCITY_PAD: u32 = 0xc;
+/// The single-precision step scale of the velocity integration (measured from
+/// the executable's constant, as the rewrite reads it).
+pub const STEP_SCALE: f32 = f32::from_bits(0x3d08_850a);
 
 /// Offset of the flag byte of a voice record that attach marks.
 pub const RECORD_FLAGS: u32 = 0xe7;

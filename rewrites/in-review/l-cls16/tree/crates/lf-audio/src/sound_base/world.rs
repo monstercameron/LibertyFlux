@@ -124,6 +124,15 @@ pub trait SoundWorld {
     fn record_byte(&self, record: u32, offset: u32) -> u8;
     /// Ors `mask` into the byte at `offset` of a voice record.
     fn or_record_byte(&mut self, record: u32, offset: u32, mask: u8);
+    /// Writes a byte at `offset` of a voice record.
+    fn set_record_byte(&mut self, record: u32, offset: u32, value: u8);
+    /// The word at `offset` of a voice record.
+    fn record_word(&self, record: u32, offset: u32) -> u32;
+    /// Writes a word at `offset` of a voice record.
+    fn set_record_word(&mut self, record: u32, offset: u32, value: u32);
+    /// One word of the divisor table for a lane: `slot` 0 is the lane's
+    /// rotation counter, `slot` 1 the word after it. The table is raw data.
+    fn divisor(&self, lane: u32, slot: u32) -> u32;
     /// The memoised-hash flag word.
     fn memo_flag(&self) -> u32;
     /// Stores the memoised-hash flag word.
