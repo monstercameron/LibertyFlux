@@ -142578,6 +142578,24 @@
   "lane": "a-U42"
  },
  {
+  "address": "0x00CEAAC0",
+  "name": "CBike::~CBike",
+  "kind": "function",
+  "file": "functions/fn_00ceaac0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CEAB10",
+  "name": "CBike::~CBike__deleting",
+  "kind": "function",
+  "file": "functions/fn_00ceab10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
   "address": "0x00CEAE70",
   "name": "CBike::vf47",
   "kind": "function",
@@ -142659,6 +142677,96 @@
   "lane": "r-s712"
  },
  {
+  "address": "0x00CF0E50",
+  "name": "Stat_RegisterBest_2",
+  "kind": "function",
+  "file": "functions/fn_00cf0e50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF0E80",
+  "name": "selector_snap_value",
+  "kind": "function",
+  "file": "functions/fn_00cf0e80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF0EC0",
+  "name": "stat_is_frontend_visible",
+  "kind": "function",
+  "file": "functions/fn_00cf0ec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF0EE0",
+  "name": "stat_ms_to_days",
+  "kind": "function",
+  "file": "functions/fn_00cf0ee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF0F30",
+  "name": "stat_ms_to_hours",
+  "kind": "function",
+  "file": "functions/fn_00cf0f30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF0F90",
+  "name": "stat_ms_to_millis",
+  "kind": "function",
+  "file": "functions/fn_00cf0f90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF0FC0",
+  "name": "stat_ms_to_minutes",
+  "kind": "function",
+  "file": "functions/fn_00cf0fc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF1010",
+  "name": "stat_ms_to_seconds",
+  "kind": "function",
+  "file": "functions/fn_00cf1010.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF1930",
+  "name": "StatGroup_GetList",
+  "kind": "function",
+  "file": "functions/fn_00cf1930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF19A0",
+  "name": "StatGroup_GetCount",
+  "kind": "function",
+  "file": "functions/fn_00cf19a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
   "address": "0x00CF1B50",
   "name": "stat_value_dispatch",
   "kind": "function",
@@ -142668,6 +142776,114 @@
   "lane": "a-G37"
  },
  {
+  "address": "0x00CF1BF0",
+  "name": "stat_entry_is_displayable",
+  "kind": "function",
+  "file": "functions/fn_00cf1bf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF1C60",
+  "name": "stat_is_best_tracked",
+  "kind": "function",
+  "file": "functions/fn_00cf1c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF1F20",
+  "name": "CPlayStatBase::CPlayStatBase",
+  "kind": "function",
+  "file": "functions/fn_00cf1f20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF1F50",
+  "name": "CPlayStatBase::CPlayStatBase_2",
+  "kind": "function",
+  "file": "functions/fn_00cf1f50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF1F80",
+  "name": "net_session_record_init",
+  "kind": "function",
+  "file": "functions/fn_00cf1f80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF1FD0",
+  "name": "playstat_append_pair",
+  "kind": "function",
+  "file": "functions/fn_00cf1fd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF1FF0",
+  "name": "playstat_append_opt_field",
+  "kind": "function",
+  "file": "functions/fn_00cf1ff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF2040",
+  "name": "CPlayStatBase::serialize",
+  "kind": "function",
+  "file": "functions/fn_00cf2040.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF20C0",
+  "name": "playstat_event_name",
+  "kind": "function",
+  "file": "functions/fn_00cf20c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF20E0",
+  "name": "CPlayStatBase::parse",
+  "kind": "function",
+  "file": "functions/fn_00cf20e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF21D0",
+  "name": "playstat_stamp_elapsed",
+  "kind": "function",
+  "file": "functions/fn_00cf21d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF21E0",
+  "name": "playstat_derive_name_id",
+  "kind": "function",
+  "file": "functions/fn_00cf21e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
   "address": "0x00CF2210",
   "name": "CPlayStatBase::vf2",
   "kind": "function",
@@ -142675,6 +142891,96 @@
   "trials": 300,
   "checker": "version 8",
   "lane": "a-G05"
+ },
+ {
+  "address": "0x00CF2810",
+  "name": "phmaterial_table_find",
+  "kind": "function",
+  "file": "functions/fn_00cf2810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF2940",
+  "name": "phMaterialMgrGta::phMaterialMgrGta",
+  "kind": "function",
+  "file": "functions/fn_00cf2940.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF2970",
+  "name": "phMaterialMgrGta::~phMaterialMgrGta",
+  "kind": "function",
+  "file": "functions/fn_00cf2970.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF29C0",
+  "name": "phMaterialMgrGta::~phMaterialMgrGta__deleting_3",
+  "kind": "function",
+  "file": "functions/fn_00cf29c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF2A60",
+  "name": "phMaterialMgrGta::create",
+  "kind": "function",
+  "file": "functions/fn_00cf2a60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF2A90",
+  "name": "phMaterialMgrGta::destroy",
+  "kind": "function",
+  "file": "functions/fn_00cf2a90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF2AB0",
+  "name": "phMaterialMgrGta::get_material",
+  "kind": "function",
+  "file": "functions/fn_00cf2ab0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF2B30",
+  "name": "phMaterialMgrGta::get_material_index",
+  "kind": "function",
+  "file": "functions/fn_00cf2b30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF2BA0",
+  "name": "phMaterialMgrGta::get_default_material",
+  "kind": "function",
+  "file": "functions/fn_00cf2ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
+ },
+ {
+  "address": "0x00CF2BC0",
+  "name": "phMaterialMgrGta::get_material_by_id",
+  "kind": "function",
+  "file": "functions/fn_00cf2bc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s757"
  },
  {
   "address": "0x00CF4030",
