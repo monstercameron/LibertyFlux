@@ -9,6 +9,31 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>UIMontageContainer: portable lift evidence</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls26"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls26</id>
+    <published>2026-10-12T00:00:00Z</published>
+    <updated>2026-10-12T00:00:00Z</updated>
+    <summary>From lane l-cls26.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-cls26.&lt;/p&gt;
+&lt;time datetime="2026-10-12"&gt;2026-10-12&lt;/time&gt;
+&lt;p&gt;Three methods of the replay editor's montage container now have owning, safe Rust lifts: the state dispatcher, per-item visibility commit, and indexed pick with its optional listener epilogue. The fourth verified method remains unlifted. The lifted methods were checked by differential tests against their accepted 32-bit rewrites; this work did not run the stock checker on the new Rust.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Finding&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;Value and meaning&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Differential trials&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;td data-label="Value and meaning"&gt;4,600 total: 2,400, 900 and 1,300 per method. The tests compare call order and arguments, return values where present, container words and direct writes. Deliberately wrong lifts for each method were caught.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Host portability&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;td data-label="Value and meaning"&gt;The host test suites pass on 64-bit Windows, and the differential crate passes an all-targets host check. The lifted module forbids unsafe code.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Function-size record&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;td data-label="Value and meaning"&gt;The inventory reports 1,175 bytes for vf97 while its accepted lane result reports 1,122. The lane summary total is 53 bytes above its result-row sum; the mismatch remains unresolved.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Rewrite comments&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;td data-label="Value and meaning"&gt;Comments for vf97 and vf88 contain unfinished references to original instructions instead of describing the stack/frame behavior. The vf94 rewrite also has an unused constant.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;vf94 contract coverage&lt;/td&gt;&lt;td data-label="Status"&gt;Inferred&lt;/td&gt;&lt;td data-label="Value and meaning"&gt;The result lists no narrowing while noting that same-per-trial geometry answers make gate two redundant after a successful first gate. A changed-answer gate-two failure is covered in the new differential fixture.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;vf88 stack-fill coverage&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;td data-label="Value and meaning"&gt;The accepted contract uses one fixed nonzero stack fill with stack and full-data checks enabled, while the result lists no narrowing. Its rewrite says the fill forces a call block. Behavior under other fills is unverified, so vf88 was left unlifted.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Operating-system boundary&lt;/td&gt;&lt;td data-label="Status"&gt;Unknown&lt;/td&gt;&lt;td data-label="Value and meaning"&gt;No direct operating-system calls were found in the four verified rewrites. The implementations behind registry, list, listener and UI collaborators are not lifted, so their internal operating-system effects are not established.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The portable container owns its state as fields and typed handles. Geometry, viewport math, signed quotient conversion, strict comparison, unsigned index update, mode/phase changes and notification choices live in ordinary Rust. Collaborators are trait methods. Any file, clock, thread, window or device work discovered beneath those collaborators belongs behind &lt;code&gt;lf-platform&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Reproduce the 32-bit comparison with &lt;code&gt;cargo test --offline --target i686-pc-windows-msvc -p lf-montage-diff&lt;/code&gt;; reproduce the host check with &lt;code&gt;cargo check --offline --all-targets -p lf-montage-diff&lt;/code&gt;. Sources: the &lt;a href="../crates/lf-input-frontend/src/montage_container/registry.rs"&gt;lift registry&lt;/a&gt; and &lt;a href="../crates/tools/lf-montage-diff/tests/item_commit.rs"&gt;differential fixtures&lt;/a&gt;.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Complex melee task family: five methods lifted and proven</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls27"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls27</id>
@@ -1386,35 +1411,5 @@ unreached for a whole probe run, and a callee whose call site was left unpatched
 &lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Stage 22 adds guards that panic on either route, so a reach is a fault and not a silent pass. The guards do not change behaviour on the zero routes, and the 21 earlier contracts still pass.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Read the scan loop and the bit-21 arm in the original's listing; compare with the rewrite's flag-set branch; run the stage 22 contract with the slots set nonzero (not done in this lane).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Status.&lt;/strong&gt; Verified by reading the code and by the checker's zero-slot runs. Not yet tested with nonzero slots (the next lane's first experiment).&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>An earlier stage read the wrong cursor on its second pass (lane a-H19)</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#a-h19-earlier-stage-cursor"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-h19-earlier-stage-cursor</id>
-    <published>2026-10-11T00:00:00Z</published>
-    <updated>2026-10-11T00:00:00Z</updated>
-    <summary>What was asked. Continue the partly proven rewrite of one particle-effect evaluator (the loop over the rule count) from the stages left by earlier lanes.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;What was asked.&lt;/strong&gt; Continue the partly proven rewrite of one particle-effect evaluator
-(the loop over the rule count) from the stages left by earlier lanes.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;What was found.&lt;/strong&gt; The stage that covers the path where the clamped count is zero or
-negative takes its second pass from the header callee's answer. The original takes the second pass
-from the rule cursor argument. Every contract for that stage pins the header answer to the cursor
-argument, so the two are equal in every trial and the stage passes. With a different header answer
-the stage failed in all 300 trials. Verified: the stage fails with a header answer that differs from
-the cursor (300/300, a global write the original does not make), and passes after the one-line
-correction in this lane's copy (1000/1000 with the pinned header answer, 300/300 with a different one).&lt;/p&gt;
-&lt;table&gt;
-&lt;tr&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Earlier stage, as recorded&lt;/td&gt;&lt;td data-label="Value"&gt;passes only with the header answer pinned to the cursor&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Earlier stage, with a different header answer&lt;/td&gt;&lt;td data-label="Value"&gt;300/300 trials fail&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Corrected stage (this lane's copy only)&lt;/td&gt;&lt;td data-label="Value"&gt;1000/1000 pinned; 300/300 with a different header answer&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Other earlier stages (JE, S3, S4 with pinned header, S4 no-backtrack)&lt;/td&gt;&lt;td data-label="Value"&gt;1000/1000 each, mutants caught&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;strong&gt;What was decided.&lt;/strong&gt; The earlier lanes' files are not changed. The corrected stage
-is in the lane's retry folder. Future stage contracts for this function should vary the header
-answer, not pin it, so that a stage like this cannot pass by construction.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Derive a stage contract from the S4 contract with the header
-callee's script set to a heap segment other than the cursor's, run the checker with 300 trials, and
-compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
   </entry>
 </feed>
