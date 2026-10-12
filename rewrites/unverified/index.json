@@ -1916,8 +1916,8 @@
   "name": "audio_compute_voice_mix",
   "file": "fn_0088fc40.rs",
   "lane": "a-U136",
-  "outcome": "not yet run",
-  "reason": ""
+  "outcome": "failed_v8",
+  "reason": "The 60-trial probe did not pass non-vacuously; see the probe verdict."
  },
  {
   "address": "0x00895A00",
@@ -1926,6 +1926,14 @@
   "lane": "a-U105",
   "outcome": "deferred",
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
+ },
+ {
+  "address": "0x0089A8A0",
+  "name": "rage::audEnvelopeSound::drive_state",
+  "file": "fn_0089a8a0.rs",
+  "lane": "r-s761",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x008DBF60",
@@ -1982,14 +1990,6 @@
   "lane": "r-b211",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x009324E0",
-  "name": "scaled_square_buffer_size_float",
-  "file": "fn_009324e0.rs",
-  "lane": "r-s763",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00932CF0",
@@ -3214,14 +3214,6 @@
   "lane": "r-b671",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00B38850",
-  "name": "object_reconfigure",
-  "file": "fn_00b38850.rs",
-  "lane": "a-U134",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00B38C20",
@@ -4710,14 +4702,6 @@
   "lane": "r-s581",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00CEA2B0",
-  "name": "peds_task_update",
-  "file": "fn_00cea2b0.rs",
-  "lane": "a-H40",
-  "outcome": "not yet run",
-  "reason": ""
  },
  {
   "address": "0x00CF1D70",

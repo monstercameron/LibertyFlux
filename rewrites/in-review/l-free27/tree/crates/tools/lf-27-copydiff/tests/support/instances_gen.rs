@@ -12,6 +12,8 @@ pub type CallA = extern "thiscall" fn(u32, u32) -> u32;
 pub type CallB = extern "thiscall" fn(u32, u32, u32, u32) -> u32;
 /// The four-argument call form for a rewrite that returns nothing.
 pub type CallU = extern "thiscall" fn(u32, u32, u32, u32);
+/// The two-argument call form for a rewrite that returns nothing.
+pub type CallAU = extern "thiscall" fn(u32, u32);
 
 /// What the rewrite returns, when its contract compares a return.
 #[derive(Clone, Copy)]
@@ -45,6 +47,8 @@ pub enum Call {
     B(CallB),
     /// Four arguments, no result.
     U(CallU),
+    /// Two arguments, no result.
+    AU(CallAU),
 }
 
 /// The members of this family, in list order.
