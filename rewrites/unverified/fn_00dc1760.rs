@@ -281,12 +281,14 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
         }
 
         // A missing second node takes the guarded safe-position path when the
-        // task allows it. The request holds the scaled navigation midpoint and
-        // the task's own height; the callee answers through the second of its
-        // two frame pointers, and the four words it stores also replace the
-        // node slots the validate step reads below, because those slots are
-        // the same frame words. A null answer skips the request entirely, and
-        // a refused request skips the copy but keeps the replaced nodes.
+        // task allows it. The request carries the scaled navigation midpoint
+        // and the task's own height to the helper, which answers through the
+        // second of its two frame pointers; the four words it stores become
+        // the new second point. The node slots sit elsewhere in the frame and
+        // are untouched, so a granted request simply promotes the nearest
+        // record to the second node. A null answer skips the request, and a
+        // refused request keeps the old point; both leave the second node
+        // null, which routes past the validate step to the step loop.
         if task_flags & SAFE_POSITION != 0 && second_node == 0 {
             if read_u8(lf_checker_rt::global::<u8>(GLOBAL_NAV_RECOVERY) as u32) != 0 {
                 write_u32(task.wrapping_add(TASK_STATUS), u32::MAX - 13);
@@ -315,6 +317,7 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
                     scale,
                 );
                 let z = read_u32(task.wrapping_add(TASK_SECOND_POINT + 8));
+                core::hint::black_box((x, y, z));
                 let mut request = [0u32; 4];
                 let mode = if task_flags & SKIP_ENTITY_RELEASES == 0 { 0x12 } else { 0x10 };
                 let safe = lf_checker_rt::callee_cdecl!(
@@ -327,13 +330,11 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
                     0,
                     0,
                     0,
-                ) as u8;
-                first_node = request[1];
+                );
                 if safe != 0 {
-                    write_u32(task.wrapping_add(TASK_SECOND_POINT), request[3]);
-                    write_u32(task.wrapping_add(TASK_SECOND_POINT + 4), x.to_bits());
-                    write_u32(task.wrapping_add(TASK_SECOND_POINT + 8), y.to_bits());
-                    write_u32(task.wrapping_add(TASK_SECOND_POINT + 12), z);
+                    for (index, value) in request.iter().copied().enumerate() {
+                        write_u32(task.wrapping_add(TASK_SECOND_POINT + index as u32 * 4), value);
+                    }
                     if task_flags & SKIP_ENTITY_RELEASES == 0 {
                         let applied = lf_checker_rt::callee_thiscall!(
                             CALL_APPLY_DROP,
@@ -357,9 +358,7 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
                         }
                     }
                     write_u32(task.wrapping_add(TASK_SECOND_POINT + 16), SAFE_PATH_SPEED);
-                    second_node = request[2];
-                } else {
-                    second_node = request[0];
+                    second_node = nearest;
                 }
             }
         }

@@ -881,7 +881,7 @@
  },
  {
   "address": "0x005EF4C0",
-  "name": "sub_005ef4c0",
+  "name": "shared_status_bit_clear",
   "file": "fn_005ef4c0.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -889,7 +889,7 @@
  },
  {
   "address": "0x005EFB40",
-  "name": "sub_005efb40",
+  "name": "child_state_is_single",
   "file": "fn_005efb40.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -897,7 +897,7 @@
  },
  {
   "address": "0x005EFB60",
-  "name": "sub_005efb60",
+  "name": "task_ctor_build",
   "file": "fn_005efb60.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -921,7 +921,7 @@
  },
  {
   "address": "0x005EFC70",
-  "name": "sub_005efc70",
+  "name": "task_ctor_build",
   "file": "fn_005efc70.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -945,7 +945,7 @@
  },
  {
   "address": "0x005EFD80",
-  "name": "sub_005efd80",
+  "name": "cooldown_tick_reset",
   "file": "fn_005efd80.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -969,7 +969,7 @@
  },
  {
   "address": "0x005EFE20",
-  "name": "sub_005efe20",
+  "name": "status_flag_check_4",
   "file": "fn_005efe20.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -977,7 +977,7 @@
  },
  {
   "address": "0x005EFE40",
-  "name": "sub_005efe40",
+  "name": "status_flag_check_8",
   "file": "fn_005efe40.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -985,7 +985,7 @@
  },
  {
   "address": "0x005EFE60",
-  "name": "sub_005efe60",
+  "name": "params_init_call",
   "file": "fn_005efe60.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -993,7 +993,7 @@
  },
  {
   "address": "0x005EFF00",
-  "name": "sub_005eff00",
+  "name": "timed_counter_bump",
   "file": "fn_005eff00.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -1225,7 +1225,7 @@
  },
  {
   "address": "0x005F3C80",
-  "name": "sub_005f3c80",
+  "name": "nonzero_word_scan",
   "file": "fn_005f3c80.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -1233,7 +1233,7 @@
  },
  {
   "address": "0x005F3CC0",
-  "name": "sub_005f3cc0",
+  "name": "bitarray_test",
   "file": "fn_005f3cc0.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -1241,7 +1241,7 @@
  },
  {
   "address": "0x005F3D00",
-  "name": "sub_005f3d00",
+  "name": "resolved_bit_test",
   "file": "fn_005f3d00.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -1289,7 +1289,7 @@
  },
  {
   "address": "0x005FC3C0",
-  "name": "sub_005fc3c0",
+  "name": "forward_to_method",
   "file": "fn_005fc3c0.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -1297,7 +1297,7 @@
  },
  {
   "address": "0x005FC430",
-  "name": "sub_005fc430",
+  "name": "holder_attach_copy",
   "file": "fn_005fc430.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -1313,7 +1313,7 @@
  },
  {
   "address": "0x00600C50",
-  "name": "sub_00600c50",
+  "name": "forward_if_live",
   "file": "fn_00600c50.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
@@ -2088,6 +2088,30 @@
   "reason": null
  },
  {
+  "address": "0x00887070",
+  "name": null,
+  "file": "fn_00887070.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008895E0",
+  "name": null,
+  "file": "fn_008895e0.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00889650",
+  "name": null,
+  "file": "fn_00889650.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00889830",
   "name": null,
   "file": "fn_00889830.rs",
@@ -2099,6 +2123,22 @@
   "address": "0x00889F00",
   "name": null,
   "file": "fn_00889f00.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0088A230",
+  "name": null,
+  "file": "fn_0088a230.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0088A2C0",
+  "name": null,
+  "file": "fn_0088a2c0.rs",
   "lane": "r-s805",
   "outcome": "not_reached",
   "reason": null
@@ -2123,6 +2163,14 @@
   "address": "0x0088A5A0",
   "name": null,
   "file": "fn_0088a5a0.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0088A5E0",
+  "name": null,
+  "file": "fn_0088a5e0.rs",
   "lane": "r-s805",
   "outcome": "not_reached",
   "reason": null
@@ -2157,6 +2205,14 @@
   "file": "fn_0088fc40.rs",
   "lane": "a-U149",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00893DA0",
+  "name": null,
+  "file": "fn_00893da0.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2285,6 +2341,14 @@
   "file": "fn_008aba00.rs",
   "lane": "r-s801",
   "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008AD120",
+  "name": "audResponseCurve_eval_a",
+  "file": "fn_008ad120.rs",
+  "lane": "a-U161",
+  "outcome": "not yet run",
   "reason": ""
  },
  {
@@ -3590,6 +3654,14 @@
   "lane": "a-U56",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00B05D80",
+  "name": "angle_between_vectors",
+  "file": "fn_00b05d80.rs",
+  "lane": "a-U156",
+  "outcome": "not yet run",
+  "reason": ""
  },
  {
   "address": "0x00B086E0",
