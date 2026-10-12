@@ -77,10 +77,13 @@ lf_checker_rt::export!(stdcall, rw_00b44290(point_a: u32, point_b: u32, radius: 
         let unit_x = mul_f32(inverse_length, dx);
         let zero_y = mul_f32(unit_y, ZERO);
         let zero_z = mul_f32(unit_z, ZERO);
+        let offset_x_unscaled = sub_f32(unit_y, zero_z);
+        let offset_y_unscaled = sub_f32(zero_z, unit_x);
         let zero_x = mul_f32(unit_x, ZERO);
-        let offset_x = mul_f32(sub_f32(unit_y, zero_z), radius);
-        let offset_y = mul_f32(sub_f32(zero_z, unit_x), radius);
-        let offset_z = mul_f32(sub_f32(zero_x, zero_y), radius);
+        let offset_z_unscaled = sub_f32(zero_x, zero_y);
+        let offset_y = mul_f32(offset_y_unscaled, radius);
+        let offset_x = mul_f32(offset_x_unscaled, radius);
+        let offset_z = mul_f32(offset_z_unscaled, radius);
 
         let mut start_minus = [
             sub_f32(start[0], offset_x),
@@ -94,6 +97,18 @@ lf_checker_rt::export!(stdcall, rw_00b44290(point_a: u32, point_b: u32, radius: 
             sub_f32(end[2], offset_z),
             ZERO,
         ];
+        // Keep the source points and computed offsets in memory across the
+        // intercepted helper call. The original stores these locals before
+        // the call and reloads them to construct the second query.
+        let mut preserved = [
+            start[0], start[1], start[2],
+            end[0], end[1], end[2],
+            offset_x, offset_y, offset_z,
+        ];
+        let preserved_ptr = preserved.as_mut_ptr();
+        for index in 0..preserved.len() {
+            core::ptr::write_volatile(preserved_ptr.add(index), preserved[index]);
+        }
         let first_hit = lf_checker_rt::callee_stdcall!(
             SPATIAL_QUERY_FIRST,
             u8,
@@ -105,16 +120,32 @@ lf_checker_rt::export!(stdcall, rw_00b44290(point_a: u32, point_b: u32, radius: 
             return 0;
         }
 
+        let saved_start = [
+            core::ptr::read_volatile(preserved_ptr.add(0)),
+            core::ptr::read_volatile(preserved_ptr.add(1)),
+            core::ptr::read_volatile(preserved_ptr.add(2)),
+        ];
+        let saved_end = [
+            core::ptr::read_volatile(preserved_ptr.add(3)),
+            core::ptr::read_volatile(preserved_ptr.add(4)),
+            core::ptr::read_volatile(preserved_ptr.add(5)),
+        ];
+        let saved_offset = [
+            core::ptr::read_volatile(preserved_ptr.add(6)),
+            core::ptr::read_volatile(preserved_ptr.add(7)),
+            core::ptr::read_volatile(preserved_ptr.add(8)),
+        ];
+
         let mut start_plus = [
-            add_f32(start[0], offset_x),
-            add_f32(start[1], offset_y),
-            add_f32(start[2], offset_z),
+            add_f32(saved_start[0], saved_offset[0]),
+            add_f32(saved_start[1], saved_offset[1]),
+            add_f32(saved_start[2], saved_offset[2]),
             ZERO,
         ];
         let mut end_plus = [
-            add_f32(end[0], offset_x),
-            add_f32(end[1], offset_y),
-            add_f32(end[2], offset_z),
+            add_f32(saved_end[0], saved_offset[0]),
+            add_f32(saved_end[1], saved_offset[1]),
+            add_f32(saved_end[2], saved_offset[2]),
             ZERO,
         ];
         let second_hit = lf_checker_rt::callee_stdcall!(

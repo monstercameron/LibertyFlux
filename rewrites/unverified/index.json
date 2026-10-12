@@ -1224,6 +1224,14 @@
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
  },
  {
+  "address": "0x008BD300",
+  "name": null,
+  "file": "fn_008bd300.rs",
+  "lane": "a-S27",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x008DBF60",
   "name": "task_ctor_update_thread_range",
   "file": "fn_008dbf60.rs",
@@ -1560,6 +1568,14 @@
   "reason": null
  },
  {
+  "address": "0x009DF7C0",
+  "name": null,
+  "file": "fn_009df7c0.rs",
+  "lane": "r-s740",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x009EF350",
   "name": "CPlayerPed::vf58",
   "file": "fn_009ef350.rs",
@@ -1660,6 +1676,14 @@
   "name": null,
   "file": "fn_00a0b4b0.rs",
   "lane": "r-s465",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A0B720",
+  "name": "mission_cleanup_contains_live_handle",
+  "file": "fn_00a0b720.rs",
+  "lane": "r-s738",
   "outcome": "not_reached",
   "reason": null
  },
@@ -3512,6 +3536,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00C7F0F0",
+  "name": "CTaskComplexMobileChatScenario::create_next_sub_task",
+  "file": "fn_00c7f0f0.rs",
+  "lane": "r-s746",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C7FD60",
   "name": "Probe scenario slot `probe`, iterating the owner list for a live entry.",
   "file": "fn_00c7fd60.rs",
@@ -4432,6 +4464,14 @@
   "reason": null
  },
  {
+  "address": "0x00D8ED50",
+  "name": "audio_query_match_detail",
+  "file": "fn_00d8ed50.rs",
+  "lane": "a-S29",
+  "outcome": "deferred",
+  "reason": null
+ },
+ {
   "address": "0x00D9E950",
   "name": "stream_global_record_value",
   "file": "fn_00d9e950.rs",
@@ -4568,14 +4608,6 @@
   "reason": null
  },
  {
-  "address": "0x00E5F4C0",
-  "name": "link_network_timer_node_b",
-  "file": "fn_00e5f4c0.rs",
-  "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00E5F4E0",
   "name": "link_network_timer_node_c",
   "file": "fn_00e5f4e0.rs",
@@ -4667,14 +4699,6 @@
   "address": "0x00E62620",
   "name": "register_network_buffer_cleanup",
   "file": "fn_00e62620.rs",
-  "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E62650",
-  "name": "initialize_light_attribute_state",
-  "file": "fn_00e62650.rs",
   "lane": "r-s745",
   "outcome": "not_reached",
   "reason": null
