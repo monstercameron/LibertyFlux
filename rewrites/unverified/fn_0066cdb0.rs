@@ -3,8 +3,8 @@
 /// Create a particle-effect shader variable through allocator slot `+8`
 /// in the object held at TLS slot zero. The indirect allocator receives
 /// a request for 48 bytes, alignment 16, and flags zero.
-/// A null allocator result is returned unchanged. On success, install the
-/// relocated class descriptor and initialize the fields listed below.
+/// A null allocator result is returned unchanged. On success, initialize
+/// the returned object as follows: +0x0 = relocated class descriptor; +0x8 = 0x0 (32-bit); +0x4 = 0x0 (32-bit); +0x10 = 0x100 (16-bit); +0x20 = 0x0 (32-bit); +0x24 = 0x0 (32-bit); +0x12 = 0x3 (8-bit).
 /// The factory has no input parameters and returns the allocated object.
 lf_checker_rt::export!(cdecl, rw_0066cdb0() -> u32 {
     unsafe {
