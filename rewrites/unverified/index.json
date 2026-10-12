@@ -1368,6 +1368,14 @@
   "reason": null
  },
  {
+  "address": "0x00880410",
+  "name": "destroy_utf16_object_array",
+  "file": "fn_00880410.rs",
+  "lane": "r-s775",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00880BA0",
   "name": "audio_format_keys_equal",
   "file": "fn_00880ba0.rs",
@@ -4428,8 +4436,8 @@
   "name": "peds_task_path_solve",
   "file": "fn_00dc1760.rs",
   "lane": "r-b709",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00DCB980",
@@ -4837,14 +4845,6 @@
   "file": "fn_00e6e980.rs",
   "lane": "r-s589",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00E72B60",
-  "name": "initialize_animation_vector_pair_array",
-  "file": "fn_00e72b60.rs",
-  "lane": "r-s778",
-  "outcome": "not_reached",
   "reason": null
  },
  {
