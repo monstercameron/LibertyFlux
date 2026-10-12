@@ -68958,6 +68958,15 @@
   "lane": "a-S14"
  },
  {
+  "address": "0x0097E1D0",
+  "name": "ped_say_taxi_hail",
+  "kind": "function",
+  "file": "functions/fn_0097e1d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
   "address": "0x0097E4F0",
   "name": "ped_task_audio_dispatch_two_fields",
   "kind": "function",
@@ -69973,6 +69982,96 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b49"
+ },
+ {
+  "address": "0x0098A0F0",
+  "name": "fire_audio_cooldown_gain",
+  "kind": "function",
+  "file": "functions/fn_0098a0f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x0098A520",
+  "name": "audio_gain_block_init",
+  "kind": "function",
+  "file": "functions/fn_0098a520.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x0098B240",
+  "name": "audRadioEmitter::~audRadioEmitter__deleting",
+  "kind": "function",
+  "file": "functions/fn_0098b240.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x0098B260",
+  "name": "audVehicleAudioEntity::~audVehicleAudioEntity__deleting",
+  "kind": "function",
+  "file": "functions/fn_0098b260.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x0098B280",
+  "name": "audVehicleAudioEntity::heli_damage_voices_active",
+  "kind": "function",
+  "file": "functions/fn_0098b280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x0098B3B0",
+  "name": "audVehicleAudioEntity::impact_audio_allowed",
+  "kind": "function",
+  "file": "functions/fn_0098b3b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x0098B690",
+  "name": "audVehicleAudioEntity::maybe_start_engine_loops",
+  "kind": "function",
+  "file": "functions/fn_0098b690.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x0098B8C0",
+  "name": "audEntityRadioEmitter::matches_channel",
+  "kind": "function",
+  "file": "functions/fn_0098b8c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x0098B950",
+  "name": "audVehicleAudioEntity::reset_siren_damage",
+  "kind": "function",
+  "file": "functions/fn_0098b950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x0098B970",
+  "name": "audio_handle_release",
+  "kind": "function",
+  "file": "functions/fn_0098b970.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
  },
  {
   "address": "0x0098C0B0",
@@ -70992,6 +71091,69 @@
   "lane": "r-s488"
  },
  {
+  "address": "0x009A5800",
+  "name": "script_audio_requests_reset",
+  "kind": "function",
+  "file": "functions/fn_009a5800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x009A5960",
+  "name": "script_audio_set_conv_flags",
+  "kind": "function",
+  "file": "functions/fn_009a5960.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x009A59C0",
+  "name": "script_audio_set_chase_flags",
+  "kind": "function",
+  "file": "functions/fn_009a59c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x009A59F0",
+  "name": "script_audio_alloc_sound_id",
+  "kind": "function",
+  "file": "functions/fn_009a59f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x009A5C80",
+  "name": "script_audio_find_slot_by_thread",
+  "kind": "function",
+  "file": "functions/fn_009a5c80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x009A6270",
+  "name": "script_sound_triple_find",
+  "kind": "function",
+  "file": "functions/fn_009a6270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x009A6390",
+  "name": "script_audio_slots_idle",
+  "kind": "function",
+  "file": "functions/fn_009a6390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
   "address": "0x009A66B0",
   "name": "MOBILE_PRERING",
   "kind": "function",
@@ -71370,6 +71532,15 @@
   "lane": "r-s420"
  },
  {
+  "address": "0x009A9BA0",
+  "name": "audSpeechManager::alloc_conversation_row",
+  "kind": "function",
+  "file": "functions/fn_009a9ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
   "address": "0x009A9C40",
   "name": "indexed_slot_lookup",
   "kind": "function",
@@ -71503,6 +71674,33 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s420"
+ },
+ {
+  "address": "0x009AA560",
+  "name": "speech_pain_table_fetch",
+  "kind": "function",
+  "file": "functions/fn_009aa560.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x009AA580",
+  "name": "audSpeechManager::voice_entry_flag_get",
+  "kind": "function",
+  "file": "functions/fn_009aa580.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
+ },
+ {
+  "address": "0x009AA780",
+  "name": "speech_pain_voice_lookup",
+  "kind": "function",
+  "file": "functions/fn_009aa780.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
  },
  {
   "address": "0x009AAA80",
@@ -71710,6 +71908,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b559"
+ },
+ {
+  "address": "0x009B08C0",
+  "name": "audPoliceScanner::audPoliceScanner",
+  "kind": "function",
+  "file": "functions/fn_009b08c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s827"
  },
  {
   "address": "0x009B08E0",
