@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Lift: 170 small list and store routines become two methods",
+    "commit": null,
+    "summary": "The second list chosen by shape, every verified function of 21 bytes that calls nothing, is mostly one routine: a static node put at the head of a list. It is lifted once and proved against 162 verified rewrites; eight more are a store of two constants.",
+    "changes": [
+      "crates/lf-core gains a static_list module with two small owning types. One holds the link words of the game's static lists by index and has a single method that puts a node at a list's head, saving the old head and returning it. The other holds plain words and stores a pair of constants. No unsafe code, no addresses, nothing that depends on pointer width; the 162 verified rewrites it replaces are 2,713 lines with 162 unsafe blocks.",
+      "Four new test crates run the lifted methods against 170 tracked verified rewrites on the 32-bit target, 1,000 generated states per instance with the return and every word of the table compared. Wrong versions (the head left unchanged; the save word given the node; a store left out) are caught for every instance. A version that only swaps the order of the two stores is equivalent here, because the two words are always distinct: the tests assert that and do not count it as a catch. The coordinator ran the core crate's host tests (24) and the four crates' 32-bit tests (195) before committing; none failed.",
+      "The store-pair method is two assignments, a weak lift, and is recorded as such: its worth is that eight functions become data. The other 28 functions on the list are listed and left: readers that branch, bit tests on record fields, clears and copies through a record pointer.",
+      "This is the first lifted module placed in the core crate by a lane. The integration script refuses changes to that crate; the coordinator read the module and added an option that lets in new files and one module line there, and nothing that changes an existing file.",
+      "Verified routines with a lifted counterpart proven in the pipeline: 922, up from 752. Two lanes on lists chosen by shape lifted 399 routines in about half an hour of lane time; a third is running on the functions of 13, 15 and 17 bytes."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 6 files from lanes (636 unverified rewrites, 429 in review)",
     "commit": "0323875df9a6dc30eb485caeecaf34fc12fb60fb",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

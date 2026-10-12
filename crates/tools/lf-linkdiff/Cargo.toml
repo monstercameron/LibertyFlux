@@ -1,0 +1,14 @@
+[package]
+name = "lf-linkdiff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: the lifted head-swap against verified 32-bit rewrites (batch 1)"
+publish = false
+
+[dependencies]
+lf-core = { path = "../../lf-core" }
+
+[lints]
+workspace = true

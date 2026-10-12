@@ -21,6 +21,7 @@ pub mod arena;
 pub mod boundary;
 pub mod layout_assert;
 pub mod ptr32;
+pub mod static_list;
 
 pub use arena::{Arena, Handle};
 pub use boundary::Handle32;
