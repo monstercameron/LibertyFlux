@@ -73,7 +73,6 @@ pub mod m_00d5ac00 {
 
 pub mod m_00d78990 {
     #![allow(unused_imports)]
-    use crate::export;
     include!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/../../../rewrites/verified/functions/fn_00d78990.rs"
