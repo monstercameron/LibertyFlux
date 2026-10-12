@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-12",
+    "title": "Rewrites: 305 proofs re-run on the current checker and recorded on it",
+    "commit": null,
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "305 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-12",
     "title": "Devlog: hourly review, 04:05 on 12 October",
     "commit": "4d82962398da97f1145c37db7aa8eb60a9cadc1f",
     "summary": "One row added to the day's hourly reviews.",
