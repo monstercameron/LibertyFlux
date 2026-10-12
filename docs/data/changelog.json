@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: 83 small accessors in five families",
+    "title": "Devlog: the lift lane's entry on five families of small accessors",
     "commit": null,
+    "summary": "The lane's own account of lifting 83 small accessors in five families is added to the devlog.",
+    "changes": [
+      "The entry gives the five families and their lifted forms, why an owning type did not fit routines that own nothing and a table of instances with one routine per family did, the float return that quiets a signalling not-a-number, the race between two tests that shared global slots and the lock that fixed it, and the 72 functions left with their reasons."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: 83 small accessors in five families",
+    "commit": "6fb47a3e567b5b22afe6bcc89a450b6dadfb0e7e",
     "summary": "The third list chosen by shape, the verified functions of 13, 15 and 17 bytes that call nothing, yields five families of small accessors. Each is lifted once and proved against every instance.",
     "changes": [
       "crates/lf-core gains five modules: a store of a byte or a word into a field of an object (50 instances, four kinds of return), a copy of words between fields (11), a write of constants (10), a test of a word (6) and a read of a table entry at a base plus an index times a stride (6). Each is one routine and a table of instances, with no unsafe code and no addresses.",
