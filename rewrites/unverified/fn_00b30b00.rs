@@ -29,6 +29,8 @@ lf_checker_rt::export!(cdecl, rw_00b30b00(context_ptr: u32, descriptor_ptr: u32,
         const LINK_KIND_FIRST: u32 = 3;
         const LINK_KIND_LAST: u32 = 4;
         const BASE_WEIGHT: i32 = 2_000;
+        const LINK_MODE_DEFAULT: u32 = 0;
+        const LINK_MODE_WATCHING: u32 = 1;
         const VTABLE_READY_SLOT: u32 = 4;
         const TASK_POOL_MANAGER_VA: u32 = 0x0171faf4;
         const RANDOM_SCALE_VA: u32 = 0x00fe8680;
@@ -55,8 +57,9 @@ lf_checker_rt::export!(cdecl, rw_00b30b00(context_ptr: u32, descriptor_ptr: u32,
         }
 
         #[inline(always)]
-        unsafe fn read_f32(address: u32) -> f32 {
-            f32::from_bits(unsafe { read_u32(address) })
+        unsafe fn read_image_f32(file_va: u32) -> f32 {
+            let bits = unsafe { lf_checker_rt::global::<u32>(file_va).read() };
+            f32::from_bits(bits)
         }
 
         #[inline(always)]
@@ -90,15 +93,21 @@ lf_checker_rt::export!(cdecl, rw_00b30b00(context_ptr: u32, descriptor_ptr: u32,
         unsafe fn link_task(
             allocated_task: u32,
             descriptor_ptr: u32,
+            task_kind: u32,
         ) -> u32 {
             let nested = unsafe { read_u32(descriptor_ptr + DESCRIPTOR_NESTED) };
             let descriptor_kind = unsafe { read_u32(descriptor_ptr + DESCRIPTOR_KIND) };
+            let link_mode = if task_kind == LINK_KIND_LAST {
+                LINK_MODE_WATCHING
+            } else {
+                LINK_MODE_DEFAULT
+            };
             lf_checker_rt::callee_thiscall!(
                 LINK_TASK_CALLEE,
                 u32,
                 allocated_task,
                 nested,
-                0u32,
+                link_mode,
                 1u32,
                 descriptor_kind
             )
@@ -111,11 +120,11 @@ lf_checker_rt::export!(cdecl, rw_00b30b00(context_ptr: u32, descriptor_ptr: u32,
                 let random_fraction = random_value as f32;
                 let random_scaled = ordered_mul(
                     random_fraction,
-                    unsafe { read_f32(RANDOM_SCALE_VA) },
+                    unsafe { read_image_f32(RANDOM_SCALE_VA) },
                 );
                 let random_weight = ordered_mul(
                     random_scaled,
-                    unsafe { read_f32(NEGATIVE_WEIGHT_SCALE_VA) },
+                    unsafe { read_image_f32(NEGATIVE_WEIGHT_SCALE_VA) },
                 );
                 // `random_value <= 65,535`; the original finite factors
                 // keep `random_weight` in range for truncating i32 conversion.
@@ -185,7 +194,7 @@ lf_checker_rt::export!(cdecl, rw_00b30b00(context_ptr: u32, descriptor_ptr: u32,
                 if allocated_task == 0 {
                     return 0;
                 }
-                unsafe { link_task(allocated_task, descriptor_ptr) }
+                unsafe { link_task(allocated_task, descriptor_ptr, task_kind) }
             }
             _ => 0,
         }

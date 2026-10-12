@@ -1,4 +1,4 @@
-// original: 0x006A1D30 gtaDrawable::vf10
+// original: 0x006A1D30 rage::fragDrawable::~fragDrawable__deleting_4
 
 /// Loads the 32-bit field at `this + 0x08`, calls the drawable helper with
 /// `this + 0x10` in ECX, and forwards the field, four stack arguments, then the

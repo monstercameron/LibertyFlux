@@ -17,5 +17,5 @@ lf_checker_rt::export!(thiscall, rw_00db3320(this: u32, source: u32) -> u32 {
         ((this + CACHED_BOUNDS_LOW) as *mut u64).write_unaligned(low);
         ((this + CACHED_BOUNDS_HIGH) as *mut u64).write_unaligned(high);
     }
-    0
+    source
 });

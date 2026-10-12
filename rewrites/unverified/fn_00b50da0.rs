@@ -10,7 +10,6 @@ lf_checker_rt::export!(thiscall, rw_type20_id(group: *const u8, search_id: u32) 
     const COUNT_OFFSET: usize = 0x08;
     const EVENTS_OFFSET: usize = 0x0c;
     const EVENT_POINTER_BYTES: usize = 4;
-    const EVENT_STRIDE: usize = 0x20;
     const NESTED_OFFSET: usize = 0x10;
     const TYPE_SLOT_OFFSET: usize = 0x4;
     const ID_SLOT_OFFSET: usize = 0xc;
@@ -25,7 +24,7 @@ lf_checker_rt::export!(thiscall, rw_type20_id(group: *const u8, search_id: u32) 
             let type_address = ((event_vtable as *const u8).add(TYPE_SLOT_OFFSET) as *const u32).read_unaligned();
             let get_type: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(type_address as usize);
             let event_type = get_type(event as u32);
-            if event_type == EVENT_TYPE { continue; }
+            if event_type != EVENT_TYPE { continue; }
             let nested = (event.add(NESTED_OFFSET) as *const u32).read_unaligned();
             if nested == 0 { continue; }
             let nested_vtable = (nested as *const u32).read_unaligned();
