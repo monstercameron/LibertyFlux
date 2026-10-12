@@ -1,0 +1,16 @@
+[package]
+name = "lf-layoutframe-diff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: the lifted layout-frame methods against their verified 32-bit rewrites"
+publish = false
+
+[dependencies]
+lf-input-frontend = { path = "../../lf-input-frontend" }
+# The shared checker runtime the verified rewrites are written against.
+lf-checker-rt = { path = "../lf-checker-rt" }
+
+[lints]
+workspace = true

@@ -637,6 +637,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-layoutframe-diff"
+version = "0.1.0"
+dependencies = [
+ "lf-checker-rt",
+ "lf-input-frontend",
+]
+
+[[package]]
 name = "lf-leaderboard"
 version = "0.1.0"
 

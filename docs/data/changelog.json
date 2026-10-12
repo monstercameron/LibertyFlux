@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Rewrites: 74 proofs re-run on the current checker and recorded on it",
+    "title": "Lift: the layout frame class, 37 methods",
     "commit": null,
+    "summary": "Thirty-seven of the 38 verified methods of the layout frame, the base class of the front-end's widgets, are lifted into portable Rust in the front-end crate and proven against their 32-bit rewrites.",
+    "changes": [
+      "Twenty-five of the lifted methods call nothing: field stores, byte masks, two block copies and two branches. Twelve call out (seven that resolve a token and run follow-up steps, the blend, the record query, the indexed check, the list release and the parameter-block refresh); their callees and shared state are behind host traits. The lifted module forbids unsafe code.",
+      "Proof: eleven differential tests on the 32-bit target, each proven method with a deliberately wrong lift that the same trials catch; 31 host tests pass on the 64-bit host.",
+      "What the proofs do not cover: callees write nothing in the proofs, shared bytes and lists are compared by their final value, and the allocator never answers zero, a path on which the original itself faults.",
+      "Not lifted: one verified method that is a single forwarded call with no behaviour of its own, and the class's 58 methods that have no verified rewrite.",
+      "One observation goes to the proof audit list: two sibling methods read pending bytes next to the handoff byte, which should be checked against the original. Lifts are now 1,381."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Rewrites: 74 proofs re-run on the current checker and recorded on it",
+    "commit": "c1fa127321c656f01a558eba38b1b98625ec812f",
     "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
     "changes": [
       "74 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
