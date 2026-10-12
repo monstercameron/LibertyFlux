@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 37258,
-    "rewritten": 19183,
-    "verified": 18941
+    "rewritten": 19200,
+    "verified": 18963
   },
   "structures": 340,
-  "symbols": 19044,
+  "symbols": 19066,
   "measured": [
     {
       "label": "Code section",
@@ -119,13 +119,13 @@
       "label": "Game code verified, measured in bytes",
       "value": 37.8,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2765548 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2771477 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
-      "value": 28.6,
+      "value": 28.7,
       "unit": "percent",
-      "source": "408 of 1347 such functions; they hold 38% of the game's code"
+      "source": "409 of 1347 such functions; they hold 38% of the game's code"
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
@@ -135,13 +135,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 19183,
+      "value": 19200,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 18941,
+      "value": 18963,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
@@ -2454,7 +2454,7 @@
       "to": "0x00993195",
       "count": 41,
       "named": 41,
-      "rewritten": 8,
+      "rewritten": 9,
       "verified": 0
     },
     {
@@ -2509,7 +2509,7 @@
       "count": 44,
       "named": 44,
       "rewritten": 18,
-      "verified": 1
+      "verified": 18
     },
     {
       "stage": "verified",
@@ -2850,8 +2850,8 @@
       "to": "0x00A8835B",
       "count": 229,
       "named": 227,
-      "rewritten": 56,
-      "verified": 34
+      "rewritten": 57,
+      "verified": 35
     },
     {
       "stage": "verified",
@@ -2868,7 +2868,7 @@
       "to": "0x00A9359F",
       "count": 118,
       "named": 117,
-      "rewritten": 74,
+      "rewritten": 77,
       "verified": 71
     },
     {
@@ -3048,8 +3048,8 @@
       "to": "0x00B02C3E",
       "count": 69,
       "named": 69,
-      "rewritten": 48,
-      "verified": 48
+      "rewritten": 49,
+      "verified": 49
     },
     {
       "stage": "verified",
@@ -3075,7 +3075,7 @@
       "to": "0x00B137A3",
       "count": 90,
       "named": 90,
-      "rewritten": 8,
+      "rewritten": 9,
       "verified": 3
     },
     {
@@ -3102,7 +3102,7 @@
       "to": "0x00B24308",
       "count": 71,
       "named": 71,
-      "rewritten": 36,
+      "rewritten": 39,
       "verified": 20
     },
     {
@@ -3453,8 +3453,8 @@
       "to": "0x00BFD726",
       "count": 95,
       "named": 95,
-      "rewritten": 70,
-      "verified": 70
+      "rewritten": 71,
+      "verified": 71
     },
     {
       "stage": "verified",
@@ -3543,7 +3543,7 @@
       "to": "0x00C35276",
       "count": 35,
       "named": 32,
-      "rewritten": 5,
+      "rewritten": 6,
       "verified": 0
     },
     {
@@ -3552,7 +3552,7 @@
       "to": "0x00C3AB97",
       "count": 46,
       "named": 46,
-      "rewritten": 5,
+      "rewritten": 7,
       "verified": 3
     },
     {
@@ -3678,8 +3678,8 @@
       "to": "0x00C88B6E",
       "count": 78,
       "named": 78,
-      "rewritten": 21,
-      "verified": 21
+      "rewritten": 22,
+      "verified": 22
     },
     {
       "stage": "verified",
@@ -3795,8 +3795,8 @@
       "to": "0x00CD1222",
       "count": 63,
       "named": 63,
-      "rewritten": 41,
-      "verified": 40
+      "rewritten": 42,
+      "verified": 41
     },
     {
       "stage": "named",
@@ -3894,7 +3894,7 @@
       "to": "0x00D0E694",
       "count": 48,
       "named": 48,
-      "rewritten": 5,
+      "rewritten": 6,
       "verified": 2
     },
     {
@@ -4477,9 +4477,9 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2765548,
+    "verified": 2771477,
     "large_functions": 2801402,
-    "large_functions_verified": 801644
+    "large_functions_verified": 802732
   },
   "lifted": {
     "methods": 497,
