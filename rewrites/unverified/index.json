@@ -472,14 +472,6 @@
   "reason": "indirect_call"
  },
  {
-  "address": "0x005C1950",
-  "name": "fn_005c1950",
-  "file": "fn_005c1950.rs",
-  "lane": "r-s774",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005CDD40",
   "name": null,
   "file": "fn_005cdd40.rs",
@@ -992,6 +984,46 @@
   "reason": "Stock 60-trial probes show an original-only heap write at offset 0x33E0 even with the record count pinned to zero; after adding the two omitted row-cache stores, the mismatch persists while return and ESP match, and the decoded zero-count path has no matching store."
  },
  {
+  "address": "0x0063B880",
+  "name": "rage::ptxModel::vf23",
+  "file": "fn_0063b880.rs",
+  "lane": "r-s779",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0063B890",
+  "name": "rage::ptxModel::vf5",
+  "file": "fn_0063b890.rs",
+  "lane": "r-s779",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x006428F0",
+  "name": "rage::ptxDomain::vf2",
+  "file": "fn_006428f0.rs",
+  "lane": "r-s779",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00642920",
+  "name": "rage::ptxDomain::vf3",
+  "file": "fn_00642920.rs",
+  "lane": "r-s779",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00642950",
+  "name": "rage::ptxDomain::vf4",
+  "file": "fn_00642950.rs",
+  "lane": "r-s779",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x006607F0",
   "name": "rage::snAddRemoteGamerTask::vf3",
   "file": "fn_006607f0.rs",
@@ -1331,6 +1363,14 @@
   "address": "0x0087F770",
   "name": "rage::miniheapAllocator::contains",
   "file": "fn_0087f770.rs",
+  "lane": "r-s775",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0087F7A0",
+  "name": "rage::miniheapAllocator::allocate_aligned",
+  "file": "fn_0087f7a0.rs",
   "lane": "r-s775",
   "outcome": "not_reached",
   "reason": null
@@ -1875,6 +1915,22 @@
   "address": "0x00A66D10",
   "name": "phInstBehaviorExplosionGta::vf0",
   "file": "fn_00a66d10.rs",
+  "lane": "r-s770",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A66D70",
+  "name": "CEventOnFire::vf0",
+  "file": "fn_00a66d70.rs",
+  "lane": "r-s770",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A67740",
+  "name": "CEventOnFire::vf4",
+  "file": "fn_00a67740.rs",
   "lane": "r-s770",
   "outcome": "not_reached",
   "reason": null
@@ -4760,30 +4816,6 @@
   "reason": null
  },
  {
-  "address": "0x00DB6C50",
-  "name": "input_control_state_set_first_enabled",
-  "file": "fn_00db6c50.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DB6C70",
-  "name": "input_control_state_set_second_enabled",
-  "file": "fn_00db6c70.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DB7820",
-  "name": "UIMusicClip::vf2",
-  "file": "fn_00db7820.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DCB980",
   "name": "vehicle_collision_response_is_allowed",
   "file": "fn_00dcb980.rs",
@@ -4965,6 +4997,14 @@
   "file": "fn_00dec570.rs",
   "lane": "r-s759",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00DF3A90",
+  "name": "UITransitionViewer::vf0",
+  "file": "fn_00df3a90.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -5246,6 +5286,22 @@
   "lane": "r-s589",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00E709A0",
+  "name": "initialize_record_set_00e709a0",
+  "file": "fn_00e709a0.rs",
+  "lane": "r-s769",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00E710C0",
+  "name": "initialize_record_set_00e710c0",
+  "file": "fn_00e710c0.rs",
+  "lane": "r-s769",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00E71120",
