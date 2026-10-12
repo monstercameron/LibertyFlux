@@ -1,5 +1,4 @@
 // original: 0x0095AA20 scan_task_marker_text
-
 /// Scan a text view until a terminal marker or a character helper accepts an
 /// early stop. The input points to a 12-byte view header: a text pointer at
 /// offset 0, a starting byte offset at 4, and a marker selector byte at 8.

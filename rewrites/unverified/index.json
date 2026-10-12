@@ -1355,15 +1355,15 @@
   "address": "0x0095AA20",
   "name": "scan_task_marker_text",
   "file": "fn_0095aa20.rs",
-  "lane": "a-U104",
-  "outcome": "failed_v8",
-  "reason": "The 1,000-trial run had five watchdog timeouts (995 original trials completed), so the required full run did not pass."
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x0095B9E0",
   "name": "clear_stale_task_entries",
   "file": "fn_0095b9e0.rs",
-  "lane": "a-U104",
+  "lane": "a-U126",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2390,6 +2390,110 @@
   "lane": "r-s665",
   "outcome": "deferred",
   "reason": "partly_proven"
+ },
+ {
+  "address": "0x00B271B0",
+  "name": "clone_ped_blend_component",
+  "file": "fn_00b271b0.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B27250",
+  "name": "conditionally_copy_nearby_blend_component",
+  "file": "fn_00b27250.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B27BB0",
+  "name": "find_first_available_task_id",
+  "file": "fn_00b27bb0.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B27E10",
+  "name": "update_blend_timing_state",
+  "file": "fn_00b27e10.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B27E30",
+  "name": "write_blend_motion_values",
+  "file": "fn_00b27e30.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B27E70",
+  "name": "stop_movement",
+  "file": "fn_00b27e70.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B27EF0",
+  "name": "toggle_motion_flag_and_request_update",
+  "file": "fn_00b27ef0.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B28050",
+  "name": "NativeImpl_GET_TOTAL_DURATION_OF_CAR_RECORDING",
+  "file": "fn_00b28050.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B2C910",
+  "name": "squared_distance_from_blend_limits",
+  "file": "fn_00b2c910.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B2F8A0",
+  "name": "reset_three_task_slots",
+  "file": "fn_00b2f8a0.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B30320",
+  "name": "clear_ped_task_records",
+  "file": "fn_00b30320.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B30380",
+  "name": "recording_category",
+  "file": "fn_00b30380.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B30CA0",
+  "name": "read_blend_position",
+  "file": "fn_00b30ca0.rs",
+  "lane": "a-U126",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00B37240",
