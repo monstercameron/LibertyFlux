@@ -159660,6 +159660,33 @@
   "lane": "a-S15"
  },
  {
+  "address": "0x00E5F4A0",
+  "name": "link_network_timer_node_a",
+  "kind": "function",
+  "file": "functions/fn_00e5f4a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E5F4C0",
+  "name": "link_network_timer_node_b",
+  "kind": "function",
+  "file": "functions/fn_00e5f4c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E5F4E0",
+  "name": "link_network_timer_node_c",
+  "kind": "function",
+  "file": "functions/fn_00e5f4e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
   "address": "0x00E5F500",
   "name": "prepend_static_node_10ef48",
   "kind": "function",
@@ -162180,6 +162207,69 @@
   "lane": "r-s187"
  },
  {
+  "address": "0x00E620F0",
+  "name": "initialize_network_thread_pool_and_register_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e620f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62140",
+  "name": "initialize_network_thread_pool_lock_b",
+  "kind": "function",
+  "file": "functions/fn_00e62140.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62160",
+  "name": "register_network_thread_pool_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e62160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62170",
+  "name": "initialize_network_thread_pool_lock_c",
+  "kind": "function",
+  "file": "functions/fn_00e62170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62190",
+  "name": "reset_network_pool_records",
+  "kind": "function",
+  "file": "functions/fn_00e62190.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E621E0",
+  "name": "initialize_network_pool_state_records",
+  "kind": "function",
+  "file": "functions/fn_00e621e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62280",
+  "name": "initialize_network_thread_pool_lock_d",
+  "kind": "function",
+  "file": "functions/fn_00e62280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
   "address": "0x00E622A0",
   "name": "net_regfwd_01",
   "kind": "function",
@@ -162540,6 +162630,123 @@
   "lane": "a-G09"
  },
  {
+  "address": "0x00E625F0",
+  "name": "register_network_object_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e625f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62600",
+  "name": "initialize_network_state_object_a",
+  "kind": "function",
+  "file": "functions/fn_00e62600.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62620",
+  "name": "register_network_buffer_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e62620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62630",
+  "name": "initialize_network_state_object_b",
+  "kind": "function",
+  "file": "functions/fn_00e62630.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62650",
+  "name": "initialize_light_attribute_state",
+  "kind": "function",
+  "file": "functions/fn_00e62650.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62670",
+  "name": "register_global_graphics_object_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e62670.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E626A0",
+  "name": "initialize_graphics_state_object_a",
+  "kind": "function",
+  "file": "functions/fn_00e626a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E626C0",
+  "name": "register_graphics_state_object_cleanup_a",
+  "kind": "function",
+  "file": "functions/fn_00e626c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E626D0",
+  "name": "initialize_graphics_state_object_b",
+  "kind": "function",
+  "file": "functions/fn_00e626d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E626F0",
+  "name": "register_graphics_state_object_cleanup_b",
+  "kind": "function",
+  "file": "functions/fn_00e626f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62700",
+  "name": "register_graphics_state_object_cleanup_c",
+  "kind": "function",
+  "file": "functions/fn_00e62700.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62710",
+  "name": "register_graphics_resource_release_a",
+  "kind": "function",
+  "file": "functions/fn_00e62710.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62720",
+  "name": "register_graphics_resource_release_b",
+  "kind": "function",
+  "file": "functions/fn_00e62720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
   "address": "0x00E62880",
   "name": "audio_thunk_forward",
   "kind": "function",
@@ -162718,6 +162925,132 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s107"
+ },
+ {
+  "address": "0x00E62B30",
+  "name": "initialize_audio_link_head_and_register_cleanup_c",
+  "kind": "function",
+  "file": "functions/fn_00e62b30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62B50",
+  "name": "initialize_audio_link_head_and_register_cleanup_d",
+  "kind": "function",
+  "file": "functions/fn_00e62b50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62B70",
+  "name": "reset_audio_smoothing_state_f",
+  "kind": "function",
+  "file": "functions/fn_00e62b70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62B90",
+  "name": "reset_audio_smoothing_state_g",
+  "kind": "function",
+  "file": "functions/fn_00e62b90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62BB0",
+  "name": "register_audio_high_end_footprint_setting",
+  "kind": "function",
+  "file": "functions/fn_00e62bb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62BF0",
+  "name": "store_audio_scale_ratio_a",
+  "kind": "function",
+  "file": "functions/fn_00e62bf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62C10",
+  "name": "initialize_audio_link_head_and_register_cleanup_e",
+  "kind": "function",
+  "file": "functions/fn_00e62c10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62C30",
+  "name": "register_audio_buffer_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e62c30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62C40",
+  "name": "store_audio_scale_ratio_b",
+  "kind": "function",
+  "file": "functions/fn_00e62c40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62C60",
+  "name": "store_audio_scale_ratio_c",
+  "kind": "function",
+  "file": "functions/fn_00e62c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62C80",
+  "name": "register_network_global_pointer_initializer_a",
+  "kind": "function",
+  "file": "functions/fn_00e62c80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62C90",
+  "name": "initialize_network_state_object_a",
+  "kind": "function",
+  "file": "functions/fn_00e62c90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62CB0",
+  "name": "register_network_global_pointer_initializer_b",
+  "kind": "function",
+  "file": "functions/fn_00e62cb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
+ },
+ {
+  "address": "0x00E62CC0",
+  "name": "register_network_global_pointer_initializer_c",
+  "kind": "function",
+  "file": "functions/fn_00e62cc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s745"
  },
  {
   "address": "0x00E62D70",
