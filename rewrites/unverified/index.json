@@ -1096,30 +1096,6 @@
   "reason": null
  },
  {
-  "address": "0x00666F80",
-  "name": "insert_keyframe",
-  "file": "fn_00666f80.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00667230",
-  "name": "create_ptx_keyframe4",
-  "file": "fn_00667230.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00667290",
-  "name": "create_keyframe_transform_state",
-  "file": "fn_00667290.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00668240",
   "name": "ptx_event_emitter_release_owned_resources",
   "file": "fn_00668240.rs",
@@ -1440,14 +1416,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00884770",
-  "name": "audio_stream_buffer_release",
-  "file": "fn_00884770.rs",
-  "lane": "a-U140",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x0088FC40",
   "name": "audio_compute_voice_mix",
   "file": "fn_0088fc40.rs",
@@ -1480,9 +1448,9 @@
   "reason": null
  },
  {
-  "address": "0x008C5DF0",
-  "name": "file_mode_label_pointer",
-  "file": "fn_008c5df0.rs",
+  "address": "0x008C5CC0",
+  "name": "n:/text",
+  "file": "fn_008c5cc0.rs",
   "lane": "a-U139",
   "outcome": "not yet run",
   "reason": null
@@ -1542,6 +1510,14 @@
   "lane": "r-b211",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00934480",
+  "name": "content_live_slots_activate",
+  "file": "fn_00934480.rs",
+  "lane": "r-s763",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x009359E0",
@@ -2080,6 +2056,14 @@
   "reason": null
  },
  {
+  "address": "0x00A81E20",
+  "name": "slide_cover_subtask_id_to_index",
+  "file": "fn_00a81e20.rs",
+  "lane": "r-s762",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A95A60",
   "name": null,
   "file": "fn_00a95a60.rs",
@@ -2261,6 +2245,14 @@
   "file": "fn_00ac85d0.rs",
   "lane": "r-s705",
   "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00ADA8A0",
+  "name": null,
+  "file": "fn_00ada8a0.rs",
+  "lane": "a-H43",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -4656,6 +4648,30 @@
   "reason": null
  },
  {
+  "address": "0x00DB3F30",
+  "name": "UIMouseCursor::UIMouseCursor",
+  "file": "fn_00db3f30.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DB3F90",
+  "name": "UIMouseCursor::UIMouseCursor_2",
+  "file": "fn_00db3f90.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DB3FB0",
+  "name": "UIMouseCursor::vf2",
+  "file": "fn_00db3fb0.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DB63C0",
   "name": "input_get_button_state_mask",
   "file": "fn_00db63c0.rs",
@@ -4683,6 +4699,38 @@
   "address": "0x00DB6C70",
   "name": "input_control_state_set_second_enabled",
   "file": "fn_00db6c70.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DB77C0",
+  "name": "UIMusicViewer::UIMusicViewer",
+  "file": "fn_00db77c0.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DB77E0",
+  "name": "UIMusicClip::UIMusicClip_2",
+  "file": "fn_00db77e0.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DB7800",
+  "name": "UIMusicViewer::UIMusicViewer_2",
+  "file": "fn_00db7800.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DB7820",
+  "name": "UIMusicClip::vf2",
+  "file": "fn_00db7820.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
   "reason": null

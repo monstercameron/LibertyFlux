@@ -9,9 +9,14 @@
 /// error flag, and clears the pending bit. The method has no meaningful
 /// return value. The resolver and error handler are intercepted by contract.
 ///
-/// The resolver receives five pointers into this function's local frame. Their
-/// addresses are skipped in the call comparison; the pointed-to words are
-/// snapshotted. The patterned stack fill is retained.
+/// The parent reads only the duration output; the other four frame outputs do
+/// not reach a returned value or persistent memory.
+///
+/// The proof skips all five frame-pointer arguments because the original and
+/// Rust frames have different layouts. It does not snapshot their pre-call
+/// contents, which are caller-dependent stack words. The patterned stack fill
+/// remains enabled, and the scripted duration is checked through the node's
+/// resulting state.
 lf_checker_rt::export!(thiscall, rw_0089a810(
     this: u32,
     start_time: u32,
