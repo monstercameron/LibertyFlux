@@ -3,8 +3,8 @@
 use lf_28_globwrdiff::instances::INSTANCES;
 
 #[test]
-fn the_table_lists_5_instances() {
-    assert_eq!(INSTANCES.len(), 5);
+fn the_table_lists_3_instances() {
+    assert_eq!(INSTANCES.len(), 3);
 }
 
 #[test]

@@ -59,7 +59,7 @@ lf_checker_rt::export!(thiscall, fn_00a2a870(
                 let aim_factor = read_f32(context, CONTEXT_FLOAT_OFFSET);
                 let left = core::hint::black_box(initial_threshold);
                 let right = core::hint::black_box(aim_factor);
-                left * right
+                right * left
             }
         } else {
             initial_threshold

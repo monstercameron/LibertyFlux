@@ -17,7 +17,7 @@ pub struct Named {
 }
 
 /// The instances, in the order of the call table.
-pub const INSTANCES: [Named; 5] = [
+pub const INSTANCES: [Named; 3] = [
     Named {
         name: "stream_state_clear",
         base: 0x1172f53,
@@ -35,26 +35,10 @@ pub const INSTANCES: [Named; 5] = [
         },
     },
     Named {
-        name: "reset_the_streaming_slot_state_words",
-        base: 0x1036f14,
-        spec: ConstantWrites {
-            writes: &[ConstantWrite { offset: 0x0, width: WriteWidth::Word, value: 0xffffffff }, ConstantWrite { offset: 0x4, width: WriteWidth::Word, value: 0xffffffff }, ConstantWrite { offset: 0x1719f6, width: WriteWidth::Byte, value: 0x0 }, ConstantWrite { offset: 0x16e0a3, width: WriteWidth::Byte, value: 0x0 }, ConstantWrite { offset: 0x1719f7, width: WriteWidth::Byte, value: 0x0 }],
-            returns: Returns::Zero,
-        },
-    },
-    Named {
         name: "reset_the_streaming_mode_state_and",
         base: 0x11d6fc4,
         spec: ConstantWrites {
             writes: &[ConstantWrite { offset: 0x4, width: WriteWidth::Word, value: 0x1 }, ConstantWrite { offset: 0x0, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x8, width: WriteWidth::Byte, value: 0x0 }],
-            returns: Returns::Zero,
-        },
-    },
-    Named {
-        name: "reset_state_words",
-        base: 0x104004c,
-        spec: ConstantWrites {
-            writes: &[ConstantWrite { offset: 0x5c1090, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x5d4c34, width: WriteWidth::Word, value: 0x0 }, ConstantWrite { offset: 0x0, width: WriteWidth::Word, value: 0xffffffff }, ConstantWrite { offset: 0x4, width: WriteWidth::Word, value: 0xffffffff }, ConstantWrite { offset: 0x8, width: WriteWidth::Word, value: 0xffffffff }, ConstantWrite { offset: 0xc, width: WriteWidth::Word, value: 0xffffffff }],
             returns: Returns::Zero,
         },
     },

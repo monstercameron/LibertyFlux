@@ -13,7 +13,7 @@ export!(stdcall, rw_0065bcb0(table: *const u8) -> u8 {
     const ROWS_FIELD: usize = 0x08;
     const FIRST_ROW_FIELD: usize = 0x0C;
     const ROW_STRIDE: usize = 0x30;
-    const KEY_OFFSETS: [usize; 2] = [0x00, 0x04];
+    const KEY_OFFSETS: [usize; 2] = [0x04, 0x00];
 
     unsafe {
         let collection = table.add(TABLE_FIELD).cast::<*const u8>().read_unaligned();

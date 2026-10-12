@@ -38,17 +38,6 @@ pub mod m_00908370 {
     ));
 }
 
-pub mod m_0093fc30 {
-    #![allow(unused_imports)]
-    use crate::export;
-    #[allow(unused_imports)]
-    use crate::{global, relocated};
-    include!(concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/../../../../../../../rewrites/verified/functions/fn_0093fc30.rs"
-    ));
-}
-
 pub mod m_009431d0 {
     #![allow(unused_imports)]
     use crate::export;
@@ -57,16 +46,5 @@ pub mod m_009431d0 {
     include!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/../../../../../../../rewrites/verified/functions/fn_009431d0.rs"
-    ));
-}
-
-pub mod m_00b02cd0 {
-    #![allow(unused_imports)]
-    use crate::export;
-    #[allow(unused_imports)]
-    use crate::{global, relocated};
-    include!(concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/../../../../../../../rewrites/verified/functions/fn_00b02cd0.rs"
     ));
 }

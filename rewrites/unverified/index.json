@@ -1224,30 +1224,6 @@
   "reason": null
  },
  {
-  "address": "0x0065F180",
-  "name": "rage::snMsgSetInvitableCmd::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065f180.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065F210",
-  "name": "rage::snMsgSessionMemberIds::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065f210.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065F2A0",
-  "name": "rage::snMsgRequestGamerInfo::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065f2a0.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0065F330",
   "name": "sn_migrate_claim_slot",
   "file": "fn_0065f330.rs",
@@ -1632,100 +1608,12 @@
   "reason": "other"
  },
  {
-  "address": "0x006A1CB0",
-  "name": null,
-  "file": "fn_006a1cb0.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006A1CE0",
-  "name": null,
-  "file": "fn_006a1ce0.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006A1CF0",
-  "name": null,
-  "file": "fn_006a1cf0.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006A1D10",
-  "name": null,
-  "file": "fn_006a1d10.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006A1D30",
-  "name": null,
-  "file": "fn_006a1d30.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006A1D50",
-  "name": null,
-  "file": "fn_006a1d50.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006A4B60",
-  "name": null,
-  "file": "fn_006a4b60.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006A4B80",
-  "name": null,
-  "file": "fn_006a4b80.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006A4C70",
-  "name": null,
-  "file": "fn_006a4c70.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006A4CD0",
-  "name": null,
-  "file": "fn_006a4cd0.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x006A4D30",
-  "name": null,
+  "name": "fn_006a4d30",
   "file": "fn_006a4d30.rs",
   "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006A58E0",
-  "name": null,
-  "file": "fn_006a58e0.rs",
-  "lane": "r-s760",
-  "outcome": "not yet run",
-  "reason": null
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x006F7F10",
@@ -2524,6 +2412,14 @@
   "name": "CSimpleNMHighFallTaskInfo::vf9",
   "file": "fn_00a7f6a0.rs",
   "lane": "r-s596",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A80D90",
+  "name": "CScenarioTaskInfo::ensure_target_entity",
+  "file": "fn_00a80d90.rs",
+  "lane": "r-s762",
   "outcome": "not_reached",
   "reason": null
  },
@@ -3366,14 +3262,6 @@
   "lane": "r-s292",
   "outcome": "deferred",
   "reason": "needs_encrypted_code"
- },
- {
-  "address": "0x00B7E9A0",
-  "name": "clear_task_reference_if_equal",
-  "file": "fn_00b7e9a0.rs",
-  "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00B82B80",
@@ -5089,7 +4977,7 @@
  },
  {
   "address": "0x00DB3BA0",
-  "name": "UILayoutFrame::set_child_flag_a",
+  "name": "UIGalleryFileViewer::vf9",
   "file": "fn_00db3ba0.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
@@ -5097,7 +4985,7 @@
  },
  {
   "address": "0x00DB3BF0",
-  "name": "UILayoutFrame::set_child_flag_b",
+  "name": "UIGalleryFileViewer::vf11",
   "file": "fn_00db3bf0.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
@@ -5105,7 +4993,7 @@
  },
  {
   "address": "0x00DB3C40",
-  "name": "UILayoutFrame::set_child_flag_c",
+  "name": "UIGalleryFileViewer::vf13",
   "file": "fn_00db3c40.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
@@ -5113,7 +5001,7 @@
  },
  {
   "address": "0x00DB3C90",
-  "name": "UILayoutFrame::set_child_flag_d",
+  "name": "UIGalleryFileViewer::vf77",
   "file": "fn_00db3c90.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
@@ -5121,7 +5009,7 @@
  },
  {
   "address": "0x00DB3CE0",
-  "name": "UILayoutFrame::set_child_mode",
+  "name": "UIGalleryFileViewer::vf28",
   "file": "fn_00db3ce0.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
@@ -5131,6 +5019,14 @@
   "address": "0x00DB63C0",
   "name": "input_get_button_state_mask",
   "file": "fn_00db63c0.rs",
+  "lane": "r-s766",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DB6470",
+  "name": "input_get_action_mapping_flags",
+  "file": "fn_00db6470.rs",
   "lane": "r-s766",
   "outcome": "not_reached",
   "reason": null

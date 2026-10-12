@@ -21,7 +21,9 @@ lf_checker_rt::export!(thiscall, rw_0066c590(this: u32, texture_id: u32) -> u32 
             TEXTURE_LOADER_CALLEE,
             u32,
             texture_manager,
-            texture_id
+            texture_id,
+            0,
+            0
         );
 
         let object_vtable = read_word(this);

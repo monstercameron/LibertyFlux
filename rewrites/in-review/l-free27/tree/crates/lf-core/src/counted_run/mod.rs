@@ -38,6 +38,8 @@
 //!   just past the run with its low byte cleared; it needs the object's
 //!   address, which the caller passes in. A masked key answers the key with
 //!   its low byte cleared, and bit 0 set for a match.
+//! - A guarded zero key takes the same answers as a miss; a masked entry
+//!   address for it is the address just past the run, which needs the count.
 //! - A run that reaches past the end of the bytes given is an error
 //!   ([`Truncated`]), reported at the first read that falls outside them. The
 //!   original would read that memory; a caller that gives the whole object
