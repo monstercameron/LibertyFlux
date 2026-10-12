@@ -689,6 +689,13 @@ name = "lf-math"
 version = "0.1.0"
 
 [[package]]
+name = "lf-mirrordiff"
+version = "0.1.0"
+dependencies = [
+ "lf-renderer",
+]
+
+[[package]]
 name = "lf-model"
 version = "0.1.0"
 dependencies = [
@@ -712,6 +719,13 @@ dependencies = [
 
 [[package]]
 name = "lf-pedmoverdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-peds-tasks",
+]
+
+[[package]]
+name = "lf-peds-diff"
 version = "0.1.0"
 dependencies = [
  "lf-peds-tasks",

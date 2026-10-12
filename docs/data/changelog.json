@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Format: the seek-cover module",
+    "title": "Lift: a move-between-points task and the mirror render phase, nine methods of two classes",
     "commit": null,
+    "summary": "Two class lifts that finished together and share the workspace's manifest, so they are one commit: a pedestrian task that walks a character between scenario points, and the render phase that draws the scene reflected in a mirror.",
+    "changes": [
+      "crates/lf-peds-tasks gains a move_between_points module: all five verified methods of the task (the deleting destructor, the clone factory, a blend weight, the run tick and the main tick), 747 lines with no unsafe code, the heap, route, world and seating services behind traits. A new test crate runs them against the five tracked verified rewrites on the 32-bit target; 24 deliberately wrong versions are each caught. The coordinator ran the crate's 365 host tests and the 10 tests on the 32-bit target; none failed.",
+      "crates/lf-renderer gains its first lifted module, mirror_phase: all four verified methods of the mirror-reflection render phase (the deleting destructor, refresh, reflect and render), 718 lines with no unsafe code. A new test crate compares each with its tracked verified rewrite on 4,000 seeded cases: results, every call in order with its arguments and what its pointers point at, and the whole memory image, floats bit for bit; a copy of each method with one line changed is caught. The coordinator ran the renderer crate's 16 host tests and the 8 tests on the 32-bit target; none failed.",
+      "The mirror lane caught in its own lift the fault that withdrew a verified rewrite yesterday: its first draft held two of the phase's words across a call that the original re-reads them after, and a scripted write through that call showed it. The lift re-reads them, and a copy without the re-read is caught.",
+      "Findings for the proof audits, from reading the verified rewrites closely: the task's main tick maps a callee's answer through three constants and gives zero for any other, and its proof covers only those three answers; that callee's arguments are not compared; one rewrite's header names a different class; two of the render phase's contracts of record have the full comparison of memory off and one sets the stack fill to zero. The lifts' own tests compare more than those contracts do.",
+      "Verified routines with a lifted counterpart proven in the pipeline: 1,329."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Format: the seek-cover module",
+    "commit": "2bd6311204197cd487844d474783a7c7a75e7133",
     "summary": "Formatting only. The seek-cover module went in an hour ago before its crate's module line was added, so the formatter had not reached it.",
     "changes": [
       "The four files of the seek-cover module are formatted as the rest of the crate is. No behaviour changes; the crate's 365 host tests pass."
