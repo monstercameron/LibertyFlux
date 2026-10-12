@@ -1,0 +1,22 @@
+// original: 0x00b86370 REGISTER_WORLD_POINT_SCRIPT_BRAIN
+/// Native handler `REGISTER_WORLD_POINT_SCRIPT_BRAIN` (script context in, engine call out).
+///
+/// Registers a world-point script brain; forwards a handle and a radius float.
+/// `ctx.ret` points at the return slot, `ctx.args` at the argument array.
+export!(cdecl, rw_00b86370(ctx: *mut NativeCtx) -> u32 {
+    unsafe {
+        let a = (*ctx).args;
+        callee_cdecl!(1, u32, *a.add(0), *a.add(1))
+    }
+});
+
+/// Script-native call context, as the handlers observe it (r-n29 shape).
+#[repr(C)]
+pub struct NativeCtx {
+    /// Pointer to the dword return slot.
+    pub ret: *mut u32,
+    /// Second word; no handler in this batch reads it.
+    pub reserved: u32,
+    /// Pointer to the argument array (one dword per script argument).
+    pub args: *const u32,
+}
