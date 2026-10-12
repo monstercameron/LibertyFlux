@@ -17,14 +17,16 @@ use core::hint::black_box;
 use lf_core::Handle32;
 use lf_playerped_diff::rewrites::{
     fn_009e54c0, fn_009e5940, fn_009eaee0, fn_009f0fc0, fn_00a2a620, fn_00a2d300, fn_00a2d3a0,
-    fn_00a2d3e0, fn_00a29e40, fn_009edb70, fn_00a2a870, fn_009f0e20,
+    fn_00a2d3e0, fn_00a29e40, fn_009edb70, fn_00a2a870, fn_009f0e20, fn_009ebed0,
 };
-use lf_playerped_diff::rt::{Effect, Kind, SLOT8_ID};
+use lf_playerped_diff::rt::{self, Effect, Kind, SLOT8_ID};
+use lf_world::player_ped::{ByteGlobal, GateWorld, WordGlobal};
 use lf_world::player_ped::offsets;
 use lf_world::player_ped::offsets::{
     CURRENT_SLOT, JOB_WORD, LINK, MODE, MOTION_VALUE, SETUP_RESULT, SUB_A, SUB_B,
 };
 use lf_world::player_ped::{CPlayerPed, PedTag, PlayerPedWorld};
+use support::cells as cells_index;
 use support::{
     Case, Rng, TestWorld, Variant, compare, float_bits, handle_pick, put16, put32, put8,
     random_image, run_both, run_trials,
@@ -816,7 +818,7 @@ fn trial_vf33(rng: &mut Rng, variant: Variant) -> Result<(), String> {
 
     let mut init = random_image(rng);
     put32(&mut init, 0, ped_table_addr);
-    put32(&mut init, offsets::SUB_OBJECT, sub_table_addr);
+    put32(&mut init, 0x0BB0, sub_table_addr);
     put32(&mut init, offsets::OUTER, outer_addr);
     let index = rng.below(16) as i32 - 8;
     put16(&mut init, offsets::CHAIN_INDEX, index as i16 as u16);

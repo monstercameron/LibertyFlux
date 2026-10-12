@@ -570,6 +570,7 @@ pub fn run_trials(
 /// Positions of the gate block's globals in the runtime's cell table.
 pub mod cells {
     pub const HOOK_ARG: usize = 0;
+    pub const HOOK_SLOT: usize = 1;
     pub const FLAG_A: usize = 2;
     pub const FLAG_B: usize = 3;
     pub const OR_FIRST: usize = 4;
