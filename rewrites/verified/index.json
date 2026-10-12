@@ -67293,6 +67293,204 @@
   "lane": "r-b49"
  },
  {
+  "address": "0x0098C0B0",
+  "name": "audio_vehicle_mix_level_get",
+  "kind": "function",
+  "file": "functions/fn_0098c0b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098C170",
+  "name": "audPoliceScanner::is_scanning",
+  "kind": "function",
+  "file": "functions/fn_0098c170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098C180",
+  "name": "NativeImpl_RETUNE_RADIO_UP_4",
+  "kind": "function",
+  "file": "functions/fn_0098c180.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098C1A0",
+  "name": "audVehicleAudioEntity::ensure_heli_config",
+  "kind": "function",
+  "file": "functions/fn_0098c1a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098C1D0",
+  "name": "audVehicleAudioEntity::road_noise_state_get",
+  "kind": "function",
+  "file": "functions/fn_0098c1d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098C3C0",
+  "name": "audVehicleAudioEntity::compute_occluded_gains",
+  "kind": "function",
+  "file": "functions/fn_0098c3c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098C410",
+  "name": "audio_voice_slot_gate",
+  "kind": "function",
+  "file": "functions/fn_0098c410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098C430",
+  "name": "audio_thread_slot_ptr",
+  "kind": "function",
+  "file": "functions/fn_0098c430.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098CBA0",
+  "name": "audVehicleAudioEntity::model_config_name",
+  "kind": "function",
+  "file": "functions/fn_0098cba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098CBC0",
+  "name": "audVehicleAudioEntity::get_slot_by_handle",
+  "kind": "function",
+  "file": "functions/fn_0098cbc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098CD20",
+  "name": "audVehicleAudioEntity::horn_flag_check",
+  "kind": "function",
+  "file": "functions/fn_0098cd20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098D690",
+  "name": "id_table_contains",
+  "kind": "function",
+  "file": "functions/fn_0098d690.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098D6D0",
+  "name": "audVehicleAudioEntity::horn_mode_is_one",
+  "kind": "function",
+  "file": "functions/fn_0098d6d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098EE70",
+  "name": "NativeImpl_ENABLE_GPS_IN_VEHICLE",
+  "kind": "function",
+  "file": "functions/fn_0098ee70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098EE80",
+  "name": "audVehicleAudioEntity::set_gps_voice",
+  "kind": "function",
+  "file": "functions/fn_0098ee80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098EEA0",
+  "name": "NativeImpl_HELI_AUDIO_SHOULD_SKIP_STARTUP",
+  "kind": "function",
+  "file": "functions/fn_0098eea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098EEC0",
+  "name": "audVehicleAudioEntity::set_loud_radio",
+  "kind": "function",
+  "file": "functions/fn_0098eec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098EF90",
+  "name": "audio_voice_set_scaled255_29",
+  "kind": "function",
+  "file": "functions/fn_0098ef90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098EFF0",
+  "name": "audio_voice_set_float_200",
+  "kind": "function",
+  "file": "functions/fn_0098eff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x0098F0C0",
+  "name": "audio_voice_set_f32_8_12",
+  "kind": "function",
+  "file": "functions/fn_0098f0c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x00990930",
+  "name": "audVehicleAudioEntity::stop_heli_damage_loop",
+  "kind": "function",
+  "file": "functions/fn_00990930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
+  "address": "0x009918C0",
+  "name": "audVehicleAudioEntity::notify_headlamp_switch",
+  "kind": "function",
+  "file": "functions/fn_009918c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s735"
+ },
+ {
   "address": "0x00996230",
   "name": "audio_voice_update",
   "kind": "function",
