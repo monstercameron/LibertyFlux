@@ -2,7 +2,7 @@
   {
     "date": "2026-10-12",
     "title": "Devlog: the lift lane's entry on the player pedestrian class",
-    "commit": null,
+    "commit": "c6eaaf67809ae52d759def7f1a3963570c13d2c5",
     "summary": "The lane's own account of lifting fourteen methods of the player pedestrian class is added to the devlog.",
     "changes": [
       "The entry gives the class's methods and their proofs, the lifted form, what the proofs do not cover, and the findings: two verified methods whose proofs depend on a zero stack fill without saying so, and two points about not-a-number handling in other rewrites."

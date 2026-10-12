@@ -9,6 +9,73 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Player pedestrian class: fourteen verified methods lifted and proven</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls25"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls25</id>
+    <published>2026-10-12T00:00:00Z</published>
+    <updated>2026-10-12T00:00:00Z</updated>
+    <summary>From lane l-cls25.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-cls25.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the verified methods of the player pedestrian class into portable Rust, each proven against its verified 32-bit rewrite on the same generated inputs, with a deliberately wrong copy of each caught by the same comparison.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Found.&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Methods of the class in the inventory&lt;/td&gt;&lt;td data-label="Value"&gt;46&lt;/td&gt;&lt;td data-label="What it means"&gt;21 have a verified rewrite; 25 have none and were not written from their names.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Verified methods lifted and proven&lt;/td&gt;&lt;td data-label="Value"&gt;14&lt;/td&gt;&lt;td data-label="What it means"&gt;Methods with behaviour: branches, arithmetic, ordered collaborator calls, float bit operations and data mappings.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Verified methods not lifted&lt;/td&gt;&lt;td data-label="Value"&gt;7&lt;/td&gt;&lt;td data-label="What it means"&gt;Three that are a single store or a store and a forward (no behaviour of their own); two that depend on the checker's zero stack fill; two large methods not reached.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Differential tests on the 32-bit target&lt;/td&gt;&lt;td data-label="Value"&gt;30&lt;/td&gt;&lt;td data-label="What it means"&gt;Fourteen agreement tests, fourteen wrong-copy tests and two branch-coverage checks, with 3000 generated cases each.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Host edge tests&lt;/td&gt;&lt;td data-label="Value"&gt;34&lt;/td&gt;&lt;td data-label="What it means"&gt;Run on the 32-bit target and on the 64-bit host.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Wrong copies caught&lt;/td&gt;&lt;td data-label="Value"&gt;14 of 14&lt;/td&gt;&lt;td data-label="What it means"&gt;Two of them only on not-a-number operands with distinct payloads (low counts, as expected).&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Finding about two verified proofs.&lt;/strong&gt; Two verified rewrites of this class store zero in a word that the original leaves to an uninitialised stack slot. Their contracts set the checker's stack fill to zero and record no narrowing for it. The lift did not follow either rewrite: a lift would fix a value the original does not define. The coordinator is asked to record the narrowing or rework those two rewrites.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Finding about one rewrite's comment.&lt;/strong&gt; A rewrite's comment says that a not-a-number distance keeps the old link; the code returns the source point in that case. The lift follows the code.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Floating-point operands are pinned where both can be not-a-number, so the lifted sums and products keep the first operand's payload as the original does. The lifted module forbids unsafe code; the test runtime, which is test-only, is the one place raw memory is touched. A collaborator the method calls is one method on a trait for the class, and its calls are compared in order with their arguments. Where a collaborator writes through a pointer argument, the proof answers with scripted words and compares the call's shape, not the address of the caller's locals.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Run the differential tests of the test crate on the 32-bit target and the crate's host tests on the 64-bit host, with the crate's package name. Each differential test runs 3000 generated cases and fails if a wrong copy is not caught.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Changing the lanes' model in mid-run, and thirty lanes cut short by stopping their launcher</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#muse-switch-2026-10-12"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#muse-switch-2026-10-12</id>
+    <published>2026-10-12T00:00:00Z</published>
+    <updated>2026-10-12T00:00:00Z</updated>
+    <summary>At 00:52 on 12 October the owner said that lanes are Muse lanes from now on. Since 7 October the work had been done by Luna lanes, with Claude Haiku lanes on the hard functions and the class lifts. Thirty Luna lanes and four Haiku lanes were running. Eight minutes later thirty Muse lanes were running, which is not what the coordinator had intended or reported: it meant the Luna lanes to finish their batches, and stopped all thirty by accident.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;At 00:52 on 12 October the owner said that lanes are Muse lanes from now on. Since 7 October the work had been done by Luna lanes, with Claude Haiku lanes on the hard functions and the class lifts. Thirty Luna lanes and four Haiku lanes were running. Eight minutes later thirty Muse lanes were running, which is not what the coordinator had intended or reported: it meant the Luna lanes to finish their batches, and stopped all thirty by accident.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;How is the working model changed while the swarm is running, without losing work or trusting the new lanes before they have shown anything?&lt;/p&gt;
+&lt;h3&gt;What was done, in order&lt;/h3&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Step&lt;/th&gt;&lt;th role="columnheader"&gt;What it was&lt;/th&gt;&lt;th role="columnheader"&gt;Result&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;The operating scripts&lt;/td&gt;&lt;td role="cell" data-label="What it was"&gt;The Muse launcher had last run on 6 October. The finishers, the supervisor, the watch and the memory guard had since been written around Luna lanes: they recognised a lane by the Luna launcher's line in its log and by its process. Each was changed to take lanes of either model, on a copy that the shell's own parser had to accept before it replaced the script in use.&lt;/td&gt;&lt;td role="cell" data-label="Result"&gt;Five scripts changed and one added, none broken. A stop file left by the supervisor on 6 October was moved aside.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;One pilot lane&lt;/td&gt;&lt;td role="cell" data-label="What it was"&gt;A batch of forty small functions, started alone. A lane that fails in its first three minutes is what an unavailable model or a broken launcher looks like, and every such start burns a batch's claim on its functions.&lt;/td&gt;&lt;td role="cell" data-label="Result"&gt;The lane logged its first step within twenty seconds and its triage within two minutes.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Stopping new Luna lanes&lt;/td&gt;&lt;td role="cell" data-label="What it was"&gt;The coordinator stopped the background window that had been starting Luna lanes.&lt;/td&gt;&lt;td role="cell" data-label="Result"&gt;Every Luna lane that window had started stopped with it: thirty lanes, between three and 110 minutes into their batches.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Starting Muse lanes&lt;/td&gt;&lt;td role="cell" data-label="What it was"&gt;The same filler as before with the Muse launcher, holding thirty lanes across both models.&lt;/td&gt;&lt;td role="cell" data-label="Result"&gt;Thirty Muse lanes within five minutes, since no Luna lane was left to wait for.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Why the lanes stopped&lt;/h3&gt;
+&lt;p&gt;Verified. The filler starts each lane as a hidden process of its own and goes on. When a filler's window reaches its time limit and ends, the lanes it started carry on; that had happened many times a day for a week and was the only case the coordinator had seen. Stopping the window from outside is different: the stop takes the window's whole tree of processes, and the lanes are in it. The coordinator told the owner that the Luna lanes would run to their end and had not checked that. The launcher has a stop file for exactly this purpose, which stops it starting lanes and touches nothing that is running.&lt;/p&gt;
+&lt;h3&gt;What was lost and what was kept&lt;/h3&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Measure&lt;/th&gt;&lt;th role="columnheader"&gt;Value&lt;/th&gt;&lt;th role="columnheader"&gt;What it means&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Lanes cut&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;30&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;All the Luna lanes running at 00:55.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Claims they had recorded as verified&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;239&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;A lane writes its results file after every function, so a cut lane's finished functions are on disk with their contracts and libraries.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Reproduced on the coordinator's re-run and imported&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;226&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;The lanes' logs were given the launcher's closing line, and the ordinary finishers took them from there. Nothing was imported without the re-run.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Held&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;13&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;Three whose wrong version is no longer in the lane's second library, and ten in one lane whose wrong versions the re-run did not pair with their proofs. The ten are being looked at with a pairing fault found the same hour.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Functions not reached&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;about 1,800&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;Returned to the queue. Most would not have been reached anyway: at thirty lanes a batch of forty ends with about thirty unreached. The real loss is the work in progress on one function per lane, and the hour of lane time it will take the new lanes to get back to the same point.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;A launcher is stopped with its stop file, or left to run out. A window that has started lanes is not stopped from outside unless stopping its lanes is the intention, and then that is said first.&lt;/li&gt;
+&lt;li&gt;A statement to the owner about what a step will leave running is checked before it is made. This one could have been checked in a minute with a throwaway window and one child process.&lt;/li&gt;
+&lt;li&gt;Muse's yield is measured afresh from its own imported results. Its figures from the first week were made under an earlier brief and an earlier checker, and the first lanes of this run end about an hour after the switch.&lt;/li&gt;
+&lt;li&gt;That the hard functions and the class lifts go to Muse lanes as well is the coordinator's reading of the instruction, and is recorded as such in the rules.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to check it&lt;/h3&gt;
+&lt;p&gt;The changelog entry "Rules: new lanes are Muse lanes from 12 October" is the rule change. The hourly review row for 01:05 on 12 October gives the fault as the coordinator ranked it at the time. The imports are the changelog entries "… more functions pass the checker" between 00:58 and 01:25 on 12 October.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Lift of the replay progress bar class: three of four verified methods</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls23"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls23</id>
@@ -1324,45 +1391,5 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Deferred as partly proven. Full verification needs the game's value of that frame word and whether any caller reads the closed-gate EAX; neither can be settled by the checker.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Unknown.&lt;/strong&gt; The game's value of the uninitialised word; whether callers use the closed-gate return.&lt;/p&gt;
 &lt;p&gt;Written by lane a-H03; integrated by the coordinator.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A checker callee's seq list answers only its first step in each trial</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#checker-seq-answers-first-step-per-trial"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#checker-seq-answers-first-step-per-trial</id>
-    <published>2026-10-10T00:00:00Z</published>
-    <updated>2026-10-10T00:00:00Z</updated>
-    <summary>What was asked. A lane continuing a deferred function had to extend an earlier stage contract so that a callee alternates its answer between the two sides of a branch, so that the branch the callee guards is exercised.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;What was asked.&lt;/strong&gt; A lane continuing a deferred function had to extend an earlier stage contract so that a callee alternates its answer between the two sides of a branch, so that the branch the callee guards is exercised.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;What was found.&lt;/strong&gt; The earlier contracts used a &lt;code&gt;seq&lt;/code&gt; list for the callee. A &lt;code&gt;seq&lt;/code&gt; list is consumed per call, and its position is not carried from one trial to the next. A callee that the original calls once per trial therefore always answered its first step, and the second step never ran. The earlier proof reported that the callee alternated. It did not. The branch guarded by the second answer was never executed, though the function's proof was reported as covering it.&lt;/p&gt;
-&lt;table&gt;
-&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Callee called once per trial, &lt;code&gt;seq&lt;/code&gt; [0, 1]&lt;/td&gt;&lt;td data-label="Value"&gt;Answer was 0 in every trial (the ID12 callee fired in every trial)&lt;/td&gt;&lt;td data-label="Status"&gt;Verified (verdict coverage counts)&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Same callee with &lt;code&gt;script&lt;/code&gt; [0, 1]&lt;/td&gt;&lt;td data-label="Value"&gt;Answered 0 and 1 across trials; the callee guarding the second answer fired in half the trials&lt;/td&gt;&lt;td data-label="Status"&gt;Verified (verdict coverage counts)&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Rewrite that had passed the earlier contract, run against the alternating contract&lt;/td&gt;&lt;td data-label="Value"&gt;Failed 30 of 60 on the second answer's tail; passed after its return value was changed to keep the callee's upper return bits&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;strong&gt;What was decided.&lt;/strong&gt; Every alternating answer in this lane's contracts uses &lt;code&gt;script&lt;/code&gt;, which the driver cycles per trial. The earlier stage contracts for the same function are not changed here; the next lane should re-derive them with the same rule before relying on them.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Run the driver on one contract with a callee given &lt;code&gt;seq&lt;/code&gt; [0, 1] and one with &lt;code&gt;script&lt;/code&gt; [0, 1], both called once per trial. Read the callee's entry in the verdict's coverage block (&lt;code&gt;callees_fired_on_ok&lt;/code&gt;) and the branch shapes.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Also learned.&lt;/strong&gt; A rewrite that keeps only the low byte of a callee's return loses the callee's upper bits. When the original's return value is compared in full, the callee's upper bits are part of the result and must be kept. The checker reproduces them only when the rewrite calls the same stub.&lt;/p&gt;
-&lt;p&gt;Written by lane a-H02; integrated by the coordinator.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Encrypted callees are stubbed like plain ones; no live capture is needed for them</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#encrypted-callees-stub-like-plain-ones"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#encrypted-callees-stub-like-plain-ones</id>
-    <published>2026-10-10T00:00:00Z</published>
-    <updated>2026-10-10T00:00:00Z</updated>
-    <summary>Asked. A deferred renderer function (its earlier lanes proved only the early exits) was said to need a live capture of the owner's running game, because one of its direct callees lies in the encrypted first megabyte of code and faults when the checker runs it natively.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; A deferred renderer function (its earlier lanes proved only the early exits) was said to need a live capture of the owner's running game, because one of its direct callees lies in the encrypted first megabyte of code and faults when the checker runs it natively.&lt;/p&gt;
-&lt;table&gt;
-&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Direct callee in the encrypted range faults when run natively&lt;/td&gt;&lt;td data-label="Value"&gt;Verified&lt;/td&gt;&lt;td data-label="What it means"&gt;The checker reports a read fault at the callee's first instruction.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;A call site can be replaced by a scripted stub through the contract's patch list, even when the callee is encrypted&lt;/td&gt;&lt;td data-label="Value"&gt;Verified&lt;/td&gt;&lt;td data-label="What it means"&gt;With every direct call site of the function patched, the original completes 60 of 60 trials without a fault.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Indirect calls through a vtable can be scripted by planting a stub in a heap vtable, and in a game vtable slot through the globals list&lt;/td&gt;&lt;td data-label="Value"&gt;Verified&lt;/td&gt;&lt;td data-label="What it means"&gt;The eight indirect sites of the function run through one stub id; the game's own vtable code is never executed.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Whole-function rewrite with 35 callee ids passes six stock-v8 contracts&lt;/td&gt;&lt;td data-label="Value"&gt;Verified&lt;/td&gt;&lt;td data-label="What it means"&gt;1,000 of 1,000 positives on each, with a same-contract wrong version failing 3 of 3 for each.&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Encrypted callees are handled by stubs exactly like plain callees. A capture is needed only if a callee's real behaviour must be proven, which a stub never does. The earlier deferral's reason, that the mapped image is ciphertext at the callee, is correct about the bytes but was not a blocker for the checker. The function is recorded as verified with its narrowed list (stub semantics, null-receiver fault paths not proven).&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Reproduce.&lt;/strong&gt; Patch each direct call instruction of the function (its relative address in the image) to a scripted callee id in the contract, and plant the stub in each indirect target slot. Run the stock checker in a 60-trial probe: the original reports ok, orig_ok equal to the trial count.&lt;/p&gt;
-&lt;p&gt;Limits: the proof covers the function under the stub model only; a callee's real effects on its pointer arguments are not compared.&lt;/p&gt;
-&lt;p&gt;Written by lane a-H01; integrated by the coordinator.&lt;/p&gt;</content>
   </entry>
 </feed>
