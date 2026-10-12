@@ -160,7 +160,8 @@ mod tests {
     #[should_panic(expected = "outside the object")]
     fn a_word_past_the_end_stops_the_lift() {
         let lookup = RowLookup::new(0x0c, 0x44, 20);
-        let object = vec![0u8; 0x20];
+        let mut object = vec![0u8; 0x20];
+        object[0x0c] = 1;
         let _ = lookup.row_or_null(&object, 0);
     }
 
