@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Lift: the follow-point-route task, ten methods",
+    "title": "Devlog: the lanes' entries on the follow-point-route task and the draw-scene render method",
     "commit": null,
+    "summary": "Two lanes' own accounts are added to the devlog: the lift of ten methods of the follow-point-route task, and the proof in stages of the draw-scene render phase's render method.",
+    "changes": [
+      "The lift entry gives the family, the lifted form and its host traits, what the proofs compare, and the three findings about words of the object that two verified rewrites read differently.",
+      "The render method's entry gives how the function was proven in stages by one rewrite, the wrong versions, the survey of callers behind the uncompared return register, and what the proof does not cover."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Lift: the follow-point-route task, ten methods",
+    "commit": "2b160a3ffa367abfe0b8537e7c07936a1ff72cc4",
     "summary": "All ten verified methods of the task that moves a pedestrian along a route of points are lifted into portable Rust in the pedestrian tasks crate and proven against their 32-bit rewrites.",
     "changes": [
       "Lifted: both constructors, the clone, the destructor, the poll, the waypoint pick, the advance, the current-point and waypoint copies and the handle copy. Everything outside the object (the move base, the route's construction, the task system's order and planning calls, the sub-task factory, the owner's calls, the allocator) is behind host traits. The lifted module forbids unsafe code.",
