@@ -40932,6 +40932,24 @@
   "lane": "a-U100"
  },
  {
+  "address": "0x006683E0",
+  "name": "rage::ptxEventEffect::~ptxEventEffect__deleting",
+  "kind": "function",
+  "file": "functions/fn_006683e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U123"
+ },
+ {
+  "address": "0x00668410",
+  "name": "ptx_event_effect_destroy",
+  "kind": "function",
+  "file": "functions/fn_00668410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U123"
+ },
+ {
   "address": "0x00668A20",
   "name": "ptx_event_emitter_update_registrations",
   "kind": "function",
@@ -40948,6 +40966,51 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-U100"
+ },
+ {
+  "address": "0x00668E10",
+  "name": "rage::ptxEventEmitter::set_bound_rule_transform",
+  "kind": "function",
+  "file": "functions/fn_00668e10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U123"
+ },
+ {
+  "address": "0x00668E40",
+  "name": "rage::ptxEventEmitter::update_bound_rule",
+  "kind": "function",
+  "file": "functions/fn_00668e40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U123"
+ },
+ {
+  "address": "0x00668F30",
+  "name": "rage::ptxEventEmitter::vf7",
+  "kind": "function",
+  "file": "functions/fn_00668f30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U123"
+ },
+ {
+  "address": "0x00668F60",
+  "name": "rage::ptxEventEmitter::vf8",
+  "kind": "function",
+  "file": "functions/fn_00668f60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U123"
+ },
+ {
+  "address": "0x00668FA0",
+  "name": "rage::ptxEventEmitter::detach_bound_rule",
+  "kind": "function",
+  "file": "functions/fn_00668fa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U123"
  },
  {
   "address": "0x00668FE0",
@@ -47212,6 +47275,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s583"
+ },
+ {
+  "address": "0x00876A30",
+  "name": "rage::crmtRequestExtrapolate::build_extrapolated_output",
+  "kind": "function",
+  "file": "functions/fn_00876a30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U123"
  },
  {
   "address": "0x00876A80",
