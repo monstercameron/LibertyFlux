@@ -640,14 +640,6 @@
   "reason": "indirect_call"
  },
  {
-  "address": "0x005D6FF0",
-  "name": "html_element_stack_pop",
-  "file": "fn_005d6ff0.rs",
-  "lane": "r-s822",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
   "address": "0x005DA100",
   "name": "fn_005da100",
   "file": "fn_005da100.rs",
@@ -1880,6 +1872,14 @@
   "reason": "partly_proven"
  },
  {
+  "address": "0x006801E0",
+  "name": "rage::crAnimation::dtor",
+  "file": "fn_006801e0.rs",
+  "lane": "r-s817",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0068A450",
   "name": "track_key_partition_0068A450 (proposed)",
   "file": "fn_0068a450.rs",
@@ -2528,20 +2528,20 @@
   "reason": ""
  },
  {
-  "address": "0x008DA500",
-  "name": "loading_tick_dispatch",
-  "file": "fn_008da500.rs",
-  "lane": "r-s819",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x008DBF60",
   "name": "task_ctor_update_thread_range",
   "file": "fn_008dbf60.rs",
   "lane": "r-s649",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x008DC3A0",
+  "name": "draw_command_alloc",
+  "file": "fn_008dc3a0.rs",
+  "lane": "r-s819",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x008E54D0",
@@ -5744,6 +5744,22 @@
   "reason": null
  },
  {
+  "address": "0x00C0D1F0",
+  "name": "UILayoutFrame::vf38",
+  "file": "fn_00c0d1f0.rs",
+  "lane": "r-s815",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C0D710",
+  "name": "UILayoutFrame::vf35",
+  "file": "fn_00c0d710.rs",
+  "lane": "r-s815",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C1DAD0",
   "name": "m:/textures/coronas",
   "file": "fn_00c1dad0.rs",
@@ -6003,6 +6019,14 @@
   "address": "0x00C553F0",
   "name": "unnamed_00c553f0",
   "file": "fn_00c553f0.rs",
+  "lane": "r-s825",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55420",
+  "name": "unnamed_00c55420",
+  "file": "fn_00c55420.rs",
   "lane": "r-s825",
   "outcome": "not_reached",
   "reason": null
@@ -7813,14 +7837,6 @@
   "file": "fn_00dec570.rs",
   "lane": "r-s759",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DF33A0",
-  "name": "function_00DF33A0",
-  "file": "fn_00df33a0.rs",
-  "lane": "r-s818",
-  "outcome": "not_reached",
   "reason": null
  },
  {
