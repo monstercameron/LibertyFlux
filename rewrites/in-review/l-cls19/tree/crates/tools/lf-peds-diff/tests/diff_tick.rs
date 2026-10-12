@@ -523,7 +523,7 @@ mod x86 {
 
     extern "thiscall" fn anchor_stub(world_a: u32) -> u32 {
         rec("anchor_of", vec![Arg::Val(world_a)]);
-        WORLD_ANCHOR_TOK
+        cur().world_anchor
     }
 
     extern "thiscall" fn dock_stub(ecx: u32, a: u32, b: u32, c: u32, d: u32, e: u32, f: u32) -> u32 {
@@ -666,20 +666,20 @@ mod x86 {
             self.case.base.map(f32::from_bits)
         }
 
-        fn route_first(&mut self, base: u32, weight: u32, ped: u32) -> RouteFirst {
+        fn route_first(&mut self, base: u32, weight: u32, flags: [u32; 3], ped: u32) -> RouteFirst {
             self.push(
                 "route_first",
                 vec![
                     Arg::Sym("task.aux"),
                     tok(base),
                     Arg::Val(weight),
-                    Arg::Val(1),
+                    Arg::Val(flags[0]),
                     Arg::Sym("task.aux"),
                     Arg::Sym("out0"),
                     Arg::Sym("out1"),
-                    Arg::Val(1),
+                    Arg::Val(flags[1]),
                     tok(ped),
-                    Arg::Val(1),
+                    Arg::Val(flags[2]),
                 ],
             );
             RouteFirst { ok: self.case.route0_ok, anchor: ANCHOR_TOK, spare: 0x77 }
@@ -730,20 +730,20 @@ mod x86 {
             self.push("schedule_use", vec![tok(leg)]);
         }
 
-        fn route_second(&mut self, ped: u32, weight: u32) -> RouteSecond {
+        fn route_second(&mut self, ped: u32, weight: u32, flags: [u32; 3]) -> RouteSecond {
             self.push(
                 "route_second",
                 vec![
                     Arg::Sym("task.aux"),
                     Arg::Sym("point"),
                     Arg::Val(weight),
-                    Arg::Val(1),
+                    Arg::Val(flags[0]),
                     Arg::Sym("task.aux"),
                     Arg::Sym("out0"),
                     Arg::Sym("out1"),
-                    Arg::Val(1),
+                    Arg::Val(flags[1]),
                     tok(ped),
-                    Arg::Val(0),
+                    Arg::Val(flags[2]),
                 ],
             );
             RouteSecond { ok: self.case.route1_ok, anchor: ANCHOR_TOK, aux: self.case.route1_aux }
@@ -780,7 +780,7 @@ mod x86 {
 
         fn anchor_of(&mut self, world_a: u32) -> u32 {
             self.push("anchor_of", vec![Arg::Val(world_a)]);
-            WORLD_ANCHOR_TOK
+            self.case.world_anchor
         }
 
         fn dock(&mut self, world: u32, args: [u32; 6]) -> u32 {
@@ -794,28 +794,28 @@ mod x86 {
             (self.case.fare_lo, self.case.fare_hi)
         }
 
-        fn board(&mut self, world: u32, fare_lo: u32, fare_hi: u32) -> u32 {
+        fn board(&mut self, world: u32, fare_lo: u32, fare_hi: u32, flags: [u32; 7]) -> u32 {
             self.push(
                 "board",
                 vec![
                     tok(world),
-                    Arg::Val(2),
+                    Arg::Val(flags[0]),
                     Arg::Sym("gate"),
                     Arg::Val(fare_lo),
                     Arg::Val(fare_hi),
-                    Arg::Val(0xFFFF_FFFF),
-                    Arg::Val(1),
-                    Arg::Val(0),
-                    Arg::Val(0),
-                    Arg::Val(0),
-                    Arg::Val(1),
+                    Arg::Val(flags[1]),
+                    Arg::Val(flags[2]),
+                    Arg::Val(flags[3]),
+                    Arg::Val(flags[4]),
+                    Arg::Val(flags[5]),
+                    Arg::Val(flags[6]),
                 ],
             );
             self.case.board_ret
         }
 
-        fn seat_info(&mut self, object: u32, a: u32, b: u32) -> u32 {
-            self.push("seat_info", vec![tok(object), Arg::Val(a), Arg::Val(b), Arg::Val(0), Arg::Val(0)]);
+        fn seat_info(&mut self, object: u32, a: u32, b: u32, tail: [u32; 2]) -> u32 {
+            self.push("seat_info", vec![tok(object), Arg::Val(a), Arg::Val(b), Arg::Val(tail[0]), Arg::Val(tail[1])]);
             self.case.seat_ret
         }
 

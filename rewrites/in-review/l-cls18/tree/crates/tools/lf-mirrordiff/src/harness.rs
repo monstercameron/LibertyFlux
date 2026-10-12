@@ -254,6 +254,8 @@ pub struct Plan {
     pub answers: HashMap<&'static str, VecDeque<u32>>,
     /// The four words the reducer writes into the frame's second half.
     pub reduce_out: [u32; 4],
+    /// The target and parameter-block words the rebuild writes into the phase.
+    pub rebuild: [u32; 2],
 }
 
 /// Builds the answers for one case.
@@ -318,14 +320,21 @@ fn build_plan(scene: &Scene, rng: &mut Rng) -> Plan {
         answers.insert(name, queue);
     }
     let reduce_out = [rng.u32(), rng.u32(), rng.u32(), rng.u32()];
+    let rebuild_target = rng.u32();
+    let rebuild_params = if rng.chance(75) {
+        scene.addr(BLOCK_AT)
+    } else {
+        0
+    };
     Plan {
         answers,
         reduce_out,
+        rebuild: [rebuild_target, rebuild_params],
     }
 }
 
 /// The callee specifications of one method's rewrite, by its own numbers.
-fn specs(method: Method, reduce_out: [u32; 4]) -> Vec<CalleeSpec> {
+fn specs(method: Method, reduce_out: [u32; 4], rebuild: [u32; 2]) -> Vec<CalleeSpec> {
     let s = |id, name, conv, nargs, ptrs: Vec<(usize, usize)>, writes| CalleeSpec {
         id,
         name,
@@ -342,7 +351,8 @@ fn specs(method: Method, reduce_out: [u32; 4]) -> Vec<CalleeSpec> {
         ],
         Method::Refresh => vec![
             s(1, "fetch_target", This, 1, vec![], vec![]),
-            s(2, "rebuild_target", Cdecl, 6, vec![], vec![]),
+            // The rebuild is given the phase object (its fourth argument) and writes the target and parameter-block words into it.
+            s(2, "rebuild_target", Cdecl, 6, vec![], vec![(3, PHASE_TARGET / 4, vec![rebuild[0]]), (3, PHASE_PARAMS / 4, vec![rebuild[1]])]),
             s(3, "lookup_object", Cdecl, 1, vec![], vec![]),
             s(5, "commit", Cdecl, 1, vec![], vec![]),
             s(6, "footer", Cdecl, 0, vec![], vec![]),
@@ -472,6 +482,7 @@ pub struct LiftHost {
     snap: u32,
     answers: HashMap<&'static str, VecDeque<u32>>,
     reduce_out: [u32; 4],
+    rebuild: [u32; 2],
     /// The calls, in order.
     pub log: Vec<Call>,
 }
@@ -696,6 +707,10 @@ impl MirrorHost for LiftHost {
         let p = self.expand(phase);
         self.record("rebuild_target", vec![a, b, c, p, one, zero], vec![]);
         self.pop("rebuild_target");
+        // The scripted writes the rewrite's side also makes into the phase object.
+        let (target, params) = (self.rebuild[0], self.rebuild[1]);
+        self.set_word(Ref::Phase(0), PHASE_TARGET as u32, target);
+        self.set_word(Ref::Phase(0), PHASE_PARAMS as u32, params);
     }
 
     fn fetch_target(&mut self, session: Ref) -> u32 {
@@ -761,7 +776,7 @@ macro_rules! lift_run {
                 u32::from(status)
             }
             Method::Render => {
-                let phase = <$phase>::load(&$scene.mem[RANGE]);
+                let mut phase = <$phase>::load(&$scene.mem[RANGE]);
                 phase.render(&mut $host, &mut $globals);
                 0
             }
@@ -781,7 +796,7 @@ fn run_case(method: Method, seed: u64, mutant: bool) -> Result<Outcome, String> 
     let snap = scene.addr(SNAP_AT);
     let before = scene.image();
 
-    rt::install(specs(method, plan.reduce_out), plan.answers.clone());
+    rt::install(specs(method, plan.reduce_out, plan.rebuild), plan.answers.clone());
     let ret_rewrite = run_rewrite(method, this, snap, flags);
     let log_rewrite = rt::take_log();
     let image_rewrite = scene.image();
@@ -792,6 +807,7 @@ fn run_case(method: Method, seed: u64, mutant: bool) -> Result<Outcome, String> 
         snap,
         answers: plan.answers.clone(),
         reduce_out: plan.reduce_out,
+        rebuild: plan.rebuild,
         log: Vec::new(),
     };
     let mut globals = load_globals();
@@ -924,4 +940,6 @@ pub fn run_mutant(method: Method, cases: usize, seed_base: u64) -> usize {
     }
     caught
 }
+
+
 

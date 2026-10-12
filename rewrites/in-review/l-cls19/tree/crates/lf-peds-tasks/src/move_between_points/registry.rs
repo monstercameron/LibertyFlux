@@ -1,4 +1,4 @@
-//! What is lifted for the move-between-points scenario, what is proven, and what
+﻿//! What is lifted for the move-between-points scenario, what is proven, and what
 //! each proof narrows.
 //!
 //! Each entry is proven by the differential test crate `lf-peds-diff`, which runs
@@ -79,12 +79,22 @@ pub const METHODS: &[Entry] = &[
         note: "Named by a naming lane; no verified rewrite. Not written.",
     },
     Entry {
-        method: "tick (the main scenario update)",
-        status: Status::VerifiedNotLifted,
-        note: "Verified rewrite exists (about 1,300 bytes, 368 instructions, 46 blocks). Not \
-               lifted in this pass: it calls about 25 callees and collaborators, and its heading \
-               block takes a double-precision answer that the rewrite maps back from three \
-               scripted low words (see the proof gaps in the report). The rewrite maps any other \
-               answer to zero, so a lift cannot be proven against it beyond those three values.",
+        method: "tick",
+        status: Status::LiftedAndProven,
+        note: "The scenario's main update: a pedestrian flag, the scenario's own sub-operation \
+               (kinds one and two), the configuration, then state zero (wait timer, a sampled \
+               destination, a commit) or state one (validate, schedule, route, board, seat and \
+               heading). Every callee is a method of TickHost; each call is compared with its \
+               arguments in order, including the constant words, which the lift passes. The proof \
+               covers 600 generated trials (exact-threshold and not-a-number destinations included) \
+               that reach the state-zero commit, the heading, the chat ping and state one. \
+               Narrowed: (1) the heading callee takes the leg vector in vector registers and answers \
+               a double; the verified rewrite passes no arguments and maps the low word of the answer \
+               through three constants, returning zero for any other answer, so the proof covers \
+               only the answers 1.1, 1.2 and 0.0; the lift narrows the double with a cast to single. \
+               (2) The boarding call's gate word is a pointer the lift does not hold; the host logs it \
+               by name. (3) Addresses of the scenario's own words and of the out-words are named in \
+               the log, not compared as values. (4) The anchor writes (leg and state) are compared as \
+               effects; the anchor's virtual leg service is compared as a call.",
     },
 ];

@@ -1,4 +1,4 @@
-//! The mirror-reflection render phase: its object and its four methods.
+﻿//! The mirror-reflection render phase: its object and its four methods.
 //!
 //! The object keeps four words and a byte of its own: the target handle, a
 //! handle to the parameter block, three filter seeds, and a status byte.
@@ -115,6 +115,15 @@ impl MirrorReflectionPhase {
         object[index] = (object[index] & !0xFF00) | (u32::from(self.status) << 8);
     }
 
+    /// Re-reads the words a collaborator may have changed: the target and the
+    /// parameter-block handle. The lift calls this after each call it makes
+    /// with the phase object, or with one of its members, because the
+    /// original reads those words again after such a call.
+    fn reload<H: MirrorHost>(&mut self, host: &mut H) {
+        self.target = host.word(Ref::Phase(0), OFF_TARGET);
+        self.params = host.word(Ref::Phase(0), OFF_PARAMS);
+    }
+
     /// The parameter block the phase must have to refresh or reflect.
     ///
     /// # Panics
@@ -143,7 +152,7 @@ impl MirrorReflectionPhase {
     /// query blocks (two stamped), a player call, a selector, and a final
     /// gated toggle. The verified rewrite returns zero; the lift returns
     /// nothing, since the zero carries no meaning of the original's.
-    pub fn render<H: MirrorHost>(&self, host: &mut H, g: &mut MirrorGlobals) {
+    pub fn render<H: MirrorHost>(&mut self, host: &mut H, g: &mut MirrorGlobals) {
         if g.render_enabled == 0 || g.render_skipped != 0 {
             return;
         }
@@ -151,6 +160,7 @@ impl MirrorReflectionPhase {
             return;
         }
         let probe = host.probe_gate(Ref::Phase(OFF_RENDER_DESC));
+        self.reload(host);
         // The staged float doubles as the high bytes of a later argument:
         // zero when the probe's low byte is set, otherwise one.
         let staged = if probe & 0xFF != 0 { 0 } else { g.one_bits };
@@ -277,6 +287,7 @@ impl MirrorReflectionPhase {
             1,
             0,
         );
+        self.reload(host);
         let object = host.lookup_object(0);
         // The remembered word: the identity with the bit of the current
         // object's flags, or one when there is no object.
@@ -325,6 +336,7 @@ impl MirrorReflectionPhase {
     pub fn reflect<H: MirrorHost>(&mut self, host: &mut H, g: &mut MirrorGlobals) -> u8 {
         host.bind(Ref::Phase(OFF_RENDER_DESC), Ref::Snapshot(SNAP_VIEW));
         host.bind(Ref::Phase(OFF_REFLECT_DESC_B), Ref::Snapshot(SNAP_VIEW));
+        self.reload(host);
 
         let params = self.params;
         // Frame: three seeds, then zeros. The reducer fills words four to
@@ -415,3 +427,4 @@ fn table_entry(table: &[u32], entry: u32) -> (u32, u32) {
 fn mul(a: f32, b: f32) -> f32 {
     black_box(a) * black_box(b)
 }
+

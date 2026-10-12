@@ -472,6 +472,14 @@
   "reason": "indirect_call"
  },
  {
+  "address": "0x005C22F0",
+  "name": "fn_005c22f0",
+  "file": "fn_005c22f0.rs",
+  "lane": "r-s774",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x005CDD40",
   "name": null,
   "file": "fn_005cdd40.rs",
@@ -644,6 +652,14 @@
   "name": null,
   "file": "fn_005e81d0.rs",
   "lane": "r-n88",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005ECA30",
+  "name": null,
+  "file": "fn_005eca30.rs",
+  "lane": "r-s784",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1032,10 +1048,10 @@
   "reason": null
  },
  {
-  "address": "0x0063AA40",
-  "name": "blend_bits_by_mask",
-  "file": "fn_0063aa40.rs",
-  "lane": "r-s779",
+  "address": "0x00639DC0",
+  "name": "rage::ptxRule::init_from_type_name",
+  "file": "fn_00639dc0.rs",
+  "lane": "r-s777",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1190,6 +1206,14 @@
   "lane": "r-s579",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00699B80",
+  "name": "rage::crAnimChannelQuantizeFloat::try_build_from_samples",
+  "file": "fn_00699b80.rs",
+  "lane": "a-U144",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x006F7F10",
@@ -1904,52 +1928,28 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00A7E3B0",
-  "name": "CStatusAndTargetTaskInfo::CStatusAndTargetTaskInfo_3",
-  "file": "fn_00a7e3b0.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7E460",
-  "name": "CComplexGangDrivebyTaskInfo::~CComplexGangDrivebyTaskInfo__deleting",
-  "file": "fn_00a7e460.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7E490",
-  "name": "CComplexGunTaskInfo::~CComplexGunTaskInfo__deleting",
-  "file": "fn_00a7e490.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A7E4C0",
   "name": "CComplexPickUpAndCarryObjectTaskInfo::~CComplexPickUpAndCarryObjectTaskInfo__deleting",
   "file": "fn_00a7e4c0.rs",
   "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00A7E4F0",
   "name": "CComplexClearVehicleSeatTaskInfo::~CComplexClearVehicleSeatTaskInfo__deleting",
   "file": "fn_00a7e4f0.rs",
   "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00A7E520",
   "name": "CJackTaskInfo::~CJackTaskInfo__deleting",
   "file": "fn_00a7e520.rs",
   "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00A7E550",
@@ -1964,48 +1964,48 @@
   "name": "CMeleeTaskInfo::~CMeleeTaskInfo__deleting",
   "file": "fn_00a7e580.rs",
   "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00A7E5B0",
   "name": "CNetCloneTaskSimpleNMBalance::~CNetCloneTaskSimpleNMBalance__deleting",
   "file": "fn_00a7e5b0.rs",
   "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00A7E5E0",
   "name": "CNetCloneTaskSimpleNMHighFall::~CNetCloneTaskSimpleNMHighFall__deleting",
   "file": "fn_00a7e5e0.rs",
   "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00A7E610",
   "name": "CNetCloneTaskSimpleNMJumpRoll::~CNetCloneTaskSimpleNMJumpRoll__deleting",
   "file": "fn_00a7e610.rs",
   "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00A7E640",
   "name": "CNetCloneTaskSimpleNMOnFire::~CNetCloneTaskSimpleNMOnFire__deleting",
   "file": "fn_00a7e640.rs",
   "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00A7E670",
   "name": "CNetCloneTaskSimpleNMRelax::~CNetCloneTaskSimpleNMRelax__deleting",
   "file": "fn_00a7e670.rs",
   "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00A7E990",
@@ -2864,100 +2864,36 @@
   "reason": "needs_encrypted_code"
  },
  {
-  "address": "0x00B7B030",
-  "name": "CTaskComplexCarDriveTimed::clone",
-  "file": "fn_00b7b030.rs",
+  "address": "0x00B7AFA0",
+  "name": "CTaskComplexCarDriveMission::clone",
+  "file": "fn_00b7afa0.rs",
   "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B7B060",
-  "name": "CTaskComplexCarDriveWander::clone",
-  "file": "fn_00b7b060.rs",
-  "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B7B0A0",
-  "name": "CTaskComplexCarSetTempAction::clone",
-  "file": "fn_00b7b0a0.rs",
-  "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x00B7B0D0",
   "name": "CTaskComplexDrivePointRoute::clone",
   "file": "fn_00b7b0d0.rs",
   "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x00B7B110",
   "name": "CTaskComplexDriveToPoint::clone",
   "file": "fn_00b7b110.rs",
   "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B7B190",
-  "name": "CTaskComplexEnterAnyCarAsDriver::clone",
-  "file": "fn_00b7b190.rs",
-  "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B7B1B0",
-  "name": "CTaskComplexGetOffBoat::clone",
-  "file": "fn_00b7b1b0.rs",
-  "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B7B1D0",
-  "name": "CTaskComplexLeaveCarAndFlee::clone",
-  "file": "fn_00b7b1d0.rs",
-  "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B7B200",
-  "name": "CTaskComplexLeaveCarAndWander::clone",
-  "file": "fn_00b7b200.rs",
-  "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B7B230",
-  "name": "CTaskComplexPlayerDrive::clone",
-  "file": "fn_00b7b230.rs",
-  "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B7B260",
   "name": "CTaskComplexReactToRanPedOver::clone",
   "file": "fn_00b7b260.rs",
   "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B7B2A0",
-  "name": "CTaskComplexScreamInCarThenLeave::clone",
-  "file": "fn_00b7b2a0.rs",
-  "lane": "r-s771",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x00B7E600",
@@ -3454,6 +3390,14 @@
   "lane": "r-b548",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00C3E430",
+  "name": "train_xmm_double_call",
+  "file": "fn_00c3e430.rs",
+  "lane": "a-U146",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00C3F0D0",

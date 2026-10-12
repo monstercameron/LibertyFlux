@@ -30,6 +30,14 @@ const FAR_SQUARED: f32 = f32::from_bits(0x4080_0000);
 const FULL_WEIGHT_BITS: u32 = 0x3F80_0000;
 /// The idle sentinel (-1.0, as its bits), passed to the dock calls.
 const NEG_ONE_BITS: u32 = 0xBF80_0000;
+/// Flag words of the first route call: the one after the weight, the one after the output words, and the one after the pedestrian.
+const ROUTE_FIRST_FLAGS: [u32; 3] = [1, 1, 1];
+/// Flag words of the second route call: the one after the weight, the one after the output words, and the zero after the pedestrian.
+const ROUTE_SECOND_FLAGS: [u32; 3] = [1, 1, 0];
+/// The boarding call's constant words in the order they are pushed, with the gate word and the fare pair left out.
+const BOARD_FLAGS: [u32; 7] = [2, 0xFFFF_FFFF, 1, 0, 0, 0, 1];
+/// Trailing argument words of the seat-information call.
+const SEAT_TAIL: [u32; 2] = [0, 0];
 /// The argument words of the dock call of the move leg and of the heading seat:
 /// zero, minus one (as bits), three zeros and 0xc.
 const DOCK_ARGS: [u32; 6] = [0, NEG_ONE_BITS, 0, 0, 0, 0xC];
@@ -114,7 +122,7 @@ pub trait TickHost {
     fn position(&mut self, base: u32) -> [f32; 3];
 
     /// The first route call: samples a destination from the base, the weight and the pedestrian.
-    fn route_first(&mut self, base: u32, weight: u32, ped: u32) -> RouteFirst;
+    fn route_first(&mut self, base: u32, weight: u32, flags: [u32; 3], ped: u32) -> RouteFirst;
 
     /// The destination words the first sample refines to.
     fn refine_first(&mut self) -> [u32; 4];
@@ -147,7 +155,7 @@ pub trait TickHost {
     fn schedule_use(&mut self, leg: u32);
 
     /// The second route call: routes the scenario's point for the pedestrian.
-    fn route_second(&mut self, ped: u32, weight: u32) -> RouteSecond;
+    fn route_second(&mut self, ped: u32, weight: u32, flags: [u32; 3]) -> RouteSecond;
 
     /// Refines a routed leg into a destination; the answer is not read.
     fn refine_leg(&mut self, anchor: u32, aux: u32);
@@ -174,10 +182,10 @@ pub trait TickHost {
     fn move_fare(&mut self) -> (u32, u32);
 
     /// The boarding call with the fare words.
-    fn board(&mut self, world: u32, fare_lo: u32, fare_hi: u32) -> u32;
+    fn board(&mut self, world: u32, fare_lo: u32, fare_hi: u32, flags: [u32; 7]) -> u32;
 
     /// The seat-information call. The first word is the object, then two words and two zeros.
-    fn seat_info(&mut self, object: u32, a: u32, b: u32) -> u32;
+    fn seat_info(&mut self, object: u32, a: u32, b: u32, tail: [u32; 2]) -> u32;
 
     /// Attaches a boarding to an anchor.
     fn attach(&mut self, anchor: u32, boarded: u32);
@@ -298,7 +306,7 @@ impl Scen {
         let narrow = self.aux_id == AUX_NARROW;
         let weight = host.weight_bits(narrow);
         let base = host.placement_base(ped);
-        let route = host.route_first(base, weight, ped);
+        let route = host.route_first(base, weight, ROUTE_FIRST_FLAGS, ped);
         if route.ok & 0xff == 0 {
             return None;
         }
@@ -340,7 +348,7 @@ impl Scen {
             self.state = 0;
             return None;
         }
-        let routed = host.route_second(ped, FULL_WEIGHT_BITS);
+        let routed = host.route_second(ped, FULL_WEIGHT_BITS, ROUTE_SECOND_FLAGS);
         if routed.ok & 0xff == 0 {
             self.state = 0;
             return None;
@@ -371,9 +379,9 @@ impl Scen {
         let mut boarded = 0;
         if world_d != 0 {
             let (fare_lo, fare_hi) = host.move_fare();
-            boarded = host.board(world_d, fare_lo, fare_hi);
+            boarded = host.board(world_d, fare_lo, fare_hi, BOARD_FLAGS);
         }
-        host.seat_info(dockw, boarded, dock);
+        host.seat_info(dockw, boarded, dock, SEAT_TAIL);
         Some(heading(host, anchor, boarded, world, leg_anchor))
     }
 }
@@ -418,7 +426,7 @@ fn heading<H: TickHost>(host: &mut H, anchor: u32, boarded: u32, world: u32, leg
         let (fare_lo, fare_hi) = host.approach_fare();
         gate2 = host.approach(world_g, approach.to_bits(), fare_lo, fare_hi);
     }
-    let boarded2 = host.seat_info(world_e, gate2, seat);
+    let boarded2 = host.seat_info(world_e, gate2, seat, SEAT_TAIL);
     host.attach(anchor, boarded2);
     anchor
 }
