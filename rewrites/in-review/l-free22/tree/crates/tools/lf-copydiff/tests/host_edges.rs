@@ -1,7 +1,7 @@
-//! Host tests of the lifted word copy and its instance table. These run on every host and do not need the
+﻿//! Host tests of the lifted word copy and its instance table. These run on every host and do not need the
 //! 32-bit rewrites.
 
-use lf_core::static_list::{StaticWords, WordId};
+use lf_core::static_list::StaticWords;
 use lf_core::word_copy::instances::{COPIES, WORD_COUNT};
 
 #[test]
@@ -37,3 +37,4 @@ fn every_instance_applies_to_a_table_of_the_full_size() {
         assert_eq!(words.word(named.copy.destination), 0x1357_9BDF, "{}", named.name);
     }
 }
+
