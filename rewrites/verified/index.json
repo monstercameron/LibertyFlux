@@ -95841,6 +95841,24 @@
   "lane": "r-b457"
  },
  {
+  "address": "0x00B30950",
+  "name": "ped_task_runnable_check",
+  "kind": "function",
+  "file": "functions/fn_00b30950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b705"
+ },
+ {
+  "address": "0x00B30B00",
+  "name": "task_spawn_by_kind",
+  "kind": "function",
+  "file": "functions/fn_00b30b00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b705"
+ },
+ {
   "address": "0x00B30D80",
   "name": "ped_task_record_field_4",
   "kind": "function",
@@ -95884,6 +95902,15 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G13"
+ },
+ {
+  "address": "0x00B31500",
+  "name": "shocking_response_weighted_pick",
+  "kind": "function",
+  "file": "functions/fn_00b31500.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b705"
  },
  {
   "address": "0x00B31650",
