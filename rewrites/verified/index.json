@@ -49455,6 +49455,78 @@
   "lane": "r-s501"
  },
  {
+  "address": "0x0087F730",
+  "name": "rage::miniheapAllocator::get_bytes_allocated",
+  "kind": "function",
+  "file": "functions/fn_0087f730.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s775"
+ },
+ {
+  "address": "0x0087F750",
+  "name": "rage::miniheapAllocator::get_bytes_remaining",
+  "kind": "function",
+  "file": "functions/fn_0087f750.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s775"
+ },
+ {
+  "address": "0x0087F770",
+  "name": "rage::miniheapAllocator::contains",
+  "kind": "function",
+  "file": "functions/fn_0087f770.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s775"
+ },
+ {
+  "address": "0x0087F7A0",
+  "name": "rage::miniheapAllocator::allocate_aligned",
+  "kind": "function",
+  "file": "functions/fn_0087f7a0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s775"
+ },
+ {
+  "address": "0x00880410",
+  "name": "destroy_utf16_object_array",
+  "kind": "function",
+  "file": "functions/fn_00880410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s775"
+ },
+ {
+  "address": "0x00880930",
+  "name": "audio_allocate_channel_states",
+  "kind": "function",
+  "file": "functions/fn_00880930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s775"
+ },
+ {
+  "address": "0x00880A30",
+  "name": "audio_convert_planar_floats_to_int16",
+  "kind": "function",
+  "file": "functions/fn_00880a30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s775"
+ },
+ {
+  "address": "0x00880AB0",
+  "name": "audio_interleave_floats_to_int16",
+  "kind": "function",
+  "file": "functions/fn_00880ab0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s775"
+ },
+ {
   "address": "0x00881540",
   "name": "stream_mgr_slot_init",
   "kind": "function",
