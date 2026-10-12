@@ -18,5 +18,6 @@ pub mod font_string;
 pub mod input_slot;
 pub mod layout;
 pub mod layout_frame;
+pub mod montage_container;
 pub mod replay_progress_bar;
 pub mod ui_clip;

@@ -9,10 +9,13 @@
 /// frame and positions to shared engine state, resolves both positions to
 /// navigation cells, and asks the navigation helpers to validate and build
 /// a path. A missing cell records status `-4`; a gated missing second node
-/// records `-14` when the global recovery flag is set. After a successful
-/// update it marks an over-distance path point and advances every path
-/// point's first component by the shared step value. The semantic result is
-/// returned in AL; upper EAX bits are not part of this function's result.
+/// records `-14` when the global recovery flag is set, and otherwise asks
+/// the safe-position helper for a replacement node, whose answer also feeds
+/// the validate step. Only when both nodes are present does the routine
+/// validate, build, and mark an over-distance path point; the step that
+/// advances every path point's first component by the shared step value runs
+/// on every path that reaches the tail. The semantic result is returned in
+/// AL; upper EAX bits are not part of this function's result.
 ///
 /// All helper calls below are intercepted by the checker contract. Pointers
 /// in the task and entity retain the original 32-bit game layout.
@@ -427,26 +430,27 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
             // Mark the current point if its squared distance exceeds the
             // data threshold.
             if point_count < PATH_POINT_COUNT_LIMIT {
-            let point = task
-                .wrapping_add(TASK_POINTS)
-                .wrapping_add(point_count.wrapping_mul(16));
-            let delta_x = sub_f32(
-                f32::from_bits(read_u32(point.wrapping_add(4))),
-                global_f32(GLOBAL_POSITION_B + 4),
-            );
-            let delta_y = sub_f32(
-                f32::from_bits(read_u32(point)),
-                global_f32(GLOBAL_POSITION_B),
-            );
-            let distance_squared = add_f32(
-                mul_f32(delta_x, delta_x),
-                mul_f32(delta_y, delta_y),
-            );
-            if distance_squared > global_f32(FRAME_OFFSET) {
-                let marker = task
-                    .wrapping_add(PATH_POINT_FLAGS)
-                    .wrapping_add(point_count.wrapping_mul(4));
-                write_u16(marker, read_u16(marker) | 0x80);
+                let point = task
+                    .wrapping_add(TASK_POINTS)
+                    .wrapping_add(point_count.wrapping_mul(16));
+                let delta_x = sub_f32(
+                    f32::from_bits(read_u32(point.wrapping_add(4))),
+                    global_f32(GLOBAL_POSITION_B + 4),
+                );
+                let delta_y = sub_f32(
+                    f32::from_bits(read_u32(point)),
+                    global_f32(GLOBAL_POSITION_B),
+                );
+                let distance_squared = add_f32(
+                    mul_f32(delta_x, delta_x),
+                    mul_f32(delta_y, delta_y),
+                );
+                if distance_squared > global_f32(FRAME_OFFSET) {
+                    let marker = task
+                        .wrapping_add(PATH_POINT_FLAGS)
+                        .wrapping_add(point_count.wrapping_mul(4));
+                    write_u16(marker, read_u16(marker) | 0x80);
+                }
             }
         }
         let step = global_f32(POINT_STEP);

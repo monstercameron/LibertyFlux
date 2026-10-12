@@ -5,8 +5,8 @@
 //! fields used here are plain words, floats and pointers; several of its
 //! virtual slots call into collaborators (the sub-objects it notifies, the
 //! job and model services, the context lookup) and read or write the
-//! pedestrian itself while doing so. Thirteen of its verified rewrites have
-//! behaviour in them, and [`CPlayerPed`] restates those thirteen:
+//! pedestrian itself while doing so. Fourteen of its verified rewrites have
+//! behaviour in them, and [`CPlayerPed`] restates those fourteen:
 //!
 //! - the ready-gated job pair ([`CPlayerPed::run_jobs_if_ready`]);
 //! - the linked notification ([`CPlayerPed::notify_while_linked`]);
@@ -19,6 +19,7 @@
 //! - the relink on movement ([`CPlayerPed::relink_on_move`]);
 //! - the aim target acquisition ([`CPlayerPed::acquire_aim_target`]);
 //! - the state refresh gate ([`CPlayerPed::refresh_gate`]);
+//! - the wanted-heat budget settlement ([`CPlayerPed::settle_budget`]);
 //! - two copies of four-word blocks ([`CPlayerPed::set_transform`] and
 //!   [`CPlayerPed::set_descriptor`]).
 //!

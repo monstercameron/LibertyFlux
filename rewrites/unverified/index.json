@@ -104,6 +104,22 @@
   "reason": null
  },
  {
+  "address": "0x00515F50",
+  "name": null,
+  "file": "fn_00515f50.rs",
+  "lane": "r-s808",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00516A00",
+  "name": null,
+  "file": "fn_00516a00.rs",
+  "lane": "r-s808",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00516B20",
   "name": null,
   "file": "fn_00516b20.rs",
@@ -888,9 +904,25 @@
   "reason": ""
  },
  {
+  "address": "0x005EFE60",
+  "name": "sub_005efe60",
+  "file": "fn_005efe60.rs",
+  "lane": "r-s802",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x005EFF00",
   "name": "sub_005eff00",
   "file": "fn_005eff00.rs",
+  "lane": "r-s802",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x005F0EA0",
+  "name": "CEventHandlerNY::vf20",
+  "file": "fn_005f0ea0.rs",
   "lane": "r-s802",
   "outcome": "not_reached",
   "reason": ""
@@ -1128,6 +1160,14 @@
   "reason": ""
  },
  {
+  "address": "0x005F3D00",
+  "name": "sub_005f3d00",
+  "file": "fn_005f3d00.rs",
+  "lane": "r-s802",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x005FC3C0",
   "name": "sub_005fc3c0",
   "file": "fn_005fc3c0.rs",
@@ -1278,14 +1318,6 @@
   "lane": "r-b314",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00628700",
-  "name": null,
-  "file": "fn_00628700.rs",
-  "lane": "r-s798",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x006287D0",
@@ -1880,6 +1912,22 @@
   "reason": ""
  },
  {
+  "address": "0x00886F90",
+  "name": null,
+  "file": "fn_00886f90.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00889830",
+  "name": null,
+  "file": "fn_00889830.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00889F00",
   "name": null,
   "file": "fn_00889f00.rs",
@@ -1952,12 +2000,92 @@
   "reason": null
  },
  {
+  "address": "0x00895270",
+  "name": null,
+  "file": "fn_00895270.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008952B0",
+  "name": null,
+  "file": "fn_008952b0.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008952E0",
+  "name": null,
+  "file": "fn_008952e0.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00895320",
+  "name": null,
+  "file": "fn_00895320.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00895350",
+  "name": null,
+  "file": "fn_00895350.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00895A00",
   "name": "audio_voice_render",
   "file": "fn_00895a00.rs",
   "lane": "a-U105",
   "outcome": "deferred",
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
+ },
+ {
+  "address": "0x0089A000",
+  "name": null,
+  "file": "fn_0089a000.rs",
+  "lane": "r-s805",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008A4E40",
+  "name": "rage::audIfSound::audIfSound_2",
+  "file": "fn_008a4e40.rs",
+  "lane": "r-s801",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008A4ED0",
+  "name": "rage::audIfSound::~audIfSound__deleting",
+  "file": "fn_008a4ed0.rs",
+  "lane": "r-s801",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008A5310",
+  "name": "audifsound_start_active_branch",
+  "file": "fn_008a5310.rs",
+  "lane": "r-s801",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008A53C0",
+  "name": "audifsound_evaluate_condition",
+  "file": "fn_008a53c0.rs",
+  "lane": "r-s801",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x008A86D0",
@@ -2142,6 +2270,22 @@
   "lane": "a-U159",
   "outcome": "not yet run",
   "reason": ""
+ },
+ {
+  "address": "0x008D68C0",
+  "name": "heading_from_offset",
+  "file": "fn_008d68c0.rs",
+  "lane": "a-U161",
+  "outcome": "not yet run",
+  "reason": ""
+ },
+ {
+  "address": "0x008DB2F0",
+  "name": "task_ctor_initialize_motion_task",
+  "file": "fn_008db2f0.rs",
+  "lane": "a-U158",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x008DBF60",
@@ -3872,9 +4016,65 @@
   "reason": "other"
  },
  {
+  "address": "0x00B58510",
+  "name": "dummy_object_init_tail",
+  "file": "fn_00b58510.rs",
+  "lane": "r-s804",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B58530",
+  "name": "CDummyObject::vf0",
+  "file": "fn_00b58530.rs",
+  "lane": "r-s804",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B58990",
-  "name": "TBD",
+  "name": "flag_bit5_to_byte",
   "file": "fn_00b58990.rs",
+  "lane": "r-s804",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B58AC0",
+  "name": "ped_factory_init",
+  "file": "fn_00b58ac0.rs",
+  "lane": "r-s804",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B58BF0",
+  "name": "CPedFactory::vf0",
+  "file": "fn_00b58bf0.rs",
+  "lane": "r-s804",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B59020",
+  "name": "vehicle_factory_init",
+  "file": "fn_00b59020.rs",
+  "lane": "r-s804",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B59040",
+  "name": "vehicle_factory_teardown",
+  "file": "fn_00b59040.rs",
+  "lane": "r-s804",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B59070",
+  "name": "CVehicleFactory::vf0",
+  "file": "fn_00b59070.rs",
   "lane": "r-s804",
   "outcome": "not_reached",
   "reason": null
@@ -3889,7 +4089,7 @@
  },
  {
   "address": "0x00B5BBF0",
-  "name": "TBD",
+  "name": "zero16_set_flag",
   "file": "fn_00b5bbf0.rs",
   "lane": "r-s804",
   "outcome": "not_reached",
@@ -3897,15 +4097,31 @@
  },
  {
   "address": "0x00B5C170",
-  "name": "TBD",
+  "name": "init_sentinels",
   "file": "fn_00b5c170.rs",
   "lane": "r-s804",
   "outcome": "not_reached",
   "reason": null
  },
  {
+  "address": "0x00B5C1A0",
+  "name": "sound_event_reset_tail",
+  "file": "fn_00b5c1a0.rs",
+  "lane": "r-s804",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B5C1E0",
+  "name": "CEventSoundDynamic::vf0",
+  "file": "fn_00b5c1e0.rs",
+  "lane": "r-s804",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B5C240",
-  "name": "TBD",
+  "name": "add_saturate_word",
   "file": "fn_00b5c240.rs",
   "lane": "r-s804",
   "outcome": "not_reached",
@@ -3913,7 +4129,7 @@
  },
  {
   "address": "0x00B5D160",
-  "name": "TBD",
+  "name": "clear_state_1_or_3",
   "file": "fn_00b5d160.rs",
   "lane": "r-s804",
   "outcome": "not_reached",

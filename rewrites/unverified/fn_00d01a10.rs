@@ -25,10 +25,10 @@ lf_checker_rt::export!(thiscall, rw_00d01a10(this: u32) -> u32 {
         const HI: u32 = 0x70;
         const MARGIN: u32 = 0x1440;
 
-        let x = f32::from_bits((this + SRC) as *const u32).read_unaligned());
-        let y = f32::from_bits((this + SRC + 4) as *const u32).read_unaligned());
-        let z = f32::from_bits((this + SRC + 8) as *const u32).read_unaligned());
-        let m = f32::from_bits((this + MARGIN) as *const u32).read_unaligned());
+        let x = f32::from_bits(((this + SRC) as *const u32).read_unaligned());
+        let y = f32::from_bits(((this + SRC + 4) as *const u32).read_unaligned());
+        let z = f32::from_bits(((this + SRC + 8) as *const u32).read_unaligned());
+        let m = f32::from_bits(((this + MARGIN) as *const u32).read_unaligned());
         ((this + LO) as *mut u32).write_unaligned(sub(x, m).to_bits());
         ((this + LO + 4) as *mut u32).write_unaligned(sub(y, m).to_bits());
         ((this + LO + 8) as *mut u32).write_unaligned(sub(z, m).to_bits());
