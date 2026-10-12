@@ -432,3 +432,176 @@ pub fn set_dist_threshold(bits: u32) {
 pub fn dist_threshold() -> u32 {
     DIST_THRESHOLD_CELL.load(Ordering::SeqCst)
 }
+
+// ---------------------------------------------------------------------------
+// The gate block's runtime: global cells, the signed pose table, the hook
+// stub reached through a global slot, and the virtual stubs of the four
+// table slots the block calls.
+// ---------------------------------------------------------------------------
+
+/// The id the hook stub records under.
+pub const HOOK_ID: u32 = 0x120;
+/// The id the refresh slot of the pedestrian's table records under.
+pub const REFRESH_ID: u32 = 0x110;
+/// The id the attach slot of the outer object's inner table records under.
+pub const ATTACH_ID: u32 = 0x111;
+/// The id the tail slot of the pedestrian's table records under.
+pub const TAIL_ID: u32 = 0x112;
+/// The id the sub-object slot records under.
+pub const VSUB_ID: u32 = 0x113;
+
+/// Number of global cells the gate block reads.
+pub const CELL_COUNT: usize = 12;
+
+/// The global cells, by index: the hook argument, the hook slot (the address
+/// of the hook stub), two flag bytes, two or-bytes, the guard byte, the state
+/// word, two pair words, the mode word and the float constant.
+static CELLS: [AtomicU32; CELL_COUNT] = [const { AtomicU32::new(0) }; CELL_COUNT];
+
+/// The pose table: sixteen entries; the table's base is the entry at index 8,
+/// so table indexes from -8 to 7 are all inside it.
+static POSE_TABLE: [AtomicU32; 16] = [const { AtomicU32::new(0) }; 16];
+
+/// The table index of the base entry.
+const POSE_BASE_INDEX: i32 = 8;
+
+/// File address of the pose table the gate block reads through its base.
+pub const POSE_TABLE_VA: u32 = 0x0129_5CD8;
+
+/// Cell index for a gate-block global at a file address.
+fn cell_index(file_va: u32) -> Option<usize> {
+    Some(match file_va {
+        0x017A_CCD8 => 0,
+        0x00E7_33DC => 1,
+        0x0105_B48F => 2,
+        0x017E_D8D1 => 3,
+        0x0117_3590 => 4,
+        0x0117_3591 => 5,
+        0x0116_0C39 => 6,
+        0x011F_7060 => 7,
+        0x0120_88B4 => 8,
+        0x00F1_C040 => 9,
+        0x0103_7720 => 10,
+        0x00FE_8628 => 11,
+        _ => return None,
+    })
+}
+
+/// Address of a gate-block global, for the relocated address map. The pose
+/// table answers with its base, so indexes reach its entries.
+///
+/// # Panics
+///
+/// For any address the gate block does not read: a case bug.
+#[must_use]
+pub fn relocated(file_va: u32) -> u32 {
+    if file_va == POSE_TABLE_VA {
+        return POSE_TABLE[POSE_BASE_INDEX as usize].as_ptr() as usize as u32;
+    }
+    let index = cell_index(file_va).unwrap_or_else(|| panic!("unexpected relocated address {file_va:#x}"));
+    CELLS[index].as_ptr() as usize as u32
+}
+
+/// Sets every gate-block global cell, by index.
+pub fn set_cells(values: &[u32; CELL_COUNT]) {
+    for (cell, value) in CELLS.iter().zip(values) {
+        cell.store(*value, Ordering::SeqCst);
+    }
+}
+
+/// The value of a gate-block global cell, as the lifted side reads it.
+#[must_use]
+pub fn cell_value(index: usize) -> u32 {
+    CELLS[index].load(Ordering::SeqCst)
+}
+
+/// Sets one pose table entry, by table index (-8 to 7).
+///
+/// # Panics
+///
+/// When the index is outside the sixteen entries.
+pub fn set_pose_entry(index: i32, value: u32) {
+    let slot = usize::try_from(POSE_BASE_INDEX + index).expect("pose index inside the table");
+    POSE_TABLE[slot].store(value, Ordering::SeqCst);
+}
+
+/// The pose table entry at a table index, as the lifted side reads it.
+#[must_use]
+pub fn pose_entry(index: i32) -> u32 {
+    let slot = usize::try_from(POSE_BASE_INDEX + index).expect("pose index inside the table");
+    POSE_TABLE[slot].load(Ordering::SeqCst)
+}
+
+/// One byte of a record the case built, at an address the record holds.
+#[must_use]
+pub fn read_u8(addr: u32) -> u8 {
+    // SAFETY: every address the lifted side reads names a record the case
+    // built, with the byte inside it.
+    unsafe { (addr as *const u8).read() }
+}
+
+/// The hook stub: the stdcall target the gate block calls through its slot.
+extern "stdcall" fn stub_hook(a: u32) -> u32 {
+    rewrite_call(HOOK_ID, vec![a])
+}
+
+/// The refresh slot of the pedestrian's table (two arguments).
+extern "thiscall" fn stub_refresh(this: u32, arg: u32) -> u32 {
+    rewrite_call(REFRESH_ID, vec![this, arg])
+}
+
+/// The attach slot of the inner object's table (two arguments).
+extern "thiscall" fn stub_attach(this: u32, arg: u32) -> u32 {
+    rewrite_call(ATTACH_ID, vec![this, arg])
+}
+
+/// The tail slot of the pedestrian's table (one argument).
+extern "thiscall" fn stub_tail(this: u32) -> u32 {
+    rewrite_call(TAIL_ID, vec![this])
+}
+
+/// The sub-object slot (one argument).
+extern "thiscall" fn stub_vsub(this: u32) -> u32 {
+    rewrite_call(VSUB_ID, vec![this])
+}
+
+/// A trap for a one-argument slot the rewrite should not call.
+extern "thiscall" fn trap_one(this: u32) -> u32 {
+    rewrite_call(TRAP_ID, vec![this])
+}
+
+/// Address of the hook stub, for the hook slot.
+#[must_use]
+pub fn hook_stub_addr() -> u32 {
+    stub_hook as *const () as usize as u32
+}
+
+/// Address of the refresh stub, for the pedestrian's table.
+#[must_use]
+pub fn refresh_stub_addr() -> u32 {
+    stub_refresh as *const () as usize as u32
+}
+
+/// Address of the attach stub, for the inner object's table.
+#[must_use]
+pub fn attach_stub_addr() -> u32 {
+    stub_attach as *const () as usize as u32
+}
+
+/// Address of the tail stub, for the pedestrian's table.
+#[must_use]
+pub fn tail_stub_addr() -> u32 {
+    stub_tail as *const () as usize as u32
+}
+
+/// Address of the sub-object stub, for the sub-object's table.
+#[must_use]
+pub fn vsub_stub_addr() -> u32 {
+    stub_vsub as *const () as usize as u32
+}
+
+/// Address of the one-argument trap, for the unused one-argument slots.
+#[must_use]
+pub fn trap_one_addr() -> u32 {
+    trap_one as *const () as usize as u32
+}

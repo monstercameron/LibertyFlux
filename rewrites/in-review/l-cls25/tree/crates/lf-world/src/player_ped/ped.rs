@@ -55,6 +55,18 @@ pub mod offsets {
     pub const RELINK_FLAGS: u32 = 0xBE0;
     /// The nine words the relink clears when its flag byte is set.
     pub const RELINK_BLOCK: [u32; 9] = [0xAD0, 0xAD4, 0xAD8, 0xAE0, 0xAE4, 0xAE8, 0xAF0, 0xAF4, 0xAF8];
+    /// The chain index, a signed half-word that selects a pose table entry.
+    pub const CHAIN_INDEX: u32 = 0x2E;
+    /// The status word the gate block keeps its lock bit in.
+    pub const STATUS_28: u32 = 0x28;
+    /// The flag byte the gate block tests for its sub-object step.
+    pub const FLAG_F4: u32 = 0xF4;
+    /// The outer object pointer the attachment step reads its inner object from.
+    pub const OUTER: u32 = 0xE98;
+    /// The float word the gate block compares with a global constant.
+    pub const FVAL: u32 = 0xBF8;
+    /// The status word the gate block arms.
+    pub const STATUS_29C: u32 = 0x29C;
 }
 
 /// The offset of the targeting component inside the pedestrian.
@@ -117,6 +129,18 @@ pub struct CPlayerPed {
     /// The nine words the relink clears, in the order of
     /// [`offsets::RELINK_BLOCK`].
     pub relink_block: [u32; 9],
+    /// The chain index that selects a pose table entry.
+    pub chain_index: i16,
+    /// The gate block's status word, whose bit 0x80_0000 is its lock.
+    pub status_28: u32,
+    /// The flag byte the gate block tests for its sub-object step.
+    pub flag_f4: u8,
+    /// The outer object pointer.
+    pub outer: u32,
+    /// The float word the gate block compares with a global constant.
+    pub fval_bits: u32,
+    /// The status word the gate block arms.
+    pub status_29c: u32,
 }
 
 /// The scaled aim threshold: the aim factor times the property threshold.

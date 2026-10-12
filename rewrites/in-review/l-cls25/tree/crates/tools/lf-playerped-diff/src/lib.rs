@@ -18,7 +18,7 @@ extern crate self as lf_checker_rt;
 pub mod rt;
 
 #[cfg(target_arch = "x86")]
-pub use rt::{callee_addr, global};
+pub use rt::{callee_addr, global, relocated};
 
 #[cfg(target_arch = "x86")]
 pub mod rewrites;

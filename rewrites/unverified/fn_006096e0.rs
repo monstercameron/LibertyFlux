@@ -13,7 +13,7 @@
 lf_checker_rt::export!(thiscall, rw_006096E0(this: u32, flag: u32) -> u32 {
     unsafe {
         const DTOR_CALLEE: u32 = 1;
-        const FREE_CALLEE: u32 = 2;
+        // The release entry is checker callee 2, reached through the planted vtable.
         const ALLOC: u32 = 0x08;
         const FREE_SLOT: u32 = 0x0c;
 
