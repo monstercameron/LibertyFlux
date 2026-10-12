@@ -15,7 +15,7 @@
 /// function uses stdcall, takes two point pointers, a radius and a mode word,
 /// and compares only the meaningful low-byte result.
 lf_checker_rt::export!(stdcall, rw_00b44290(point_a: u32, point_b: u32, radius: f32, mode: u32) -> u32 {
-    #[inline(always)]
+    #[inline(never)]
     fn add_f32(left: f32, right: f32) -> f32 {
         core::hint::black_box(left) + core::hint::black_box(right)
     }
