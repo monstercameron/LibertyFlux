@@ -66870,6 +66870,15 @@
   "lane": "r-s626"
  },
  {
+  "address": "0x0097E820",
+  "name": "JEERING",
+  "kind": "function",
+  "file": "functions/fn_0097e820.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
   "address": "0x0097E8A0",
   "name": "WALKIE_TALKIE",
   "kind": "function",
@@ -66967,6 +66976,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s626"
+ },
+ {
+  "address": "0x0097EF40",
+  "name": "ped_task_release_voice_task",
+  "kind": "function",
+  "file": "functions/fn_0097ef40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
  },
  {
   "address": "0x0097EF80",
@@ -97245,6 +97263,42 @@
   "lane": "a-U129"
  },
  {
+  "address": "0x00B464A0",
+  "name": "CEventCopCarBeingStolen::~CEventCopCarBeingStolen__deleting",
+  "kind": "function",
+  "file": "functions/fn_00b464a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00B464D0",
+  "name": "CEventDraggedOutCar::~CEventDraggedOutCar__deleting",
+  "kind": "function",
+  "file": "functions/fn_00b464d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00B46500",
+  "name": "CEventEditableResponse::~CEventEditableResponse__deleting",
+  "kind": "function",
+  "file": "functions/fn_00b46500.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00B46530",
+  "name": "CEventFactory::~CEventFactory__deleting",
+  "kind": "function",
+  "file": "functions/fn_00b46530.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
   "address": "0x00B46550",
   "name": "CEventFireNearby::~CEventFireNearby__deleting",
   "kind": "function",
@@ -97540,6 +97594,33 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G15"
+ },
+ {
+  "address": "0x00B46B80",
+  "name": "CInformFriendsEvent::~CInformFriendsEvent__deleting",
+  "kind": "function",
+  "file": "functions/fn_00b46b80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00B46BA0",
+  "name": "CInformGroupEvent::~CInformGroupEvent__deleting",
+  "kind": "function",
+  "file": "functions/fn_00b46ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00B46BC0",
+  "name": "CWeightedTaskSet::~CWeightedTaskSet__deleting",
+  "kind": "function",
+  "file": "functions/fn_00b46bc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
  },
  {
   "address": "0x00B4BA30",
@@ -101466,6 +101547,15 @@
   "lane": "r-s628"
  },
  {
+  "address": "0x00B805F0",
+  "name": "CTaskComplexCarDriveWander::reset_drive_state",
+  "kind": "function",
+  "file": "functions/fn_00b805f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
   "address": "0x00B80640",
   "name": "CTaskComplexDriveToPoint::vf21",
   "kind": "function",
@@ -101581,6 +101671,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80D70",
+  "name": "ped_task_manager_last_active_node",
+  "kind": "function",
+  "file": "functions/fn_00b80d70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
  },
  {
   "address": "0x00B80DD0",
@@ -141939,6 +142038,33 @@
   "lane": "r-s625"
  },
  {
+  "address": "0x00CDF150",
+  "name": "nm_message_timeout_clear",
+  "kind": "function",
+  "file": "functions/fn_00cdf150.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00CDF290",
+  "name": "CTaskComplexNM::create_first_sub_task",
+  "kind": "function",
+  "file": "functions/fn_00cdf290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00CDF320",
+  "name": "CTaskComplexNM::create_next_sub_task",
+  "kind": "function",
+  "file": "functions/fn_00cdf320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
   "address": "0x00CDF940",
   "name": "proposed: ped-task result publisher gated on flags and distances",
   "kind": "function",
@@ -141946,6 +142072,60 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b400"
+ },
+ {
+  "address": "0x00CDFF90",
+  "name": "CTaskSimpleNMBrace::finish_behavior",
+  "kind": "function",
+  "file": "functions/fn_00cdff90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00CDFFD0",
+  "name": "CTaskSimpleNMFallDown::finish_behavior",
+  "kind": "function",
+  "file": "functions/fn_00cdffd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00CE0030",
+  "name": "CTaskSimpleNMExplosion::finish_behavior",
+  "kind": "function",
+  "file": "functions/fn_00ce0030.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00CE0730",
+  "name": "CTaskSimpleNMPose::finish_behavior",
+  "kind": "function",
+  "file": "functions/fn_00ce0730.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00CE0740",
+  "name": "CTaskSimpleNMRelax::finish_behavior",
+  "kind": "function",
+  "file": "functions/fn_00ce0740.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
+ },
+ {
+  "address": "0x00CE0750",
+  "name": "CTaskSimpleNMRollUpAndRelax::finish_behavior",
+  "kind": "function",
+  "file": "functions/fn_00ce0750.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U131"
  },
  {
   "address": "0x00CE0BB0",
