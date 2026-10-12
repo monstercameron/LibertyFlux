@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 1 more functions pass the checker (19286 in total)",
+    "title": "Devlog: research on a host platform for the finished game",
     "commit": null,
+    "summary": "The owner asked whether the Bevy engine should be the platform under the game once its logic is portable Rust. Two research lanes and a measurement are written up as one entry; nothing was installed and the plan is unchanged.",
+    "changes": [
+      "What this engine needs from a host, measured from the project's own data: 969 distinct shader programs of which the project's translator already turns 965 into SPIR-V (measured for this entry over the owner's installed files), a deferred renderer with recorded draw lists, its own audio mixer, exact thread and clock behaviour, ranged reads into the player's own archives, and a main loop that lies in the part of the code the inventory cannot see.",
+      "What Bevy offers in its current release, from primary sources: custom render passes with none of its own meshes or lights, SPIR-V input through translation, an optional renderer and an application-owned loop; and against that, no stability commitment, no tested Windows target for ARM64 processors (with one open rendering fault reported there), and no console support.",
+      "The coordinator's reading, marked as judgement: a port onto Bevy's entity-component system has no case under exact reproduction; Bevy as a platform layer is feasible; the renderer should be written against the wgpu library directly so that the shell around it, Bevy or a bare one, stays a reversible choice. An experiment with pass criteria is proposed and waits for the owner's approval to fetch the crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 1 more functions pass the checker (19286 in total)",
+    "commit": "3afafd3742df553faadaf558808ec65b402c60d8",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
