@@ -1,0 +1,15 @@
+[package]
+name = "lf-montage-diff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: lifted montage container against its verified 32-bit rewrite"
+publish = false
+
+[dependencies]
+lf-input-frontend = { path = "../../lf-input-frontend" }
+lf-core = { path = "../../lf-core" }
+
+[lints]
+workspace = true

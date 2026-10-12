@@ -1,6 +1,20 @@
 [
   {
     "date": "2026-10-12",
+    "title": "Lift: the montage container, three methods",
+    "commit": null,
+    "summary": "Three of the four verified methods of the replay editor's montage container are lifted into portable Rust in the front-end crate and proven against their 32-bit rewrites.",
+    "changes": [
+      "The lifted module forbids unsafe code; state is passed at the boundary and collaborators are a trait.",
+      "Proof on the 32-bit target: 2,400 trials over eight paths for one method with eight wrong lifts caught, 900 over nine paths for the second and 1,300 over thirteen for the third, including threshold, not-a-number and unsigned-index cases, each with a wrong lift caught. Floats are compared bit for bit. Host tests pass on the 64-bit host.",
+      "What the proofs do not cover: collaborators' bodies are scripted; handles are non-null where they are dereferenced; one method keeps the stack-check narrowing of its contract of record.",
+      "Not lifted: the fourth verified method, whose contract of record tests one fixed stack fill that forces a block of calls and lists no narrowing for it, and fourteen methods with no verified rewrite.",
+      "Found while lifting, for the proof audit list and the inventory: that fourth method's unlisted fixed stack fill; a contract that leaves out a correlation between two of its per-trial inputs; one size in the inventory that differs from the accepted result's by 53 bytes; unfinished placeholder comments in two rewrites and an unused constant in a third.",
+      "The lane was begun by a Muse lane cut sixteen minutes in and finished by a Luna lane from its files; the second found a false pass in the harness it inherited and fixed it. The count of lifted routines is 1,386."
+    ]
+  },
+  {
+    "date": "2026-10-12",
     "title": "Rust in progress: 21 files from lanes (1037 unverified rewrites, 1356 in review)",
     "commit": "95c98bec2ae02600b35a447ddab95112362e0a4d",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
