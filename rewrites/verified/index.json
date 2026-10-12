@@ -139185,6 +139185,141 @@
   "lane": "r-b463"
  },
  {
+  "address": "0x00C5DF10",
+  "name": "ctask_complex_gang_driveby_clone",
+  "kind": "function",
+  "file": "functions/fn_00c5df10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5DF60",
+  "name": "ctask_simple_arrest_ped_clone",
+  "kind": "function",
+  "file": "functions/fn_00c5df60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5DF90",
+  "name": "ctask_simple_be_hit_clone",
+  "kind": "function",
+  "file": "functions/fn_00c5df90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5DFC0",
+  "name": "ctask_simple_new_gang_driveby_clone",
+  "kind": "function",
+  "file": "functions/fn_00c5dfc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E000",
+  "name": "ctask_simple_player_be_arrested_clone",
+  "kind": "function",
+  "file": "functions/fn_00c5e000.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E030",
+  "name": "ctask_simple_throw_grenade_from_vehicle_clone",
+  "kind": "function",
+  "file": "functions/fn_00c5e030.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E060",
+  "name": "CTaskComplexDestroyCar::control_sub_task",
+  "kind": "function",
+  "file": "functions/fn_00c5e060.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E150",
+  "name": "CTaskComplexDestroyCarArmed::control_sub_task",
+  "kind": "function",
+  "file": "functions/fn_00c5e150.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E230",
+  "name": "CTaskComplexGangDriveby::control_sub_task",
+  "kind": "function",
+  "file": "functions/fn_00c5e230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E2F0",
+  "name": "CTaskComplexDestroyCar::vf19",
+  "kind": "function",
+  "file": "functions/fn_00c5e2f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E390",
+  "name": "CTaskComplexDestroyCarArmed::vf19",
+  "kind": "function",
+  "file": "functions/fn_00c5e390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E6A0",
+  "name": "CTaskComplexDestroyCar::create_next_sub_task",
+  "kind": "function",
+  "file": "functions/fn_00c5e6a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E790",
+  "name": "CTaskComplexDestroyCarArmed::create_next_sub_task",
+  "kind": "function",
+  "file": "functions/fn_00c5e790.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E850",
+  "name": "CTaskComplexGangDriveby::vf18",
+  "kind": "function",
+  "file": "functions/fn_00c5e850.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5E940",
+  "name": "create_destroy_car_sub_task",
+  "kind": "function",
+  "file": "functions/fn_00c5e940.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
   "address": "0x00C5E9C0",
   "name": "gang_task_factory",
   "kind": "function",
@@ -139192,6 +139327,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b463"
+ },
+ {
+  "address": "0x00C5EB50",
+  "name": "set_driveby_seat_door",
+  "kind": "function",
+  "file": "functions/fn_00c5eb50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
+ },
+ {
+  "address": "0x00C5EC10",
+  "name": "set_grenade_throw_seat_door",
+  "kind": "function",
+  "file": "functions/fn_00c5ec10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s814"
  },
  {
   "address": "0x00C5FED0",
