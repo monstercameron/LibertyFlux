@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Rust in progress: 13 files from lanes (1029 unverified rewrites, 1201 in review)",
+    "title": "Devlog: hourly review, 04:05 on 12 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "11,759 bytes verified from the first seven of thirty finishing lanes, all claims reproduced; two more classes lifted, to 1,386 routines.",
+      "No new lane starts; the coordinator parks when the last running lane is imported."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Rust in progress: 13 files from lanes (1029 unverified rewrites, 1201 in review)",
+    "commit": "2cf032e09d232d8baacfbded334d9f2fd4c4d2fe",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 1029 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
