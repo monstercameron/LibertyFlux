@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Lift of the replay progress bar class: three of four verified methods</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls23"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls23</id>
+    <published>2026-10-12T00:00:00Z</published>
+    <updated>2026-10-12T00:00:00Z</updated>
+    <summary>From lane l-cls23.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-cls23.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the verified methods of the replay progress bar class to portable Rust, each proven against its verified 32-bit rewrite.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Found.&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Update method extent&lt;/td&gt;&lt;td data-label="Fact"&gt;The inventory size runs into the next routine. The routine ends with a return 373 bytes in; the verified rewrite was proven over that extent.&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Draw method extent&lt;/td&gt;&lt;td data-label="Fact"&gt;The routine is 4,095 bytes; the inventory says 4,089.&lt;/td&gt;&lt;td data-label="Status"&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Teardown routine name&lt;/td&gt;&lt;td data-label="Fact"&gt;Its inventory name says constructor; it is the teardown the deleting destructor calls first. Its rewrite comment says menu-state object, which does not match the class.&lt;/td&gt;&lt;td data-label="Status"&gt;Verified for the call pattern; Inferred for the class&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Update contract&lt;/td&gt;&lt;td data-label="Fact"&gt;The first out-word of the first fill call is never written by the contract, so it is zero on every trial. The narrowing list records only the zeroed stack fill.&lt;/td&gt;&lt;td data-label="Status"&gt;Verified from the contract&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Lift the deleting destructor, the teardown and the update, which together cover the class's lifecycle and per-frame behaviour. Defer the draw method: it orders floating-point work through helpers, keeps a local frame array and reads nine globals, and its lift needs float-exact output checks. The four unverified methods are not lifted.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Result.&lt;/strong&gt; Six differential tests pass on the 32-bit target, 3,000 seeded trials per method, and 13 deliberately wrong lifts are caught. Twelve host tests pass on the 64-bit host. The lifted module has no unsafe blocks.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Reproduce.&lt;/strong&gt; Run the lane's differential test crate on the 32-bit target with one test thread, and its host tests on the 64-bit host. Each method's registry row names its rewrite and its test.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Limits.&lt;/strong&gt; The proofs script the collaborators, do not verify them, and do not compare stack words. Each row of the registry lists what its proof does not cover.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Lifting the go-to-point-on-route task family: eight of nine verified methods proven</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls24"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls24</id>
@@ -1342,39 +1364,5 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;p&gt;&lt;strong&gt;Reproduce.&lt;/strong&gt; Patch each direct call instruction of the function (its relative address in the image) to a scripted callee id in the contract, and plant the stub in each indirect target slot. Run the stock checker in a 60-trial probe: the original reports ok, orig_ok equal to the trial count.&lt;/p&gt;
 &lt;p&gt;Limits: the proof covers the function under the stub model only; a callee's real effects on its pointer arguments are not compared.&lt;/p&gt;
 &lt;p&gt;Written by lane a-H01; integrated by the coordinator.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>The checker's option for unrelocated absolute reads has never set up on this machine</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#absolute-read-option-unavailable-2026-10-11"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#absolute-read-option-unavailable-2026-10-11</id>
-    <published>2026-10-11T00:00:00Z</published>
-    <updated>2026-10-11T00:00:00Z</updated>
-    <summary>The checker has a contract option for an original that reads an absolute address which the loader did not relocate: the worker holds the address range of the original's preferred base, so such a read lands on a copy of the image. A lane on a large function asked for the option, was refused, and reported that the repository's own self-test contract for it fails the same way. A checker investigation lane took 15 minutes to settle it. The option fails at set-up on this machine every time, it has done so since the day it was added, and nothing a lane can do changes that.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;The checker has a contract option for an original that reads an absolute address which the loader did not relocate: the worker holds the address range of the original's preferred base, so such a read lands on a copy of the image. A lane on a large function asked for the option, was refused, and reported that the repository's own self-test contract for it fails the same way. A checker investigation lane took 15 minutes to settle it. The option fails at set-up on this machine every time, it has done so since the day it was added, and nothing a lane can do changes that.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Is the refusal a fault in the checker, a fault in the lane's contract, or the machine? Twenty deferred functions, 27,343 bytes, were queued behind this option, so the answer mattered beyond one lane.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Question&lt;/th&gt;&lt;th role="columnheader"&gt;Finding&lt;/th&gt;&lt;th role="columnheader"&gt;How it is known&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Does the self-test contract fail?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;Yes, at set-up, before any trial: 10 of 10 fresh driver runs, 40 of 40 set-up attempts counting the driver's own retries.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Verified: run on the stock driver and worker.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;What holds the range?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;One block mapped by the system, present at the first line of the worker's own code, covering the whole range. It is not the worker's image, which sits elsewhere. None of the 768 pieces of the range can be reserved, and the block cannot be released.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Verified: a private copy of the worker that lists the regions in the range before it reserves anything.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Does it depend on how the worker is linked?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;The layout changes and the outcome does not. Linked at a fixed base, as the worker is, the block is always there. Linked to load at a random base, some pieces of the range are free on some starts, never all of them: 0 of 40 set-ups.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Verified: two small 32-bit probe programs, one linked each way.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Is it new?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;No. The first lane log that records the worker holding none of the range is from 4 October, the day the option went live. Forty-one lane logs record a deferral for it since. No log of a contract passing with the option was found on this machine.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Verified for the logs; that it never passed is inferred from finding none.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Does it depend on load, or on how the worker is started?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;No: the same with 25 other workers running and with none started by the driver.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Verified.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Would it work after a restart, or on a machine with an x86 processor?&lt;/td&gt;&lt;td role="cell" data-label="Finding"&gt;Unknown. This machine runs 32-bit x86 code under emulation, which may be what maps the block; that was not tested.&lt;/td&gt;&lt;td role="cell" data-label="How it is known"&gt;Unknown.&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;Repairs tried and ruled out: linking the worker differently, reserving earlier (the block is there before the worker runs), releasing the block, and retrying. Covering only the pieces that can be held was not tried, on purpose: the worker refuses a partial cover by design, because a read that lands on a piece it does not hold would silently read the worker's own memory.&lt;/p&gt;
-&lt;h3&gt;What was decided&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;No lane is sent at a contract that needs this option, or at its self-test contract. The self-test's failure is a known condition of this machine, not a regression in the checker.&lt;/li&gt;
-&lt;li&gt;The twenty queued functions stay deferred with this as the stated reason. Before any of them is believed to need the option, its claim is checked with the relocation checker: an earlier devlog entry records that every such claim examined so far was wrong, and the worker already relocates absolute immediates so that most data reads work without the option (see the entry of 5 October on a production lane).&lt;/li&gt;
-&lt;li&gt;Getting the option to work is a design change to the checker, for the owner to decide: for example loading the original at its preferred base in a process built for that purpose. It is not a lane repair.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;Correction&lt;/h3&gt;
-&lt;p&gt;Lane notes since 4 October say the range is taken "in every 32-bit process". That is true only of programs linked at a fixed base. It does not change the outcome, and it is corrected here so the next investigation does not start from it.&lt;/p&gt;
-&lt;h3&gt;How to reproduce&lt;/h3&gt;
-&lt;p&gt;Run the self-test contract for the option from the checker's contract folder on the stock driver, ten times, each in a fresh driver process, and read the set-up message. The investigation lane's commands, outputs and the region listings are in its scratch folder.&lt;/p&gt;</content>
   </entry>
 </feed>
