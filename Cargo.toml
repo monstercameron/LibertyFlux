@@ -156,6 +156,7 @@ members = [
     "crates/tools/lf-peds-seekdiff",
     "crates/tools/lf-composerdiff",
     "crates/tools/lf-shaftdiff",
+    "crates/tools/lf-soundbase-diff",
     "crates/formats/lf-archive",
     "crates/formats/lf-resource",
     "crates/formats/lf-model",
@@ -214,4 +215,10 @@ debug-assertions = false
 # address that is not a multiple of four; the 32-bit processor allows it and a debug build's pointer-alignment
 # check aborts on it. The check is switched off for this crate only.
 [profile.dev.package.lf-28-globwrdiff]
+debug-assertions = false
+
+# This test crate compiles verified rewrites exactly as they are, and they read and write words at addresses the
+# 32-bit processor allows and a debug build's pointer-alignment check aborts on. The check is switched off for this
+# crate only, so its tests run in the ordinary debug build like the others.
+[profile.dev.package.lf-soundbase-diff]
 debug-assertions = false

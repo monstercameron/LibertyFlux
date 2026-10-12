@@ -18,4 +18,5 @@ pub mod audio_slot;
 pub mod audio_voice;
 pub mod layout;
 pub mod sound;
+pub mod sound_base;
 pub mod voice;

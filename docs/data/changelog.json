@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Devlog: hourly review, 00:05 on 12 October",
+    "title": "Lift: the audio engine's base sound class, nine methods",
     "commit": null,
+    "summary": "The fourth class lift: the interface every kind of sound implements. Nine of its ten verified methods are lifted; the tenth returns a constant and has nothing to lift.",
+    "changes": [
+      "crates/lf-audio gains a sound_base module beside the existing sound module: two lookups (by hash and by name), a store at a key, a hash-and-forward, a link forward, the deleting destructor, the attachment of a voice, the advance of a sound in time, and the second constructor. 811 lines with unsafe code forbidden in the module; the engine's globals, callees and virtual slots are behind one trait, and nothing calls the operating system, a file or a clock. The nine verified rewrites are 481 lines with nine unsafe blocks.",
+      "One new test crate runs each lifted method against its tracked verified rewrite in one 32-bit test memory on 300 generated cases, comparing the return value, every engine call in order with its arguments, and every byte of memory afterwards, floats bit for bit; a deliberately wrong copy of each method is caught. The coordinator ran the audio crate's host tests (120) and the 19 tests on the 32-bit target before committing; none failed. The crate has the debug build's alignment check switched off, as four other test crates have.",
+      "Narrowed, as the lane states: voice rows 0 to 4 and 44 initial sub-identifiers only, from the test memory's layout; the advance is proven for five of the divisor entries, and a sound with no voice column panics where the original faults.",
+      "Two findings for the proof audits: the contracts of record of the voice attachment and of the advance both set the stack fill to zero, and the advance's rewrite zeroes a word that, by its own comment, the original reads uninitialised; and the evidence database lists five callees of the advance that its rewrite never calls, so either they are on a path the proof leaves out or the rewrite's narrowing is wider than it says. Both go to the stack-fill audit's list and to a lane.",
+      "Verified routines with a lifted counterpart proven in the pipeline: 1,320."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Devlog: hourly review, 00:05 on 12 October",
+    "commit": "b76cc0ab607208d7a10f5ff07cc0215019bda895",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "19,893 bytes an hour verified, the highest at thirty lanes; 488 published files repaired and the assembled library's exclusions down from 706 to 218; three class lifts in.",
