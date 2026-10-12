@@ -9,13 +9,10 @@
 /// frame and positions to shared engine state, resolves both positions to
 /// navigation cells, and asks the navigation helpers to validate and build
 /// a path. A missing cell records status `-4`; a gated missing second node
-/// records `-14` when the global recovery flag is set, and otherwise asks
-/// the safe-position helper for a replacement node, whose answer also feeds
-/// the validate step. Only when both nodes are present does the routine
-/// validate, build, and mark an over-distance path point; the step that
-/// advances every path point's first component by the shared step value runs
-/// on every path that reaches the tail. The semantic result is returned in
-/// AL; upper EAX bits are not part of this function's result.
+/// records `-14` when the global recovery flag is set. After a successful
+/// update it marks an over-distance path point and advances every path
+/// point's first component by the shared step value. The semantic result is
+/// returned in AL; upper EAX bits are not part of this function's result.
 ///
 /// All helper calls below are intercepted by the checker contract. Pointers
 /// in the task and entity retain the original 32-bit game layout.
@@ -258,8 +255,8 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
             (first, second)
         };
 
-        let mut first_node = lf_checker_rt::callee_cdecl!(CALL_FIND_CELL, u32, first_cell);
-        let mut second_node = lf_checker_rt::callee_cdecl!(CALL_FIND_CELL, u32, second_cell);
+        let first_node = lf_checker_rt::callee_cdecl!(CALL_FIND_CELL, u32, first_cell);
+        let second_node = lf_checker_rt::callee_cdecl!(CALL_FIND_CELL, u32, second_cell);
 
         // Clear the matching weapon row when the first navigation node asks
         // for a fire response. The game stores each row 0x280 bytes apart.
@@ -280,15 +277,9 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
             );
         }
 
-        // A missing second node takes the guarded safe-position path when the
-        // task allows it. The request carries the scaled navigation midpoint
-        // and the task's own height to the helper, which answers through the
-        // second of its two frame pointers; the four words it stores become
-        // the new second point. The node slots sit elsewhere in the frame and
-        // are untouched, so a granted request simply promotes the nearest
-        // record to the second node. A null answer skips the request, and a
-        // refused request keeps the old point; both leave the second node
-        // null, which routes past the validate step to the step loop.
+        // A missing second node takes the guarded safe-position path. Its
+        // output record is local to this call; the contract models that
+        // callee and its two frame pointers explicitly.
         if task_flags & SAFE_POSITION != 0 && second_node == 0 {
             if read_u8(lf_checker_rt::global::<u8>(GLOBAL_NAV_RECOVERY) as u32) != 0 {
                 write_u32(task.wrapping_add(TASK_STATUS), u32::MAX - 13);
@@ -299,74 +290,67 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
                 u32,
                 task.wrapping_add(TASK_SECOND_POINT),
             );
-            if nearest != 0 {
-                let nav_vector = read_u32(nearest.wrapping_add(NAV_REC_VECTOR));
-                let scale = global_f32(POINT_STEP);
-                let x = mul_f32(
-                    add_f32(
-                        f32::from_bits(read_u32(nav_vector.wrapping_add(NAV_VECTOR_OFFSET))),
-                        f32::from_bits(read_u32(nav_vector)),
-                    ),
-                    scale,
-                );
-                let y = mul_f32(
-                    add_f32(
-                        f32::from_bits(read_u32(nav_vector.wrapping_add(NAV_VECTOR_OFFSET + 4))),
-                        f32::from_bits(read_u32(nav_vector.wrapping_add(4))),
-                    ),
-                    scale,
-                );
-                let z = read_u32(task.wrapping_add(TASK_SECOND_POINT + 8));
-                core::hint::black_box((x, y, z));
-                let mut request = [0u32; 4];
-                let mode = if task_flags & SKIP_ENTITY_RELEASES == 0 { 0x12 } else { 0x10 };
-                let safe = lf_checker_rt::callee_cdecl!(
-                    CALL_SAFE_POSITION,
-                    u32,
-                    request.as_mut_ptr().wrapping_add(4) as u32,
-                    request.as_mut_ptr() as u32,
-                    PATH_SPEED,
-                    mode,
-                    0,
-                    0,
-                    0,
-                );
-                if safe != 0 {
-                    for (index, value) in request.iter().copied().enumerate() {
-                        write_u32(task.wrapping_add(TASK_SECOND_POINT + index as u32 * 4), value);
-                    }
-                    if task_flags & SKIP_ENTITY_RELEASES == 0 {
-                        let applied = lf_checker_rt::callee_thiscall!(
+            let nav_vector = read_u32(nearest.wrapping_add(NAV_REC_VECTOR));
+            let scale = global_f32(POINT_STEP);
+            let x = mul_f32(
+                add_f32(
+                    f32::from_bits(read_u32(nav_vector)),
+                    f32::from_bits(read_u32(nav_vector.wrapping_add(NAV_VECTOR_OFFSET))),
+                ),
+                scale,
+            );
+            let y = mul_f32(
+                add_f32(
+                    f32::from_bits(read_u32(nav_vector.wrapping_add(4))),
+                    f32::from_bits(read_u32(nav_vector.wrapping_add(NAV_VECTOR_OFFSET + 4))),
+                ),
+                scale,
+            );
+            let mut requested_position = [x.to_bits(), y.to_bits(), read_u32(task.wrapping_add(TASK_SECOND_POINT + 8)), 0];
+            let mut safe_output = [first_node, 0, 0, 0];
+            let mode = if task_flags & SKIP_ENTITY_RELEASES == 0 { 0x12 } else { 0x10 };
+            let safe = lf_checker_rt::callee_cdecl!(
+                CALL_SAFE_POSITION,
+                u32,
+                requested_position.as_mut_ptr() as u32,
+                safe_output.as_mut_ptr() as u32,
+                PATH_SPEED,
+                mode,
+                0,
+                0,
+                0,
+            ) as u8;
+            if safe != 0 {
+                for (index, value) in safe_output.iter().copied().enumerate() {
+                    write_u32(task.wrapping_add(TASK_SECOND_POINT + index as u32 * 4), value);
+                }
+                if task_flags & SKIP_ENTITY_RELEASES == 0 {
+                    let applied = lf_checker_rt::callee_thiscall!(
+                        CALL_APPLY_DROP,
+                        u32,
+                        ped,
+                        task.wrapping_add(TASK_SECOND_POINT),
+                        0,
+                        0,
+                        0,
+                    ) as u8;
+                    if applied == 0 {
+                        let _ = lf_checker_rt::callee_thiscall!(
                             CALL_APPLY_DROP,
                             u32,
                             ped,
                             task.wrapping_add(TASK_SECOND_POINT),
                             0,
+                            u32::from(task_flags & WEAPON_BIT != 0),
                             0,
-                            0,
-                        ) as u8;
-                        if applied == 0 {
-                            let _ = lf_checker_rt::callee_thiscall!(
-                                CALL_APPLY_DROP,
-                                u32,
-                                ped,
-                                task.wrapping_add(TASK_SECOND_POINT),
-                                0,
-                                u32::from(task_flags & WEAPON_BIT != 0),
-                                0,
-                            );
-                        }
+                        );
                     }
-                    write_u32(task.wrapping_add(TASK_SECOND_POINT + 16), SAFE_PATH_SPEED);
-                    second_node = nearest;
                 }
+                write_u32(task.wrapping_add(TASK_SECOND_POINT + 16), SAFE_PATH_SPEED);
             }
         }
 
         // Validate and build only when both cell lookups produced records.
-        // The marker check below belongs to the same region: a null on
-        // either side skips both and runs only the step loop.
-        let point_count = read_u32(task.wrapping_add(TASK_PATH_COUNT));
         if first_node != 0 && second_node != 0 {
             write_u32(ped.wrapping_add(PED_COMPONENT), task);
             write_u8(
@@ -425,31 +409,32 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
                 let _ = lf_checker_rt::callee_thiscall!(CALL_REFINE, u32, ped, task);
             }
             set_global_u32(GLOBAL_PATH_MODE, saved_path_mode);
+        }
 
-            // Mark the current point if its squared distance exceeds the
-            // data threshold.
-            if point_count < PATH_POINT_COUNT_LIMIT {
-                let point = task
-                    .wrapping_add(TASK_POINTS)
-                    .wrapping_add(point_count.wrapping_mul(16));
-                let delta_x = sub_f32(
-                    f32::from_bits(read_u32(point.wrapping_add(4))),
-                    global_f32(GLOBAL_POSITION_B + 4),
-                );
-                let delta_y = sub_f32(
-                    f32::from_bits(read_u32(point)),
-                    global_f32(GLOBAL_POSITION_B),
-                );
-                let distance_squared = add_f32(
-                    mul_f32(delta_x, delta_x),
-                    mul_f32(delta_y, delta_y),
-                );
-                if distance_squared > global_f32(FRAME_OFFSET) {
-                    let marker = task
-                        .wrapping_add(PATH_POINT_FLAGS)
-                        .wrapping_add(point_count.wrapping_mul(4));
-                    write_u16(marker, read_u16(marker) | 0x80);
-                }
+        // Mark the current point if its squared distance exceeds the data
+        // threshold, then advance the first coordinate of each path point.
+        let point_count = read_u32(task.wrapping_add(TASK_PATH_COUNT));
+        if point_count < PATH_POINT_COUNT_LIMIT {
+            let point = task
+                .wrapping_add(TASK_POINTS)
+                .wrapping_add(point_count.wrapping_mul(16));
+            let delta_x = sub_f32(
+                f32::from_bits(read_u32(point.wrapping_add(4))),
+                global_f32(GLOBAL_POSITION_B + 4),
+            );
+            let delta_y = sub_f32(
+                f32::from_bits(read_u32(point)),
+                global_f32(GLOBAL_POSITION_B),
+            );
+            let distance_squared = add_f32(
+                mul_f32(delta_x, delta_x),
+                mul_f32(delta_y, delta_y),
+            );
+            if distance_squared > global_f32(FRAME_OFFSET) {
+                let marker = task
+                    .wrapping_add(PATH_POINT_FLAGS)
+                    .wrapping_add(point_count.wrapping_mul(4));
+                write_u16(marker, read_u16(marker) | 0x80);
             }
         }
         let step = global_f32(POINT_STEP);

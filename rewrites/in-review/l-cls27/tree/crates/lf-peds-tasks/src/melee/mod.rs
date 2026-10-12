@@ -21,4 +21,7 @@ pub mod registry;
 pub mod task;
 
 pub use host::{CtorArgs, InitWords, MeleeHost, StampWords, StartArgs};
-pub use task::{MeleeTask, ResetSlot, SubTask};
+pub use task::{
+    DISABLE_BIT, FLAG_BASE, FOLLOW_UP_ALT, FREE_BIT, KIND_MELEE, MeleeTask, ResetSlot, SLOT_OFFSETS,
+    SubTask,
+};

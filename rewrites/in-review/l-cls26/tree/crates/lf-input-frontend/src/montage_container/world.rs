@@ -14,6 +14,14 @@ use lf_core::Handle32;
 
 /// Tag for the handle to the container object itself.
 pub struct OwnTag;
+/// Tag for the opaque helper context supplied by the UI subsystem.
+pub struct HelperContextTag;
+/// Tag for the opaque lookup context supplied by the registry subsystem.
+pub struct LookupContextTag;
+/// Tag for the shared editor state object.
+pub struct StateTag;
+/// Tag for the helper object returned by an activation call.
+pub struct ActiveTag;
 /// Tag for the handle to the clip list object.
 pub struct ListTag;
 /// Tag for the handle to the auxiliary object the refresh toggles.
@@ -74,13 +82,17 @@ pub enum Tag {
 /// Names describe the role each call plays in the region that makes it.
 /// Where a call's result is consumed, the result is returned; where the
 /// original ignores the answer, nothing is returned (see the registry for
-/// the per-method narrowings). A constant zero word the original passes as
-/// a mode or flag is still passed, so the value is part of the call's
-/// record; a fixed game object passed as a call's context is not, and the
-/// production world supplies it itself.
+/// the per-method narrowings). Fixed contexts and constant arguments are
+/// explicit so the differential recorder can compare every argument. The
+/// two raw byte stores are represented as semantic effects on collaborator
+/// objects; their full blocks are compared by the differential test.
 pub trait MontageWorld {
     /// Opens a session for the state flag; answers the session object.
-    fn open_session(&mut self, flag: u32) -> Option<Handle32<SessionTag>>;
+    fn open_session(
+        &mut self,
+        context: Handle32<HelperContextTag>,
+        flag: u32,
+    ) -> Option<Handle32<SessionTag>>;
     /// The container's own open entry, run after the session opens.
     fn own_open(&mut self, own: Handle32<OwnTag>);
     /// The session's tag word, compared against the wanted tag at each gate.
@@ -88,9 +100,15 @@ pub trait MontageWorld {
     /// The wanted tag word for an identity gate, or the refresh handle.
     fn tag_id(&mut self, tag: Tag) -> u32;
     /// Activates the helper for a region.
-    fn activate(&mut self, tag: Tag);
+    fn activate(
+        &mut self,
+        context: Handle32<HelperContextTag>,
+        tag: Tag,
+    ) -> Handle32<ActiveTag>;
+    /// Sets the helper object's active flag, a byte store made after activation.
+    fn mark_active(&mut self, active: Handle32<ActiveTag>, value: bool);
     /// The shared lookup a region runs after activating.
-    fn lookup(&mut self, tag: Tag);
+    fn lookup(&mut self, context: Handle32<LookupContextTag>, tag: Tag);
     /// The clip list's element count.
     fn list_count(&mut self, list: Handle32<ListTag>) -> u32;
     /// The clip element at an index.
@@ -106,12 +124,12 @@ pub trait MontageWorld {
     /// The freshness value the refresh region thresholds.
     fn freshness(&mut self, src: Handle32<SrcTag>) -> u32;
     /// The teardown mark, run when the freshness threshold trips.
-    fn note_teardown_mark(&mut self);
+    fn note_teardown_mark(&mut self, marker: u32);
     /// The shared state refresh, run on the refresh path.
-    fn state_refresh(&mut self);
+    fn state_refresh(&mut self, state: Handle32<StateTag>);
     /// The shared state teardown; answers the dispatcher's result on the
     /// threshold path.
-    fn state_teardown(&mut self) -> u32;
+    fn state_teardown(&mut self, state: Handle32<StateTag>) -> u32;
     /// Sets the auxiliary object's mode on the toggled refresh path.
     fn aux_set(&mut self, aux: Handle32<AuxTag>, mode: u32);
     /// The list's parameter sub-object (read, not called).
@@ -129,7 +147,7 @@ pub trait MontageWorld {
     /// Sets a second probe's mode.
     fn probe_set(&mut self, probe: Option<Handle32<ProbeTag>>, mode: u32);
     /// The preparation step of the refresh sequence.
-    fn prepare(&mut self, tag: Tag);
+    fn prepare(&mut self, tag: Tag, argument: u32);
     /// Opens the refresh worker session for the container and the first
     /// session; answers the worker session.
     fn open_worker(
@@ -137,6 +155,7 @@ pub trait MontageWorld {
         own: Handle32<OwnTag>,
         first: Option<Handle32<SessionTag>>,
         handle: u32,
+        trailing: u32,
     ) -> Option<Handle32<SessionTag>>;
     /// The worker session's first word.
     fn session_first(&mut self, session: Option<Handle32<SessionTag>>) -> u32;
@@ -158,10 +177,17 @@ pub trait MontageWorld {
     fn prop_read(&mut self, inner: Option<Handle32<InnerTag>>) -> u32;
     /// Sets the configuration from a property word.
     fn cfg_set(&mut self, cfg: Handle32<CfgTag>, prop: u32);
+    /// Clears the configuration object's status byte on the toggled path.
+    fn clear_cfg_status(&mut self, cfg: Handle32<CfgTag>);
     /// The blend value for a property word, as bits.
     fn blend_level(&mut self, src: Handle32<SrcTag>, prop: u32) -> u32;
     /// Resolves the blend target for a tag and a blend value's bits.
-    fn resolve_output(&mut self, tag: Tag, blend: u32) -> Option<Handle32<OutputTag>>;
+    fn resolve_output(
+        &mut self,
+        context: Handle32<HelperContextTag>,
+        tag: Tag,
+        blend: u32,
+    ) -> Option<Handle32<OutputTag>>;
     /// Releases the blend target; answers the dispatcher's result on the
     /// refresh path.
     fn release_output(&mut self, target: Option<Handle32<OutputTag>>) -> u32;

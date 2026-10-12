@@ -17,7 +17,7 @@ mod x86 {
     mod support;
     use support::{
         Fake, Image, Rng, Stubs, VTable, SLOT_COMPLETE, S_MODE, TASK_SIZE, T_SESSION, T_STARTED,
-        T_STATE, assert_only_changed, check_virtual, lift_task,
+        T_STATE, assert_only_changed, assert_task_matches, check_virtual, lift_task,
     };
 
     mod wrong {
@@ -59,7 +59,11 @@ mod x86 {
                     if started == 0 { 1 } else { started },
                     "latch"
                 );
-                assert!(lifted.started, "lift latched");
+                assert_eq!(
+                    lifted.started,
+                    if started == 0 { 1 } else { started },
+                    "lift latch word"
+                );
                 let live = mode == 2 || mode == 3;
                 if live {
                     assert_eq!(obj.r32(T_STATE), state_before, "live keeps state");
@@ -92,6 +96,7 @@ mod x86 {
                         &[(T_STARTED, T_STARTED + 4), (T_STATE, T_STATE + 4)],
                     );
                 }
+                assert_task_matches(&obj, &lifted);
                 assert!(rt::take_numbered().is_empty(), "no numbered calls");
                 if wrong::live(mode) != live {
                     caught += 1;

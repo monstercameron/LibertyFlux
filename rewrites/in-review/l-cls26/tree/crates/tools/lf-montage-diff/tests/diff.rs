@@ -163,8 +163,6 @@ struct Trial {
     state_flag: u32,
     /// The scripted answers, by call name.
     script: Script,
-    /// The forced path.
-    path: Path,
 }
 
 fn push(script: &mut Script, name: &'static str, answers: Vec<u32>) {
@@ -173,8 +171,16 @@ fn push(script: &mut Script, name: &'static str, answers: Vec<u32>) {
 
 /// A word guaranteed to differ from `probe`.
 fn differ(rng: &mut Rng, probe: u32) -> u32 {
-    let flip = probe ^ 1;
-    if rng.below(2) == 0 { flip } else { rng.pick_word() ^ 1 }
+    if rng.below(2) == 0 {
+        probe ^ 1
+    } else {
+        let candidate = rng.pick_word();
+        if candidate == probe {
+            probe.wrapping_add(1)
+        } else {
+            candidate
+        }
+    }
 }
 
 /// Generates the trial for `path`. Gate answers force the path; every
@@ -233,7 +239,9 @@ fn make_trial(rng: &mut Rng, path: Path) -> Trial {
                     2 => 99,
                     3 => 0xFFFF_FFFF,
                     4 => 0x8000_0000,
-                    _ => rng.word() & 0x7FFF_FFFF,
+                // Keep nonnegative samples below the signed threshold; the
+                // high-bit cases above still exercise negative inputs.
+                _ => rng.word() % 100,
                 },
             };
             push(&mut script, "freshness", vec![freshness]);
@@ -349,7 +357,7 @@ fn make_trial(rng: &mut Rng, path: Path) -> Trial {
     } else {
         rng.pick_word()
     };
-    Trial { words, mode, phase, state_flag, script, path }
+    Trial { words, mode, phase, state_flag, script }
 }
 
 /// A planted word buffer the rewrite reads and writes through.
@@ -640,8 +648,13 @@ fn run_rewrite(scene: &Scene, trial: &Trial, ctx: &Ctx) -> (Vec<String>, u32) {
 
 /// Runs the lifted dispatcher on a copy of the object's words; returns the
 /// record, the returned word and the words afterwards.
-fn run_lift(scene: &Scene, trial: &Trial, ctx: &Ctx) -> (Vec<String>, u32, Vec<u32>) {
-    let mut lifted = scene.obj.words.clone();
+fn run_lift(
+    scene: &Scene,
+    initial: &[u32],
+    trial: &Trial,
+    ctx: &Ctx,
+) -> (Vec<String>, u32, Vec<u32>) {
+    let mut lifted = initial.to_vec();
     let mut container = decode(&lifted, scene.obj.addr());
     let mut world = FakeWorld::new(*ctx, trial.script.clone());
     let globals = MontageGlobals { state_flag: trial.state_flag };
@@ -653,11 +666,12 @@ fn run_lift(scene: &Scene, trial: &Trial, ctx: &Ctx) -> (Vec<String>, u32, Vec<u
 /// Runs one wrong dispatcher the same way.
 fn run_mutant(
     scene: &Scene,
+    initial: &[u32],
     trial: &Trial,
     ctx: &Ctx,
     m: DispatchMutant,
 ) -> (Vec<String>, u32, Vec<u32>) {
-    let mut lifted = scene.obj.words.clone();
+    let mut lifted = initial.to_vec();
     let mut container = decode(&lifted, scene.obj.addr());
     let mut world = FakeWorld::new(*ctx, trial.script.clone());
     let globals = MontageGlobals { state_flag: trial.state_flag };
@@ -682,7 +696,7 @@ fn dispatch_matches_its_rewrite() {
         let initial = scene.obj.words.clone();
         let (rewrite_events, eax) = run_rewrite(&scene, &trial, &ctx);
         let after_rewrite = scene.obj.words.clone();
-        let (lift_events, returned, lifted) = run_lift(&scene, &trial, &ctx);
+        let (lift_events, returned, lifted) = run_lift(&scene, &initial, &trial, &ctx);
 
         assert_eq!(lift_events, rewrite_events, "trial {index} ({path:?}): calls differ");
         assert_eq!(returned, eax, "trial {index} ({path:?}): result differs");
@@ -713,7 +727,11 @@ fn dispatch_matches_its_rewrite() {
             ),
             Path::ReconcileDrop => assert!(
                 rewrite_events.iter().any(|e| e.starts_with("drop_pending(")),
-                "trial {index}: drop path not reached"
+                "trial {index}: drop path not reached; pending={:#x}, cursor={:#x}, want={:#x}, counts={:?}, calls={rewrite_events:?}",
+                trial.words[PENDING_WORD],
+                trial.words[CURSOR_WORD],
+                trial.words[WANT_WORD],
+                trial.script.get("list_count")
             ),
             Path::ReconcileRearm => assert!(
                 rewrite_events.iter().any(|e| e.starts_with("own_rearm(")),
@@ -732,11 +750,11 @@ fn dispatch_matches_its_rewrite() {
                 if caught[k] {
                     continue;
                 }
-                let (mut_events, mut_ret, mut_words) = run_mutant(&scene, &trial, &ctx, *m);
+                let (mut_events, mut_ret, mut_words) =
+                    run_mutant(&scene, &initial, &trial, &ctx, *m);
                 if mut_events != rewrite_events || mut_ret != eax || mut_words != after_rewrite {
                     caught[k] = true;
                 }
-                let _ = initial;
             }
         }
     }

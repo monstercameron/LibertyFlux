@@ -195,6 +195,10 @@ pub struct Fake {
     pub session_flag_byte: u8,
     /// Emulated host-entry flag byte.
     pub entry_flag_byte: u8,
+    /// Source words and result for the session-block copy role.
+    pub mirror_source: [u32; 2],
+    /// Words the fake session receives when the mirror role runs.
+    pub mirror_result: Option<[u32; 2]>,
 }
 
 impl Fake {
@@ -205,6 +209,8 @@ impl Fake {
             log: Vec::new(),
             session_flag_byte: 0,
             entry_flag_byte: 0,
+            mirror_source: [0; 2],
+            mirror_result: None,
         }
     }
 
@@ -368,6 +374,7 @@ impl HostSessionWorld for Fake {
     }
     fn mirror_session_block(&mut self, session: Option<Handle32<SessionTag>>) {
         self.call_unit("mirror", vec![words(session)]);
+        self.mirror_result = Some(self.mirror_source);
     }
     fn session_flag(&mut self, session: Option<Handle32<SessionTag>>) -> u8 {
         self.call_unit("session_flag", vec![words(session)]);
@@ -443,7 +450,7 @@ pub fn lift_task(obj: &Image) -> HostSessionTask {
         *w = obj.r32(T_GAMERS + i * 4);
     }
     HostSessionTask {
-        started: obj.r32(T_STARTED) != 0,
+        started: obj.r32(T_STARTED),
         countdown: obj.r32(T_COUNTDOWN),
         session: cookie(obj.r32(T_SESSION)),
         state: obj.r32(T_STATE),
@@ -457,6 +464,25 @@ pub fn lift_task(obj: &Image) -> HostSessionTask {
         open_extra: obj.r32(T_EXTRA),
         trailer_size: obj.r32(T_TSIZE),
         trailer: Vec::new(),
+    }
+}
+
+/// Compares every task word owned by the lifted type with the 32-bit image.
+pub fn assert_task_matches(obj: &Image, task: &HostSessionTask) {
+    assert_eq!(obj.r32(T_STARTED), task.started, "started word");
+    assert_eq!(obj.r32(T_COUNTDOWN), task.countdown, "countdown");
+    assert_eq!(obj.r32(T_SESSION), words(task.session), "session link");
+    assert_eq!(obj.r32(T_STATE), task.state, "state");
+    assert_eq!(obj.r32(T_PROBE), task.probe, "probe");
+    assert_eq!(obj.r32(T_CONFIG), task.config, "config");
+    assert_eq!(obj.r32(T_EMPTY), task.first_empty, "empty word");
+    assert_eq!(obj.r32(T_SPLIT), task.list_split, "split word");
+    assert_eq!(obj.r32(T_FIRST), task.first_count, "first count");
+    assert_eq!(obj.r32(T_SECOND), task.second_count, "second count");
+    assert_eq!(obj.r32(T_EXTRA), task.open_extra, "open extra");
+    assert_eq!(obj.r32(T_TSIZE), task.trailer_size, "trailer size");
+    for (i, word) in task.gamers.iter().enumerate() {
+        assert_eq!(obj.r32(T_GAMERS + i * 4), *word, "gamer word {i}");
     }
 }
 

@@ -10,7 +10,8 @@
 use lf_core::Handle32;
 
 use super::world::{
-    AuxTag, CfgTag, ListTag, MontageWorld, OutTag, OwnTag, SrcTag, Tag, ViewTag,
+    AuxTag, CfgTag, HelperContextTag, ListTag, LookupContextTag, MontageWorld, OutTag, OwnTag,
+    SrcTag, StateTag, Tag, ViewTag,
 };
 
 /// The freshness value at and above which the refresh region tears down.
@@ -23,11 +24,17 @@ const PHASE_RECONCILE: u8 = 3;
 const PHASE_IDLE: u8 = 0;
 
 /// The shared globals the dispatcher reads.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MontageGlobals {
     /// The editor's state flag: zero clears the cursor and pending words
     /// and returns at once, nonzero opens a session.
     pub state_flag: u32,
+    /// The shared editor state object passed to state collaborators.
+    pub state: Handle32<StateTag>,
+    /// The helper context used by session and activation calls.
+    pub helper_context: Handle32<HelperContextTag>,
+    /// The lookup context used by registry calls.
+    pub lookup_context: Handle32<LookupContextTag>,
 }
 
 /// The montage container object.
@@ -81,17 +88,17 @@ impl MontageContainer {
             self.pending = 0;
             return 0;
         }
-        let session = world.open_session(globals.state_flag);
+        let session = world.open_session(globals.helper_context, globals.state_flag);
         world.own_open(self.own);
         let gate1 = world.session_tag(session);
         let want1 = world.tag_id(Tag::A);
         if gate1 == want1 {
-            return self.run_list(world);
+            return self.run_list(world, globals);
         }
         let gate2 = world.session_tag(session);
         let want2 = world.tag_id(Tag::D);
         if gate2 == want2 {
-            return self.run_refresh(world, session);
+            return self.run_refresh(world, globals, session);
         }
         let gate3 = world.session_tag(session);
         let want3 = world.tag_id(Tag::J);
@@ -104,9 +111,10 @@ impl MontageContainer {
     /// The list region: activates the helper, then notifies two helpers
     /// per clip element with the element's two words. The count is
     /// re-read after every element, and the final count is the result.
-    fn run_list(&mut self, world: &mut impl MontageWorld) -> u32 {
-        world.activate(Tag::B);
-        world.lookup(Tag::C);
+    fn run_list(&mut self, world: &mut impl MontageWorld, globals: &MontageGlobals) -> u32 {
+        let active = world.activate(globals.helper_context, Tag::B);
+        world.mark_active(active, true);
+        world.lookup(globals.lookup_context, Tag::C);
         let mut count = world.list_count(self.list);
         if count != 0 {
             let mut index = 0u32;
@@ -134,20 +142,23 @@ impl MontageContainer {
     fn run_refresh(
         &mut self,
         world: &mut impl MontageWorld,
+        globals: &MontageGlobals,
         session: Option<Handle32<super::world::SessionTag>>,
     ) -> u32 {
         let freshness = world.freshness(self.src);
         if (freshness as i32) >= FRESHNESS_LIMIT {
-            world.note_teardown_mark();
-            return world.state_teardown();
+            world.note_teardown_mark(0x2A);
+            return world.state_teardown(globals.state);
         }
-        world.activate(Tag::E);
-        world.state_refresh();
+        let active = world.activate(globals.helper_context, Tag::E);
+        world.mark_active(active, true);
+        world.state_refresh(globals.state);
         if self.mode != 0 {
             self.mode = 0;
             world.aux_set(self.aux, 0);
             let tail = world.list_tail(self.list);
             world.tail_set(tail, 1);
+            world.clear_cfg_status(self.cfg);
             world.signal_out(self.out, 0);
         } else {
             let inner = world.list_inner(self.list);
@@ -157,10 +168,10 @@ impl MontageContainer {
             let probe_again = world.probe_open(inner_again);
             world.probe_set(probe_again, 0);
         }
-        world.lookup(Tag::F);
-        world.prepare(Tag::G);
+        world.lookup(globals.lookup_context, Tag::F);
+        world.prepare(Tag::G, 0);
         let handle = world.tag_id(Tag::H);
-        let worker = world.open_worker(self.own, session, handle);
+        let worker = world.open_worker(self.own, session, handle, 0);
         let first = world.session_first(worker);
         let key = world.list_rank(self.list, first);
         world.note_rank(self.own, key);
@@ -177,7 +188,7 @@ impl MontageContainer {
         let inner_b = world.list_inner(self.list);
         let prop_again = world.prop_read(inner_b);
         let blend = world.blend_level(self.src, prop_again);
-        let target = world.resolve_output(Tag::I, blend);
+        let target = world.resolve_output(globals.helper_context, Tag::I, blend);
         world.release_output(target)
     }
 

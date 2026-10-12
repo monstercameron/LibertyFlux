@@ -31,6 +31,7 @@ pub mod registry;
 
 pub use container::{MontageContainer, MontageGlobals};
 pub use world::{
-    AuxTag, CfgSubTag, CfgTag, ElemTag, InnerTag, ListTag, MontageWorld, OutTag, OutputTag, OwnTag,
-    ProbeTag, SessionTag, SrcTag, Tag, TailTag, ViewTag,
+    ActiveTag, AuxTag, CfgSubTag, CfgTag, ElemTag, HelperContextTag, InnerTag, ListTag,
+    LookupContextTag, MontageWorld, OutTag, OutputTag, OwnTag, ProbeTag, SessionTag, SrcTag,
+    StateTag, Tag, TailTag, ViewTag,
 };

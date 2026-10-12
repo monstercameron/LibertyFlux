@@ -14,8 +14,7 @@
 pub enum State {
     /// Restated on the task type and proven against its rewrite.
     Proven,
-    /// Restated but not proven (no row should stay here: everything
-    /// lifted in this module is proven).
+    /// Restated but not yet proven against its rewrite.
     Lifted,
     /// Not lifted, for the stated reason.
     Missing,
@@ -40,7 +39,7 @@ pub const ROWS: &[Row] = &[
     Row {
         channel: "HostSession",
         method: "setup",
-        state: State::Proven,
+        state: State::Lifted,
         narrows: &[
             "the unused first stack word is dropped",
             "the gamer source arrives as a 259-word array",
@@ -50,13 +49,13 @@ pub const ROWS: &[Row] = &[
     Row {
         channel: "HostSession",
         method: "vf2",
-        state: State::Proven,
+        state: State::Lifted,
         narrows: &["the session link must be present; the original faults on a null link"],
     },
     Row {
         channel: "HostSession",
         method: "vf3",
-        state: State::Proven,
+        state: State::Lifted,
         narrows: &[
             "ignored callee answers are unmodelled",
             "task-side effects of the promote, notify and progress callees are unobserved by the proof and not modelled",
@@ -66,7 +65,7 @@ pub const ROWS: &[Row] = &[
     Row {
         channel: "HostSession",
         method: "vf7",
-        state: State::Proven,
+        state: State::Lifted,
         narrows: &[
             "relocated tags are the image base plus the file tag word",
             "descriptor self-pointers and padding stay inside the world",

@@ -19,9 +19,6 @@
     clippy::pedantic
 )]
 
-pub use crate::rt::{callee_addr, global, relocated};
-pub use crate::{callee_cdecl, callee_thiscall, export};
-
 include!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../../../../../../../rewrites/verified/functions/fn_00dd46c0.rs"

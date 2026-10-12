@@ -50,6 +50,9 @@
 pub mod registry;
 pub mod task;
 
+#[cfg(test)]
+mod tests;
+
 pub use task::{
     DESCRIPTOR_TAG_FIRST, DESCRIPTOR_TAG_SECOND, GAMER_WORDS, GamerListParams, HostSessionGlobals,
     HostSessionTask, HostSessionWorld, KEY_TABLE_BASE, MAX_GAMERS_TOTAL,

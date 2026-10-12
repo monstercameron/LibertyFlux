@@ -897,7 +897,7 @@ impl MeleeHost for Host {
             recv: 0,
             arg,
             kind,
-            flag,
+            one: flag,
         });
     }
 

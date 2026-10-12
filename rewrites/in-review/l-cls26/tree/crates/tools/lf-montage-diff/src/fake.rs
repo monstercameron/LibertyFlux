@@ -15,13 +15,20 @@ use std::collections::{HashMap, VecDeque};
 
 use lf_core::Handle32;
 use lf_input_frontend::montage_container::{
-    AuxTag, CfgSubTag, CfgTag, ElemTag, InnerTag, ListTag, MontageWorld, OutTag, OutputTag, OwnTag,
-    ProbeTag, SessionTag, SrcTag, Tag, TailTag, ViewTag,
+    ActiveTag, AuxTag, CfgSubTag, CfgTag, ElemTag, HelperContextTag, InnerTag, ListTag,
+    LookupContextTag, MontageWorld, OutTag, OutputTag, OwnTag, ProbeTag, SessionTag, SrcTag,
+    StateTag, Tag, TailTag, ViewTag,
 };
 
 /// The addresses a case works with, so the record can name them.
 #[derive(Debug, Clone, Copy)]
 pub struct Ctx {
+    /// The relocated helper context.
+    pub helper_context: u32,
+    /// The relocated registry lookup context.
+    pub lookup_context: u32,
+    /// The state object backing the dispatcher flag.
+    pub state: u32,
     /// The container object.
     pub own: u32,
     /// The clip list object.
@@ -60,7 +67,13 @@ pub struct Ctx {
 /// constant by its letter, anything else by its hexadecimal value.
 #[must_use]
 pub fn sym(ctx: &Ctx, value: u32) -> String {
-    if value == ctx.own {
+    if value == ctx.helper_context {
+        "helper_context".to_string()
+    } else if value == ctx.lookup_context {
+        "lookup_context".to_string()
+    } else if value == ctx.state {
+        "state".to_string()
+    } else if value == ctx.own {
         "own".to_string()
     } else if value == ctx.list {
         "list".to_string()
@@ -109,69 +122,68 @@ pub fn sym(ctx: &Ctx, value: u32) -> String {
     }
 }
 
-/// One callee or virtual slot of the rewrite, with the argument positions
-/// that carry fixed values (a constant context, a fixed code, a trailing
-/// zero) rather than inputs of the call.
+/// One callee or virtual slot of the rewrite and its lifted operation name.
 #[derive(Debug, Clone, Copy)]
 pub struct CallSpec {
     /// The callee number or virtual id the rewrite uses.
     pub id: u32,
     /// The name the lifted trait gives the call.
     pub name: &'static str,
-    /// Argument positions dropped from the comparison.
-    pub skip: &'static [usize],
 }
 
 /// The numbered callees of the state dispatcher.
 pub const DISPATCH_CALLS: &[CallSpec] = &[
-    CallSpec { id: 1, name: "open_session", skip: &[0] },
-    CallSpec { id: 2, name: "tag_id", skip: &[] },
-    CallSpec { id: 3, name: "activate", skip: &[0] },
-    CallSpec { id: 4, name: "resolve_output", skip: &[0] },
-    CallSpec { id: 5, name: "lookup", skip: &[0] },
-    CallSpec { id: 6, name: "emit_a", skip: &[] },
-    CallSpec { id: 7, name: "emit_b", skip: &[] },
-    CallSpec { id: 8, name: "freshness", skip: &[] },
-    CallSpec { id: 9, name: "note_teardown_mark", skip: &[0] },
-    CallSpec { id: 10, name: "state_refresh", skip: &[0] },
-    CallSpec { id: 11, name: "state_teardown", skip: &[0] },
-    CallSpec { id: 12, name: "signal_out", skip: &[] },
-    CallSpec { id: 13, name: "prepare", skip: &[1] },
-    CallSpec { id: 14, name: "open_worker", skip: &[3] },
-    CallSpec { id: 15, name: "note_rank", skip: &[] },
-    CallSpec { id: 16, name: "note_session", skip: &[] },
-    CallSpec { id: 17, name: "list_touch", skip: &[] },
-    CallSpec { id: 18, name: "note_sync", skip: &[] },
-    CallSpec { id: 19, name: "cfg_set", skip: &[] },
-    CallSpec { id: 20, name: "blend_level", skip: &[] },
-    CallSpec { id: 21, name: "release_output", skip: &[] },
-    CallSpec { id: 22, name: "drop_pending", skip: &[] },
+    CallSpec { id: 1, name: "open_session" },
+    CallSpec { id: 2, name: "tag_id" },
+    CallSpec { id: 3, name: "activate" },
+    CallSpec { id: 4, name: "resolve_output" },
+    CallSpec { id: 5, name: "lookup" },
+    CallSpec { id: 6, name: "emit_a" },
+    CallSpec { id: 7, name: "emit_b" },
+    CallSpec { id: 8, name: "freshness" },
+    CallSpec { id: 9, name: "note_teardown_mark" },
+    CallSpec { id: 10, name: "state_refresh" },
+    CallSpec { id: 11, name: "state_teardown" },
+    CallSpec { id: 12, name: "signal_out" },
+    CallSpec { id: 13, name: "prepare" },
+    CallSpec { id: 14, name: "open_worker" },
+    CallSpec { id: 15, name: "note_rank" },
+    CallSpec { id: 16, name: "note_session" },
+    CallSpec { id: 17, name: "list_touch" },
+    CallSpec { id: 18, name: "note_sync" },
+    CallSpec { id: 19, name: "cfg_set" },
+    CallSpec { id: 20, name: "blend_level" },
+    CallSpec { id: 21, name: "release_output" },
+    CallSpec { id: 22, name: "drop_pending" },
 ];
 
 /// The virtual slots of the state dispatcher, by virtual id.
 pub const DISPATCH_VIRTUALS: &[CallSpec] = &[
-    CallSpec { id: 0x1001, name: "own_open", skip: &[] },
-    CallSpec { id: 0x1002, name: "own_rearm", skip: &[] },
-    CallSpec { id: 0x1003, name: "session_tag", skip: &[] },
-    CallSpec { id: 0x1004, name: "session_first", skip: &[] },
-    CallSpec { id: 0x1005, name: "session_mode", skip: &[] },
-    CallSpec { id: 0x1006, name: "list_count", skip: &[] },
-    CallSpec { id: 0x1007, name: "list_at", skip: &[] },
-    CallSpec { id: 0x1008, name: "list_mode", skip: &[] },
-    CallSpec { id: 0x1009, name: "list_rank", skip: &[] },
-    CallSpec { id: 0x100A, name: "aux_set", skip: &[] },
-    CallSpec { id: 0x100B, name: "tail_set", skip: &[] },
-    CallSpec { id: 0x100C, name: "probe_open", skip: &[] },
-    CallSpec { id: 0x100D, name: "prop_read", skip: &[] },
-    CallSpec { id: 0x100E, name: "probe_prime", skip: &[] },
-    CallSpec { id: 0x100F, name: "probe_set", skip: &[] },
-    CallSpec { id: 0x1010, name: "view_set", skip: &[] },
-    CallSpec { id: 0x1011, name: "cfg_sub_set", skip: &[] },
+    CallSpec { id: 0x1001, name: "own_open" },
+    CallSpec { id: 0x1002, name: "own_rearm" },
+    CallSpec { id: 0x1003, name: "session_tag" },
+    CallSpec { id: 0x1004, name: "session_first" },
+    CallSpec { id: 0x1005, name: "session_mode" },
+    CallSpec { id: 0x1006, name: "list_count" },
+    CallSpec { id: 0x1007, name: "list_at" },
+    CallSpec { id: 0x1008, name: "list_mode" },
+    CallSpec { id: 0x1009, name: "list_rank" },
+    CallSpec { id: 0x100A, name: "aux_set" },
+    CallSpec { id: 0x100B, name: "tail_set" },
+    CallSpec { id: 0x100C, name: "probe_open" },
+    CallSpec { id: 0x100D, name: "prop_read" },
+    CallSpec { id: 0x100E, name: "probe_prime" },
+    CallSpec { id: 0x100F, name: "probe_set" },
+    CallSpec { id: 0x1010, name: "view_set" },
+    CallSpec { id: 0x1011, name: "cfg_sub_set" },
 ];
 
 /// The answers a case scripts, by the call's name, popped in call order.
 /// Both sides take their own copy.
 pub type Script = HashMap<&'static str, VecDeque<u32>>;
+
+/// Finite collaborator memory blocks whose bytes are changed directly by the rewrite.
+pub type EffectMemory = HashMap<u32, Vec<u8>>;
 
 /// The lifted side: records each call and answers from the script.
 pub struct FakeWorld {
@@ -181,13 +193,15 @@ pub struct FakeWorld {
     pub script: Script,
     /// The recorded calls, in order.
     pub events: Vec<String>,
+    /// Copies of the finite collaborator blocks whose bytes can be written.
+    pub effects: EffectMemory,
 }
 
 impl FakeWorld {
     /// A recorder over `ctx`, answering from `script`.
     #[must_use]
-    pub fn new(ctx: Ctx, script: Script) -> Self {
-        Self { ctx, script, events: Vec::new() }
+    pub fn new(ctx: Ctx, script: Script, effects: EffectMemory) -> Self {
+        Self { ctx, script, events: Vec::new(), effects }
     }
 
     fn answer(&mut self, name: &str) -> u32 {
@@ -204,6 +218,18 @@ impl FakeWorld {
 
     fn opt<T>(&self, handle: Option<Handle32<T>>) -> String {
         self.word(Handle32::raw_or_zero(handle))
+    }
+
+    fn write_effect_byte(&mut self, address: u32, offset: usize, value: u8) {
+        let label = self.word(address);
+        let block = self
+            .effects
+            .get_mut(&address)
+            .unwrap_or_else(|| panic!("missing effect block for {label}"));
+        let byte = block
+            .get_mut(offset)
+            .unwrap_or_else(|| panic!("effect offset {offset} is outside its block"));
+        *byte = value;
     }
 }
 
@@ -223,9 +249,14 @@ fn tag_name(tag: Tag) -> &'static str {
 }
 
 impl MontageWorld for FakeWorld {
-    fn open_session(&mut self, flag: u32) -> Option<Handle32<SessionTag>> {
+    fn open_session(
+        &mut self,
+        context: Handle32<HelperContextTag>,
+        flag: u32,
+    ) -> Option<Handle32<SessionTag>> {
+        let c = self.word(context.get());
         let f = self.word(flag);
-        self.record("open_session", &[f]);
+        self.record("open_session", &[c, f]);
         Handle32::new(self.answer("open_session"))
     }
     fn own_open(&mut self, own: Handle32<OwnTag>) {
@@ -241,11 +272,21 @@ impl MontageWorld for FakeWorld {
         self.record("tag_id", &[tag_name(tag).to_string()]);
         self.answer("tag_id")
     }
-    fn activate(&mut self, tag: Tag) {
-        self.record("activate", &[tag_name(tag).to_string()]);
+    fn activate(
+        &mut self,
+        context: Handle32<HelperContextTag>,
+        tag: Tag,
+    ) -> Handle32<ActiveTag> {
+        let c = self.word(context.get());
+        self.record("activate", &[c, tag_name(tag).to_string()]);
+        Handle32::new(self.answer("activate")).expect("the rewrite stores through this helper")
     }
-    fn lookup(&mut self, tag: Tag) {
-        self.record("lookup", &[tag_name(tag).to_string()]);
+    fn mark_active(&mut self, active: Handle32<ActiveTag>, value: bool) {
+        self.write_effect_byte(active.get(), 0x20B, u8::from(value));
+    }
+    fn lookup(&mut self, context: Handle32<LookupContextTag>, tag: Tag) {
+        let c = self.word(context.get());
+        self.record("lookup", &[c, tag_name(tag).to_string()]);
     }
     fn list_count(&mut self, list: Handle32<ListTag>) -> u32 {
         let l = self.word(list.get());
@@ -281,14 +322,17 @@ impl MontageWorld for FakeWorld {
         self.record("freshness", &[s]);
         self.answer("freshness")
     }
-    fn note_teardown_mark(&mut self) {
-        self.record("note_teardown_mark", &[]);
+    fn note_teardown_mark(&mut self, marker: u32) {
+        let m = self.word(marker);
+        self.record("note_teardown_mark", &[m]);
     }
-    fn state_refresh(&mut self) {
-        self.record("state_refresh", &[]);
+    fn state_refresh(&mut self, state: Handle32<StateTag>) {
+        let s = self.word(state.get());
+        self.record("state_refresh", &[s]);
     }
-    fn state_teardown(&mut self) -> u32 {
-        self.record("state_teardown", &[]);
+    fn state_teardown(&mut self, state: Handle32<StateTag>) -> u32 {
+        let s = self.word(state.get());
+        self.record("state_teardown", &[s]);
         self.answer("state_teardown")
     }
     fn aux_set(&mut self, aux: Handle32<AuxTag>, mode: u32) {
@@ -326,19 +370,22 @@ impl MontageWorld for FakeWorld {
         let m = self.word(mode);
         self.record("probe_set", &[p, m]);
     }
-    fn prepare(&mut self, tag: Tag) {
-        self.record("prepare", &[tag_name(tag).to_string()]);
+    fn prepare(&mut self, tag: Tag, argument: u32) {
+        let a = self.word(argument);
+        self.record("prepare", &[tag_name(tag).to_string(), a]);
     }
     fn open_worker(
         &mut self,
         own: Handle32<OwnTag>,
         first: Option<Handle32<SessionTag>>,
         handle: u32,
+        trailing: u32,
     ) -> Option<Handle32<SessionTag>> {
         let o = self.word(own.get());
         let f = self.opt(first);
         let h = self.word(handle);
-        self.record("open_worker", &[o, f, h]);
+        let t = self.word(trailing);
+        self.record("open_worker", &[o, f, h, t]);
         Handle32::new(self.answer("open_worker"))
     }
     fn session_first(&mut self, session: Option<Handle32<SessionTag>>) -> u32 {
@@ -392,15 +439,24 @@ impl MontageWorld for FakeWorld {
         let p = self.word(prop);
         self.record("cfg_set", &[c, p]);
     }
+    fn clear_cfg_status(&mut self, cfg: Handle32<CfgTag>) {
+        self.write_effect_byte(cfg.get(), 0x1F4, 0);
+    }
     fn blend_level(&mut self, src: Handle32<SrcTag>, prop: u32) -> u32 {
         let s = self.word(src.get());
         let p = self.word(prop);
         self.record("blend_level", &[s, p]);
         self.answer("blend_level")
     }
-    fn resolve_output(&mut self, tag: Tag, blend: u32) -> Option<Handle32<OutputTag>> {
+    fn resolve_output(
+        &mut self,
+        context: Handle32<HelperContextTag>,
+        tag: Tag,
+        blend: u32,
+    ) -> Option<Handle32<OutputTag>> {
+        let c = self.word(context.get());
         let t = self.word(blend);
-        self.record("resolve_output", &[tag_name(tag).to_string(), t]);
+        self.record("resolve_output", &[c, tag_name(tag).to_string(), t]);
         Handle32::new(self.answer("resolve_output"))
     }
     fn release_output(&mut self, target: Option<Handle32<OutputTag>>) -> u32 {
@@ -437,9 +493,8 @@ impl MontageWorld for FakeWorld {
 /// Turns the rewrite's recorded calls into the lifted side's text.
 ///
 /// `calls` lists each recorded call as (callee number or virtual id, raw
-/// argument words), with `numbered` and `virtuals` naming them. Fixed
-/// argument positions are dropped: they carry constants, which both sides
-/// agree on by construction.
+/// argument words), with `numbered` and `virtuals` naming them. Every raw
+/// argument is retained; fixed globals and collaborators are rendered by role.
 #[must_use]
 pub fn normalise(
     ctx: &Ctx,
@@ -455,12 +510,7 @@ pub fn normalise(
                 .chain(virtuals.iter())
                 .find(|c| c.id == *id)
                 .unwrap_or_else(|| panic!("callee {id:#x} is not in the table"));
-            let names: Vec<String> = args
-                .iter()
-                .enumerate()
-                .filter(|(index, _)| !spec.skip.contains(index))
-                .map(|(_, value)| sym(ctx, *value))
-                .collect();
+            let names: Vec<String> = args.iter().map(|value| sym(ctx, *value)).collect();
             format!("{}({})", spec.name, names.join(","))
         })
         .collect()

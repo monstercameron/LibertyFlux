@@ -8,9 +8,8 @@
 /// an association, and updates that association's timing and flags. The task
 /// fields at `+0x40`, `+0x4c`, `+0x60`, `+0x68`, `+0x70..+0x7c`, `+0x94`,
 /// and `+0x9c` hold the selected key, helper result, requested blend amount,
-/// association, sampled track data, and playback settings. The weapon
-/// manager's `+0x5c` field bounds the selected key. Animation association
-/// fields at `+0x04`, `+0x4c`,
+/// association, sampled track data, and playback settings. The weapon manager's
+/// `+0x5c` field bounds the selected key. Animation association fields at `+0x04`, `+0x4c`,
 /// and `+0x54` hold flags, clip time, and blend speed. Callee calls are
 /// dispatched through the checker runtime; the virtual ped method is planted
 /// in the contract's vtable slot. Floating-point operations retain the
@@ -36,6 +35,7 @@ lf_checker_rt::export!(thiscall, rw_00dc68e0(task: u32, ped: u32) -> u32 {
         const PED_ANIMATION_MANAGER: u32 = 0x78;
         const PED_WEAPON_INFO: u32 = 0x2b0;
         const PED_SCALE_DATA: u32 = 0x228;
+        const WEAPON_MANAGER_ANIMATION_LIMIT: u32 = 0x5c;
         const PED_ANIMATION_RATE: u32 = 0x27c;
         const PED_ANIMATION_RATE_BYTE: u32 = 0x370;
         const SCALE_DATA_FIRE_RATE: u32 = 0x5a8;
@@ -46,7 +46,6 @@ lf_checker_rt::export!(thiscall, rw_00dc68e0(task: u32, ped: u32) -> u32 {
         const INFO_ANIMATION_COUNT: u32 = 0x86;
         const INFO_DIVISOR: u32 = 0x8c;
         const MANAGER_INFO_KEY: u32 = 0x18;
-        const MANAGER_ANIMATION_LIMIT: u32 = 0x5c;
         const ASSOCIATION_FLAGS: u32 = 0x04;
         const ASSOCIATION_TRACK_VALUE: u32 = 0x40;
         const ASSOCIATION_CLIP_TIME: u32 = 0x4c;
@@ -382,10 +381,7 @@ lf_checker_rt::export!(thiscall, rw_00dc68e0(task: u32, ped: u32) -> u32 {
                         mul_f32(duration_signed as f32, global_f32(RATE_LOWER_BOUND)),
                         global_f32(RATE_VARIATION),
                     );
-                    // The original keeps the bound only on an ordered
-                    // above comparison; when either side is NaN the
-                    // computed rate wins.
-                    if !(timing_limit > duration_rate) {
+                    if duration_rate > timing_limit {
                         timing_limit = duration_rate;
                     }
 
@@ -431,7 +427,9 @@ lf_checker_rt::export!(thiscall, rw_00dc68e0(task: u32, ped: u32) -> u32 {
         }
 
         let selected_key = read_u16(task.wrapping_add(TASK_SELECTED_KEY));
-        let animation_limit = read_u16(weapon_manager.wrapping_add(MANAGER_ANIMATION_LIMIT));
+        let animation_limit = read_u16(
+            weapon_manager.wrapping_add(WEAPON_MANAGER_ANIMATION_LIMIT),
+        );
         let bounded_key = if selected_key == u16::MAX {
             animation_limit
         } else if (selected_key as i16) < (animation_limit as i16) {

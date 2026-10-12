@@ -198,7 +198,7 @@ pub trait HostSessionWorld {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HostSessionTask {
     /// The started latch.
-    pub started: bool,
+    pub started: u32,
     /// Ticks left before the state machine runs freely.
     pub countdown: u32,
     /// The hosted session; the completion paths drop it.
@@ -228,13 +228,15 @@ pub struct HostSessionTask {
 }
 
 impl HostSessionTask {
-    /// Stores the list words, clamps the two counts so their signed total
-    /// fits [`MAX_GAMERS_TOTAL`], copies the gamer array, and appends the
-    /// trailer record unless its size is zero. Answers the trailer tag, or
-    /// the zero size, with its low byte forced to 1.
+    /// Stores the list words, applies the original's signed count adjustment,
+    /// copies the gamer array, and appends the trailer record unless its size
+    /// is zero. Answers the trailer tag, or the zero size, with its low byte
+    /// forced to 1.
     ///
-    /// Clamping reduces the first count first and then the second, flooring
-    /// each at zero; arithmetic wraps exactly where the original's does.
+    /// The adjustment uses wrapping signed arithmetic exactly as the rewrite
+    /// does. In particular, some positive overflow cases increase the stored
+    /// counts; this follows the verified rewrite even though its comment calls
+    /// the operation a clamp.
     pub fn setup_gamer_data<W: HostSessionWorld>(
         &mut self,
         world: &mut W,
@@ -284,8 +286,8 @@ impl HostSessionTask {
     /// When the session link is missing (the original reads through it
     /// unconditionally).
     pub fn start<W: HostSessionWorld>(&mut self, world: &mut W) {
-        if !self.started {
-            self.started = true;
+        if self.started == 0 {
+            self.started = 1;
         }
         let session = self
             .session
