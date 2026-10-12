@@ -474,7 +474,7 @@ fn read_cache() -> [u32; 4] {
 }
 
 /// Writes the shared cache words into the test memory.
-fn write_cache(words: [u32; 4]) {
+fn write_cache(words: [u32; 4]) { eprintln!("DBG xbase={:#x} g={:#x} w={:#x}", lf_checker_rt::xbase(), lf_checker_rt::global::<u32>(CACHE_WEIGHT_A_VA) as usize, lf_checker_rt::global::<u32>(ALLOCATOR_GLOBAL) as usize);
     for (va, w) in [CACHE_WEIGHT_A_VA, CACHE_FLAGS_VA, CACHE_WEIGHT_B_VA, CACHE_SCALE_VA]
         .into_iter()
         .zip(words)
