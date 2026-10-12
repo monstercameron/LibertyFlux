@@ -2,8 +2,8 @@
 /// Call the complex-task base constructor, then store the task type and
 /// parameter-block pointer at offsets 0x14 and 0x18. Copy three vector words
 /// to offsets 0x20 through 0x28; store the maximum word, factor, flags, and zeroed
-/// fields through offset 0x44. If the parameter block's first pointer is non-null,
-/// call the reference helper with it and the stored pointer field. Return this object.
+/// fields through offset 0x44. If the parameter block pointer is non-null, call the
+/// reference helper with it and the stored pointer field. Return this object.
 lf_checker_rt::export!(thiscall, rw_00cfc120(this: *mut u8, task_type: u32, parameter_block: *const u32, vector: *const u32, factor_bits: u32, flags: u32) -> u32 {
     unsafe {
         const TASK_VTABLE: u32 = 0x00EE0484;
@@ -21,9 +21,8 @@ lf_checker_rt::export!(thiscall, rw_00cfc120(this: *mut u8, task_type: u32, para
         *(this.add(0x3C) as *mut u32) = 0;
         *(this.add(0x40) as *mut u32) = flags;
         *(this.add(0x44) as *mut u32) = 0;
-        let referenced = * (parameter_block as *const u32);
-        if referenced != 0 {
-            lf_checker_rt::callee_thiscall!(2, u32, referenced, this.add(0x18) as u32);
+        if !parameter_block.is_null() {
+            lf_checker_rt::callee_thiscall!(2, u32, parameter_block as u32, this.add(0x18) as u32);
         }
         this as u32
     }

@@ -3,7 +3,7 @@
 /// Refresh the clip-transition state of the object in `this`. Its two child
 /// pointers are stored at `+0x1e0` and `+0x1e4`; virtual methods first query
 /// the second child, then update a stored time and pass the first child's
-/// time as an x87 `f32` argument to a method on `this`. After that optional
+/// float time as a stack word to a method on `this`. After that optional
 /// update, the method always resets the first child and clears both children
 /// through their virtual interfaces. The final child call's EAX value is
 /// preserved as the function result. The gate is the low byte returned by
@@ -38,7 +38,7 @@ lf_checker_rt::export!(thiscall, rw_00DE35B0(this: u32) -> u32 {
             (this.wrapping_add(FIRST_CHILD) as *const u32).read_unaligned()
         };
         let child_time = lf_checker_rt::callee_thiscall!(CALLEE_CHILD_TIME, f32, first_child);
-        let _ = lf_checker_rt::callee_thiscall!(CALLEE_SET_TIME, u32, this, child_time);
+        let _ = lf_checker_rt::callee_thiscall!(CALLEE_SET_TIME, u32, this, child_time.to_bits());
         unsafe {
             (this.wrapping_add(TRANSITION_FLAG) as *mut u8).write(0);
         }
