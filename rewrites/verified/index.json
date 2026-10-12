@@ -85824,6 +85824,15 @@
   "lane": "r-s463"
  },
  {
+  "address": "0x00A8ABE0",
+  "name": "pool_struct_kernel_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a8abe0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
+ },
+ {
   "address": "0x00A8AC70",
   "name": "pool_bind_or_invalidate",
   "kind": "function",
@@ -85840,6 +85849,33 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s463"
+ },
+ {
+  "address": "0x00A8AD20",
+  "name": "pool_retry_probe",
+  "kind": "function",
+  "file": "functions/fn_00a8ad20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
+ },
+ {
+  "address": "0x00A8ADC0",
+  "name": "streaming_make_space_for",
+  "kind": "function",
+  "file": "functions/fn_00a8adc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
+ },
+ {
+  "address": "0x00A8AE90",
+  "name": "pool_cookie_scan_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a8ae90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
  },
  {
   "address": "0x00A8AF90",
@@ -85885,6 +85921,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s466"
+ },
+ {
+  "address": "0x00A8B210",
+  "name": "find_entry_by_name_prefix",
+  "kind": "function",
+  "file": "functions/fn_00a8b210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
  },
  {
   "address": "0x00A8B260",
@@ -85941,6 +85986,15 @@
   "lane": "a-S07"
  },
  {
+  "address": "0x00A8C9C0",
+  "name": "count_matching_query_rows",
+  "kind": "function",
+  "file": "functions/fn_00a8c9c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
+ },
+ {
   "address": "0x00A8CD90",
   "name": "fade_flags_from_range",
   "kind": "function",
@@ -85948,6 +86002,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s466"
+ },
+ {
+  "address": "0x00A8D5F0",
+  "name": "pool_vec_kernel_notify",
+  "kind": "function",
+  "file": "functions/fn_00a8d5f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
  },
  {
   "address": "0x00A8D720",
@@ -86245,6 +86308,69 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s466"
+ },
+ {
+  "address": "0x00A8F790",
+  "name": "interior_portal_flag_query",
+  "kind": "function",
+  "file": "functions/fn_00a8f790.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
+ },
+ {
+  "address": "0x00A8F7D0",
+  "name": "interior_portal_has_geometry",
+  "kind": "function",
+  "file": "functions/fn_00a8f7d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
+ },
+ {
+  "address": "0x00A8F810",
+  "name": "interior_room_flag_query",
+  "kind": "function",
+  "file": "functions/fn_00a8f810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
+ },
+ {
+  "address": "0x00A8F850",
+  "name": "vehicle_model_has_driver_flag",
+  "kind": "function",
+  "file": "functions/fn_00a8f850.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
+ },
+ {
+  "address": "0x00A8F870",
+  "name": "vehicle_model_flag_bit9",
+  "kind": "function",
+  "file": "functions/fn_00a8f870.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
+ },
+ {
+  "address": "0x00A8F8B0",
+  "name": "interior_resolve_portal_indices",
+  "kind": "function",
+  "file": "functions/fn_00a8f8b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
+ },
+ {
+  "address": "0x00A8F8F0",
+  "name": "interior_mark_frag_dirty",
+  "kind": "function",
+  "file": "functions/fn_00a8f8f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s737"
  },
  {
   "address": "0x00A8FFD0",
