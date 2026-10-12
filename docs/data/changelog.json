@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: 35 routines of 38 to 43 bytes in seven families, five with branches or loops",
+    "title": "Devlog: the lift lane's entry on seven families with branches and loops",
     "commit": null,
+    "summary": "The lane's own account of lifting 35 routines of 38 to 43 bytes is added to the devlog.",
+    "changes": [
+      "The entry gives the seven families and where each one's behaviour now lives, which are weak lifts, the five functions that cannot be checked as published, and the shapes among the 114 left."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: 35 routines of 38 to 43 bytes in seven families, five with branches or loops",
+    "commit": "b8a04939de4d896eddf9efe82b79be4a2177d8be",
     "summary": "The eighth list chosen by shape gives 35 of 154 functions. Fewer than the smaller sizes gave, but these are less trivial: a search, a table reset, and reads and stores through a record.",
     "changes": [
       "crates/lf-core gains five modules: a search of a counted run of words for a value (8 instances: the membership and find-index routines of several subsystems), a reset of a table to a sentinel (4), a store of a pair with a flag (4), a read of a word of a record (5) and a guarded store and flag read through a record table (4). The last two take the record through a small trait; none has unsafe code or an address.",
