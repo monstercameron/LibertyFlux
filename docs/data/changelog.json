@@ -2,7 +2,7 @@
   {
     "date": "2026-10-11",
     "title": "Rewrites: the 174 script natives among the repaired published files",
-    "commit": null,
+    "commit": "ca50930937d15db384f4060f252b159a3ca889d8",
     "summary": "The entry before this one describes 488 repaired files; its commit carried 314 of them. The other 174 are script natives, which the tree keeps in a folder of their own, and are committed here.",
     "changes": [
       "174 script native handlers whose published file used a naming lane's own runtime now use the shared runtime, each built alone and run against its lane's contract of record by the prover, as the entry before this one describes. Almost all are in the class with no wrong version that can still be run; they stay in the backlog of old proofs to be run again.",
