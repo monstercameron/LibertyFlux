@@ -40077,6 +40077,15 @@
   "lane": "r-b277"
  },
  {
+  "address": "0x00655940",
+  "name": "pose_set_identity",
+  "kind": "function",
+  "file": "functions/fn_00655940.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
   "address": "0x00655AA0",
   "name": "shaft_group_ctor",
   "kind": "function",
@@ -40192,6 +40201,42 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s688"
+ },
+ {
+  "address": "0x0065A590",
+  "name": "rage::fragHeapAllocator::vf15",
+  "kind": "function",
+  "file": "functions/fn_0065a590.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
+  "address": "0x0065A780",
+  "name": "rage::fragHeapAllocator::vf18",
+  "kind": "function",
+  "file": "functions/fn_0065a780.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
+  "address": "0x0065A880",
+  "name": "rage::ProceduralTextureRenderTargetDef::vf0",
+  "kind": "function",
+  "file": "functions/fn_0065a880.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
+  "address": "0x0065A8C0",
+  "name": "rage::ProceduralTextureShaderDef::vf0",
+  "kind": "function",
+  "file": "functions/fn_0065a8c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
  },
  {
   "address": "0x0065AF00",
@@ -40419,6 +40464,24 @@
   "lane": "r-s500"
  },
  {
+  "address": "0x0065BC30",
+  "name": "rage::EnviromentDomeLighting::vf5",
+  "kind": "function",
+  "file": "functions/fn_0065bc30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
+  "address": "0x0065BCB0",
+  "name": "rage::EnviromentDomeLighting::vf3",
+  "kind": "function",
+  "file": "functions/fn_0065bcb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
   "address": "0x0065BD50",
   "name": "rage::DayLighting::DayLightingVarCache::vf0",
   "kind": "function",
@@ -40426,6 +40489,24 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b547"
+ },
+ {
+  "address": "0x0065BE80",
+  "name": "rage::DayLighting::vf3",
+  "kind": "function",
+  "file": "functions/fn_0065be80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
+  "address": "0x0065BEE0",
+  "name": "rage::DayLighting::vf5",
+  "kind": "function",
+  "file": "functions/fn_0065bee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
  },
  {
   "address": "0x0065BF20",
@@ -40543,6 +40624,60 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G60"
+ },
+ {
+  "address": "0x0065DED0",
+  "name": "create_water_fog_control",
+  "kind": "function",
+  "file": "functions/fn_0065ded0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
+  "address": "0x0065DF80",
+  "name": "rage::VerletWaterSimulation::VerletWaterSimulation",
+  "kind": "function",
+  "file": "functions/fn_0065df80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
+  "address": "0x0065DFF0",
+  "name": "rage::VerletWaterPerturbation::VerletWaterPerturbation",
+  "kind": "function",
+  "file": "functions/fn_0065dff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
+  "address": "0x0065E040",
+  "name": "rage::VerletWaterSurface::VerletWaterSurface",
+  "kind": "function",
+  "file": "functions/fn_0065e040.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
+  "address": "0x0065E0B0",
+  "name": "create_skyhat_perlin_noise",
+  "kind": "function",
+  "file": "functions/fn_0065e0b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
+ },
+ {
+  "address": "0x0065E130",
+  "name": "create_day_lighting",
+  "kind": "function",
+  "file": "functions/fn_0065e130.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s765"
  },
  {
   "address": "0x0065EC50",
