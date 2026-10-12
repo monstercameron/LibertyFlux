@@ -740,6 +740,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-peds-follow-diff"
+version = "0.1.0"
+dependencies = [
+ "lf-checker-rt",
+ "lf-peds-tasks",
+]
+
+[[package]]
 name = "lf-peds-seekdiff"
 version = "0.1.0"
 dependencies = [

@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Rust in progress: 4 files from lanes (639 unverified rewrites, 1741 in review)",
+    "title": "Lift: the follow-point-route task, ten methods",
     "commit": null,
+    "summary": "All ten verified methods of the task that moves a pedestrian along a route of points are lifted into portable Rust in the pedestrian tasks crate and proven against their 32-bit rewrites.",
+    "changes": [
+      "Lifted: both constructors, the clone, the destructor, the poll, the waypoint pick, the advance, the current-point and waypoint copies and the handle copy. Everything outside the object (the move base, the route's construction, the task system's order and planning calls, the sub-task factory, the owner's calls, the allocator) is behind host traits. The lifted module forbids unsafe code.",
+      "Proof: differential tests on the 32-bit target at 3,000 trials a method and 9,000 for the poll, all equal; 17 wrong lifts, each caught, the weakest on 47 trials of 3,000. Twenty-four host tests pass on the 64-bit host.",
+      "What the proofs do not cover: the poll's scratch words are not compared, the route constructor's effects are host calls, and virtual table words are compared as identities only.",
+      "Found while lifting, none a proof failure: two verified rewrites read the same word of the object as two different things (the current sub-task in the advance, the owner in the poll), another word is a route index in one method and a handle in another, and a zero second argument to the poll empties the route for later methods. The first needs checking against the original before a port relies on either name; all three go to the proof audit list.",
+      "Five methods of the class have no verified rewrite and are not lifted. Lifts are now 1,344."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Rust in progress: 4 files from lanes (639 unverified rewrites, 1741 in review)",
+    "commit": "6148792bd52a7f397fdb9cdd3d3fdf2c2fea3aac",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 639 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",

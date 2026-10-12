@@ -15,6 +15,7 @@
 //! - Never original game code here: structures, symbols and new Rust only.
 
 pub mod event_handler;
+pub mod follow_point_route;
 pub mod layout;
 pub mod move_between_points;
 pub mod ped_task;
