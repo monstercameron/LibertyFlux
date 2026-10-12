@@ -8,6 +8,8 @@ lf_checker_rt::export!(thiscall, rw_008c5be0(this: u32, label: u32) -> u32 {
     const NULL_LABEL_HANDLER: u32 = 3;
     const COOKIE_CHECK: u32 = 4;
     const SCRATCH_TABLE_FILE_VA: u32 = 0x116B_F68;
+    const SECURITY_COOKIE_FILE_VA: u32 = 0x0105_7FB4;
+    let security_cookie = unsafe { lf_checker_rt::global::<u32>(SECURITY_COOKIE_FILE_VA).read_unaligned() };
     unsafe {
         if label == 0 {
             let _ = lf_checker_rt::callee_thiscall!(NULL_LABEL_HANDLER, u32, this);
@@ -16,7 +18,7 @@ lf_checker_rt::export!(thiscall, rw_008c5be0(this: u32, label: u32) -> u32 {
                     as *mut u16).write_unaligned(0);
             }
             let result = lf_checker_rt::relocated(SCRATCH_TABLE_FILE_VA);
-            let _ = lf_checker_rt::callee_thiscall!(COOKIE_CHECK, u32, 0);
+            let _ = lf_checker_rt::callee_thiscall!(COOKIE_CHECK, u32, security_cookie);
             return result;
         }
         let first = (label as *const u8).read();
@@ -30,7 +32,7 @@ lf_checker_rt::export!(thiscall, rw_008c5be0(this: u32, label: u32) -> u32 {
             let hash = lf_checker_rt::callee_cdecl!(HASH_HELPER, u32, label, 0);
             lf_checker_rt::callee_thiscall!(LABEL_RESOLVER, u32, this, hash, label)
         };
-        let _ = lf_checker_rt::callee_thiscall!(COOKIE_CHECK, u32, 0);
+        let _ = lf_checker_rt::callee_thiscall!(COOKIE_CHECK, u32, security_cookie);
         result
     }
 });

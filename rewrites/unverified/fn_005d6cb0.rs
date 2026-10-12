@@ -3,9 +3,9 @@
 /// screen point, or -1 when no item matches. The object stores a u16 item
 /// count at +0x1c and a pointer array at +0x18. Each item provides left,
 /// top, right and bottom floats at +0x20, +0x24, +0x2c and +0x30. A left
-/// edge of -1.0 on type 0x12 follows the parent pointer at +8; a top edge
-/// with that sentinel also triggers a parent walk. When the left edge is at
-/// or below the image's clip
+/// edge equal to -1.0 or an item of type 0x12 follows the parent pointer at
+/// +8. A top edge follows the same rule during its scan, which stops at a
+/// null parent. When the left edge is at or below the image's clip
 /// threshold, the selected horizontal item's margins at +0xb4 and +0xb0
 /// are subtracted from its left edge. The vertical parent walk follows the
 /// same sentinel/type condition and stops if that walk reaches a null parent;
@@ -82,7 +82,7 @@ lf_checker_rt::export!(thiscall, rw_005d6cb0(this: u32) -> u32 {
                 loop {
                     let edge = read_f32(horizontal_item.wrapping_add(LEFT_OFFSET));
                     let item_type = read_u32(horizontal_item.wrapping_add(ITEM_TYPE_OFFSET));
-                    if edge != sentinel || item_type != INHERITED_EDGE_TYPE {
+                    if edge != sentinel && item_type != INHERITED_EDGE_TYPE {
                         left = edge;
                         break;
                     }
@@ -107,7 +107,7 @@ lf_checker_rt::export!(thiscall, rw_005d6cb0(this: u32) -> u32 {
             loop {
                 let scanned_top = read_f32(vertical_item.wrapping_add(TOP_OFFSET));
                 let item_type = read_u32(vertical_item.wrapping_add(ITEM_TYPE_OFFSET));
-                if scanned_top != sentinel || item_type != INHERITED_EDGE_TYPE {
+                if scanned_top != sentinel && item_type != INHERITED_EDGE_TYPE {
                     break;
                 }
                 let parent = read_u32(vertical_item.wrapping_add(ITEM_PARENT_OFFSET));

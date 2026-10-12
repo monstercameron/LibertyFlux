@@ -1880,6 +1880,14 @@
   "reason": "partly_proven"
  },
  {
+  "address": "0x00672C80",
+  "name": "get_file_slot_progress",
+  "file": "fn_00672c80.rs",
+  "lane": "r-s817",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0068A450",
   "name": "track_key_partition_0068A450 (proposed)",
   "file": "fn_0068a450.rs",
@@ -1894,6 +1902,14 @@
   "lane": "r-s585",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00871F80",
+  "name": "initialize_refcounted_embedded_object",
+  "file": "fn_00871f80.rs",
+  "lane": "r-s816",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x008773B0",
@@ -2376,14 +2392,6 @@
   "reason": ""
  },
  {
-  "address": "0x008B4090",
-  "name": "stick_response_apply",
-  "file": "fn_008b4090.rs",
-  "lane": "a-U156",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
   "address": "0x008B5700",
   "name": "frontend_invalidate_all_handles",
   "file": "fn_008b5700.rs",
@@ -2662,14 +2670,6 @@
   "lane": "r-s597",
   "outcome": "deferred",
   "reason": "out_of_time"
- },
- {
-  "address": "0x00950A40",
-  "name": "float_chain_converter",
-  "file": "fn_00950a40.rs",
-  "lane": "a-U156",
-  "outcome": "not yet run",
-  "reason": ""
  },
  {
   "address": "0x00957100",
@@ -3216,9 +3216,9 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x00A18CD0",
-  "name": "CCamFollowVehicle::maybe_solve_mode3",
-  "file": "fn_00a18cd0.rs",
+  "address": "0x00A0D3B0",
+  "name": "building_swap_model",
+  "file": "fn_00a0d3b0.rs",
   "lane": "r-s828",
   "outcome": "not_reached",
   "reason": null
@@ -4014,14 +4014,6 @@
   "lane": "a-U56",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00B05D80",
-  "name": "angle_between_vectors",
-  "file": "fn_00b05d80.rs",
-  "lane": "a-U156",
-  "outcome": "not yet run",
-  "reason": ""
  },
  {
   "address": "0x00B086E0",
@@ -4996,8 +4988,8 @@
   "name": "update_drive_model_request",
   "file": "fn_00b7f230.rs",
   "lane": "r-s815",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00B82B80",
@@ -8099,6 +8091,14 @@
   "address": "0x00DF3360",
   "name": "function_00DF3360",
   "file": "fn_00df3360.rs",
+  "lane": "r-s818",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DF3380",
+  "name": "UITransitionViewer::vf2",
+  "file": "fn_00df3380.rs",
   "lane": "r-s818",
   "outcome": "not_reached",
   "reason": null

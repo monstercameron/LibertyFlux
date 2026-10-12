@@ -6,7 +6,9 @@
 /// optional selection index. The method records an allocated four-byte slot
 /// at +0x1D4, calls the rectangle helper only for a nonnegative first index,
 /// sets the virtual resource state with argument one, writes the 16-bit mode
-/// at +0x230, and stores the final index at +0x258 when nonnegative.
+/// at +0x230, and stores the final index at +0x258 when nonnegative. If the
+/// readiness query is already true, the method returns immediately with that
+/// byte in AL and leaves all resource fields untouched.
 lf_checker_rt::export!(thiscall, rw_00db2740(
     this: u32,
     resource_index: u32,
@@ -26,20 +28,21 @@ lf_checker_rt::export!(thiscall, rw_00db2740(
         let ready_address = (vtable.wrapping_add(VTABLE_READY_SLOT) as *const u32).read_unaligned();
         let is_ready: extern "thiscall" fn(u32) -> u8 =
             core::mem::transmute(ready_address as usize);
-        let already_ready = is_ready(this) != 0;
+        let readiness = is_ready(this);
+        if readiness != 0 {
+            return readiness as u32;
+        }
 
-        if !already_ready {
-            let allocated = lf_checker_rt::callee_cdecl!(3, u32, 4);
-            if allocated != 0 {
-                (allocated as *mut u32).write_unaligned(0);
-            }
-            (this.wrapping_add(RESOURCE_SLOT) as *mut u32).write_unaligned(allocated);
+        let allocated = lf_checker_rt::callee_cdecl!(3, u32, 4);
+        if allocated != 0 {
+            (allocated as *mut u32).write_unaligned(0);
+        }
+        (this.wrapping_add(RESOURCE_SLOT) as *mut u32).write_unaligned(allocated);
 
-            if (resource_index as i32) > -1 {
-                let _ = lf_checker_rt::callee_thiscall!(
-                    4, u32, this, resource_index, rectangle_value
-                );
-            }
+        if (resource_index as i32) > -1 {
+            let _ = lf_checker_rt::callee_thiscall!(
+                4, u32, this, resource_index, rectangle_value
+            );
         }
 
         let descriptor_word = (descriptor as *const u32).read_unaligned();
