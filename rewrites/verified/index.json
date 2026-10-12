@@ -130698,10 +130698,55 @@
   "lane": "r-s733"
  },
  {
+  "address": "0x00C2F510",
+  "name": "NativeImpl_SET_CAR_DOOR_LATCHED_2",
+  "kind": "function",
+  "file": "functions/fn_00c2f510.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C2F5A0",
+  "name": "NativeImpl_SET_CAR_DOOR_LATCHED_3",
+  "kind": "function",
+  "file": "functions/fn_00c2f5a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
   "address": "0x00C2F620",
   "name": "aud_placeable_tracker_state_init",
   "kind": "function",
   "file": "functions/fn_00c2f620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C2F650",
+  "name": "detach_owned_timing_node",
+  "kind": "function",
+  "file": "functions/fn_00c2f650.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C2F7C0",
+  "name": "vehicle_dynamics_sample_clamped_factor",
+  "kind": "function",
+  "file": "functions/fn_00c2f7c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C2F970",
+  "name": "vehicle_dynamics_get_handling_ratio",
+  "kind": "function",
+  "file": "functions/fn_00c2f970.rs",
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s733"
@@ -130716,10 +130761,73 @@
   "lane": "r-s733"
  },
  {
+  "address": "0x00C30F90",
+  "name": "CAutomobile::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c30f90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C319B0",
+  "name": "CPlane::vf110",
+  "kind": "function",
+  "file": "functions/fn_00c319b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
   "address": "0x00C321B0",
   "name": "vehicle_speed_in_handling_range",
   "kind": "function",
   "file": "functions/fn_00c321b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C33AC0",
+  "name": "CHeli::vf106",
+  "kind": "function",
+  "file": "functions/fn_00c33ac0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C377A0",
+  "name": "CHeli::vf77",
+  "kind": "function",
+  "file": "functions/fn_00c377a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C37C80",
+  "name": "decode_quant_vector",
+  "kind": "function",
+  "file": "functions/fn_00c37c80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C38880",
+  "name": "zone_table_row_for_mode",
+  "kind": "function",
+  "file": "functions/fn_00c38880.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s733"
+ },
+ {
+  "address": "0x00C38BA0",
+  "name": "CTrain::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c38ba0.rs",
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s733"
