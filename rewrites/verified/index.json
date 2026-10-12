@@ -89658,6 +89658,303 @@
   "lane": "r-s820"
  },
  {
+  "address": "0x00A86340",
+  "name": "CJackTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86340.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86360",
+  "name": "CMedicTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86360.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A863D0",
+  "name": "CMeleeTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a863d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A864D0",
+  "name": "CScriptAnimTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a864d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86530",
+  "name": "CSequenceTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86530.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86580",
+  "name": "CPlayRandomAmbientsInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86580.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A865A0",
+  "name": "CSimpleCarDriveTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a865a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86630",
+  "name": "CSimpleClimbTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86630.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86680",
+  "name": "CSimpleMeleeActionResultTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A866D0",
+  "name": "CSimpleNMBraceTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a866d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86700",
+  "name": "CSimpleNMExplosionTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86700.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86720",
+  "name": "CSimpleNMFlinchTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86760",
+  "name": "CSimpleNMShotTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86760.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A867B0",
+  "name": "CSimpleSidewaysDiveTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a867b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A867E0",
+  "name": "CSimpleThrowProjectileInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a867e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86800",
+  "name": "CSitDownIdleThenStandTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86880",
+  "name": "CSitIdleTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86880.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A868C0",
+  "name": "CStandUpTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a868c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A868F0",
+  "name": "CStatusAndTargetTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a868f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86910",
+  "name": "CComplexOpenVehicleDoorTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86940",
+  "name": "CTargetTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86940.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86960",
+  "name": "CDieInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86960.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86980",
+  "name": "CVehicleTaskInfo::write_task_data",
+  "kind": "function",
+  "file": "functions/fn_00a86980.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A869E0",
+  "name": "CCamTrans::~CCamTrans__deleting",
+  "kind": "function",
+  "file": "functions/fn_00a869e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86A10",
+  "name": "destroy_unflagged_slot_objects",
+  "kind": "function",
+  "file": "functions/fn_00a86a10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86A50",
+  "name": "release_and_destroy_slot_object",
+  "kind": "function",
+  "file": "functions/fn_00a86a50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86A80",
+  "name": "find_first_cam_of_type_9",
+  "kind": "function",
+  "file": "functions/fn_00a86a80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86AC0",
+  "name": "find_first_cam_of_type_15",
+  "kind": "function",
+  "file": "functions/fn_00a86ac0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86B50",
+  "name": "find_first_cam_of_type_27",
+  "kind": "function",
+  "file": "functions/fn_00a86b50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86B90",
+  "name": "find_first_cam_of_type_32",
+  "kind": "function",
+  "file": "functions/fn_00a86b90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86BB0",
+  "name": "find_first_cam_of_type_37",
+  "kind": "function",
+  "file": "functions/fn_00a86bb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86BD0",
+  "name": "find_first_cam_of_type_6",
+  "kind": "function",
+  "file": "functions/fn_00a86bd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00A86BF0",
+  "name": "find_first_cam_of_type_20",
+  "kind": "function",
+  "file": "functions/fn_00a86bf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
   "address": "0x00A872D0",
   "name": "notify_table_walk",
   "kind": "function",
@@ -89692,6 +89989,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G06"
+ },
+ {
+  "address": "0x00A87A40",
+  "name": "init_release_table",
+  "kind": "function",
+  "file": "functions/fn_00a87a40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
  },
  {
   "address": "0x00A87A70",
@@ -92203,6 +92509,24 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s437"
+ },
+ {
+  "address": "0x00AAB990",
+  "name": "select_effect_record_field",
+  "kind": "function",
+  "file": "functions/fn_00aab990.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
+ },
+ {
+  "address": "0x00AAC000",
+  "name": "node_move_between_queues",
+  "kind": "function",
+  "file": "functions/fn_00aac000.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s821"
  },
  {
   "address": "0x00AAC030",
