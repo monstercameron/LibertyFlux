@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Devlog: hourly review, 02:05 on 12 October",
+    "title": "Rewrites: 1 withdrawn because its proof of record fails when run again unchanged",
     "commit": null,
+    "summary": "The verified count goes down by one. An audit that re-runs old proofs unchanged before varying their stack fill found a routine that allocates a row in a slot table whose proof no longer passes, and the coordinator confirmed it.",
+    "changes": [
+      "The contract of record, run again on the stock checker with its own seed and its own 1,000 trials, fails on 3 trials: the original completes and the rewrite faults on a write that the checker classes as touching the original's code. The proof was recorded under checker version 6. Whether the cause is the rewrite or the address the contract gives it is not established; either way the proof does not hold on the current checker, and the rewrite is withdrawn until a strengthening lane has proven it again.",
+      "The same run shows how thin the proof was: the original completes on 36 of the 1,000 trials and faults, with the rewrite, on the other 964. The current checker calls a proof with under a tenth of its trials completing vacuous.",
+      "The audit had recorded this failure at 21:28 on 11 October. The coordinator read the audit's totals several times after that, saw one proof listed as failing its own record, and did not open it until 02:08. A proof that does not reproduce is acted on in the hour it is found; the audit's failing records are now read by name at every review, not counted.",
+      "A second proof the audit lists as failing unchanged, a search for the largest cluster in a set of players recorded under checker version 3, is not withdrawn: both sides make the same 2,098 calls and the failure is the call log's limit of 256, which the current checker counts as a failure and version 3 passed in silence. Its proof covers the first 256 calls only; it goes to the list of proofs to strengthen."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Devlog: hourly review, 02:05 on 12 October",
+    "commit": "b38a38958fc4ae855fd4713cb652c9539f6e6446",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "12,088 bytes an hour verified, the last of the Luna lanes' work; three more classes lifted, to 1,374 routines; 31 falsely held claims recovered after a fix to how the re-run pairs wrong versions.",
