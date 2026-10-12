@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Devlog: the harvest lane's entry, and why the leaf functions are used up",
+    "title": "Changelog: a count corrected in the entry on the harvest lift",
     "commit": null,
+    "summary": "The entry on the harvest said about 660 leaf functions were found and lifted in the evening. It is 749.",
+    "changes": [
+      "Nine lanes on lists chosen by shape lifted 229, 170, 83, 58, 36, 78, 16, 35 and 44 routines between 20:10 and 22:57: 749 in all, which is the difference between the 523 lifted routines at the start of the evening and the 1,272 now. The entry's figure was a slip of the coordinator's addition."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Devlog: the harvest lane's entry, and why the leaf functions are used up",
+    "commit": "29d78a754df22a1fb66d22ed36dfd70a18150488",
     "summary": "The lane's own account of matching 1,977 leaf functions against the lifted routines is added to the devlog.",
     "changes": [
       "The entry gives the 44 instances proved by routine, the count of why the other functions do not match (unparsed access forms, branches and loops, relocated operands, 129 shapes among 143 straight-line functions), the two matcher faults its proofs exposed, the near misses listed for a later lift, and the routines its matchers did not cover."
