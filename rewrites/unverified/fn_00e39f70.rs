@@ -1,4 +1,4 @@
-// original: 0x00E39F70 copy_text_then_replace_final_byte_with_image_suffix
+// original: 0x00E39F70 ui_input_name_copy_with_tag_suffix
 
 /// Copy a nul-terminated byte string to the destination, then overwrite the
 /// terminator and following bytes with the read-only suffix stored in the

@@ -1,4 +1,4 @@
-﻿//! The 32-bit differential runtime for the base sound class.
+//! The 32-bit differential runtime for the base sound class.
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `relocated`,
@@ -11,9 +11,7 @@
 //!
 //! Test-only code: the lifted crate itself stays `#![forbid(unsafe_code)]`.
 
-// Test-only runtime: raw addresses flow through the test arena and the
-// scripted stubs. Every access stays inside the arena, whose bounds the
-// case builders keep.
+// Test-only runtime: raw addresses flow through the test arena and the scripted stubs.
 #![allow(unsafe_code)]
 
 use std::collections::{HashMap, VecDeque};

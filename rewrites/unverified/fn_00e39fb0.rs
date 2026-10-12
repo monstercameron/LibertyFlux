@@ -1,4 +1,4 @@
-// original: 0x00E39FB0 UIMontageMoviePlayer::update_montage_player_visibility
+// original: 0x00E39FB0 ui_update_montage_player_visibility
 
 /// Notify the option owned by the player, then notify both child controls
 /// through their slot-`0x120` virtual methods. Finally clear the player's

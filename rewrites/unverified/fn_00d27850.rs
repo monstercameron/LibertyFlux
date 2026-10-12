@@ -103,6 +103,8 @@ lf_checker_rt::export!(thiscall, rw_00d27850(
             final_world_ptr,
         );
         let strength_bits = (entity.wrapping_add(0x54) as *const u32).read_unaligned();
+        let mut replay_output = core::mem::MaybeUninit::<u32>::uninit();
+        let replay_output_ptr = replay_output.as_mut_ptr() as u32;
         let _ = lf_checker_rt::callee_cdecl!(
             7,
             u32,
@@ -110,7 +112,7 @@ lf_checker_rt::export!(thiscall, rw_00d27850(
             entity,
             strength_bits,
             0,
-            final_world_ptr,
+            replay_output_ptr,
             0,
             0,
             u32::MAX,

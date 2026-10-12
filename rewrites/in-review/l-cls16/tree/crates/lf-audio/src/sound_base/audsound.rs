@@ -2,9 +2,10 @@
 //!
 //! A sound holds a voice column and a link, a kind word, a few flag bytes,
 //! a sub-id, a voice id and option, an identity word, an attached voice,
-//! eight slot ids, a sequence word and two stored slot pointers. The original keeps them at fixed byte offsets of one
-//! object; here each is a named field. Offsets appear in the field docs
-//! only, for a reader who compares with the original's layout.
+//! eight slot ids, a sequence word and two stored slot pointers. The
+//! original keeps them at fixed byte offsets of one object; here each is a
+//! named field. Offsets appear in the field docs only, for a reader who
+//! compares with the original's layout.
 //!
 //! The virtual table of the base class has nine slots. Their meaning, as
 //! established from the verified rewrites and the table itself:
@@ -18,8 +19,8 @@
 //! | 4 | forward the argument to a link target's slot 4 (`forward_link`) |
 //! | 5 | deleting destructor (`deleting_destructor`) |
 //! | 6 | always answers false (not lifted: no behaviour in it) |
-//! | 7 | attach a voice description (not lifted yet) |
-//! | 8 | advance the voice record (not lifted yet) |
+//! | 7 | attach a voice description (attach_voice) |
+//! | 8 | advance the voice record by one tick (advance) |
 //!
 //! Each lifted method is proven against its verified 32-bit rewrite with the
 //! `lf-soundbase-diff` test crate; `registry` says what each proof narrows.

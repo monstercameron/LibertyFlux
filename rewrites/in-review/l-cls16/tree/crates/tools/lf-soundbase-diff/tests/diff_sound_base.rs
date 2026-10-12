@@ -1,4 +1,4 @@
-﻿//! Differential proof of the lifted base sound class against its verified rewrites.
+//! Differential proof of the lifted base sound class against its verified rewrites.
 //!
 //! Each lifted method runs on the same generated inputs as its verified
 //! rewrite. Both run in the same test arena: the arena is restored to one
@@ -16,10 +16,7 @@
 //! Runs on the 32-bit target only (the rewrites take real addresses).
 
 #![cfg(target_arch = "x86")]
-// The cases call the rewrites and the lifted world through raw addresses in
-// the test arena. Every access is checked against the arena's bounds by the
-// runtime's helpers, and the rewrites' own accesses stay inside the arena
-// the case builder laid out.
+// Test-only: the cases call the rewrites and the lifted world through raw arena addresses.
 #![allow(unsafe_code)]
 
 use lf_audio::sound_base::{
@@ -599,6 +596,18 @@ impl SoundWorld for ArenaWorld {
             unsafe { core::mem::transmute(rt::callee_addr(7) as usize) };
         f(found)
     }
+    fn set_record_byte(&mut self, record: u32, offset: u32, value: u8) {
+        rt::write_u8(record.wrapping_add(offset), value);
+    }
+    fn record_word(&self, record: u32, offset: u32) -> u32 {
+        rt::read_u32(record.wrapping_add(offset))
+    }
+    fn set_record_word(&mut self, record: u32, offset: u32, value: u32) {
+        rt::write_u32(record.wrapping_add(offset), value);
+    }
+    fn divisor(&self, lane: u32, slot: u32) -> u32 {
+        rt::read_u32(rt::relocated(rt::DIVISOR_VA) + lane * 8 + slot * 4)
+    }
 }
 
 /// Runs the verified rewrite of the case's method.
@@ -900,7 +909,7 @@ fn run_wrong(c: &Case) -> u32 {
                 } else {
                     let wide = f64::from(dt as i32)
                         + if dt >> 31 == 0 { 0.0 } else { 4_294_967_296.0 };
-                    let rate = 1.0 / ((wide as f32) * lf_audio::sound_base::STEP_SCALE_FOR_TESTS);
+                    let rate = 1.0 / ((wide as f32) * lf_audio::sound_base::STEP_SCALE);
                     w.set_record_word(voice, 0, (dv0 * rate).to_bits());
                     w.set_record_word(voice, 4, (dv1 * rate).to_bits());
                     w.set_record_word(voice, 8, (dv2 * rate).to_bits());
@@ -968,12 +977,18 @@ fn prove(kind: Method, seed: u64, side_lift: fn(&Case) -> u32) -> (u32, Option<S
     let mut rng = Rng(seed);
     let mut first = None;
     let mut mismatches = 0;
+    let mut nonzero = 0;
+    let mut lengths = std::collections::BTreeSet::new();
     for _ in 0..CASES {
         let case = gen_case(&mut rng, kind);
         build_image(&case);
         let image = rt::arena_copy();
         let rw = outcome(&image, &case, run_rewrite);
         let lf = outcome(&image, &case, side_lift);
+        if rw.ret != 0 {
+            nonzero += 1;
+        }
+        lengths.insert(rw.log.len());
         if let Some(why) = compare(&rw, &lf) {
             mismatches += 1;
             if first.is_none() {
@@ -981,6 +996,7 @@ fn prove(kind: Method, seed: u64, side_lift: fn(&Case) -> u32) -> (u32, Option<S
             }
         }
     }
+    println!("{kind:?}: {CASES} cases, {nonzero} with a nonzero answer, call counts seen {lengths:?}");
     (mismatches, first)
 }
 
@@ -1079,4 +1095,14 @@ fn attach_voice_matches_rewrite() {
 #[test]
 fn wrong_lift_of_attach_voice_is_caught() {
     run_wrong_caught(Method::Attach, 0x8008);
+}
+
+#[test]
+fn advance_matches_rewrite() {
+    run_proof(Method::Advance, 0x9009);
+}
+
+#[test]
+fn wrong_lift_of_advance_is_caught() {
+    run_wrong_caught(Method::Advance, 0x9009);
 }

@@ -1,4 +1,4 @@
-//! The verified rewrites under test, compiled from their tracked files.
+﻿//! The verified rewrites under test, compiled from their tracked files.
 //!
 //! Each file is included unchanged and sees this crate as `lf_checker_rt` (32-bit
 //! target only). The include paths are relative to this crate's manifest: three
@@ -11,6 +11,7 @@
     unsafe_code,
     missing_docs,
     non_snake_case,
+    dead_code,
     unused_doc_comments,
     unused_imports,
     unused_mut,

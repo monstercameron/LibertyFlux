@@ -23,12 +23,12 @@ const INFINITY_MAGNITUDE_BITS: u32 = 0x7F80_0000;
 
 #[inline(always)]
 unsafe fn image_f64(file_va: u32) -> f64 {
-    core::ptr::read_unaligned(lf_checker_rt::global::<f64>(file_va))
+    unsafe { core::ptr::read_unaligned(lf_checker_rt::global::<f64>(file_va)) }
 }
 
 #[inline(always)]
 unsafe fn image_f32(file_va: u32) -> f32 {
-    core::ptr::read_unaligned(lf_checker_rt::global::<f32>(file_va))
+    unsafe { core::ptr::read_unaligned(lf_checker_rt::global::<f32>(file_va)) }
 }
 
 #[inline(always)]
@@ -89,13 +89,13 @@ lf_checker_rt::export!(cdecl, rw_00dfbf26() -> __m128 {
     let scale = f32::from_bits(SCALE_F32_BITS);
     let scaled = core::hint::black_box(input) * core::hint::black_box(scale);
     // This path is reached only for |input| < 256, so |scaled| < 11800.
-    // The conversion therefore stays within i32, and round_ties_even matches
-    // the source's current-rounding-mode single-precision conversion.
+    // The conversion therefore stays within i32; the intrinsic follows the
+    // current rounding mode, like the source's conversion.
     let rounded = unsafe { _mm_cvtss_si32(_mm_set_ss(scaled)) };
 
     let table_a_offset = ((rounded as u32).wrapping_shl(3)) & 0x78;
-    let table_b_offset = (((rounded >> 1) as u32) & 0x1F) << 3;
-    let table_c_offset = (((rounded >> 6) as u32) & 0x1F) << 3;
+    let table_b_offset = ((rounded >> 1) as u32) & 0xF8;
+    let table_c_offset = ((rounded >> 6) as u32) & 0xF8;
 
     unsafe {
         let input_f64 = input as f64;

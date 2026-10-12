@@ -29,6 +29,8 @@ struct Fake {
     record_byte: u8,
     memo_flag: u32,
     memo_value: u32,
+    mem: std::collections::HashMap<u32, u8>,
+    divisors: [u32; 16],
 }
 
 impl Fake {
@@ -43,6 +45,8 @@ impl Fake {
             record_byte: 0,
             memo_flag: 0,
             memo_value: 0,
+            mem: std::collections::HashMap::new(),
+            divisors: [3; 16],
             ..Self::default()
         }
     }
@@ -169,8 +173,24 @@ impl SoundWorld for Fake {
         self.log.push(format!("reset {:#x}", this.get()));
         0
     }
-    fn record_byte(&self, _record: u32, _offset: u32) -> u8 {
-        self.record_byte
+    fn record_byte(&self, record: u32, offset: u32) -> u8 {
+        self.mem.get(&record.wrapping_add(offset)).copied().unwrap_or(self.record_byte)
+    }
+    fn set_record_byte(&mut self, record: u32, offset: u32, value: u8) {
+        self.mem.insert(record.wrapping_add(offset), value);
+    }
+    fn record_word(&self, record: u32, offset: u32) -> u32 {
+        let at = record.wrapping_add(offset);
+        (0..4).fold(0u32, |acc, i| acc | (u32::from(self.mem.get(&(at + i)).copied().unwrap_or(0)) << (8 * i)))
+    }
+    fn set_record_word(&mut self, record: u32, offset: u32, value: u32) {
+        let at = record.wrapping_add(offset);
+        for i in 0..4 {
+            self.mem.insert(at + i, (value >> (8 * i)) as u8);
+        }
+    }
+    fn divisor(&self, lane: u32, slot: u32) -> u32 {
+        self.divisors[(lane * 2 + slot) as usize]
     }
     fn or_record_byte(&mut self, record: u32, offset: u32, mask: u8) {
         self.log
@@ -404,8 +424,8 @@ fn construct_second_no_voice_column_skips_registration() {
 #[test]
 fn registry_says_what_is_proven_and_what_is_missing() {
     let (proven, missing) = registry::counts();
-    assert_eq!(proven, 8);
-    assert_eq!(missing, registry::ROWS.len() - 8);
+    assert_eq!(proven, 9);
+    assert_eq!(missing, registry::ROWS.len() - 9);
     assert!(registry::ROWS
         .iter()
         .filter(|r| r.state == State::Missing)
@@ -474,4 +494,47 @@ fn attach_full_option_resolves_a_category_once_and_memoises_it() {
     let _ = s2.attach_voice(obj(0x5000), 0x6000, 0x6100, 0x7000, &mut w2);
     assert!(!w2.log.iter().any(|l| l == "key_hash"));
     assert!(w2.log.iter().any(|l| l == "lookup 0x99"));
+}
+
+#[test]
+fn advance_first_tick_clears_velocity_and_stamps_the_record() {
+    let mut w = Fake::new();
+    // Voice record = row word 0x1000 + column 1 * scalar_b 0x10 = 0x1010.
+    let s = sound(); // voice_column 3 -> record 0x1000 + 3 * 0x10 = 0x1030
+    let rec = 0x1030;
+    w.set_record_word(rec, 0xd0, 0); // no previous stamp
+    w.set_record_word(rec, 0, 0x3f80_0000);
+    let tagw = s.advance(0x500, &mut w);
+    assert_eq!(tagw, 0, "the oldest tag word is zero here");
+    assert_eq!(w.record_word(rec, 0), 0);
+    assert_eq!(w.record_word(rec, 4), 0);
+    assert_eq!(w.record_word(rec, 8), 0);
+    assert_eq!(w.record_word(rec, 0xd0), 0x500, "stamp written");
+    // Counter 3: the tick byte is at 3 * 32 + 0x5f = 0xbf and advances by one.
+    assert_eq!(w.record_byte(rec, 0xbf), 1);
+}
+
+#[test]
+fn advance_zero_delta_clears_velocity_and_keeps_the_stamp() {
+    let mut w = Fake::new();
+    let s = sound();
+    let rec = 0x1030;
+    w.set_record_word(rec, 0xd0, 0x500); // previous stamp equals the new one
+    w.set_record_word(rec, 0, 0x3f80_0000);
+    w.set_record_word(rec, 4, 0x3f80_0000);
+    w.set_record_word(rec, 8, 0x3f80_0000);
+    let _ = s.advance(0x500, &mut w);
+    assert_eq!(w.record_word(rec, 0), 0);
+    assert_eq!(w.record_word(rec, 4), 0);
+    assert_eq!(w.record_word(rec, 8), 0);
+    assert_eq!(w.record_word(rec, 0xd0), 0x500);
+}
+
+#[test]
+#[should_panic(expected = "no voice column")]
+fn advance_without_a_voice_column_stops_where_the_original_faults() {
+    let mut w = Fake::new();
+    let mut s = sound();
+    s.voice_column = NO_VOICE;
+    let _ = s.advance(1, &mut w);
 }

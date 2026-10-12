@@ -1,4 +1,4 @@
-//! What is lifted, what is proven, and what each proof leaves out.
+﻿//! What is lifted, what is proven, and what each proof leaves out.
 //!
 //! One row per verified or unverified 32-bit method of the base sound
 //! class. `Proven` means the method is restated on [`AudSound`] (or as an
@@ -61,8 +61,13 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "AudSound",
         method: "vf8 / advance (slot 8)",
-        state: State::Missing,
-        narrows: &["verified, not lifted yet: writes voice records, rotates history and reads a divisor table; the next lane takes it"],
+        state: State::Proven,
+        narrows: &[
+            "a sound with no voice column: the original reads a null voice record and faults; the lift panics at the same read, which a proof cannot compare",
+            "the divisor table entries are proven for 3 to 7 only: the contract pins entries to three or more, and the rewrite has no timer wait for entries 0 to 2",
+            "the rewrite writes zero to the record word at offset 0xc where the original reloads an uninitialised word below the stack; the lift writes zero too, so the proof inherits the rewrite's definition of that word, not the original's read",
+            "the history and tag rows are moved as words, not as 64-bit moves: the same bytes in the same order",
+        ],
     },
     Row {
         class: "AudSound",

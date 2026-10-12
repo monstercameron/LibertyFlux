@@ -864,6 +864,14 @@
   "reason": null
  },
  {
+  "address": "0x006142E0",
+  "name": "streaming_sample_trace_record",
+  "file": "fn_006142e0.rs",
+  "lane": "a-U147",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x0061B150",
   "name": "net_session_desc_init",
   "file": "fn_0061b150.rs",
@@ -960,9 +968,25 @@
   "reason": "other"
  },
  {
-  "address": "0x006381D0",
-  "name": "rage::ptxEffectRuleStd::update_child_rules",
-  "file": "fn_006381d0.rs",
+  "address": "0x006379F0",
+  "name": "rage::ptxEffectRule::~ptxEffectRule__deleting",
+  "file": "fn_006379f0.rs",
+  "lane": "r-s777",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00637B20",
+  "name": "rage::ptxTimeLine::~ptxTimeLine__deleting",
+  "file": "fn_00637b20.rs",
+  "lane": "r-s777",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00638110",
+  "name": "rage::ptxEffectRuleStd::~ptxEffectRuleStd__deleting",
+  "file": "fn_00638110.rs",
   "lane": "r-s777",
   "outcome": "not_reached",
   "reason": null
@@ -973,7 +997,7 @@
   "file": "fn_00638690.rs",
   "lane": "a-U140",
   "outcome": "deferred",
-  "reason": "The original stores the returned count byte at params+0x1e3; the earlier rewrite omitted it, causing the heap mismatch at 0x33E0. After adding the byte store, a 60-trial zero-count diagnostic passes 60/60 with all originals complete, but the required 1,000-trial record proof and same-contract wrong-version run remain unexecuted."
+  "reason": "The original stores the returned count byte at params+0x1e3; the earlier rewrite omitted it, causing the heap mismatch at 0x33E0. After adding the byte store, a 60-trial zero-count diagnostic passes 60/60 with all originals complete. The required 1,000-trial correct and wrong-version runs were started but stopped before completion at the 95-minute lane cap."
  },
  {
   "address": "0x006397A0",
@@ -984,10 +1008,10 @@
   "reason": null
  },
  {
-  "address": "0x00642920",
-  "name": "rage::ptxDomain::vf3",
-  "file": "fn_00642920.rs",
-  "lane": "r-s779",
+  "address": "0x00639810",
+  "name": "rage::ptxRule::~ptxRule",
+  "file": "fn_00639810.rs",
+  "lane": "r-s777",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1393,7 +1417,7 @@
  },
  {
   "address": "0x0088FC40",
-  "name": "unknown",
+  "name": null,
   "file": "fn_0088fc40.rs",
   "lane": "a-U145",
   "outcome": "not yet run",
@@ -1408,9 +1432,9 @@
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
  },
  {
-  "address": "0x008AD310",
-  "name": "audio_clamp_call_select",
-  "file": "fn_008ad310.rs",
+  "address": "0x008AD3D0",
+  "name": "audio_shape_call_blend",
+  "file": "fn_008ad3d0.rs",
   "lane": "a-U146",
   "outcome": "not yet run",
   "reason": null
@@ -1422,6 +1446,14 @@
   "lane": "a-U144",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x008D6920",
+  "name": "paired_heading_blend",
+  "file": "fn_008d6920.rs",
+  "lane": "a-U144",
+  "outcome": "failed_v8",
+  "reason": "The prior passing proof repeated the same wrapped-helper answer for all three calls and did not compare the function ST0 result; that contract allowed the rewrite to store the third helper result in the second output. The return channel and per-call sequence have been corrected; fresh proof pending."
  },
  {
   "address": "0x008DBF60",
@@ -1896,30 +1928,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00A7D670",
-  "name": "CMedicTaskInfo::CMedicTaskInfo",
-  "file": "fn_00a7d670.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D6C0",
-  "name": "CMedicTaskInfo::CMedicTaskInfo_2",
-  "file": "fn_00a7d6c0.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D6F0",
-  "name": "CMeleeTaskInfo::CMeleeTaskInfo",
-  "file": "fn_00a7d6f0.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A7D710",
   "name": "CMeleeTaskInfo::CMeleeTaskInfo_2",
   "file": "fn_00a7d710.rs",
@@ -2168,9 +2176,9 @@
   "reason": null
  },
  {
-  "address": "0x00A8D670",
-  "name": "interior_release_room_records",
-  "file": "fn_00a8d670.rs",
+  "address": "0x00A8F910",
+  "name": "interior_snap_verts_to_corners",
+  "file": "fn_00a8f910.rs",
   "lane": "a-U142",
   "outcome": "not yet run",
   "reason": ""
@@ -3446,14 +3454,6 @@
   "lane": "r-s708",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00C1F9A0",
-  "name": "streaming_check_asset_record_flags",
-  "file": "fn_00c1f9a0.rs",
-  "lane": "r-s708",
-  "outcome": "deferred",
-  "reason": "out_of_time"
  },
  {
   "address": "0x00C1FAE0",
@@ -4824,14 +4824,6 @@
   "reason": null
  },
  {
-  "address": "0x00DF3B00",
-  "name": "UITransitionViewer::vf112",
-  "file": "fn_00df3b00.rs",
-  "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DF3B60",
   "name": "UIFileViewer::UIFileViewer",
   "file": "fn_00df3b60.rs",
@@ -4840,8 +4832,40 @@
   "reason": null
  },
  {
+  "address": "0x00DF3BF0",
+  "name": "UIFileViewer::UIFileViewer_2",
+  "file": "fn_00df3bf0.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DF3C10",
+  "name": "UIFileViewer::vf2",
+  "file": "fn_00df3c10.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DF3C40",
+  "name": "UIFileViewer::apply_state_to_child_objects",
+  "file": "fn_00df3c40.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DF3C90",
+  "name": "UIFileViewer::clear_file_list_state",
+  "file": "fn_00df3c90.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DFBF26",
-  "name": null,
+  "name": "expf_sse",
   "file": "fn_00dfbf26.rs",
   "lane": "a-U148",
   "outcome": "not yet run",
@@ -4867,6 +4891,14 @@
   "address": "0x00E3CA40",
   "name": "UIMontageMoviePlayer::type_name_hash",
   "file": "fn_00e3ca40.rs",
+  "lane": "r-s773",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E45EB0",
+  "name": "net_info_header_write_text_or_ellipsis",
+  "file": "fn_00e45eb0.rs",
   "lane": "r-s773",
   "outcome": "not_reached",
   "reason": null
@@ -5128,36 +5160,12 @@
   "reason": null
  },
  {
-  "address": "0x00E6F380",
-  "name": "cleanup_tls_state_00e6f380",
-  "file": "fn_00e6f380.rs",
+  "address": "0x00E6F060",
+  "name": "register_image_table_range",
+  "file": "fn_00e6f060.rs",
   "lane": "r-s769",
   "outcome": "not_reached",
   "reason": ""
- },
- {
-  "address": "0x00E6F3C0",
-  "name": "cleanup_tls_state_00e6f3c0",
-  "file": "fn_00e6f3c0.rs",
-  "lane": "r-s769",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00E711E0",
-  "name": "send_audio_buffer_cleanup_message",
-  "file": "fn_00e711e0.rs",
-  "lane": "r-s778",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E71370",
-  "name": "clear_viewport_children_and_notify",
-  "file": "fn_00e71370.rs",
-  "lane": "r-s778",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E713E0",

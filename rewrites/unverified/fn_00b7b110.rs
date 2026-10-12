@@ -32,8 +32,30 @@ lf_checker_rt::export!(thiscall, rw_00b7b110(this: u32) -> u32 {
         if allocated == 0 {
             return 0;
         }
-        let mut coordinates = [read_u32(this.wrapping_add(0x18)), read_u32(this.wrapping_add(0x1c)), read_u32(this.wrapping_add(0x20))];
-        let copy = lf_checker_rt::callee_thiscall!(CONSTRUCTOR, u32, allocated, read_u32(this.wrapping_add(0x40)), coordinates.as_mut_ptr() as u32, read_u8(this.wrapping_add(0x3b)) as u32, read_u32(this.wrapping_add(0x4c)), read_u32(this.wrapping_add(0x44)), read_u32(this.wrapping_add(0x50)), read_i8(this.wrapping_add(0x3c)) as u32, read_u16(this.wrapping_add(0x38)) as u32, 1);
+        #[repr(C)]
+        struct ConstructorScratch {
+            words_before_coordinates: [u32; 13],
+            coordinates: [u32; 3],
+        }
+        let mut scratch = ConstructorScratch {
+            words_before_coordinates: [
+                read_u32(this.wrapping_add(0x40)), 0,
+                read_u8(this.wrapping_add(0x3b)) as u32,
+                read_u32(this.wrapping_add(0x4c)),
+                read_u32(this.wrapping_add(0x44)),
+                read_u32(this.wrapping_add(0x50)),
+                read_i8(this.wrapping_add(0x3c)) as u32,
+                read_u16(this.wrapping_add(0x38)) as u32,
+                1, 0, 0, 0, 0,
+            ],
+            coordinates: [read_u32(this.wrapping_add(0x18)), read_u32(this.wrapping_add(0x1c)), read_u32(this.wrapping_add(0x20))],
+        };
+        let copy = lf_checker_rt::callee_thiscall!(CONSTRUCTOR, u32, allocated,
+            scratch.words_before_coordinates[0], scratch.coordinates.as_mut_ptr() as u32,
+            scratch.words_before_coordinates[2], scratch.words_before_coordinates[3],
+            scratch.words_before_coordinates[4], scratch.words_before_coordinates[5],
+            scratch.words_before_coordinates[6], scratch.words_before_coordinates[7],
+            scratch.words_before_coordinates[8]);
         copy
     }
 });

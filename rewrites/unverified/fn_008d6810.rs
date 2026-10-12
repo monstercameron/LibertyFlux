@@ -31,7 +31,7 @@ lf_checker_rt::export!(cdecl, rw_fn_008d6810(
     second_vector: *const f32,
     first_out: *mut f32,
     second_out: *mut f32,
-) -> () {
+) -> f32 {
     unsafe {
         let sign_mask = lf_checker_rt::global::<u32>(SIGN_MASK_VA).read();
         if !first_vector.is_null() {
@@ -61,6 +61,6 @@ lf_checker_rt::export!(cdecl, rw_fn_008d6810(
             f32,
             delta.to_bits(),
         );
-        second_out.write(wrapped_delta);
+        wrapped_delta
     }
 });

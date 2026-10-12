@@ -106,3 +106,13 @@ pub mod fn_008909C0 {
         "/../../../../../../../rewrites/verified/functions/fn_008909c0.rs"
     ));
 }
+
+pub mod fn_0088FFF0 {
+    #![allow(unused_imports)]
+    use crate::export;
+    use super::{callee_addr, global, relocated};
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_0088fff0.rs"
+    ));
+}
