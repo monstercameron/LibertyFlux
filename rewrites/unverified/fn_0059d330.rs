@@ -28,7 +28,7 @@ lf_checker_rt::export!(cdecl, rw_0059d330() -> u8 {
     unsafe {
         lf_checker_rt::global::<u32>(DEVICE_REGISTRATION_FLAG)
             .write_unaligned(REGISTRATION_VALUE);
-        let _ = lf_checker_rt::callee_cdecl!(1, u32);
+        let _ = lf_checker_rt::callee_cdecl!(1, u32,);
 
         let registry_slot = lf_checker_rt::global::<u32>(REGISTRY_GLOBAL);
         if registry_slot.read_unaligned() == 0 {

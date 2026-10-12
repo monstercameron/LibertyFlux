@@ -1144,34 +1144,18 @@
   "reason": "other"
  },
  {
-  "address": "0x0065E180",
-  "name": "fn_0065e180",
-  "file": "fn_0065e180.rs",
+  "address": "0x0065BC30",
+  "name": "rage::EnviromentDomeLighting::vf5",
+  "file": "fn_0065bc30.rs",
   "lane": "r-s765",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x0065F060",
-  "name": "rage::snMsgStartMatchCmd::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065f060.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065F0F0",
-  "name": "rage::snMsgChangeSessionAttributesCmd::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065f0f0.rs",
-  "lane": "r-s764",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0065F180",
-  "name": "rage::snMsgSetInvitableCmd::AutoIdDesc__::AutoIdDesc__",
-  "file": "fn_0065f180.rs",
-  "lane": "r-s764",
+  "address": "0x0065E180",
+  "name": "fn_0065e180",
+  "file": "fn_0065e180.rs",
+  "lane": "r-s765",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1728,6 +1712,14 @@
   "reason": null
  },
  {
+  "address": "0x0087EB80",
+  "name": null,
+  "file": "fn_0087eb80.rs",
+  "lane": "r-s755",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x0087EC40",
   "name": null,
   "file": "fn_0087ec40.rs",
@@ -1851,6 +1843,14 @@
   "address": "0x009322F0",
   "name": "tree_imposter_cache_size",
   "file": "fn_009322f0.rs",
+  "lane": "r-s763",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00932330",
+  "name": "table_vector_normalized_copy",
+  "file": "fn_00932330.rs",
   "lane": "r-s763",
   "outcome": "not_reached",
   "reason": null
@@ -3240,22 +3240,6 @@
   "reason": "needs_encrypted_code"
  },
  {
-  "address": "0x00B805F0",
-  "name": "CTaskComplexCarDriveWander::vf21",
-  "file": "fn_00b805f0.rs",
-  "lane": "r-s628",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00B80D70",
-  "name": "ped_task_manager_last_active_node",
-  "file": "fn_00b80d70.rs",
-  "lane": "r-s628",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
   "address": "0x00B82B80",
   "name": "script_vm_helper_00b82b80",
   "file": "fn_00b82b80.rs",
@@ -4606,78 +4590,6 @@
   "lane": "r-s581",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00CDF150",
-  "name": "nm_message_timeout_clear",
-  "file": "fn_00cdf150.rs",
-  "lane": "r-s625",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CDF290",
-  "name": "CTaskComplexNM::vf19",
-  "file": "fn_00cdf290.rs",
-  "lane": "r-s625",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CDF320",
-  "name": "CTaskComplexNM::vf18",
-  "file": "fn_00cdf320.rs",
-  "lane": "r-s625",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CDFF90",
-  "name": "CTaskSimpleNMBrace::vf28",
-  "file": "fn_00cdff90.rs",
-  "lane": "r-s625",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CDFFD0",
-  "name": "CTaskSimpleNMFallDown::vf28",
-  "file": "fn_00cdffd0.rs",
-  "lane": "r-s625",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CE0030",
-  "name": "CTaskSimpleNMExplosion::vf28",
-  "file": "fn_00ce0030.rs",
-  "lane": "r-s625",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CE0730",
-  "name": "CTaskSimpleNMPose::vf28",
-  "file": "fn_00ce0730.rs",
-  "lane": "r-s625",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CE0740",
-  "name": "CTaskSimpleNMRelax::vf28",
-  "file": "fn_00ce0740.rs",
-  "lane": "r-s625",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00CE0750",
-  "name": "CTaskSimpleNMRollUpAndRelax::vf28",
-  "file": "fn_00ce0750.rs",
-  "lane": "r-s625",
-  "outcome": "deferred",
-  "reason": "out_of_time"
  },
  {
   "address": "0x00CEA2B0",

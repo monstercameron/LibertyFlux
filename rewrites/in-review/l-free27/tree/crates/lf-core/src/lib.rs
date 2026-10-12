@@ -21,6 +21,7 @@ pub mod arena;
 pub mod boundary;
 pub mod byte_flag_test;
 pub mod const_fill;
+pub mod counted_run;
 pub mod constant_writes;
 pub mod field_compare;
 pub mod field_pair_store;
