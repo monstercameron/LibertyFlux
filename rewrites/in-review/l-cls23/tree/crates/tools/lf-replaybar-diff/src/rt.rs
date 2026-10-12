@@ -21,7 +21,7 @@ use std::collections::HashMap;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Mutex, MutexGuard};
 
-use crate::fake::{Answer, CallSpec, Script};
+use crate::fake::{Answer, CallSpec, READ_ARGS, Script};
 
 /// Which stub shape serves a callee number.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -51,6 +51,7 @@ pub struct Scope {
     kinds: HashMap<u32, Kind>,
     answers: HashMap<u32, std::collections::VecDeque<Answer>>,
     outs: HashMap<u32, &'static [usize]>,
+    reads: HashMap<u32, &'static [usize]>,
 }
 
 /// A recorded call: the scope it ran in, the callee number, and the words.
@@ -84,6 +85,11 @@ pub fn install(scope: usize, table: &[(CallSpec, Kind)], script: &Script) {
         for (spec, kind) in table {
             fresh.kinds.insert(spec.id, *kind);
             fresh.outs.insert(spec.id, spec.outs);
+            let reads = READ_ARGS
+                .iter()
+                .find(|(name, _)| *name == spec.name)
+                .map_or(&[][..], |(_, positions)| *positions);
+            fresh.reads.insert(spec.id, reads);
             let queue = script.get(spec.name).cloned().unwrap_or_default();
             fresh.answers.insert(spec.id, queue);
         }
@@ -149,9 +155,19 @@ pub fn callee_addr(id: u32) -> u32 {
 /// Records a call in the innermost scope, writes its scripted out-words and
 /// returns its scripted return word.
 fn dispatch(id: u32, args: Vec<u32>) -> u32 {
+    let reads = with_state(|state| {
+        let scope = *state.stack.last().expect("a scope is active");
+        state.scopes[scope].reads.get(&id).copied().unwrap_or(&[])
+    });
+    let mut logged = args.clone();
+    for &position in reads {
+        // SAFETY: the rewrite passed this address to the call, and the word it
+        // points at is in the rewrite's own frame, live for the call.
+        logged[position] = unsafe { *(args[position] as *const u32) };
+    }
     let (scope, ret, outs, positions) = with_state(|state| {
         let scope = *state.stack.last().expect("a scope is active");
-        state.log.push((scope, id, args.clone()));
+        state.log.push((scope, id, logged));
         let answer = state.scopes[scope]
             .answers
             .get_mut(&id)

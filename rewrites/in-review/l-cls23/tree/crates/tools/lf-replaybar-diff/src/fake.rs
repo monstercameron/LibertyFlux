@@ -115,6 +115,11 @@ pub const UPDATE_CALLS: &[CallSpec] = &[
     CallSpec { id: 20, name: "base_update", outs: &[] },
 ];
 
+/// Argument positions the callee reads through a pointer. The record holds
+/// the word at each such position when the call is made, so the value the
+/// callee sees is compared, not the address.
+pub const READ_ARGS: &[(&str, &[usize])] = &[("consume", &[2, 3])];
+
 /// The answers a case scripts, by the call's name, popped in call order.
 /// Both sides take their own copy.
 pub type Script = HashMap<&'static str, VecDeque<Answer>>;
@@ -241,12 +246,14 @@ impl ReplayBarWorld for FakeWorld {
         &mut self,
         bar: Handle32<BarTag>,
         token: u32,
-        _first: &mut u32,
-        _second: &mut u32,
+        first: &mut u32,
+        second: &mut u32,
     ) {
         let a = self.handle_bar(bar);
         let t = self.word(token);
-        self.record("consume", &[a, t]);
+        let f = self.word(*first);
+        let s = self.word(*second);
+        self.record("consume", &[a, t, f, s]);
     }
 
     fn measure(&mut self) -> u32 {
@@ -359,7 +366,7 @@ pub fn normalise(ctx: &Ctx, table: &[CallSpec], calls: &[(u32, Vec<u32>)]) -> Ve
             let names: Vec<String> = args
                 .iter()
                 .enumerate()
-                .filter(|(index, _)| !spec.outs.contains(index) && !(spec.name == "consume" && **index >= 2))
+                .filter(|(index, _)| !spec.outs.contains(index))
                 .map(|(_, value)| sym(ctx, *value))
                 .collect();
             format!("{}({})", spec.name, names.join(","))

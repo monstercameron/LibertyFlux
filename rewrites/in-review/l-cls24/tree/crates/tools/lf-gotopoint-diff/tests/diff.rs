@@ -508,7 +508,7 @@ fn run_rewrite(m: Method, inp: &Input) -> Outcome {
     let mut target = Box::new(inp.target);
     let target_addr = target.as_mut_ptr() as usize as u32;
     let ped_addr = ped.as_mut_ptr() as usize as u32;
-    write_cache(inp.cache);
+    eprintln!("DBG write_cache"); write_cache(inp.cache); eprintln!("DBG wrote");
 
     set_manager_word(inp.manager);
     SRC.with(|s| s.set(addr));
@@ -538,10 +538,10 @@ fn run_rewrite(m: Method, inp: &Input) -> Outcome {
         }
         Method::Refresh => Some(fn_00CB8AC0::rw_00cb8ac0(addr, inp.word1, inp.word2, 0x5A5A_5A5A)),
         Method::Clone => Some(fn_00CAF720::rw_00caf720(addr)),
-        Method::Advance => Some(fn_00CAFC10::rw_00CAFC10(addr, ped_addr, target_addr)),
+        Method::Advance => { eprintln!("DBG call rw"); let r = fn_00CAFC10::rw_00CAFC10(addr, ped_addr, target_addr); eprintln!("DBG returned"); Some(r) }
     };
     let out = if m == Method::Copy3 { Some(*outbuf) } else { None };
-    let cache = if m == Method::Advance { Some(read_cache()) } else { None };
+    eprintln!("DBG read cache"); let cache = if m == Method::Advance { Some(read_cache()) } else { None }; eprintln!("DBG cache read");
     Outcome {
         ret,
         mem: *obj,
