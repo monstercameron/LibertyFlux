@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 7 files from lanes (684 unverified rewrites, 853 in review)",
+    "title": "Checker: the placement check's module imports without its two packages",
     "commit": null,
+    "summary": "The pipeline's checker tests failed for a second reason after the placement check was adopted: its module imported a disassembler and an executable-format reader when it was loaded, and the pipeline's runner has neither.",
+    "changes": [
+      "The module now imports those two packages inside the functions that use them. Its tests need the original executable and are skipped where it is absent, as they were written to be, but the test file could not even be imported on the runner. With the packages present, the 50 checker tests pass as before; with both made unavailable, the module and its test file import.",
+      "This is the second failure the coordinator's adoption of that check caused in the pipeline; the first was the unmoved pin of the driver's hash. Neither affected a checker run on this machine, where both packages are installed. A change to the checker folder is now run through the pipeline's own commands in a clean environment before it is committed."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 7 files from lanes (684 unverified rewrites, 853 in review)",
+    "commit": "8159b34abbafc10da4ea79d7118a85791c61ed84",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 684 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",

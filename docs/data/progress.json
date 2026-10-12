@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 37258,
-    "rewritten": 19550,
-    "verified": 19381
+    "rewritten": 19562,
+    "verified": 19406
   },
   "structures": 340,
-  "symbols": 19485,
+  "symbols": 19510,
   "measured": [
     {
       "label": "Code section",
@@ -117,9 +117,9 @@
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 38.4,
+      "value": 38.5,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2814508 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2816464 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
@@ -135,13 +135,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 19550,
+      "value": 19562,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 19381,
+      "value": 19406,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
@@ -816,7 +816,7 @@
       "to": "0x0059D3B4",
       "count": 129,
       "named": 129,
-      "rewritten": 67,
+      "rewritten": 68,
       "verified": 59
     },
     {
@@ -1131,7 +1131,7 @@
       "to": "0x0066034C",
       "count": 143,
       "named": 143,
-      "rewritten": 60,
+      "rewritten": 62,
       "verified": 49
     },
     {
@@ -2301,7 +2301,7 @@
       "to": "0x0093465A",
       "count": 47,
       "named": 46,
-      "rewritten": 9,
+      "rewritten": 11,
       "verified": 5
     },
     {
@@ -2707,7 +2707,7 @@
       "count": 85,
       "named": 85,
       "rewritten": 51,
-      "verified": 48
+      "verified": 51
     },
     {
       "stage": "named",
@@ -2716,7 +2716,7 @@
       "count": 121,
       "named": 120,
       "rewritten": 59,
-      "verified": 48
+      "verified": 58
     },
     {
       "stage": "verified",
@@ -2841,7 +2841,7 @@
       "to": "0x00A82A3A",
       "count": 229,
       "named": 228,
-      "rewritten": 120,
+      "rewritten": 121,
       "verified": 108
     },
     {
@@ -3129,7 +3129,7 @@
       "to": "0x00B34E6D",
       "count": 73,
       "named": 73,
-      "rewritten": 49,
+      "rewritten": 50,
       "verified": 48
     },
     {
@@ -3183,7 +3183,7 @@
       "to": "0x00B56536",
       "count": 128,
       "named": 128,
-      "rewritten": 93,
+      "rewritten": 95,
       "verified": 84
     },
     {
@@ -3858,7 +3858,7 @@
       "to": "0x00CF820D",
       "count": 86,
       "named": 86,
-      "rewritten": 49,
+      "rewritten": 50,
       "verified": 43
     },
     {
@@ -4029,8 +4029,8 @@
       "to": "0x00D61F8C",
       "count": 62,
       "named": 62,
-      "rewritten": 8,
-      "verified": 0
+      "rewritten": 10,
+      "verified": 10
     },
     {
       "stage": "named",
@@ -4039,7 +4039,7 @@
       "count": 31,
       "named": 31,
       "rewritten": 5,
-      "verified": 3
+      "verified": 5
     },
     {
       "stage": "verified",
@@ -4477,7 +4477,7 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2814508,
+    "verified": 2816464,
     "large_functions": 2801402,
     "large_functions_verified": 816263
   },

@@ -24,8 +24,8 @@ The body is approximate: it is decoded from the function's start to the next ver
 are not waivable.
 """
 
-import capstone
-import pefile
+# capstone and pefile are imported where they are used: the pipeline's runners do not have them, and this
+# module (and its test file, which is skipped there for want of the original executable) must still import.
 
 IMAGE_BASE_DEFAULT = 0x400000
 BODY_CAP_DEFAULT = 0x2000
@@ -39,6 +39,7 @@ class Image:
     """The original's sections and mapped bytes, read through pefile's mapped image."""
 
     def __init__(self, exe_path):
+        import pefile
         self.pe = pefile.PE(exe_path, fast_load=True)
         self.base = self.pe.OPTIONAL_HEADER.ImageBase
         self.size = self.pe.OPTIONAL_HEADER.SizeOfImage
@@ -79,6 +80,7 @@ class Image:
         if next_start_rva is not None and fn_rva < next_start_rva < end:
             end = next_start_rva
         code = bytes(self.mapped[fn_rva:end])
+        import capstone
         md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
         md.detail = True
         found = {}
