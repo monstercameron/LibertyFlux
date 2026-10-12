@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-12",
+    "title": "Rewrites: 102 proofs re-run on the current checker and recorded on it",
+    "commit": "def582fccec0277f1ec91c8274bebeafc9afa545",
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "102 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-12",
     "title": "Devlog: the lift lane's entry on the game camera class",
     "commit": "ff4729a72f025492d8942e458fa8ff8e5d6fbf19",
     "summary": "The lane's own account of lifting five methods of the game camera class is added to the devlog.",
