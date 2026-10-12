@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 16 more functions pass the checker (19609 in total)",
+    "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "16 rewrites added under rewrites/verified: 0 script native handlers and 16 other functions.",
+      "The tree now holds 19609 rewrites, 19606 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Changelog: a count corrected in the entry on the harvest lift",
     "commit": "12cb98271c56ea775772d27869b865613ad8403b",
     "summary": "The entry on the harvest said about 660 leaf functions were found and lifted in the evening. It is 749.",

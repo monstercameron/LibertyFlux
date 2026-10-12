@@ -41031,6 +41031,51 @@
   "lane": "a-U101"
  },
  {
+  "address": "0x006672D0",
+  "name": "create_keyframe_defaults",
+  "kind": "function",
+  "file": "functions/fn_006672d0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x006673B0",
+  "name": "alloc_keyframe_index",
+  "kind": "function",
+  "file": "functions/fn_006673b0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x00667520",
+  "name": "compare_emitters_by_distance",
+  "kind": "function",
+  "file": "functions/fn_00667520.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x00667550",
+  "name": "rage::ptxTimeLine::~ptxTimeLine",
+  "kind": "function",
+  "file": "functions/fn_00667550.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x006675C0",
+  "name": "rage::ptxTimeLine::reset",
+  "kind": "function",
+  "file": "functions/fn_006675c0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
   "address": "0x00667620",
   "name": "streaming_assign_indices_and_notify",
   "kind": "function",
@@ -41209,6 +41254,105 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s704"
+ },
+ {
+  "address": "0x0066C590",
+  "name": "rage::rmPtfxShaderVar_Texture::load_and_set_texture",
+  "kind": "function",
+  "file": "functions/fn_0066c590.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x0066CC90",
+  "name": "rage::rmPtfxShaderVar::create",
+  "kind": "function",
+  "file": "functions/fn_0066cc90.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x0066CCD0",
+  "name": "rage::rmPtfxShaderVar_Bool::create",
+  "kind": "function",
+  "file": "functions/fn_0066ccd0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x0066CD10",
+  "name": "rage::rmPtfxShaderVar_Int::create",
+  "kind": "function",
+  "file": "functions/fn_0066cd10.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x0066CD60",
+  "name": "rage::rmPtfxShaderVar_Float::create",
+  "kind": "function",
+  "file": "functions/fn_0066cd60.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x0066CDB0",
+  "name": "rage::rmPtfxShaderVar_Float2::create",
+  "kind": "function",
+  "file": "functions/fn_0066cdb0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x0066CE00",
+  "name": "rage::rmPtfxShaderVar_Float3::create",
+  "kind": "function",
+  "file": "functions/fn_0066ce00.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x0066CE60",
+  "name": "rage::rmPtfxShaderVar_Float4::create",
+  "kind": "function",
+  "file": "functions/fn_0066ce60.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x0066CEC0",
+  "name": "rage::rmPtfxShaderVar_Texture::create",
+  "kind": "function",
+  "file": "functions/fn_0066cec0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x0066CF10",
+  "name": "rage::rmPtfxShaderVar_Keyframe::create",
+  "kind": "function",
+  "file": "functions/fn_0066cf10.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
+ },
+ {
+  "address": "0x0066D280",
+  "name": "rb_tree_lower_bound",
+  "kind": "function",
+  "file": "functions/fn_0066d280.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s758"
  },
  {
   "address": "0x0066DB10",
