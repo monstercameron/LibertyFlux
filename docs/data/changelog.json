@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: a harvest over every unlifted leaf function finds 44 more instances of six routines",
+    "title": "Devlog: the harvest lane's entry, and why the leaf functions are used up",
     "commit": null,
+    "summary": "The lane's own account of matching 1,977 leaf functions against the lifted routines is added to the devlog.",
+    "changes": [
+      "The entry gives the 44 instances proved by routine, the count of why the other functions do not match (unparsed access forms, branches and loops, relocated operands, 129 shapes among 143 straight-line functions), the two matcher faults its proofs exposed, the near misses listed for a later lift, and the routines its matchers did not cover."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: a harvest over every unlifted leaf function finds 44 more instances of six routines",
+    "commit": "31beb1c8c24504eb5a80b9fffd6e90e7a1634b8a",
     "summary": "One lane matched all 1,977 verified functions that call nothing and have no portable counterpart against the routines lifted this evening. 44 match and are proved; the routines are too narrow to recur widely.",
     "changes": [
       "Six new test crates prove 44 more tracked verified rewrites against routines already in the repository, unchanged: constant writes (26 on objects, 3 over a region of globals), a field store (1), a pair store (3), a row address (1) and the ratio cell (10). 1,000 cases per instance on the 32-bit target, the routines' deliberately wrong versions caught by every instance. The coordinator ran the six crates' tests before committing; none failed. One crate has the debug build's alignment check switched off, for the same reason as two earlier ones.",
