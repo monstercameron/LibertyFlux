@@ -4,7 +4,7 @@
 /// TLS slot zero. A zero unit count returns null. Positive counts request
 /// twice the unit count in bytes, 16-byte alignment, and a zero fill value.
 /// Counts above the unsigned 31-bit limit follow a fatal reporter path and
-/// reach a debugger-breakpoint fault; that path is excluded from the proof.
+/// reach `int3`; that faulting path is excluded from the proof.
 lf_checker_rt::export!(thiscall, rw_00880310(_this: u32, unit_count: u32, _unused: u32) -> u32 {
     unsafe {
         const ALLOCATOR_OFFSET: u32 = 0x08;

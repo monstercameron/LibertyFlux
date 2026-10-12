@@ -9,7 +9,7 @@
 /// allocator's answer as the table, sets the 16-bit generation at `GEN`
 /// (+0x270) to 1, and returns the allocator's answer. When the flag is
 /// already set it only refreshes `GEN` to 1 and returns 1. Thiscall:
-// `this` in ECX, no stack arguments.
+/// `this` in ECX, no stack arguments.
 lf_checker_rt::export!(thiscall, rw_00601CA0(this: u32) -> u32 {
     unsafe {
         const TABLE: u32 = 0x26c;
