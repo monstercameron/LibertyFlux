@@ -118,7 +118,7 @@ mod tests {
     fn the_shift_wraps_as_thirty_two_bits() {
         let mut table = [0u32; TABLE_LEN];
         table[0] = 0x0800_0001; // shifted left by five: 0x20 after wrapping
-        let mut object = vec![0u8; 0x80];
+        let mut object = vec![0u8; 0x400];
         SlotStore::new(0, 1).store(&mut object, &table, 9);
         assert_eq!(object[0x20], 9);
     }
