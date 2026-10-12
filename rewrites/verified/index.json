@@ -177894,6 +177894,96 @@
   "lane": "r-s588"
  },
  {
+  "address": "0x00E6ED40",
+  "name": "network_cleanup_record16_arrays",
+  "kind": "function",
+  "file": "functions/fn_00e6ed40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6ED70",
+  "name": "network_cleanup_thread_local_objects",
+  "kind": "function",
+  "file": "functions/fn_00e6ed70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6EDB0",
+  "name": "cleanup_tls_object_00e6edb0",
+  "kind": "function",
+  "file": "functions/fn_00e6edb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6EFA0",
+  "name": "network_cleanup_record16_global",
+  "kind": "function",
+  "file": "functions/fn_00e6efa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6EFC0",
+  "name": "cleanup_tls_object_00e6efc0",
+  "kind": "function",
+  "file": "functions/fn_00e6efc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6EFF0",
+  "name": "cleanup_tls_object_00e6eff0",
+  "kind": "function",
+  "file": "functions/fn_00e6eff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6F020",
+  "name": "cleanup_tls_object_00e6f020",
+  "kind": "function",
+  "file": "functions/fn_00e6f020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6F060",
+  "name": "register_image_table_range",
+  "kind": "function",
+  "file": "functions/fn_00e6f060.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6F380",
+  "name": "cleanup_tls_state_00e6f380",
+  "kind": "function",
+  "file": "functions/fn_00e6f380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6F3C0",
+  "name": "cleanup_tls_state_00e6f3c0",
+  "kind": "function",
+  "file": "functions/fn_00e6f3c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
   "address": "0x00E6F520",
   "name": "timer_hook_dispatch",
   "kind": "function",
@@ -177912,6 +178002,42 @@
   "lane": "a-S12"
  },
  {
+  "address": "0x00E6F5C0",
+  "name": "cleanup_tls_object_00e6f5c0",
+  "kind": "function",
+  "file": "functions/fn_00e6f5c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6F610",
+  "name": "cleanup_tls_object_00e6f610",
+  "kind": "function",
+  "file": "functions/fn_00e6f610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6F680",
+  "name": "cleanup_tls_object_00e6f680",
+  "kind": "function",
+  "file": "functions/fn_00e6f680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E6F6B0",
+  "name": "cleanup_tls_object_00e6f6b0",
+  "kind": "function",
+  "file": "functions/fn_00e6f6b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
   "address": "0x00E6F6E0",
   "name": "timer_table_notify_2490",
   "kind": "function",
@@ -177928,6 +178054,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G08"
+ },
+ {
+  "address": "0x00E6F920",
+  "name": "cleanup_tls_object_00e6f920",
+  "kind": "function",
+  "file": "functions/fn_00e6f920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
  },
  {
   "address": "0x00E6F950",
@@ -178056,6 +178191,15 @@
   "lane": "a-G08"
  },
  {
+  "address": "0x00E6FF30",
+  "name": "cleanup_tls_object_00e6ff30",
+  "kind": "function",
+  "file": "functions/fn_00e6ff30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
   "address": "0x00E6FFA0",
   "name": "timing_block_reset_c",
   "kind": "function",
@@ -178090,6 +178234,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G07"
+ },
+ {
+  "address": "0x00E70280",
+  "name": "cleanup_tls_object_00e70280",
+  "kind": "function",
+  "file": "functions/fn_00e70280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
  },
  {
   "address": "0x00E702C0",
@@ -178234,6 +178387,141 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s163"
+ },
+ {
+  "address": "0x00E70950",
+  "name": "cleanup_critical_section_00e70950",
+  "kind": "function",
+  "file": "functions/fn_00e70950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E70990",
+  "name": "cleanup_critical_section_00e70990",
+  "kind": "function",
+  "file": "functions/fn_00e70990.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E709A0",
+  "name": "initialize_record_set_00e709a0",
+  "kind": "function",
+  "file": "functions/fn_00e709a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E709D0",
+  "name": "cleanup_critical_section_00e709d0",
+  "kind": "function",
+  "file": "functions/fn_00e709d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E70AB0",
+  "name": "cleanup_tls_object_00e70ab0",
+  "kind": "function",
+  "file": "functions/fn_00e70ab0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E70AE0",
+  "name": "timing_manager_cleanup_single",
+  "kind": "function",
+  "file": "functions/fn_00e70ae0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E70B00",
+  "name": "cleanup_tls_object_00e70b00",
+  "kind": "function",
+  "file": "functions/fn_00e70b00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E70B30",
+  "name": "cleanup_tls_object_00e70b30",
+  "kind": "function",
+  "file": "functions/fn_00e70b30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E70B60",
+  "name": "cleanup_tls_object_00e70b60",
+  "kind": "function",
+  "file": "functions/fn_00e70b60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E70B90",
+  "name": "cleanup_tls_object_00e70b90",
+  "kind": "function",
+  "file": "functions/fn_00e70b90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E70BC0",
+  "name": "cleanup_tls_object_00e70bc0",
+  "kind": "function",
+  "file": "functions/fn_00e70bc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E70F30",
+  "name": "conditional_cleanup_00e70f30",
+  "kind": "function",
+  "file": "functions/fn_00e70f30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E71010",
+  "name": "conditional_cleanup_00e71010",
+  "kind": "function",
+  "file": "functions/fn_00e71010.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E710C0",
+  "name": "initialize_record_set_00e710c0",
+  "kind": "function",
+  "file": "functions/fn_00e710c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
+ },
+ {
+  "address": "0x00E71120",
+  "name": "timing_buffer_release",
+  "kind": "function",
+  "file": "functions/fn_00e71120.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s769"
  },
  {
   "address": "0x00E71620",
