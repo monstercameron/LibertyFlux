@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Checker: the pinned hash of the reviewed driver follows the placement check",
+    "commit": null,
+    "summary": "The pipeline's script tests failed on the two commits after the driver gained its placement check. The coordinator's stock runner pins the hash of the reviewed driver, and the pin had not been moved.",
+    "changes": [
+      "The stock runner refuses to use a driver whose hash is not the reviewed one: that is what keeps a lane's or a tool's edited copy from standing in for the stock checker. The coordinator reviewed and adopted a change to the driver an hour ago and did not update the pin with it, so 4 of the 296 coordinator script tests failed in the pipeline and the runner would have refused the new driver. The pin now names the driver as committed with the placement check.",
+      "The guard worked as intended; the omission was the coordinator's. A change to the driver and its pin belong in one commit, and the adoption steps now say so. The 296 tests pass locally."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 23 files from lanes (672 unverified rewrites, 755 in review)",
     "commit": "ca160d0ec501ea87fcffcdfb38af0ab450a2d1a6",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
