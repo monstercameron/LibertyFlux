@@ -49,4 +49,17 @@ pub trait GoToPointOnRouteHost {
     /// The class constructor, run on a new task with the copy arguments.
     /// Returns the constructor's answer, which the copy returns in turn.
     fn construct_copy(&mut self, new_task: u32, args: &CopyArgs) -> u32;
+
+    /// The flag word of the ped's link, read by the host. The advance method
+    /// asks for it only when the task is active.
+    fn ped_link_flags(&mut self, ped: u32) -> u32;
+
+    /// The ped's position, x and y, read by the host. The advance method
+    /// asks for it only after its early exits.
+    fn ped_position(&mut self, ped: u32) -> [f32; 2];
+
+    /// The scale helper: called once, with the bits of a double, on the first
+    /// advance that finds the scale unfilled. Its answer is a double, which
+    /// the advance narrows to a float.
+    fn double_helper(&mut self, arg_bits: u64) -> u64;
 }

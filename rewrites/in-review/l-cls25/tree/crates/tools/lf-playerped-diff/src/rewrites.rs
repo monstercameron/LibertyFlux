@@ -13,6 +13,7 @@
     unused_doc_comments,
     unused_imports,
     unused_mut,
+    unused_unsafe,
     unused_variables,
     clippy::all,
     clippy::pedantic
@@ -30,7 +31,7 @@ pub mod fn_009f0fc0 {
     ));
 }
 
-pub mod fn_a29e40 {
+pub mod fn_00a29e40 {
     #![allow(unused_imports)]
     use super::{callee_addr, global};
     use crate::{callee_thiscall, export};
@@ -70,7 +71,7 @@ pub mod fn_009e54c0 {
     ));
 }
 
-pub mod fn_a2a620 {
+pub mod fn_00a2a620 {
     #![allow(unused_imports)]
     use super::{callee_addr, global};
     use crate::{callee_cdecl, callee_thiscall, export};
@@ -80,7 +81,7 @@ pub mod fn_a2a620 {
     ));
 }
 
-pub mod fn_a2d300 {
+pub mod fn_00a2d300 {
     #![allow(unused_imports)]
     use super::{callee_addr, global};
     use crate::{callee_cdecl, callee_thiscall, export};
@@ -90,7 +91,7 @@ pub mod fn_a2d300 {
     ));
 }
 
-pub mod fn_a2d3e0 {
+pub mod fn_00a2d3e0 {
     #![allow(unused_imports)]
     use super::{callee_addr, global};
     use crate::{callee_thiscall, export};
@@ -100,7 +101,7 @@ pub mod fn_a2d3e0 {
     ));
 }
 
-pub mod fn_a2d3a0 {
+pub mod fn_00a2d3a0 {
     #![allow(unused_imports)]
     use super::{callee_addr, global};
     use crate::{callee_thiscall, export};

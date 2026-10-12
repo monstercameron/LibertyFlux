@@ -129,7 +129,9 @@ fn answer(rng: &mut Rng) -> Answer {
 /// Generates the trial with index `index`. Inputs are drawn from the same
 /// generator in the same order, so a trial is reproducible from its index.
 fn make_trial(rng: &mut Rng) -> Trial {
-    let mut words = vec![0u32; BAR_BYTES / 4];
+    // Every word starts random, so words the object does not model carry
+    // values that both sides must leave alone.
+    let mut words: Vec<u32> = (0..BAR_BYTES / 4).map(|_| rng.word()).collect();
     let phase = match rng.below(6) {
         0 => 0,
         1 => 1,
@@ -141,15 +143,6 @@ fn make_trial(rng: &mut Rng) -> Trial {
     words[PHASE_WORD / 4] = phase;
     words[MARK_WORD / 4] = rng.word();
     words[TOTAL_WORD / 4] = rng.word();
-    // The object's first word is the vtable word; the teardown overwrites
-    // it, the update leaves it alone. Its initial value is random.
-    words[0] = rng.word();
-    // Words the object does not model keep their random values on both sides.
-    for (index, word) in words.iter_mut().enumerate() {
-        if index != 0 && *word == 0 {
-            *word = rng.word();
-        }
-    }
     let mut owned = [0u32; OWNED_SLOTS];
     for (index, slot) in owned.iter_mut().enumerate() {
         *slot = if rng.below(3) == 0 {
@@ -233,19 +226,28 @@ fn make_trial(rng: &mut Rng) -> Trial {
 
 /// A test object the rewrite and the lift each get a copy of.
 struct Scene {
+    /// The object's words before either side runs.
+    initial: Vec<u32>,
     bar: Vec<u32>,
     inner: Vec<u8>,
 }
 
 impl Scene {
     fn new(trial: &Trial) -> Self {
+        let mut inner = vec![0u8; INNER_BYTES];
+        inner[INNER_FLAG_BYTE] = if trial.inner_flag { 0x80 } else { 0 };
         let mut bar = trial.words.clone();
+        // The object's inner pointer word names the inner object, which the
+        // rewrite and the lifted method both read from the object's bytes.
+        bar[INNER_WORD / 4] = inner.as_ptr() as usize as u32;
         for (slot, value) in trial.owned.iter().enumerate() {
             bar[OWNED_WORD / 4 + slot] = *value;
         }
-        let mut inner = vec![0u8; INNER_BYTES];
-        inner[INNER_FLAG_BYTE] = if trial.inner_flag { 0x80 } else { 0 };
-        Self { bar, inner }
+        Self {
+            initial: bar.clone(),
+            bar,
+            inner,
+        }
     }
 
     fn bar_addr(&self) -> u32 {
@@ -370,7 +372,7 @@ fn teardown_matches_its_rewrite() {
         let ctx = scene.ctx(&trial);
         let rewrite_events = run_teardown_rewrite(&mut scene, &trial, &ctx);
 
-        let mut lifted = scene.bar.clone();
+        let mut lifted = scene.initial.clone();
         let mut bar = decode(&lifted, scene.bar_addr(), scene.inner_addr());
         if bar.owned.iter().any(Option::is_some) {
             torn_with_owned += 1;
@@ -421,7 +423,7 @@ fn deleting_destructor_matches_its_rewrite() {
             freed += 1;
         }
 
-        let mut lifted = scene.bar.clone();
+        let mut lifted = scene.initial.clone();
         let mut bar = decode(&lifted, scene.bar_addr(), scene.inner_addr());
         let mut world = FakeWorld::new(ctx, trial.inner_flag, trial.script.clone());
         let returned = bar.deleting_destructor(&mut world, trial.flags);
@@ -467,7 +469,7 @@ fn update_matches_its_rewrite() {
             or_word: trial.or_word,
             save_word: trial.save_word,
         };
-        let mut lifted = scene.bar.clone();
+        let mut lifted = scene.initial.clone();
         let mut bar = decode(&lifted, scene.bar_addr(), scene.inner_addr());
         let mut world = FakeWorld::new(ctx, trial.inner_flag, trial.script.clone());
         let outcome = bar.update(&mut world, &mut globals);
@@ -520,7 +522,7 @@ fn teardown_mutant_failures(mutant: TeardownMutant) -> usize {
         let mut scene = Scene::new(&trial);
         let ctx = scene.ctx(&trial);
         let rewrite_events = run_teardown_rewrite(&mut scene, &trial, &ctx);
-        let mut lifted = scene.bar.clone();
+        let mut lifted = scene.initial.clone();
         let mut bar = decode(&lifted, scene.bar_addr(), scene.inner_addr());
         let mut world = FakeWorld::new(ctx, trial.inner_flag, trial.script.clone());
         mutants::teardown(&mut bar, &mut world, mutant);
@@ -561,7 +563,7 @@ fn deleting_mutant_failures(mutant: DeletingMutant) -> usize {
                 normalise(&ctx, table, &[(*id, args.clone())]).remove(0)
             })
             .collect();
-        let mut lifted = scene.bar.clone();
+        let mut lifted = scene.initial.clone();
         let mut bar = decode(&lifted, scene.bar_addr(), scene.inner_addr());
         let mut world = FakeWorld::new(ctx, trial.inner_flag, trial.script.clone());
         let returned = mutants::deleting(&mut bar, &mut world, trial.flags, mutant);
@@ -602,7 +604,7 @@ fn update_mutant_failures(mutant: UpdateMutant) -> usize {
             or_word: trial.or_word,
             save_word: trial.save_word,
         };
-        let mut lifted = scene.bar.clone();
+        let mut lifted = scene.initial.clone();
         let mut bar = decode(&lifted, scene.bar_addr(), scene.inner_addr());
         let mut world = FakeWorld::new(ctx, trial.inner_flag, trial.script.clone());
         let outcome = mutants::update(&mut bar, &mut world, &mut globals, mutant);

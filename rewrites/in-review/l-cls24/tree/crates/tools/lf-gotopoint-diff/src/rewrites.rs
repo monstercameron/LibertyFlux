@@ -55,3 +55,8 @@ pub mod fn_00CAF720 {
     #![allow(unused_imports)]
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00CAF720.rs"));
 }
+
+pub mod fn_00CAFC10 {
+    #![allow(unused_imports)]
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00CAFC10.rs"));
+}

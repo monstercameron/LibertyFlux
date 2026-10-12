@@ -42,10 +42,16 @@ pub mod offsets {
     pub const TRANSFORM: u32 = 0xEC0;
     /// The job word, also read as the bundle context.
     pub const JOB_WORD: u32 = 0x21C;
+    /// The pointer to the sub-object whose entry chain runs; the chain
+    /// works on the address this word names plus a fixed offset.
+    pub const CHAIN_BASE: u32 = 0x224;
 }
 
 /// The bias added to the job word before the first job runs.
 const JOB_BIAS: u32 = 0x80;
+
+/// The fixed offset the entry chain adds to its sub-object pointer.
+const CHAIN_OFFSET: u32 = 0x84;
 
 /// The player pedestrian's data the lifted methods own.
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -74,6 +80,9 @@ pub struct CPlayerPed {
     pub transform: [u32; 4],
     /// The job word.
     pub job_word: u32,
+    /// The pointer word the entry chain offsets; zero is a value the chain
+    /// runs on, not an absent object.
+    pub chain_base: u32,
 }
 
 impl CPlayerPed {
@@ -229,6 +238,19 @@ impl CPlayerPed {
         world.revive(self, this, revive_flag);
         let bundle = self.job_word;
         world.load_bundle(self, this, bundle)
+    }
+
+    /// Runs the entry chain of the sub-object the chain base names: the
+    /// reset entry, then the flag entry with the flag set, then the main
+    /// entry, whose answer is the method's answer.
+    ///
+    /// The sub-object is the chain base plus a fixed offset, computed once
+    /// before the first entry runs; the chain base is not read again.
+    pub fn run_entry_chain<W: PlayerPedWorld + ?Sized>(&mut self, world: &mut W) -> u32 {
+        let sub = self.chain_base.wrapping_add(CHAIN_OFFSET);
+        world.chain_reset(sub);
+        world.chain_flag(sub, 1);
+        world.chain_main(sub)
     }
 
     /// Stores the four words of a caller's transform block and returns the

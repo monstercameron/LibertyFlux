@@ -22,4 +22,4 @@ pub mod registry;
 pub mod task;
 
 pub use host::{CopyArgs, GoToPointOnRouteHost, TaskField};
-pub use task::GoToPointOnRouteTask;
+pub use task::{GoToPointOnRouteTask, ProgressCache};

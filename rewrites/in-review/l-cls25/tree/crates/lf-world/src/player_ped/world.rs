@@ -119,6 +119,19 @@ pub trait PlayerPedWorld {
     /// and the entry's fixed offset. The lift does not read the table.
     fn model_state(&mut self, model_id: u32) -> u8;
 
+    /// Callee 2 of the entry chain: the reset entry of the sub-object at
+    /// `sub`, an address the chain computed (raw, since the chain works on
+    /// the address and never dereferences it itself).
+    fn chain_reset(&mut self, sub: u32);
+
+    /// Callee 3 of the entry chain: the flag entry of the sub-object, called
+    /// with the flag word the chain passes (one).
+    fn chain_flag(&mut self, sub: u32, flag: u32);
+
+    /// Callee 4 of the entry chain: the main entry of the sub-object; its
+    /// answer is the chain's answer.
+    fn chain_main(&mut self, sub: u32) -> u32;
+
     /// Callee 1 of the model change: the model lookup, called with the
     /// pedestrian and the model number.
     fn lookup_model(&mut self, ped: &mut CPlayerPed, this: Handle32<PedTag>, model_id: u32) -> u32;

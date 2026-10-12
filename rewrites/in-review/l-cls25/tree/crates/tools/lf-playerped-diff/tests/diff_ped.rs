@@ -196,7 +196,7 @@ fn trial_vf44(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     let c = case(init, &[(2, Kind::T4), (3, Kind::T1)], answers, None);
     let (rw, lf) = run_both(
         &c,
-        fn_009f0fc0::rw_009f0fc0,
+        |this| fn_009f0fc0::rw_009f0fc0(this),
         |ped, this, world| match variant {
             Variant::Lifted => ped.notify_while_linked(this, world),
             Variant::Wrong => wrong_vf44(ped, this, world),
@@ -237,7 +237,7 @@ fn trial_vf16(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     let c = case(init, &[(1, Kind::T1), (2, Kind::C3), (3, Kind::C3)], answers, effect);
     let (rw, lf) = run_both(
         &c,
-        fn_009e54c0::rw_009e54c0,
+        |this| fn_009e54c0::rw_009e54c0(this),
         |ped, this, world| match variant {
             Variant::Lifted => u32::from(ped.run_jobs_if_ready(this, world)),
             Variant::Wrong => u32::from(wrong_vf16(ped, this, world)),
@@ -502,7 +502,8 @@ fn expect_agreement(name: &str, trial: fn(&mut Rng, Variant) -> Result<(), Strin
 }
 
 fn expect_wrong_caught(name: &str, trial: fn(&mut Rng, Variant) -> Result<(), String>, seed: u64) {
-    let (failures, _) = run_trials(TRIALS, seed, trial, Variant::Wrong);
+    let (failures, first) = run_trials(TRIALS, seed, trial, Variant::Wrong);
+    eprintln!("{name}: wrong lift caught in {failures} of {TRIALS} cases; first: {first:?}");
     assert!(failures > 0, "{name}: the deliberately wrong lift was not caught in {TRIALS} cases");
 }
 

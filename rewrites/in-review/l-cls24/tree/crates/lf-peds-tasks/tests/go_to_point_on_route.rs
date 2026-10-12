@@ -2,7 +2,7 @@
 //! of the code would ask about. These run on every host; the differential
 //! proof against the verified rewrites is in `lf-gotopoint-diff`.
 
-use lf_peds_tasks::go_to_point_on_route::{
+use lf_peds_tasks::go_to_point_on_route::{ProgressCache,
     CopyArgs, GoToPointOnRouteHost, GoToPointOnRouteTask, TaskField,
 };
 
@@ -16,7 +16,14 @@ struct FakeHost {
     ctor_answer: u32,
     constructed: Vec<(u32, CopyArgs)>,
     allocations: u32,
+    link_flags: u32,
+    ped_pos: [f32; 2],
+    helper_answer: u64,
+    helper_args: Vec<u64>,
 }
+
+/// The helper's argument: one eighth of pi, as the bits of a double.
+const PI_EIGHTH_BITS: u64 = 0x3FD9_21FB_6000_0000;
 
 impl GoToPointOnRouteHost for FakeHost {
     fn refresh_route(&mut self, task: &mut GoToPointOnRouteTask, arg: u32) {
@@ -32,6 +39,19 @@ impl GoToPointOnRouteHost for FakeHost {
     fn construct_copy(&mut self, new_task: u32, args: &CopyArgs) -> u32 {
         self.constructed.push((new_task, *args));
         self.ctor_answer
+    }
+
+    fn ped_link_flags(&mut self, _ped: u32) -> u32 {
+        self.link_flags
+    }
+
+    fn ped_position(&mut self, _ped: u32) -> [f32; 2] {
+        self.ped_pos
+    }
+
+    fn double_helper(&mut self, arg_bits: u64) -> u64 {
+        self.helper_args.push(arg_bits);
+        self.helper_answer
     }
 }
 
@@ -200,4 +220,134 @@ fn clone_hands_the_constructor_the_copy_words() {
     assert_eq!(args.word_a0, 0xA0A0_A0A0);
     assert_eq!(args.flag_bit_0, 0);
     assert_eq!(args.flag_bit_1, 1);
+}
+
+#[test]
+fn idle_advance_changes_nothing_and_fills_no_cache() {
+    let mut h = FakeHost {
+        helper_answer: 1,
+        ..FakeHost::default()
+    };
+    let mut t = GoToPointOnRouteTask {
+        progress: 0.25,
+        entry_value: 2.5,
+        ..GoToPointOnRouteTask::default()
+    };
+    t.active = 0;
+    let mut cache = ProgressCache::default();
+    t.advance_progress(&mut h, &mut cache, 1, [3.0, 4.0]);
+    assert_eq!(t.progress, 0.25);
+    assert_eq!(cache, ProgressCache::default());
+    assert!(h.helper_args.is_empty());
+}
+
+#[test]
+fn held_link_takes_the_entry_value() {
+    let mut h = FakeHost {
+        link_flags: 0b10,
+        ..FakeHost::default()
+    };
+    let mut t = GoToPointOnRouteTask {
+        entry_value: 5.0,
+        active: 1,
+        ..GoToPointOnRouteTask::default()
+    };
+    let mut cache = ProgressCache::default();
+    t.advance_progress(&mut h, &mut cache, 1, [3.0, 4.0]);
+    assert_eq!(t.progress, 5.0);
+    assert_eq!(cache, ProgressCache::default());
+}
+
+#[test]
+fn entry_at_or_below_one_is_kept_and_a_nan_entry_is_advanced() {
+    let mut h = FakeHost::default();
+    let mut t = GoToPointOnRouteTask {
+        entry_value: 1.0,
+        active: 1,
+        ..GoToPointOnRouteTask::default()
+    };
+    let mut cache = ProgressCache::default();
+    t.advance_progress(&mut h, &mut cache, 1, [3.0, 4.0]);
+    assert_eq!(t.progress, 1.0);
+    assert_eq!(cache, ProgressCache::default());
+
+    // A NaN entry value is not at or below one, so the advance runs: it fills
+    // the caches, and then the failed threshold test keeps the NaN.
+    let nan = f32::from_bits(0x7FC0_0042);
+    t.entry_value = nan;
+    t.advance_progress(&mut h, &mut cache, 1, [0.0, 0.0]);
+    assert_eq!(t.progress.to_bits(), 0x7FC0_0042);
+    assert_eq!(cache.flags & 0x7, 0x7);
+}
+
+#[test]
+fn first_advance_fills_the_cache_and_calls_the_helper_once() {
+    let answer = 2.75f64.to_bits();
+    let mut h = FakeHost {
+        helper_answer: answer,
+        ..FakeHost::default()
+    };
+    let mut t = GoToPointOnRouteTask {
+        entry_value: 1.5,
+        active: 1,
+        ..GoToPointOnRouteTask::default()
+    };
+    let mut cache = ProgressCache::default();
+    // The ped stands at the origin and the target is five away: the threshold
+    // (3.0 for this entry value) fails, so the entry value is kept.
+    t.advance_progress(&mut h, &mut cache, 1, [3.0, 4.0]);
+    assert_eq!(t.progress, 1.5);
+    assert_eq!(cache.flags, 0x7);
+    assert_eq!(cache.weight_a, 1.5f32.to_bits());
+    assert_eq!(cache.weight_b, 2.0f32.to_bits());
+    assert_eq!(cache.scale, 2.75f32.to_bits());
+    assert_eq!(h.helper_args, vec![PI_EIGHTH_BITS]);
+
+    // The second call finds every cache filled and does not call the helper.
+    t.advance_progress(&mut h, &mut cache, 1, [3.0, 4.0]);
+    assert_eq!(h.helper_args.len(), 1);
+}
+
+#[test]
+fn full_advance_blends_the_cosine_with_the_entry_value() {
+    // A cache already filled with scale 2.0: the cosine is 0.5, so the blend
+    // is 0.25 * 0.5 + 2.0 = 2.125 for an entry value of 2.5.
+    let mut h = FakeHost::default();
+    let mut t = GoToPointOnRouteTask {
+        entry_value: 2.5,
+        active: 1,
+        anchor: [1.0, 0.0],
+        ..GoToPointOnRouteTask::default()
+    };
+    let mut cache = ProgressCache {
+        flags: 0x7,
+        weight_a: 1.5f32.to_bits(),
+        weight_b: 2.0f32.to_bits(),
+        scale: 2.0f32.to_bits(),
+    };
+    t.advance_progress(&mut h, &mut cache, 1, [0.5, 0.0]);
+    assert_eq!(t.progress, 2.125);
+    assert!(h.helper_args.is_empty());
+}
+
+#[test]
+fn zero_scale_skips_the_divide_and_uses_one() {
+    // With a zero scale the cosine is taken as one: t = 1, so the blend is
+    // 1 * 1 * 0.5 + 2.0 = 2.5 for an entry value of 2.5, and it is not
+    // raised above the entry value.
+    let mut h = FakeHost::default();
+    let mut t = GoToPointOnRouteTask {
+        entry_value: 2.5,
+        active: 1,
+        anchor: [1.0, 0.0],
+        ..GoToPointOnRouteTask::default()
+    };
+    let mut cache = ProgressCache {
+        flags: 0x7,
+        weight_a: 1.5f32.to_bits(),
+        weight_b: 2.0f32.to_bits(),
+        scale: 0,
+    };
+    t.advance_progress(&mut h, &mut cache, 1, [0.5, 0.0]);
+    assert_eq!(t.progress, 2.5);
 }
