@@ -10,8 +10,10 @@
 /// navigation cells, and asks the navigation helpers to validate and build
 /// a path. A missing cell records status `-4`; a gated missing second node
 /// records `-14` when the global recovery flag is set. The marker check runs
-/// only after both navigation nodes resolve; every path then advances the
-/// first component of each point by the shared step value. The semantic
+/// only with two usable navigation nodes; a successful safe-position lookup
+/// supplies the second node when the direct lookup misses. Every non-early-
+/// return path advances the first component of each point by the shared step
+/// value. The semantic
 /// result is returned in AL; upper EAX bits are not part of this function's
 /// result.
 ///

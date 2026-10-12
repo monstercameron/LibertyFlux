@@ -21,9 +21,10 @@ lf_checker_rt::export!(thiscall, rw_00d52310(camera: u32) -> () {
             (camera.wrapping_add(THIRD_COORDINATE) as *const u32).read_unaligned(),
         ];
         let coordinate_ptr = coordinates.as_ptr() as u32;
+        let callback = lf_checker_rt::relocated(CALLBACK_VA);
         let _ = lf_checker_rt::callee_cdecl!(
             ENUMERATE_OBJECTS, u32,
-            coordinate_ptr, CALLBACK_VA, camera, 0x100, 5
+            coordinate_ptr, callback, camera, 0x100, 5
         );
     }
 });

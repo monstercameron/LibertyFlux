@@ -5,7 +5,7 @@
 /// manager means idle. Otherwise it checks two pointers at manager offset
 /// `0x20`; null entries are ignored. A non-null entity blocks the idle result
 /// only when its byte at `0x47` is zero and its unsigned word at `0x08` is
-/// also zero. The result is returned in AL.
+/// nonzero. The result is returned in AL.
 const MANAGER_POINTER_VA: u32 = 0x0128_8520;
 const SLOT_ARRAY_OFFSET: u32 = 0x20;
 const SLOT_COUNT: u32 = 2;
@@ -26,7 +26,7 @@ export!(cdecl, rw_009a6390() -> u8 {
                     let pending = unsafe {
                         (entity.wrapping_add(ENTITY_PENDING_COUNT) as *const u32).read()
                     };
-                    if pending == 0 {
+                    if pending != 0 {
                         idle = false;
                     }
                 }

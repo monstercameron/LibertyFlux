@@ -14,7 +14,7 @@ const REQUEST_FLAGS: u32 = 4;
 const REQUEST_OWNER: u32 = 8;
 const UNUSED_REQUEST: u32 = u32::MAX;
 
-export!(cdecl, rw_009a6270(first: u32, second: u32, third: u32) -> u8 {
+export!(stdcall, rw_009a6270(first: u32, second: u32, third: u32) -> u8 {
     let mut row = lf_checker_rt::relocated(REQUEST_TABLE_VA);
     let table_end = lf_checker_rt::relocated(REQUEST_TABLE_END_VA);
     while row < table_end {

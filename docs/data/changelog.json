@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Devlog: the lift lane's entry on the complex melee task",
+    "title": "Rust in progress: 34 files from lanes (1033 unverified rewrites, 1356 in review)",
     "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 1033 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 1356 Rust files from 17 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "69 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Devlog: the lift lane's entry on the complex melee task",
+    "commit": "3ead25e75c7f55813f5de61f4e411f6c7cab3284",
     "summary": "The lane's own account of lifting five methods of the complex melee task is added to the devlog.",
     "changes": [
       "The entry gives the task's methods, the lifted form and its host trait, what the proofs compare and narrow, and why the sixth verified method was left."
