@@ -39,10 +39,35 @@ lf_checker_rt::export!(thiscall, rw_00db7860(
         read_word(5),
     ];
 
-    let _ = lf_checker_rt::callee_thiscall!(
-        2,
+    type PanelCall = extern "thiscall" fn(
         u32,
+        core::arch::x86::__m128i,
+        u32,
+        u32,
+        u32,
+        u32,
+        u32,
+        u32,
+        u32,
+        u32,
+        u32,
+        u32,
+        u32,
+    ) -> u32;
+    let final_pair = unsafe {
+        core::mem::transmute::<[u32; 4], core::arch::x86::__m128i>([
+            panel_values[4],
+            panel_values[5],
+            0,
+            0,
+        ])
+    };
+    let panel_call: PanelCall = unsafe {
+        core::mem::transmute(lf_checker_rt::callee_addr(2) as usize)
+    };
+    let _ = panel_call(
         this_ptr,
+        final_pair,
         first_argument,
         second_argument,
         third_argument,

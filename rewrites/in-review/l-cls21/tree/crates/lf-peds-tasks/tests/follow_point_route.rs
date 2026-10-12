@@ -286,7 +286,7 @@ fn advance_on_an_index_wrap_at_the_end_of_an_empty_route_starts_the_route() {
 #[test]
 fn registry_counts_match_the_methods_lifted() {
     assert_eq!(registry::METHODS.len(), 15, "the class has fifteen listed methods");
-    assert_eq!(registry::proven_count(), 9);
+    assert_eq!(registry::proven_count(), 10);
 }
 
 
@@ -426,5 +426,6 @@ fn clone_constructs_the_copy_from_the_source_words() {
     assert_eq!(copy.flags & 0x8, 0x8);
     assert_eq!(copy.flags & 0x4, 0);
 }
+
 
 

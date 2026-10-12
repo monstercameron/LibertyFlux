@@ -974,7 +974,8 @@ fn pick_waypoint_wrong_lift_is_caught() {
     for which in 0..3u32 {
         let mut rng = Rng(0x5EED_0101 + which as u64);
         let mut caught = 0usize;
-        for _ in 0..WRONG_TRIALS {
+        // The nearest-only lift differs only where a projection wins, which is a small share of trials.
+        for _ in 0..3 * WRONG_TRIALS {
             let c = gen_pick(&mut rng);
             let (rw, this, ped) = pick_rewrite(&c);
             if pick_wrong(&c, this, ped, which) != rw {

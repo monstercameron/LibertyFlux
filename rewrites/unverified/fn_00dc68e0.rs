@@ -8,7 +8,8 @@
 /// an association, and updates that association's timing and flags. The task
 /// fields at `+0x40`, `+0x4c`, `+0x60`, `+0x68`, `+0x70..+0x7c`, `+0x94`,
 /// and `+0x9c` hold the selected key, helper result, requested blend amount,
-/// association, sampled track data, and playback settings. The animation association fields at `+0x04`, `+0x4c`,
+/// association, sampled track data, and playback settings. The ped's `+0x5c`
+/// field bounds the selected key. Animation association fields at `+0x04`, `+0x4c`,
 /// and `+0x54` hold flags, clip time, and blend speed. Callee calls are
 /// dispatched through the checker runtime; the virtual ped method is planted
 /// in the contract's vtable slot. Floating-point operations retain the

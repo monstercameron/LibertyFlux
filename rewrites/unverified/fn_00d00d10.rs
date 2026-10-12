@@ -1,12 +1,28 @@
-// original: 0x00D00D10 CTaskComplexBackOff::vf1
-/// Allocate a task from the shared task pool, forward the source object's constructor fields in the original ABI order, and return the allocated task. The receiver is the source task and the pool manager is loaded from the engine's task-pool slot. Constructor float arguments preserve their source bit patterns.
+// original: 0x00d00d10 CTaskComplexBackOff::vf1
+
+/// Clone helper for CTaskComplexBackOff: allocates a fresh object from the game heap and
+/// copy-constructs it from field `+0x14` of `this`.
+///
+/// `this` (ECX) is the source object. The global game heap pointer is loaded
+/// and the allocator (callee 1, thiscall, no stack args) runs with ECX =
+/// heap. When it returns null the function returns 0. Otherwise the dword at
+/// `this + 0x14` is pushed and the copy constructor (callee 2, thiscall, one
+/// stack arg) runs with ECX = fresh object; its return value (in EAX) is the
+/// function's result.
+///
+/// Original: 0x00d00d10 (thiscall, no stack args).
 lf_checker_rt::export!(thiscall, rw_00d00d10(this: u32) -> u32 {
-    const TASK_POOL_MANAGER_FILE_VA: u32 = 0x0167E2A0;
-    let pool_manager = unsafe { lf_checker_rt::global::<u32>(TASK_POOL_MANAGER_FILE_VA).read_unaligned() };
-    let destination = lf_checker_rt::callee_thiscall!(1, u32, pool_manager);
-    if destination == 0 { return 0; }
-    const SOURCE_ARG_0_OFFSET: u32 = 0x14;
-    let arg_0 = unsafe { (this.wrapping_add(SOURCE_ARG_0_OFFSET) as *const u32).read_unaligned() };
-    let _ = lf_checker_rt::callee_thiscall!(2, u32, destination, arg_0);
-    destination
+    unsafe {
+        const HEAP_GLOBAL: u32 = 0x0167_E2A0;
+        const SRC_FIELD: u32 = 0x14;
+        const ALLOC_CALLEE: u32 = 1;
+        const COPY_CALLEE: u32 = 2;
+        let heap = lf_checker_rt::global::<u32>(HEAP_GLOBAL).read();
+        let fresh: u32 = lf_checker_rt::callee_thiscall!(ALLOC_CALLEE, u32, heap);
+        if fresh == 0 {
+            return 0;
+        }
+        let src = (this.wrapping_add(SRC_FIELD) as *const u32).read_unaligned();
+        lf_checker_rt::callee_thiscall!(COPY_CALLEE, u32, fresh, src)
+    }
 });

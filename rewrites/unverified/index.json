@@ -660,6 +660,14 @@
   "name": "CTaskComplexCop::vf6",
   "file": "fn_005eb050.rs",
   "lane": "r-s784",
+  "outcome": "deferred",
+  "reason": "partly_proven"
+ },
+ {
+  "address": "0x005EB1A0",
+  "name": "CTaskComplexSearchForPedOnFoot::CTaskComplexSearchForPedOnFoot_3",
+  "file": "fn_005eb1a0.rs",
+  "lane": "r-s784",
   "outcome": "not_reached",
   "reason": null
  },
@@ -668,8 +676,8 @@
   "name": "CTaskComplexSearchForPedOnFoot::~CTaskComplexSearchForPedOnFoot__deleting",
   "file": "fn_005eb200.rs",
   "lane": "r-s784",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x005EBB30",
@@ -684,8 +692,8 @@
   "name": "CTaskComplexSearchForPedInCar::~CTaskComplexSearchForPedInCar__deleting",
   "file": "fn_005ebb80.rs",
   "lane": "r-s784",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x005ECA30",
@@ -710,6 +718,14 @@
   "lane": "r-s784",
   "outcome": "deferred",
   "reason": "partly_proven"
+ },
+ {
+  "address": "0x005ED530",
+  "name": "CTaskComplexMoveSeekEntity<CEntitySeekPosCalculatorStandard>::~CTaskComplexMoveSeekEntity__deleting",
+  "file": "fn_005ed530.rs",
+  "lane": "r-s784",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x005EE5B0",
@@ -1400,9 +1416,25 @@
   "reason": null
  },
  {
+  "address": "0x00880310",
+  "name": "allocate_utf16_buffer",
+  "file": "fn_00880310.rs",
+  "lane": "a-U151",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00880AB0",
   "name": "audio_interleave_floats_to_int16",
   "file": "fn_00880ab0.rs",
+  "lane": "r-s775",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00880B70",
+  "name": "audio_mixer_buffer_create",
+  "file": "fn_00880b70.rs",
   "lane": "r-s775",
   "outcome": "not_reached",
   "reason": null
@@ -1782,6 +1814,14 @@
   "lane": "a-U34",
   "outcome": "deferred",
   "reason": "partly_proven: only the early guarded exit is implemented; the remaining body is not rewritten"
+ },
+ {
+  "address": "0x009F1030",
+  "name": "proposed_009f1030",
+  "file": "fn_009f1030.rs",
+  "lane": "r-s790",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x009FBD40",
@@ -2232,14 +2272,6 @@
   "reason": null
  },
  {
-  "address": "0x00ADD200",
-  "name": "CRenderPhaseDrawScene::render",
-  "file": "fn_00add200.rs",
-  "lane": "a-H44",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
   "address": "0x00ADDCF0",
   "name": null,
   "file": "fn_00addcf0.rs",
@@ -2254,30 +2286,6 @@
   "lane": "r-b166",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00AE4E20",
-  "name": "T_CB_Generic_3Args<void(*)(int, const rage::Matrix34&, unsigned char), int, rage::Matrix34, unsigned char>::invoke",
-  "file": "fn_00ae4e20.rs",
-  "lane": "r-s781",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00AE4E40",
-  "name": "T_CB_Generic_4Args<void(*)(int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode), int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode>::invoke",
-  "file": "fn_00ae4e40.rs",
-  "lane": "r-s781",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00AE4E60",
-  "name": "T_CB_Generic_5Args<void(*)(int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode, int), int, RenderListId, CRenderer::RenderBucketTypes, eRenderMode, int>::invoke",
-  "file": "fn_00ae4e60.rs",
-  "lane": "r-s781",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00AE5C10",
@@ -2704,14 +2712,6 @@
   "reason": null
  },
  {
-  "address": "0x00B4CC10",
-  "name": "group_mark_free",
-  "file": "fn_00b4cc10.rs",
-  "lane": "r-s786",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B505D0",
   "name": "event_ctor",
   "file": "fn_00b505d0.rs",
@@ -2720,20 +2720,28 @@
   "reason": "other"
  },
  {
-  "address": "0x00B60BD0",
-  "name": "update_player_weapon_fire_audio",
-  "file": "fn_00b60bd0.rs",
-  "lane": "r-s785",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B6D1B0",
   "name": "ped_task_ctor_reference_values_and_flags",
   "file": "fn_00b6d1b0.rs",
   "lane": "r-s643",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00B6DBF0",
+  "name": "CTaskSimpleStartCar::~CTaskSimpleStartCar",
+  "file": "fn_00b6dbf0.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B6DC20",
+  "name": "CTaskSimpleWaitUntilPedIsOutCar::~CTaskSimpleWaitUntilPedIsOutCar",
+  "file": "fn_00b6dc20.rs",
+  "lane": "r-s785",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00B77C30",
@@ -3278,6 +3286,14 @@
   "lane": "r-s642",
   "outcome": "deferred",
   "reason": "partly_proven"
+ },
+ {
+  "address": "0x00BECD70",
+  "name": "interp_float_track_eval",
+  "file": "fn_00becd70.rs",
+  "lane": "r-b710",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00BF97C0",
@@ -4096,6 +4112,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00CDC6B0",
+  "name": "select_shot_response_by_weapon",
+  "file": "fn_00cdc6b0.rs",
+  "lane": "r-s776",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00CF1D70",
   "name": "stat_passes_mode_check",
   "file": "fn_00cf1d70.rs",
@@ -4110,22 +4134,6 @@
   "lane": "r-s757",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00CF2BD0",
-  "name": "phMaterialMgrGta::vf8",
-  "file": "fn_00cf2bd0.rs",
-  "lane": "r-s783",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00CF2BF0",
-  "name": "phMaterialMgrGta::vf13",
-  "file": "fn_00cf2bf0.rs",
-  "lane": "r-s783",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00CF72B0",
@@ -4217,42 +4225,26 @@
  },
  {
   "address": "0x00D00CE0",
-  "name": "CTaskComplexArrestedAIPedAndDriveAway::vf1",
+  "name": null,
   "file": "fn_00d00ce0.rs",
-  "lane": "r-s783",
-  "outcome": "not_reached",
+  "lane": "r-s286",
+  "outcome": "not yet run",
   "reason": null
  },
  {
   "address": "0x00D00D10",
-  "name": "CTaskComplexBackOff::vf1",
+  "name": null,
   "file": "fn_00d00d10.rs",
-  "lane": "r-s783",
-  "outcome": "not_reached",
+  "lane": "r-s286",
+  "outcome": "not yet run",
   "reason": null
  },
  {
   "address": "0x00D00D40",
-  "name": "CTaskComplexBeArrestedAndDrivenAway::vf1",
+  "name": null,
   "file": "fn_00d00d40.rs",
-  "lane": "r-s783",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D00D70",
-  "name": "CTaskComplexCombat::vf1",
-  "file": "fn_00d00d70.rs",
-  "lane": "r-s783",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D00E10",
-  "name": "CTaskComplexCombatAdditionalTask::vf1",
-  "file": "fn_00d00e10.rs",
-  "lane": "r-s783",
-  "outcome": "not_reached",
+  "lane": "r-s286",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -4536,30 +4528,6 @@
   "reason": null
  },
  {
-  "address": "0x00D699E0",
-  "name": "",
-  "file": "fn_00d699e0.rs",
-  "lane": "r-s787",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00D69A50",
-  "name": "",
-  "file": "fn_00d69a50.rs",
-  "lane": "r-s787",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00D72AC0",
-  "name": "",
-  "file": "fn_00d72ac0.rs",
-  "lane": "r-s787",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00D72AE0",
   "name": "",
   "file": "fn_00d72ae0.rs",
@@ -4824,33 +4792,17 @@
   "reason": null
  },
  {
-  "address": "0x00DF6770",
-  "name": "UIFileViewer::delete_selected_montage_clip",
-  "file": "fn_00df6770.rs",
-  "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DF6820",
-  "name": "UIFileViewer::first_matching_child",
-  "file": "fn_00df6820.rs",
-  "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DF68B0",
-  "name": "UIFileViewer::vf1",
-  "file": "fn_00df68b0.rs",
-  "lane": "r-s780",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DF79B0",
   "name": "UIGalleryFileViewer::vf107",
   "file": "fn_00df79b0.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DF7B30",
+  "name": "UIGalleryFileViewer::vf108",
+  "file": "fn_00df7b30.rs",
   "lane": "r-s780",
   "outcome": "not_reached",
   "reason": null
@@ -4876,6 +4828,14 @@
   "name": "sse_float_unary_tables_b",
   "file": "fn_00dfe938.rs",
   "lane": "a-U148",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00E45260",
+  "name": null,
+  "file": "fn_00e45260.rs",
+  "lane": "a-U149",
   "outcome": "not yet run",
   "reason": null
  },

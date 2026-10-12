@@ -1,8 +1,9 @@
 // original: 0x00DFB980 sse_float_unary_tables_a
 /// Return the inverse cosine of the scalar value supplied in XMM0.
 ///
-/// Domain endpoints and invalid values preserve the target's scalar-result
-/// behavior; a small-input interval also preserves the input's upper words.
+/// NaN quieting preserves the input's upper words, as does a small-input
+/// interval; domain endpoints and invalid values preserve the target's
+/// scalar-result behavior.
 /// The ordinary range uses Rust's f32 inverse-cosine operation.
 use core::arch::x86::{_mm_set_ps, __m128};
 
@@ -29,7 +30,14 @@ lf_checker_rt::export!(cdecl, rw_00dfb980() -> __m128 {
     let magnitude = bits & ABS_MASK;
     if magnitude & EXPONENT_MASK == EXPONENT_MASK && magnitude != INFINITY_BITS {
         let quieted = core::hint::black_box(input) + core::hint::black_box(0.0_f32);
-        return result_vector(quieted, [quieted.to_bits(); 3]);
+        return result_vector(
+            quieted,
+            [
+                lf_checker_rt::xmm_word(0, 1),
+                lf_checker_rt::xmm_word(0, 2),
+                lf_checker_rt::xmm_word(0, 3),
+            ],
+        );
     }
     if magnitude > ONE_BITS {
         let invalid = 0.0_f32 * f32::INFINITY;

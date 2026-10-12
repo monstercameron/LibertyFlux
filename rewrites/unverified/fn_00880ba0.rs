@@ -1,20 +1,41 @@
 // original: 0x00880BA0 audio_format_keys_equal
 
-/// Compare the four 32-bit words of the left and right audio-format keys.
+/// Compare the first format-key pointer with the sixteen bytes stored at the
+/// fourth stack argument.
 ///
-/// The first and fourth stack arguments are the key addresses. The two middle
-/// words are part of the original ABI but are not read. The comparison is
-/// bitwise and returns one for equal keys, zero otherwise.
-lf_checker_rt::export!(stdcall, rw_00880ba0(left: u32, _unused_one: u32, _unused_two: u32, right: u32) -> u32 {
+/// The reference key is copied before the first pointer is checked. A null
+/// first pointer returns true without reading through it. Otherwise all four
+/// 32-bit words are compared in order, returning false at the first mismatch
+/// and true when the complete keys match. The stdcall routine consumes four
+/// stack arguments; the second and third arguments do not affect the result.
+lf_checker_rt::export!(stdcall, rw_00880ba0(first_key: u32, _arg2: u32, _arg3: u32, reference_key: u32) -> u32 {
     unsafe {
-        const KEY_WORDS: usize = 4;
-        let mut word = 0;
-        while word < KEY_WORDS {
-            let lhs = (left as *const u32).add(word).read_unaligned();
-            let rhs = (right as *const u32).add(word).read_unaligned();
-            if lhs != rhs { return 0; }
-            word += 1;
+        const KEY_BYTES: u32 = 16;
+        const KEY_WORD_BYTES: u32 = 4;
+        const KEY_WORDS: u32 = KEY_BYTES / KEY_WORD_BYTES;
+
+        let mut reference_words = [0u32; KEY_WORDS as usize];
+        for word_index in 0..KEY_WORDS {
+            reference_words[word_index as usize] = (reference_key
+                .wrapping_add(word_index.wrapping_mul(KEY_WORD_BYTES))
+                as *const u32)
+                .read_unaligned();
         }
+
+        if first_key == 0 {
+            return 1;
+        }
+
+        for word_index in 0..KEY_WORDS {
+            let first_word = (first_key
+                .wrapping_add(word_index.wrapping_mul(KEY_WORD_BYTES))
+                as *const u32)
+                .read_unaligned();
+            if first_word != reference_words[word_index as usize] {
+                return 0;
+            }
+        }
+
         1
     }
 });
