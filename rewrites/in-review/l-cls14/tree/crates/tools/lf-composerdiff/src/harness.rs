@@ -27,12 +27,14 @@ struct Script {
     log: Vec<Call>,
     answer: u32,
     one_name: &'static str,
+    four_name: &'static str,
 }
 
 static SCRIPT: Mutex<Script> = Mutex::new(Script {
     log: Vec::new(),
     answer: 0,
     one_name: "",
+    four_name: "",
 });
 
 static LOCK: Mutex<()> = Mutex::new(());
@@ -67,6 +69,7 @@ pub fn begin(answer: u32, one_name: &'static str) {
     s.log.clear();
     s.answer = answer;
     s.one_name = one_name;
+    s.four_name = "";
 }
 
 /// Takes the call log of the trial that ran.
@@ -85,6 +88,7 @@ pub fn install(thread_block: u32, xbase: u32) {
     unsafe {
         let table = core::ptr::addr_of_mut!(CALLEE_TABLE);
         (*table)[1] = one_arg_stub as *const () as usize as u32;
+        (*table)[2] = four_arg_stub as *const () as usize as u32;
         let tls = core::ptr::addr_of_mut!(TLS_MIRROR);
         (*tls)[0] = thread_block;
         core::ptr::addr_of_mut!(lf_checker_rt::CHECKER_CTABLE).write(table as *const u32);
@@ -97,6 +101,38 @@ pub fn install(thread_block: u32, xbase: u32) {
 #[must_use]
 pub fn xbase_for(file_va: u32, target: u32) -> u32 {
     target.wrapping_sub(file_va.wrapping_sub(0x40_0000))
+}
+
+/// Starts a trial whose composer forwarders call numbered callee 2: the
+/// one-argument name is recorded as in [`begin`], and the four-argument
+/// callee under `four_name`.
+pub fn begin_forward(answer: u32, one_name: &'static str, four_name: &'static str) {
+    let mut s = script();
+    s.log.clear();
+    s.answer = answer;
+    s.one_name = one_name;
+    s.four_name = four_name;
+}
+
+extern "thiscall" fn four_arg_stub(this: u32, a0: u32, a1: u32, a2: u32) -> u32 {
+    let mut s = script();
+    let name = s.four_name;
+    s.log.push((name, vec![this, a0, a1, a2]));
+    s.answer
+}
+
+/// The composer's sync slot (offset 0x78): records the composer.
+pub extern "thiscall" fn sync_stub(this: u32) -> u32 {
+    script().log.push(("sync", vec![this]));
+    0
+}
+
+/// A composer's vtable: slot 30 (offset 0x78) is the sync stub.
+#[must_use]
+pub fn composer_vtable() -> Box<[u32; 32]> {
+    let mut vt = Box::new([0u32; 32]);
+    vt[0x78 / 4] = sync_stub as *const () as usize as u32;
+    vt
 }
 
 extern "thiscall" fn one_arg_stub(this: u32) -> u32 {

@@ -34,3 +34,22 @@ pub mod fn_008700E0 {
 pub mod fn_00870180 {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00870180.rs"));
 }
+
+pub mod fn_00878180 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00878180.rs"));
+}
+pub mod fn_008781B0 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_008781b0.rs"));
+}
+pub mod fn_008781D0 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_008781d0.rs"));
+}
+pub mod fn_00878290 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00878290.rs"));
+}
+pub mod fn_008782C0 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_008782c0.rs"));
+}
+pub mod fn_008782E0 {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_008782e0.rs"));
+}

@@ -1,20 +1,21 @@
 //! Differential tests: the lifted seek-cover task methods against their
-//! verified 32-bit rewrites.
+//! verified 32-bit rewrites, and deliberately wrong lifts of each that the
+//! same comparison must catch.
 //!
 //! Each case runs the rewrite and the lifted method on the same generated
 //! inputs, in the same test memory layout. The comparison covers the
-//! return value, every numbered callee call in order with its arguments
-//! (addresses named by what they point into), a copy of the object at each
-//! call, the object after the call, and every other word the method writes
-//! (the worker, the subtask, the node). Floats are compared as their bits.
+//! return value, every numbered callee call in order with its arguments, a
+//! copy of the object at each call, the object after the call, and every
+//! other word the method writes (the subtask, the node). Floats are
+//! compared as their bits.
 //!
-//! The rewrites run on the 32-bit target only, so this file is compiled
-//! for that target alone. On other hosts the lifted crate's own host tests
-//! run instead.
+//! The rewrites run on the 32-bit target only, so this file is compiled for
+//! that target alone. On other hosts the lifted crate's host tests run.
 
 #![cfg(target_arch = "x86")]
 
-use std::slice;
+#[path = "support/mod.rs"]
+mod support;
 
 use lf_core::Handle32;
 use lf_peds_seekdiff::rewrites::{fn_00d1d3d0, fn_00d1d4c0, fn_00d1d650, fn_00d1d7a0, fn_00d1e060, fn_00d1f5b0};
@@ -23,6 +24,7 @@ use lf_peds_tasks::seek_cover::{
     CoverRowArgs, CoverRoute, CoverSubTask, CoverWorker, FullArgs, OwnedSlot, RouteArgs, RouteExtra,
     SeekCoverTask, SeekCoverWorld, ShortArgs, SmallNode, Stamp, TaskNode,
 };
+use support::{Arena, Ev, Norm, Rng, compare_bytes, compare_calls, count_disagreements, install, lock, rd32, run_cases, wr32};
 
 /// Length of the seek-cover object image the proof compares.
 const OBJ_LEN: usize = 0xC0;
@@ -44,155 +46,11 @@ const POOL_VA: u32 = 0x0167_E2A0;
 /// File address of the cover table.
 const COVER_TABLE_VA: u32 = 0x016F_C990;
 
-/// Trials per case.
-const TRIALS: u32 = 1500;
-
-/// A fixed-address block of test memory. The vector never reallocates
-/// after construction, so the address stays valid for the arena's life.
-struct Arena {
-    words: Vec<u32>,
-    len: usize,
-}
-
-impl Arena {
-    fn zeroed(len: usize) -> Self {
-        Self { words: vec![0; len.div_ceil(4).max(1)], len }
-    }
-
-    fn from_bytes(bytes: &[u8]) -> Self {
-        let mut a = Self::zeroed(bytes.len());
-        a.bytes_mut().copy_from_slice(bytes);
-        a
-    }
-
-    fn from_words(words: &[u32]) -> Self {
-        let mut bytes = Vec::with_capacity(words.len() * 4);
-        for w in words {
-            bytes.extend_from_slice(&w.to_le_bytes());
-        }
-        Self::from_bytes(&bytes)
-    }
-
-    fn addr(&self) -> u32 {
-        self.words.as_ptr() as usize as u32
-    }
-
-    fn bytes(&self) -> &[u8] {
-        // SAFETY: the vector owns `words.len() * 4 >= len` initialised bytes.
-        unsafe { slice::from_raw_parts(self.words.as_ptr() as *const u8, self.len) }
-    }
-
-    fn bytes_mut(&mut self) -> &mut [u8] {
-        // SAFETY: as in `bytes`, with exclusive access through `&mut self`.
-        unsafe { slice::from_raw_parts_mut(self.words.as_mut_ptr() as *mut u8, self.len) }
-    }
-}
-
-/// Small deterministic generator (xorshift64*), so every run sees the same
-/// inputs.
-struct Rng(u64);
-
-impl Rng {
-    fn new(seed: u64) -> Self {
-        Self(seed | 1)
-    }
-
-    fn next_u32(&mut self) -> u32 {
-        self.0 ^= self.0 >> 12;
-        self.0 ^= self.0 << 25;
-        self.0 ^= self.0 >> 27;
-        (self.0.wrapping_mul(0x2545_F491_4F6C_DD1D) >> 32) as u32
-    }
-
-    fn below(&mut self, n: u32) -> u32 {
-        self.next_u32() % n
-    }
-
-    fn bytes(&mut self, n: usize) -> Vec<u8> {
-        (0..n).map(|_| self.next_u32() as u8).collect()
-    }
-
-    /// A word that is often a special value: zero, one, the signed and
-    /// unsigned limits, the top bit alone, the float infinities and a
-    /// not-a-number with and without its sign bit.
-    fn word(&mut self) -> u32 {
-        const SPECIAL: [u32; 12] = [
-            0,
-            1,
-            0xFFFF_FFFF,
-            0x7FFF_FFFF,
-            0x8000_0000,
-            0x7FC0_0000,
-            0xFFC0_0000,
-            0x7F80_0000,
-            0xFF80_0000,
-            0x3F80_0000,
-            0x0000_0007,
-            0x0000_0008,
-        ];
-        if self.below(3) == 0 {
-            SPECIAL[self.below(SPECIAL.len() as u32) as usize]
-        } else {
-            self.next_u32()
-        }
-    }
-
-    fn words<const N: usize>(&mut self) -> [u32; N] {
-        std::array::from_fn(|_| self.word())
-    }
-}
-
-/// A normalised argument: a word, or the name of the thing it points into.
-#[derive(Clone, Debug, PartialEq, Eq)]
-enum Norm {
-    W(u32),
-    S(&'static str),
-}
-
-/// A normalised callee call or lifted collaborator call.
-#[derive(Clone, Debug, PartialEq, Eq)]
-struct Ev {
-    name: &'static str,
-    args: Vec<Norm>,
-    snap: Option<Vec<u8>>,
-}
-
-/// Names the addresses a rewrite may pass, so the two logs compare by
-/// meaning. An address with no name stays a word.
-fn norm_call(
-    raw: &rt::RawCall,
-    id_names: &[(u32, &'static str)],
-    addr_names: &[(u32, &'static str)],
-    query_id: Option<u32>,
-) -> Ev {
-    let name = id_names
-        .iter()
-        .find(|(id, _)| *id == raw.id)
-        .map_or("UNMAPPED", |(_, n)| *n);
-    let args = raw
-        .args
-        .iter()
-        .enumerate()
-        .map(|(i, &w)| {
-            if Some(raw.id) == query_id && i == 1 {
-                // The query's out pointer is a stack word of the rewrite.
-                return Norm::S("out");
-            }
-            addr_names
-                .iter()
-                .find(|(a, _)| *a == w)
-                .map_or(Norm::W(w), |(_, n)| Norm::S(n))
-        })
-        .collect();
-    Ev { name, args, snap: raw.snap.clone() }
-}
-
-fn rd32(b: &[u8], off: usize) -> u32 {
-    u32::from_le_bytes([b[off], b[off + 1], b[off + 2], b[off + 3]])
-}
-
-fn wr32(b: &mut [u8], off: usize, v: u32) {
-    b[off..off + 4].copy_from_slice(&v.to_le_bytes());
+/// Which lift a case runs: the lifted method, or a deliberately wrong one.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Lift {
+    Real,
+    Wrong,
 }
 
 /// Reads the owned fields of the object image.
@@ -255,6 +113,22 @@ struct Recorder {
 }
 
 impl Recorder {
+    fn new(seed: &[u8], table: &[u8], watch: bool) -> Self {
+        Self {
+            img: seed.to_vec(),
+            watch,
+            events: Vec::new(),
+            table: table.to_vec(),
+            query: [0; 4],
+            worker: 0,
+            sub: 0,
+            sub_img: Vec::new(),
+            node: 0,
+            node_img: Vec::new(),
+            dtor_answer: 0,
+        }
+    }
+
     fn image(&self, t: &SeekCoverTask) -> Vec<u8> {
         let mut v = self.img.clone();
         store(t, &mut v);
@@ -392,34 +266,7 @@ impl SeekCoverWorld for Recorder {
     }
 }
 
-/// Compares the two logs and the object images.
-fn compare_calls(
-    raw: &[rt::RawCall],
-    id_names: &[(u32, &'static str)],
-    addr_names: &[(u32, &'static str)],
-    query_id: Option<u32>,
-    lifted: &[Ev],
-) -> Result<(), String> {
-    let rewritten: Vec<Ev> = raw
-        .iter()
-        .map(|r| norm_call(r, id_names, addr_names, query_id))
-        .collect();
-    if rewritten != lifted {
-        return Err(format!("call logs differ:\n rewrite {rewritten:?}\n lifted  {lifted:?}"));
-    }
-    Ok(())
-}
-
-/// The object image after the rewrite and after the lifted method must agree.
-fn compare_images(what: &str, raw: &[u8], lifted: &[u8]) -> Result<(), String> {
-    if raw != lifted {
-        let at = raw.iter().zip(lifted).position(|(a, b)| a != b);
-        return Err(format!("{what} images differ first at {at:?}"));
-    }
-    Ok(())
-}
-
-/// Object-names used by every seek-cover case.
+/// Object names every seek-cover case uses in its call logs.
 fn object_names(obj: u32) -> Vec<(u32, &'static str)> {
     vec![
         (obj, "obj"),
@@ -432,377 +279,544 @@ fn object_names(obj: u32) -> Vec<(u32, &'static str)> {
     ]
 }
 
-/// Fresh recorder for one trial.
-fn recorder(seed: &[u8], table: &[u8], watch: bool) -> Recorder {
-    Recorder {
-        img: seed.to_vec(),
-        watch,
-        events: Vec::new(),
-        table: table.to_vec(),
-        query: [0; 4],
-        worker: 0,
-        sub: 0,
-        sub_img: Vec::new(),
-        node: 0,
-        node_img: Vec::new(),
-        dtor_answer: 0,
-    }
+/// The class stamps the rewrites write, bound to test memory. The arenas
+/// stay alive as long as the returned value.
+struct Stamps {
+    _vtable: Arena,
+    _node_vtable: Arena,
 }
 
-/// Binds the two class stamps the rewrites write.
-fn bind_stamps(vtable: &Arena, node_vtable: &Arena) {
+fn bind_stamps() -> Stamps {
+    let vtable = Arena::zeroed(4);
+    let node_vtable = Arena::zeroed(4);
     rt::bind(VTABLE_VA, vtable.addr());
     rt::bind(NODE_VTABLE_VA, node_vtable.addr());
+    Stamps { _vtable: vtable, _node_vtable: node_vtable }
 }
 
-/// Points the callee numbers at named stubs.
-fn install(stubs: &[(u32, &str)]) {
-    for (id, name) in stubs {
-        rt::set_callee(*id, rt::stub(name));
-    }
-}
-
-/// Runs trials of one case, returning how many completed with each branch
-/// label the case reports.
-fn run_cases_unlocked(name: &str, mut trial: impl FnMut(&mut Rng, u32) -> Result<&'static str, String>) {
-    let mut rng = Rng::new(0x5EEC_C0DE ^ name.len() as u64);
-    let mut branches: Vec<(&'static str, u32)> = Vec::new();
-    for n in 0..TRIALS {
-        match trial(&mut rng, n) {
-            Ok(branch) => match branches.iter_mut().find(|(b, _)| *b == branch) {
-                Some((_, c)) => *c += 1,
-                None => branches.push((branch, 1)),
-            },
-            Err(e) => panic!("{name}: trial {n} differs: {e}"),
-        }
-    }
-    eprintln!("{name}: {TRIALS} trials agree; branches {branches:?}");
-    for (branch, count) in &branches {
-        assert!(*count > 0, "{name}: branch {branch} never ran");
-    }
-}
+const CTOR_IDS: [(u32, &str); 4] = [(1, "base"), (2, "init60"), (3, "init6c"), (4, "reinit")];
 
 // ----------------------------------------------------------------------------
 // The full constructor.
 // ----------------------------------------------------------------------------
 
-const CTOR_IDS: [(u32, &str); 4] = [(1, "base"), (2, "init60"), (3, "init6c"), (4, "reinit")];
+fn full_case(rng: &mut Rng, lift: Lift) -> Result<&'static str, String> {
+    let seed = rng.bytes(OBJ_LEN);
+    let w = rng.word();
+    let pos_a: [u32; 3] = rng.words();
+    let pos_b: [u32; 3] = rng.words();
+    let b1 = rng.next_u32() as u8;
+    let b2 = rng.next_u32() as u8;
+    let f = rng.word();
+    let mode = rng.word();
+
+    let obj = Arena::from_bytes(&seed);
+    let pa = Arena::from_words(&pos_a);
+    let pb = Arena::from_words(&pos_b);
+    install(&[(1, "s1_0"), (2, "s2_0"), (3, "s3_0"), (4, "s4_0")]);
+    let _ = rt::take_log();
+    rt::watch(obj.addr(), OBJ_LEN as u32);
+    let ret = fn_00d1d3d0::rw_00d1d3d0(
+        obj.addr(), w, pa.addr(), u32::from(b1), u32::from(b2), pb.addr(), f, mode,
+    );
+    let raw = rt::take_log();
+    rt::unwatch();
+    if ret != obj.addr() {
+        return Err(format!("return {ret:#x} is not the object"));
+    }
+
+    let mut world = Recorder::new(&seed, &[], true);
+    let mut t = load(&seed);
+    let args = FullArgs { pos: w, dir_src: &pos_a, mode_byte: b1, latch_src: b2, slot_src: &pos_b, weight: f, mode };
+    match lift {
+        Lift::Real => t.construct_full(&mut world, &args),
+        Lift::Wrong => wrong::construct_full(&mut t, &mut world, &args),
+    }
+    let lifted_img = world.image(&t);
+    compare_calls(&raw, &CTOR_IDS, &object_names(obj.addr()), None, &world.events)?;
+    compare_bytes("object", obj.bytes(), &lifted_img)?;
+    Ok(if mode & 7 == 0 { "mode zero" } else { "mode nonzero" })
+}
 
 #[test]
 fn full_constructor_matches_rewrite() {
     let _guard = lock();
-    let vtable = Arena::zeroed(4);
-    let node_vtable = Arena::zeroed(4);
-    bind_stamps(&vtable, &node_vtable);
-    run_cases("construct_full", |rng, _| {
-        let seed = rng.bytes(OBJ_LEN);
-        let w = rng.word();
-        let pos_a: [u32; 3] = rng.words();
-        let pos_b: [u32; 3] = rng.words();
-        let b1 = rng.next_u32() as u8;
-        let b2 = rng.next_u32() as u8;
-        let f = rng.word();
-        let mode = rng.word();
+    let _stamps = bind_stamps();
+    run_cases("construct_full", &["mode zero", "mode nonzero"], |rng| full_case(rng, Lift::Real));
+}
 
-        let obj = Arena::from_bytes(&seed);
-        let pa = Arena::from_words(&pos_a);
-        let pb = Arena::from_words(&pos_b);
-        install(&[(1, "s1_0"), (2, "s2_0"), (3, "s3_0"), (4, "s4_0")]);
-        rt::set_answers(1, &[]);
-        let _ = rt::take_log();
-        rt::watch(obj.addr(), OBJ_LEN as u32);
-        let ret = fn_00d1d3d0::rw_00d1d3d0(obj.addr(), w, pa.addr(), u32::from(b1), u32::from(b2), pb.addr(), f, mode);
-        let raw = rt::take_log();
-        rt::unwatch();
-        if ret != obj.addr() {
-            return Err(format!("return {ret:#x} is not the object"));
-        }
-
-        let mut world = recorder(&seed, &[], true);
-        let mut t = load(&seed);
-        t.construct_full(
-            &mut world,
-            &FullArgs { pos: w, dir_src: &pos_a, mode_byte: b1, latch_src: b2, slot_src: &pos_b, weight: f, mode },
-        );
-        let lifted_img = world.image(&t);
-        compare_calls(&raw, &CTOR_IDS, &object_names(obj.addr()), None, &world.events)?;
-        compare_images("object", obj.bytes(), &lifted_img)?;
-        Ok(if mode & 7 == 0 { "route zero mode" } else { "other mode" })
-    });
+#[test]
+fn full_constructor_wrong_lift_is_caught() {
+    let _guard = lock();
+    let _stamps = bind_stamps();
+    let bad = count_disagreements("construct_full (wrong)", |rng| full_case(rng, Lift::Wrong));
+    assert!(bad > 0, "the wrong full constructor was not caught");
 }
 
 // ----------------------------------------------------------------------------
 // The constructor that takes a cover-table row.
 // ----------------------------------------------------------------------------
 
+fn row_case(rng: &mut Rng, lift: Lift) -> Result<&'static str, String> {
+    let seed = rng.bytes(OBJ_LEN);
+    let table_bytes = rng.bytes(TABLE_ROWS * ROW_STRIDE);
+    let table = Arena::from_bytes(&table_bytes);
+    rt::bind(COVER_TABLE_VA, table.addr());
+
+    let pos = rng.word();
+    let dir: [u32; 3] = rng.words();
+    let flags0 = rng.word();
+    let flags1 = rng.word();
+    let index = rng.below(TABLE_ROWS as u32);
+    let weight = rng.word();
+    let mode = rng.word();
+    let query: [u32; 4] = rng.words();
+
+    let obj = Arena::from_bytes(&seed);
+    let da = Arena::from_words(&dir);
+    install(&[(1, "s1_0"), (2, "s2_0"), (3, "s3_0"), (4, "s4_2"), (5, "s5_0")]);
+    rt::set_query_words(query);
+    let _ = rt::take_log();
+    rt::watch(obj.addr(), OBJ_LEN as u32);
+    let ret = fn_00d1d4c0::rw_00d1d4c0(obj.addr(), pos, da.addr(), flags0, flags1, index, weight, mode);
+    let raw = rt::take_log();
+    rt::unwatch();
+    if ret != obj.addr() {
+        return Err(format!("return {ret:#x} is not the object"));
+    }
+
+    let row_flags = table_bytes[index as usize * ROW_STRIDE];
+    let mut world = Recorder::new(&seed, &table_bytes, true);
+    world.query = query;
+    let mut t = load(&seed);
+    let args = CoverRowArgs { pos, dir_src: &dir, flags0, flags1, index, weight, mode };
+    match lift {
+        Lift::Real => t.construct_cover_row(&mut world, &args),
+        Lift::Wrong => wrong::construct_cover_row(&mut t, &mut world, &args),
+    }
+    let lifted_img = world.image(&t);
+
+    let mut names = object_names(obj.addr());
+    names.push((table.addr() + index * ROW_STRIDE as u32, "row"));
+    let ids = [(1, "base"), (2, "init60"), (3, "init6c"), (4, "query"), (5, "reinit")];
+    compare_calls(&raw, &ids, &names, Some(4), &world.events)?;
+    compare_bytes("object", obj.bytes(), &lifted_img)?;
+    Ok(if row_flags & 7 != 0 { "populated row" } else { "empty row" })
+}
+
 #[test]
 fn row_constructor_matches_rewrite() {
     let _guard = lock();
-    let vtable = Arena::zeroed(4);
-    let node_vtable = Arena::zeroed(4);
-    bind_stamps(&vtable, &node_vtable);
-    run_cases("construct_cover_row", |rng, _| {
-        let seed = rng.bytes(OBJ_LEN);
-        let table_bytes = rng.bytes(TABLE_ROWS * ROW_STRIDE);
-        let table = Arena::from_bytes(&table_bytes);
-        rt::bind(COVER_TABLE_VA, table.addr());
+    let _stamps = bind_stamps();
+    run_cases("construct_cover_row", &["populated row", "empty row"], |rng| row_case(rng, Lift::Real));
+}
 
-        let pos = rng.word();
-        let dir: [u32; 3] = rng.words();
-        let flags0 = rng.word();
-        let flags1 = rng.word();
-        let index = rng.below(TABLE_ROWS as u32);
-        let weight = rng.word();
-        let mode = rng.word();
-        let query: [u32; 4] = rng.words();
-
-        let obj = Arena::from_bytes(&seed);
-        let da = Arena::from_words(&dir);
-        install(&[(1, "s1_0"), (2, "s2_0"), (3, "s3_0"), (4, "s4_2"), (5, "s5_0")]);
-        rt::set_query_words(query);
-        let _ = rt::take_log();
-        rt::watch(obj.addr(), OBJ_LEN as u32);
-        let ret = fn_00d1d4c0::rw_00d1d4c0(obj.addr(), pos, da.addr(), flags0, flags1, index, weight, mode);
-        let raw = rt::take_log();
-        rt::unwatch();
-        if ret != obj.addr() {
-            return Err(format!("return {ret:#x} is not the object"));
-        }
-
-        let row_flags = table_bytes[index as usize * ROW_STRIDE];
-        let mut world = recorder(&seed, &table_bytes, true);
-        world.query = query;
-        let mut t = load(&seed);
-        t.construct_cover_row(
-            &mut world,
-            &CoverRowArgs { pos, dir_src: &dir, flags0, flags1, index, weight, mode },
-        );
-        let lifted_img = world.image(&t);
-
-        let mut names = object_names(obj.addr());
-        names.push((table.addr() + index * ROW_STRIDE as u32, "row"));
-        let ids = [(1, "base"), (2, "init60"), (3, "init6c"), (4, "query"), (5, "reinit")];
-        compare_calls(&raw, &ids, &names, Some(4), &world.events)?;
-        compare_images("object", obj.bytes(), &lifted_img)?;
-        Ok(if row_flags & 7 != 0 { "populated row" } else { "empty row" })
-    });
+#[test]
+fn row_constructor_wrong_lift_is_caught() {
+    let _guard = lock();
+    let _stamps = bind_stamps();
+    let bad = count_disagreements("construct_cover_row (wrong)", |rng| row_case(rng, Lift::Wrong));
+    assert!(bad > 0, "the wrong row constructor was not caught");
 }
 
 // ----------------------------------------------------------------------------
 // The shorter constructor.
 // ----------------------------------------------------------------------------
 
+fn short_case(rng: &mut Rng, lift: Lift) -> Result<&'static str, String> {
+    let seed = rng.bytes(OBJ_LEN);
+    let w = rng.word();
+    let pos_a: [u32; 3] = rng.words();
+    let b1 = rng.next_u32() as u8;
+    let b2 = rng.next_u32() as u8;
+    let f = rng.word();
+    let mode = rng.word();
+
+    let obj = Arena::from_bytes(&seed);
+    let pa = Arena::from_words(&pos_a);
+    install(&[(1, "s1_0"), (2, "s2_0"), (3, "s3_0"), (4, "s4_0")]);
+    let _ = rt::take_log();
+    rt::watch(obj.addr(), OBJ_LEN as u32);
+    let ret = fn_00d1d650::rw_00d1d650(obj.addr(), w, pa.addr(), u32::from(b1), u32::from(b2), f, mode);
+    let raw = rt::take_log();
+    rt::unwatch();
+    if ret != obj.addr() {
+        return Err(format!("return {ret:#x} is not the object"));
+    }
+
+    let mut world = Recorder::new(&seed, &[], true);
+    let mut t = load(&seed);
+    let args = ShortArgs { pos: w, dir_src: &pos_a, mode_byte: b1, latch_src: b2, weight: f, mode };
+    match lift {
+        Lift::Real => t.construct_short(&mut world, &args),
+        Lift::Wrong => wrong::construct_short(&mut t, &mut world, &args),
+    }
+    let lifted_img = world.image(&t);
+    compare_calls(&raw, &CTOR_IDS, &object_names(obj.addr()), None, &world.events)?;
+    compare_bytes("object", obj.bytes(), &lifted_img)?;
+    Ok("short")
+}
+
 #[test]
 fn short_constructor_matches_rewrite() {
     let _guard = lock();
-    let vtable = Arena::zeroed(4);
-    let node_vtable = Arena::zeroed(4);
-    bind_stamps(&vtable, &node_vtable);
-    run_cases("construct_short", |rng, _| {
-        let seed = rng.bytes(OBJ_LEN);
-        let w = rng.word();
-        let pos_a: [u32; 3] = rng.words();
-        let b1 = rng.next_u32() as u8;
-        let b2 = rng.next_u32() as u8;
-        let f = rng.word();
-        let mode = rng.word();
+    let _stamps = bind_stamps();
+    run_cases("construct_short", &["short"], |rng| short_case(rng, Lift::Real));
+}
 
-        let obj = Arena::from_bytes(&seed);
-        let pa = Arena::from_words(&pos_a);
-        install(&[(1, "s1_0"), (2, "s2_0"), (3, "s3_0"), (4, "s4_0")]);
-        let _ = rt::take_log();
-        rt::watch(obj.addr(), OBJ_LEN as u32);
-        let ret = fn_00d1d650::rw_00d1d650(obj.addr(), w, pa.addr(), u32::from(b1), u32::from(b2), f, mode);
-        let raw = rt::take_log();
-        rt::unwatch();
-        if ret != obj.addr() {
-            return Err(format!("return {ret:#x} is not the object"));
-        }
-
-        let mut world = recorder(&seed, &[], true);
-        let mut t = load(&seed);
-        t.construct_short(
-            &mut world,
-            &ShortArgs { pos: w, dir_src: &pos_a, mode_byte: b1, latch_src: b2, weight: f, mode },
-        );
-        let lifted_img = world.image(&t);
-        compare_calls(&raw, &CTOR_IDS, &object_names(obj.addr()), None, &world.events)?;
-        compare_images("object", obj.bytes(), &lifted_img)?;
-        Ok("short")
-    });
+#[test]
+fn short_constructor_wrong_lift_is_caught() {
+    let _guard = lock();
+    let _stamps = bind_stamps();
+    let bad = count_disagreements("construct_short (wrong)", |rng| short_case(rng, Lift::Wrong));
+    assert!(bad > 0, "the wrong short constructor was not caught");
 }
 
 // ----------------------------------------------------------------------------
 // The destructor.
 // ----------------------------------------------------------------------------
 
+fn dtor_case(rng: &mut Rng, lift: Lift) -> Result<&'static str, String> {
+    let mut seed = rng.bytes(OBJ_LEN);
+    // The owned words are zero about a third of the time each, so every
+    // branch of the destructor runs.
+    if rng.chance(3) {
+        wr32(&mut seed, 0x30, 0);
+    }
+    if rng.chance(3) {
+        wr32(&mut seed, 0xB0, 0);
+    }
+    let answer = rng.word();
+    let obj = Arena::from_bytes(&seed);
+    install(&[(1, "s1_1"), (2, "s2_0"), (3, "s3_0"), (4, "s4_0")]);
+    rt::set_answers(4, &[answer]);
+    let _ = rt::take_log();
+    rt::watch(obj.addr(), OBJ_LEN as u32);
+    let ret = fn_00d1d7a0::rw_00d1d7a0(obj.addr());
+    let raw = rt::take_log();
+    rt::unwatch();
+
+    let mut world = Recorder::new(&seed, &[], true);
+    world.dtor_answer = answer;
+    let mut t = load(&seed);
+    let lifted_ret = match lift {
+        Lift::Real => t.destruct(&mut world),
+        Lift::Wrong => wrong::destruct(&mut t, &mut world),
+    };
+    let lifted_img = world.image(&t);
+    if ret != lifted_ret {
+        return Err(format!("return {ret:#x} vs {lifted_ret:#x}"));
+    }
+    compare_calls(
+        &raw,
+        &[(1, "release"), (2, "rel6c"), (3, "rel60"), (4, "base_dtor")],
+        &object_names(obj.addr()),
+        None,
+        &world.events,
+    )?;
+    compare_bytes("object", obj.bytes(), &lifted_img)?;
+    let owned = u32::from(rd32(&seed, 0x30) != 0) + u32::from(rd32(&seed, 0xB0) != 0);
+    Ok(match owned {
+        0 => "no owned word",
+        1 => "one owned word",
+        _ => "two owned words",
+    })
+}
+
 #[test]
 fn destructor_matches_rewrite() {
     let _guard = lock();
-    let vtable = Arena::zeroed(4);
-    let node_vtable = Arena::zeroed(4);
-    bind_stamps(&vtable, &node_vtable);
-    run_cases("destruct", |rng, _| {
-        let seed = rng.bytes(OBJ_LEN);
-        let obj = Arena::from_bytes(&seed);
-        let answer = rng.word();
-        install(&[(1, "s1_1"), (2, "s2_0"), (3, "s3_0"), (4, "s4_0")]);
-        rt::set_answers(4, &[answer]);
-        let _ = rt::take_log();
-        rt::watch(obj.addr(), OBJ_LEN as u32);
-        let ret = fn_00d1d7a0::rw_00d1d7a0(obj.addr());
-        let raw = rt::take_log();
-        rt::unwatch();
-
-        let mut world = recorder(&seed, &[], true);
-        world.dtor_answer = answer;
-        let mut t = load(&seed);
-        let lifted_ret = t.destruct(&mut world);
-        let lifted_img = world.image(&t);
-        if ret != lifted_ret {
-            return Err(format!("return {ret:#x} vs {lifted_ret:#x}"));
-        }
-        compare_calls(
-            &raw,
-            &[(1, "release"), (2, "rel6c"), (3, "rel60"), (4, "base_dtor")],
-            &object_names(obj.addr()),
-            None,
-            &world.events,
-        )?;
-        compare_images("object", obj.bytes(), &lifted_img)?;
-        let released = u32::from(load(&seed).pos != 0) + u32::from(load(&seed).link != 0);
-        Ok(match released {
-            0 => "no owned word",
-            1 => "one owned word",
-            _ => "two owned words",
-        })
+    let _stamps = bind_stamps();
+    run_cases("destruct", &["no owned word", "one owned word", "two owned words"], |rng| {
+        dtor_case(rng, Lift::Real)
     });
+}
+
+#[test]
+fn destructor_wrong_lift_is_caught() {
+    let _guard = lock();
+    let _stamps = bind_stamps();
+    let bad = count_disagreements("destruct (wrong)", |rng| dtor_case(rng, Lift::Wrong));
+    assert!(bad > 0, "the wrong destructor was not caught");
 }
 
 // ----------------------------------------------------------------------------
 // The subtask router.
 // ----------------------------------------------------------------------------
 
+fn route_case(rng: &mut Rng, lift: Lift) -> Result<&'static str, String> {
+    let mut seed = rng.bytes(OBJ_LEN);
+    // The route is the low three bits of the flag word. The original runs
+    // routes zero to two and faults on the others, so the proof draws only
+    // those, with a non-null worker and subtask.
+    let flags = (rng.next_u32() & !7) | rng.below(3);
+    wr32(&mut seed, 0x90, flags);
+
+    let pool_obj = Arena::zeroed(16);
+    let pool_cell = Arena::from_words(&[pool_obj.addr()]);
+    rt::bind(POOL_VA, pool_cell.addr());
+
+    let worker = Arena::from_bytes(&rng.bytes(0x20));
+    let sub_bytes = rng.bytes(SUB_LEN);
+    let sub = Arena::from_bytes(&sub_bytes);
+    let obj = Arena::from_bytes(&seed);
+
+    install(&[(1, "s1_0"), (2, "s2_7"), (3, "s3_7"), (4, "s4_6")]);
+    rt::set_answers(1, &[worker.addr()]);
+    rt::set_answers(2, &[sub.addr()]);
+    rt::set_answers(3, &[sub.addr()]);
+    rt::set_answers(4, &[sub.addr()]);
+    let _ = rt::take_log();
+    rt::watch(obj.addr(), OBJ_LEN as u32);
+    let ret = fn_00d1e060::rw_00d1e060(obj.addr());
+    let raw = rt::take_log();
+    rt::unwatch();
+
+    let mut world = Recorder::new(&seed, &[], true);
+    world.worker = worker.addr();
+    world.sub = sub.addr();
+    world.sub_img = sub_bytes.clone();
+    let mut t = load(&seed);
+    let lifted = match lift {
+        Lift::Real => t.route_to_sub_task(&mut world),
+        Lift::Wrong => wrong::route_to_sub_task(&mut t, &mut world),
+    }
+    .map_or(0, Handle32::get);
+    let lifted_img = world.image(&t);
+
+    if ret != lifted {
+        return Err(format!("return {ret:#x} vs {lifted:#x}"));
+    }
+    compare_calls(
+        &raw,
+        &[(1, "fetch"), (2, "route2"), (3, "route1"), (4, "route0")],
+        &[
+            (obj.addr(), "obj"),
+            (obj.addr() + 0x20, "dir"),
+            (obj.addr() + 0x80, "slot"),
+            (pool_obj.addr(), "pool"),
+            (worker.addr(), "worker"),
+            (sub.addr(), "sub"),
+        ],
+        None,
+        &world.events,
+    )?;
+    compare_bytes("object", obj.bytes(), &lifted_img)?;
+    compare_bytes("subtask", sub.bytes(), &world.sub_img)?;
+    Ok(match CoverRoute::from_flags(flags) {
+        Some(CoverRoute::Zero) => "route zero",
+        Some(CoverRoute::One) => "route one",
+        Some(CoverRoute::Two) => "route two",
+        None => "other",
+    })
+}
+
 #[test]
 fn router_matches_rewrite() {
     let _guard = lock();
-    let vtable = Arena::zeroed(4);
-    let node_vtable = Arena::zeroed(4);
-    bind_stamps(&vtable, &node_vtable);
-    run_cases("route_to_sub_task", |rng, _| {
-        let mut seed = rng.bytes(OBJ_LEN);
-        // The route is the low three bits of the flag word; the original
-        // runs routes zero to two and faults on the others, so the proof
-        // draws only those.
-        let flags = (rng.next_u32() & !7) | rng.below(3);
-        wr32(&mut seed, 0x90, flags);
-
-        let pool_obj = Arena::zeroed(16);
-        let pool_cell = Arena::from_words(&[pool_obj.addr()]);
-        rt::bind(POOL_VA, pool_cell.addr());
-
-        let worker = Arena::from_bytes(&rng.bytes(0x20));
-        let sub_bytes = rng.bytes(SUB_LEN);
-        let sub = Arena::from_bytes(&sub_bytes);
-        let obj = Arena::from_bytes(&seed);
-
-        install(&[(1, "s1_0"), (2, "s2_7"), (3, "s3_7"), (4, "s4_6")]);
-        rt::set_answers(1, &[worker.addr()]);
-        rt::set_answers(2, &[sub.addr()]);
-        rt::set_answers(3, &[sub.addr()]);
-        rt::set_answers(4, &[sub.addr()]);
-        let _ = rt::take_log();
-        rt::watch(obj.addr(), OBJ_LEN as u32);
-        let ret = {
-            // The rewrite is exported under its own name; the route is run
-            // through the same entry point as the checker.
-            fn_00d1e060::rw_00d1e060(obj.addr())
-        };
-        let raw = rt::take_log();
-        rt::unwatch();
-
-        let mut world = recorder(&seed, &[], true);
-        world.worker = worker.addr();
-        world.sub = sub.addr();
-        world.sub_img = sub_bytes.clone();
-        let mut t = load(&seed);
-        let lifted = t.route_to_sub_task(&mut world).map_or(0, Handle32::get);
-        let lifted_img = world.image(&t);
-
-        if ret != lifted {
-            return Err(format!("return {ret:#x} vs {lifted:#x}"));
-        }
-        compare_calls(
-            &raw,
-            &[(1, "fetch"), (2, "route2"), (3, "route1"), (4, "route0")],
-            &[(obj.addr(), "obj"), (obj.addr() + 0x20, "dir"), (obj.addr() + 0x80, "slot"), (pool_obj.addr(), "pool"), (worker.addr(), "worker"), (sub.addr(), "sub")],
-            None,
-            &world.events,
-        )?;
-        compare_images("object", obj.bytes(), &lifted_img)?;
-        compare_images("subtask", sub.bytes(), &world.sub_img)?;
-        Ok(match CoverRoute::from_flags(flags) {
-            Some(CoverRoute::Zero) => "route zero",
-            Some(CoverRoute::One) => "route one",
-            Some(CoverRoute::Two) => "route two",
-            None => "other",
-        })
+    let _stamps = bind_stamps();
+    run_cases("route_to_sub_task", &["route zero", "route one", "route two"], |rng| {
+        route_case(rng, Lift::Real)
     });
+}
+
+#[test]
+fn router_wrong_lift_is_caught() {
+    let _guard = lock();
+    let _stamps = bind_stamps();
+    let bad = count_disagreements("route_to_sub_task (wrong)", |rng| route_case(rng, Lift::Wrong));
+    assert!(bad > 0, "the wrong router was not caught");
 }
 
 // ----------------------------------------------------------------------------
 // The node allocator.
 // ----------------------------------------------------------------------------
 
+fn alloc_case(rng: &mut Rng, lift: Lift) -> Result<&'static str, String> {
+    let arg = rng.word();
+    let pool_obj = Arena::zeroed(16);
+    let pool_cell = Arena::from_words(&[pool_obj.addr()]);
+    rt::bind(POOL_VA, pool_cell.addr());
+
+    let node_bytes = rng.bytes(NODE_LEN);
+    let node = Arena::from_bytes(&node_bytes);
+    let got_node = !rng.chance(4);
+    install(&[(1, "s1_0"), (2, "s2_0")]);
+    rt::set_answers(1, &[if got_node { node.addr() } else { 0 }]);
+    let _ = rt::take_log();
+    let ret = fn_00d1f5b0::rw_00d1f5b0(0, arg);
+    let raw = rt::take_log();
+
+    let mut world = Recorder::new(&[0; OBJ_LEN], &[], false);
+    world.node = if got_node { node.addr() } else { 0 };
+    world.node_img = node_bytes.clone();
+    let lifted = match lift {
+        Lift::Real => SeekCoverTask::allocate_node_for_arg(&mut world, arg),
+        Lift::Wrong => wrong::allocate_node_for_arg(&mut world, arg),
+    }
+    .map_or(0, Handle32::get);
+    if ret != lifted {
+        return Err(format!("return {ret:#x} vs {lifted:#x}"));
+    }
+    compare_calls(
+        &raw,
+        &[(1, "alloc"), (2, "node_ctor")],
+        &[(pool_obj.addr(), "pool"), (node.addr(), "node")],
+        None,
+        &world.events,
+    )?;
+    compare_bytes("node", node.bytes(), &world.node_img)?;
+    Ok(if got_node { "node taken" } else { "pool empty" })
+}
+
 #[test]
 fn allocator_matches_rewrite() {
     let _guard = lock();
-    let vtable = Arena::zeroed(4);
-    let node_vtable = Arena::zeroed(4);
-    bind_stamps(&vtable, &node_vtable);
-    run_cases("allocate_node_for_arg", |rng, _| {
-        let arg = rng.word();
-        let pool_obj = Arena::zeroed(16);
-        let pool_cell = Arena::from_words(&[pool_obj.addr()]);
-        rt::bind(POOL_VA, pool_cell.addr());
+    let _stamps = bind_stamps();
+    run_cases("allocate_node_for_arg", &["node taken", "pool empty"], |rng| alloc_case(rng, Lift::Real));
+}
 
-        let node_bytes = rng.bytes(NODE_LEN);
-        let node = Arena::from_bytes(&node_bytes);
-        let got_node = rng.below(4) != 0;
-        install(&[(1, "s1_0"), (2, "s2_0")]);
-        rt::set_answers(1, &[if got_node { node.addr() } else { 0 }]);
-        let _ = rt::take_log();
-        let ret = fn_00d1f5b0::rw_00d1f5b0(0, arg);
-        let raw = rt::take_log();
+#[test]
+fn allocator_wrong_lift_is_caught() {
+    let _guard = lock();
+    let _stamps = bind_stamps();
+    let bad = count_disagreements("allocate_node_for_arg (wrong)", |rng| alloc_case(rng, Lift::Wrong));
+    assert!(bad > 0, "the wrong allocator was not caught");
+}
 
-        let mut world = recorder(&[0; OBJ_LEN], &[], false);
-        world.node = if got_node { node.addr() } else { 0 };
-        world.node_img = node_bytes.clone();
-        let lifted = SeekCoverTask::allocate_node_for_arg(&mut world, arg).map_or(0, Handle32::get);
-        if ret != lifted {
-            return Err(format!("return {ret:#x} vs {lifted:#x}"));
+// ----------------------------------------------------------------------------
+// Wrong lifts. Each copies one lifted method and makes one deliberate fault
+// that a reader could plausibly make from the rewrite. The same comparison
+// must report it.
+// ----------------------------------------------------------------------------
+
+mod wrong {
+    use super::*;
+
+    /// Fault: the flag word keeps bit one, which the constructor clears.
+    pub fn construct_full<W: SeekCoverWorld>(t: &mut SeekCoverTask, w: &mut W, a: &FullArgs<'_>) {
+        w.base_construct(t);
+        w.set_stamp(t, Stamp::SeekCover);
+        t.dir = *a.dir_src;
+        t.pos = a.pos;
+        t.mode_byte = a.mode_byte;
+        w.init_member_60(t);
+        w.init_member_6c(t);
+        t.index = 0xFFFF_FFFF;
+        t.slot[0] = a.slot_src[0];
+        t.slot[1] = a.slot_src[1];
+        t.slot[2] = a.slot_src[2];
+        t.flags = ((a.mode & 7) << 3) | (t.flags & 0xFFFF_FFC3) | 1;
+        t.latch ^= (t.latch ^ a.latch_src) & 1;
+        t.weight = a.weight;
+        t.tail = [0, 0, 0];
+        t.mark = 0xFFFF_FFFF;
+        t.tail_end = [0, 0];
+        w.reinit_shared(t);
+    }
+
+    /// Fault: the empty-row path never runs the shared re-initialiser.
+    pub fn construct_cover_row<W: SeekCoverWorld>(t: &mut SeekCoverTask, w: &mut W, a: &CoverRowArgs<'_>) {
+        w.base_construct(t);
+        w.set_stamp(t, Stamp::SeekCover);
+        t.dir = *a.dir_src;
+        t.pos = a.pos;
+        t.mode_byte = a.flags0 as u8;
+        w.init_member_60(t);
+        w.init_member_6c(t);
+        t.index = a.index;
+        t.slot[0] = 0;
+        t.slot[1] = 0;
+        t.slot[2] = 0;
+        t.flags = (t.flags & 0xFFFF_FFC2) | ((a.mode & 7) << 3);
+        t.latch ^= (t.latch ^ a.flags1 as u8) & 1;
+        t.flags |= 2;
+        t.weight = a.weight;
+        t.tail = [0, 0, 0];
+        t.mark = 0xFFFF_FFFF;
+        t.tail_end = [0, 0];
+        let row_flags = w.cover_row_flags(a.index);
+        if row_flags & 7 != 0 {
+            t.slot = w.cover_row_query(t, a.index);
+            w.reinit_shared(t);
+        } else {
+            t.slot[2] = 0;
+            t.slot[1] = 0;
+            t.slot[0] = 0;
+            t.flags &= 0xFFFF_FFF8;
+            t.index = 0xFFFF_FFFF;
         }
-        compare_calls(
-            &raw,
-            &[(1, "alloc"), (2, "node_ctor")],
-            &[(pool_obj.addr(), "pool"), (node.addr(), "node")],
-            None,
-            &world.events,
-        )?;
-        compare_images("node", node.bytes(), &world.node_img)?;
-        Ok(if got_node { "node taken" } else { "pool empty" })
-    });
-}
+    }
 
-/// The test binary's runs share the runtime's scripted state, so each test
-/// holds this lock for its whole body.
-static SERIAL: std::sync::Mutex<()> = std::sync::Mutex::new(());
+    /// Fault: the two member initialisers run in the wrong order.
+    pub fn construct_short<W: SeekCoverWorld>(t: &mut SeekCoverTask, w: &mut W, a: &ShortArgs<'_>) {
+        w.base_construct(t);
+        w.set_stamp(t, Stamp::SeekCover);
+        t.dir = *a.dir_src;
+        t.pos = a.pos;
+        t.mode_byte = a.mode_byte;
+        w.init_member_6c(t);
+        w.init_member_60(t);
+        t.index = 0xFFFF_FFFF;
+        t.slot[0] = 0;
+        t.slot[1] = 0;
+        t.slot[2] = 0;
+        t.flags = ((a.mode & 7) << 3) | (t.flags & 0xFFFF_FFC0);
+        t.latch ^= (t.latch ^ a.latch_src) & 1;
+        t.weight = a.weight;
+        t.tail = [0, 0, 0];
+        t.mark = 0xFFFF_FFFF;
+        t.tail_end = [0, 0];
+        w.reinit_shared(t);
+    }
 
-fn lock() -> std::sync::MutexGuard<'static, ()> {
-    SERIAL.lock().unwrap_or_else(|e| e.into_inner())
-}
+    /// Fault: the owned word is released but never cleared.
+    pub fn destruct<W: SeekCoverWorld>(t: &mut SeekCoverTask, w: &mut W) -> u32 {
+        w.set_stamp(t, Stamp::SeekCover);
+        let owned_pos = t.pos;
+        if owned_pos != 0 {
+            w.release_owned(t, OwnedSlot::Pos, owned_pos);
+            t.pos = 0;
+        }
+        let owned_link = t.link;
+        if owned_link != 0 {
+            w.release_owned(t, OwnedSlot::Link, owned_link);
+        }
+        w.release_member_6c(t);
+        w.release_member_60(t);
+        w.base_destruct(t)
+    }
 
-/// Runs a case's trials, with the case's name in every report.
-fn run_cases(name: &str, trial: impl FnMut(&mut Rng, u32) -> Result<&'static str, String>) {
-    run_cases_unlocked(name, trial);
+    /// Fault: the lane is read without sign extension.
+    pub fn route_to_sub_task<W: SeekCoverWorld>(t: &mut SeekCoverTask, w: &mut W) -> Option<Handle32<CoverSubTask>> {
+        let route = CoverRoute::from_flags(t.flags)?;
+        let worker = w.fetch_worker(t)?;
+        let extra = match route {
+            CoverRoute::Zero => None,
+            CoverRoute::One => Some(RouteExtra::SlotRef),
+            CoverRoute::Two => Some(RouteExtra::Index(t.index)),
+        };
+        let args = RouteArgs {
+            pos: t.pos,
+            mode: t.mode_byte,
+            latch_bit: t.latch & 1,
+            extra,
+            speed: t.weight,
+            lane: (t.flags >> 3) & 7,
+        };
+        let sub = w.run_route(t, route, worker, &args)?;
+        let mine = t.latch;
+        let theirs = w.latch_of(sub);
+        let flip = (mine ^ theirs) & 8;
+        w.set_latch_of(sub, theirs ^ flip);
+        Some(sub)
+    }
+
+    /// Fault: the argument goes into the tail word, not the argument word.
+    pub fn allocate_node_for_arg<W: SeekCoverWorld>(w: &mut W, arg: u32) -> Option<Handle32<TaskNode>> {
+        let node = w.allocate_node()?;
+        w.construct_node(node);
+        w.store_small_node(node, &SmallNode { arg: 0, flag: 0, tail: arg });
+        Some(node)
+    }
 }

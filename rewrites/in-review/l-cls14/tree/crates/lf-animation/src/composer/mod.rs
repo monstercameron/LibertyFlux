@@ -19,6 +19,7 @@
 #![forbid(unsafe_code)]
 
 pub mod combining_filter;
+pub mod optimized;
 pub mod optimized_data;
 pub mod registry;
 
@@ -28,3 +29,4 @@ pub use combining_filter::{
 pub use optimized_data::{
     BlockId, ComposerDataCallees, ComposerOptimizedData, ObjectManager, TableEntry, ValueEntry,
 };
+pub use optimized::{ComposerCallees, ComposerId, ComposerOptimized};

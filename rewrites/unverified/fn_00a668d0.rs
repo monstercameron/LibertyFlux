@@ -6,7 +6,7 @@
 lf_checker_rt::export!(cdecl, rw_00a668d0(begin: u32, end: u32, context: u32) -> u32 {
     const MAKE_HEAP_CALLEE: u32 = 1;
     let _ignored = lf_checker_rt::callee_cdecl!(
-        MAKE_HEAP_CALLEE, (), begin, end, context, 0, 0,
+        MAKE_HEAP_CALLEE, u32, begin, end, context, 0, 0,
     );
     0
 });
