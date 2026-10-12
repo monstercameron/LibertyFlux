@@ -40545,6 +40545,159 @@
   "lane": "a-G60"
  },
  {
+  "address": "0x0065EC50",
+  "name": "rage::snMsgJoinResponse::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065ec50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065ECE0",
+  "name": "rage::snMsgAddGamerToSessionCmd::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065ece0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065ED70",
+  "name": "rage::snMsgHostLeftWhilstJoiningCmd::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065ed70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065EE00",
+  "name": "rage::snMsgRemoveGamersFromSessionCmd::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065ee00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065EE90",
+  "name": "rage::snMsgNotMigrating::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065ee90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065EF20",
+  "name": "rage::snMsgMigrateHostRequest::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065ef20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065EFD0",
+  "name": "rage::snMsgMigrateHostResponse::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065efd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065F060",
+  "name": "rage::snMsgStartMatchCmd::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065f060.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065F0F0",
+  "name": "rage::snMsgChangeSessionAttributesCmd::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065f0f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065F180",
+  "name": "rage::snMsgSetInvitableCmd::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065f180.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065F210",
+  "name": "rage::snMsgSessionMemberIds::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065f210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065F2A0",
+  "name": "rage::snMsgRequestGamerInfo::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_0065f2a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065F330",
+  "name": "sn_migrate_claim_slot",
+  "kind": "function",
+  "file": "functions/fn_0065f330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065F680",
+  "name": "init_message_record",
+  "kind": "function",
+  "file": "functions/fn_0065f680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065F810",
+  "name": "init_id_record",
+  "kind": "function",
+  "file": "functions/fn_0065f810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065F900",
+  "name": "pack_sn_msg_session_attrs_changed",
+  "kind": "function",
+  "file": "functions/fn_0065f900.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x0065FB80",
+  "name": "rage::snEventJoinFailed::snEventJoinFailed",
+  "kind": "function",
+  "file": "functions/fn_0065fb80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
   "address": "0x0065FC20",
   "name": "session_id_format",
   "kind": "function",
@@ -41218,6 +41371,96 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-U101"
+ },
+ {
+  "address": "0x00666810",
+  "name": "init_keyframe_defaults",
+  "kind": "function",
+  "file": "functions/fn_00666810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x00666F80",
+  "name": "insert_keyframe",
+  "kind": "function",
+  "file": "functions/fn_00666f80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x00667020",
+  "name": "resize_keyframe_array",
+  "kind": "function",
+  "file": "functions/fn_00667020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x00667080",
+  "name": "alloc_keyframe_array",
+  "kind": "function",
+  "file": "functions/fn_00667080.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x00667110",
+  "name": "create_keyframe_index_entry",
+  "kind": "function",
+  "file": "functions/fn_00667110.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x00667160",
+  "name": "resize_keyframe_index",
+  "kind": "function",
+  "file": "functions/fn_00667160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x006671A0",
+  "name": "create_keyframe_auxiliary_block",
+  "kind": "function",
+  "file": "functions/fn_006671a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x006671E0",
+  "name": "create_rmptfx_keyframe",
+  "kind": "function",
+  "file": "functions/fn_006671e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x00667230",
+  "name": "create_ptx_keyframe4",
+  "kind": "function",
+  "file": "functions/fn_00667230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
+ },
+ {
+  "address": "0x00667290",
+  "name": "create_keyframe_transform_state",
+  "kind": "function",
+  "file": "functions/fn_00667290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s764"
  },
  {
   "address": "0x006672D0",
