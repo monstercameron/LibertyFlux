@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: 58 small routines in seven families",
+    "title": "Devlog: the lift lane's entry on seven families of small routines",
     "commit": null,
+    "summary": "The lane's own account of lifting 58 small routines in seven families is added to the devlog.",
+    "changes": [
+      "The entry gives the seven families with the strength of each lift, why grouping by role found families where a hash of the text left 174 of 186 functions alone, why these routines have no owning type, which families were transcribed by hand, and the 128 functions left."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: 58 small routines in seven families",
+    "commit": "c4dd3bf6fbfb68af0acc1d128ee289f0043b7a3e",
     "summary": "The fourth list chosen by shape, the verified functions of 24 to 33 bytes that call nothing, gives seven more families. Each is lifted once and proved against every instance.",
     "changes": [
       "crates/lf-core gains seven modules: a row lookup by flag, base and stride (10 instances), a copy of a block of three or four words with a rule for what is returned (22), one source word written to three targets (8), a store into a record chosen through an eight-entry selector (4), a test of one flag bit reached through a table of signed ids (4), one constant written to three globals (4) and a yes-or-no over two or three fields of an object (6). No unsafe code and no addresses; the 50 rewrite files they stand for hold 107 uses of unsafe.",
