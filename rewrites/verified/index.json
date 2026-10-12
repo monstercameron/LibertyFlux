@@ -79146,6 +79146,24 @@
   "lane": "a-G34"
  },
  {
+  "address": "0x009F4160",
+  "name": "NativeImpl_REGISTER_HATED_TARGETS_IN_AREA",
+  "kind": "function",
+  "file": "functions/fn_009f4160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x009F41D0",
+  "name": "ped_task_time_gate_open",
+  "kind": "function",
+  "file": "functions/fn_009f41d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
   "address": "0x009F4200",
   "name": "peds_tasks_register_all",
   "kind": "function",
@@ -80503,6 +80521,24 @@
   "trials": 300,
   "checker": "version 8",
   "lane": "a-G38"
+ },
+ {
+  "address": "0x009FFF70",
+  "name": "save_block_dispatch_load",
+  "kind": "function",
+  "file": "functions/fn_009fff70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x009FFFF0",
+  "name": "save_block_dispatch_save",
+  "kind": "function",
+  "file": "functions/fn_009ffff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
  },
  {
   "address": "0x00A00380",
@@ -81972,6 +82008,42 @@
   "lane": "a-G38"
  },
  {
+  "address": "0x00A04500",
+  "name": "NativeImpl_GET_INTERIOR_AT_COORDS",
+  "kind": "function",
+  "file": "functions/fn_00a04500.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A04540",
+  "name": "NativeImpl_GET_LEVEL_DESIGN_COORDS_FOR_OBJECT",
+  "kind": "function",
+  "file": "functions/fn_00a04540.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A04820",
+  "name": "NativeImpl_GET_OBJECT_QUATERNION",
+  "kind": "function",
+  "file": "functions/fn_00a04820.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A04910",
+  "name": "NativeImpl_GET_OBJECT_ROTATION_VELOCITY",
+  "kind": "function",
+  "file": "functions/fn_00a04910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
   "address": "0x00A055A0",
   "name": "NativeImpl_IS_NON_FRAG_OBJECT_SMASHED",
   "kind": "function",
@@ -82341,6 +82413,51 @@
   "lane": "r-s465"
  },
  {
+  "address": "0x00A0D320",
+  "name": "CEntity::get_rigid_body",
+  "kind": "function",
+  "file": "functions/fn_00a0d320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A0D330",
+  "name": "CEntity::get_position",
+  "kind": "function",
+  "file": "functions/fn_00a0d330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A0D460",
+  "name": "interior_render_state_init",
+  "kind": "function",
+  "file": "functions/fn_00a0d460.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A0D610",
+  "name": "entity_emit_ui_bit_if_flagged",
+  "kind": "function",
+  "file": "functions/fn_00a0d610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A0D640",
+  "name": "streaming_emit_ui_record_gated",
+  "kind": "function",
+  "file": "functions/fn_00a0d640.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
   "address": "0x00A0FBC0",
   "name": "flag_gated_dispatch",
   "kind": "function",
@@ -82672,6 +82789,69 @@
   "trials": 1200,
   "checker": "version 7",
   "lane": "a-S16"
+ },
+ {
+  "address": "0x00A17550",
+  "name": "vec3_cross",
+  "kind": "function",
+  "file": "functions/fn_00a17550.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A175D0",
+  "name": "vec3_cross_swapped",
+  "kind": "function",
+  "file": "functions/fn_00a175d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A18CD0",
+  "name": "CCamFollowVehicle::maybe_solve_mode3",
+  "kind": "function",
+  "file": "functions/fn_00a18cd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A18FA0",
+  "name": "CCamFollowVehicle::read_look_scale",
+  "kind": "function",
+  "file": "functions/fn_00a18fa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A19DC0",
+  "name": "CCamFollowVehicle::vf8",
+  "kind": "function",
+  "file": "functions/fn_00a19dc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A19E90",
+  "name": "CCamFollowVehicle::set_script_pos",
+  "kind": "function",
+  "file": "functions/fn_00a19e90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A19FC0",
+  "name": "CCamFollowVehicle::is_active_mode",
+  "kind": "function",
+  "file": "functions/fn_00a19fc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
  },
  {
   "address": "0x00A1A870",
@@ -84013,6 +84193,24 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b596"
+ },
+ {
+  "address": "0x00A2E610",
+  "name": "weather_select_forecast_table",
+  "kind": "function",
+  "file": "functions/fn_00a2e610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
+ },
+ {
+  "address": "0x00A2E6B0",
+  "name": "weather_state_reset",
+  "kind": "function",
+  "file": "functions/fn_00a2e6b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s828"
  },
  {
   "address": "0x00A2E740",
