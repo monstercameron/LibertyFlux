@@ -166833,6 +166833,15 @@
   "lane": "r-s454"
  },
  {
+  "address": "0x00E68B30",
+  "name": "initialize_vehicle_light_attribute_table",
+  "kind": "function",
+  "file": "functions/fn_00e68b30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
   "address": "0x00E68B90",
   "name": "veh_ratio_recompute",
   "kind": "function",
@@ -168253,6 +168262,294 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G30"
+ },
+ {
+  "address": "0x00E6A5F0",
+  "name": "initialize_navigation_entry_table",
+  "kind": "function",
+  "file": "functions/fn_00e6a5f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A610",
+  "name": "initialize_navigation_entry_table_records",
+  "kind": "function",
+  "file": "functions/fn_00e6a610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A640",
+  "name": "clear_vehicle_static_state",
+  "kind": "function",
+  "file": "functions/fn_00e6a640.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A6A0",
+  "name": "initialize_vehicle_state_entry_records",
+  "kind": "function",
+  "file": "functions/fn_00e6a6a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A6D0",
+  "name": "register_vehicle_state_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e6a6d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A6E0",
+  "name": "initialize_vehicle_tuning_records_four",
+  "kind": "function",
+  "file": "functions/fn_00e6a6e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A700",
+  "name": "initialize_vehicle_tuning_records_sixty_four",
+  "kind": "function",
+  "file": "functions/fn_00e6a700.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A720",
+  "name": "initialize_vehicle_object_buffer_slots",
+  "kind": "function",
+  "file": "functions/fn_00e6a720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A790",
+  "name": "initialize_vehicle_buffer_manager",
+  "kind": "function",
+  "file": "functions/fn_00e6a790.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A7B0",
+  "name": "register_vehicle_buffer_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e6a7b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A7C0",
+  "name": "vehicle_tuning_ratio_init_19",
+  "kind": "function",
+  "file": "functions/fn_00e6a7c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A7E0",
+  "name": "initialize_vehicle_static_store_a_and_register_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e6a7e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A800",
+  "name": "initialize_vehicle_static_store_b_and_register_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e6a800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A820",
+  "name": "initialize_vehicle_static_store_c_and_register_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e6a820.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A840",
+  "name": "nav_request_store_initialize_and_register_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e6a840.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A860",
+  "name": "vehicle_tuning_ratio_init_20",
+  "kind": "function",
+  "file": "functions/fn_00e6a860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A880",
+  "name": "rain_effect_register_global_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e6a880.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A890",
+  "name": "rain_particle_render_state_initialize_and_register_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e6a890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A8B0",
+  "name": "rain_particle_settings_initialize_and_register_cleanup",
+  "kind": "function",
+  "file": "functions/fn_00e6a8b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A8D0",
+  "name": "initialize_streaming_object",
+  "kind": "function",
+  "file": "functions/fn_00e6a8d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6A8F0",
+  "name": "reset_vehicle_request_holder_table",
+  "kind": "function",
+  "file": "functions/fn_00e6a8f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6AA50",
+  "name": "vehicle_tuning_ratio_init_21",
+  "kind": "function",
+  "file": "functions/fn_00e6aa50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6AA70",
+  "name": "initialize_vehicle_slot_tables",
+  "kind": "function",
+  "file": "functions/fn_00e6aa70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6AAB0",
+  "name": "vehicle_tuning_ratio_init_22",
+  "kind": "function",
+  "file": "functions/fn_00e6aab0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6AAD0",
+  "name": "initialize_cable_car_name_hash",
+  "kind": "function",
+  "file": "functions/fn_00e6aad0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6AAF0",
+  "name": "vehicle_tuning_ratio_init_23",
+  "kind": "function",
+  "file": "functions/fn_00e6aaf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6AB10",
+  "name": "vehicle_tuning_ratio_init_24",
+  "kind": "function",
+  "file": "functions/fn_00e6ab10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6AB30",
+  "name": "initialize_vehicle_audio_link_head",
+  "kind": "function",
+  "file": "functions/fn_00e6ab30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6AB50",
+  "name": "vehicle_tuning_ratio_init_25",
+  "kind": "function",
+  "file": "functions/fn_00e6ab50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6AB70",
+  "name": "vehicle_tuning_ratio_init_26",
+  "kind": "function",
+  "file": "functions/fn_00e6ab70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6AB90",
+  "name": "vehicle_tuning_ratio_init_27",
+  "kind": "function",
+  "file": "functions/fn_00e6ab90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
+ },
+ {
+  "address": "0x00E6ABB0",
+  "name": "vehicle_tuning_ratio_init_28",
+  "kind": "function",
+  "file": "functions/fn_00e6abb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s732"
  },
  {
   "address": "0x00E6ADF0",

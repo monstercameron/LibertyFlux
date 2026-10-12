@@ -14,10 +14,10 @@
     "identified": 37413,
     "named": 37258,
     "rewritten": 19200,
-    "verified": 18963
+    "verified": 18999
   },
   "structures": 340,
-  "symbols": 19066,
+  "symbols": 19102,
   "measured": [
     {
       "label": "Code section",
@@ -117,9 +117,9 @@
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 37.8,
+      "value": 37.9,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2771477 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2772341 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
@@ -141,7 +141,7 @@
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 18963,
+      "value": 18999,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
@@ -4462,7 +4462,7 @@
       "count": 618,
       "named": 609,
       "rewritten": 584,
-      "verified": 525
+      "verified": 551
     },
     {
       "stage": "named",
@@ -4471,13 +4471,13 @@
       "count": 598,
       "named": 566,
       "rewritten": 170,
-      "verified": 160
+      "verified": 170
     }
   ],
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2771477,
+    "verified": 2772341,
     "large_functions": 2801402,
     "large_functions_verified": 802732
   },
