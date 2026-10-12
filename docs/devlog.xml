@@ -9,6 +9,30 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Game camera class lifted: five verified methods proven against their rewrites</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls22"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls22</id>
+    <published>2026-10-12T00:00:00Z</published>
+    <updated>2026-10-12T00:00:00Z</updated>
+    <summary>From lane l-cls22.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-cls22.&lt;/p&gt;
+&lt;time datetime="2026-10-12"&gt;2026-10-12&lt;/time&gt;
+&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift the game camera class from its verified 32-bit rewrites into portable Rust, with a differential proof for each method that has behaviour in it.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Found.&lt;/strong&gt; Seven methods are listed for the class. Five have verified rewrites; all five are now lifted and proven. Two listed entries have no size and no rewrite and were left out. The five cover the deleting destructor, the restart, the camera event step, the blend update and the idle reset.&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Method&lt;/th&gt;&lt;th&gt;What it does (lifted name)&lt;/th&gt;&lt;th&gt;Callees&lt;/th&gt;&lt;th&gt;Wrong versions caught&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Deleting destructor&lt;/td&gt;&lt;td data-label="What it does (lifted name)"&gt;Runs the destructor body; returns storage to the pool when the low flag bit is set&lt;/td&gt;&lt;td data-label="Callees"&gt;2&lt;/td&gt;&lt;td data-label="Wrong versions caught"&gt;1 of 1&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Restart&lt;/td&gt;&lt;td data-label="What it does (lifted name)"&gt;Tears down, builds a worker, chains and releases it, clears the active marker and pending words&lt;/td&gt;&lt;td data-label="Callees"&gt;2 plus 2 virtual&lt;/td&gt;&lt;td data-label="Wrong versions caught"&gt;2 of 2&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Camera event step&lt;/td&gt;&lt;td data-label="What it does (lifted name)"&gt;Two gate blocks around a middle chain, then the tail&lt;/td&gt;&lt;td data-label="Callees"&gt;16&lt;/td&gt;&lt;td data-label="Wrong versions caught"&gt;5 of 5&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Blend update&lt;/td&gt;&lt;td data-label="What it does (lifted name)"&gt;Four updates, the initialised marker, two blend channels while the singleton exists, two updates&lt;/td&gt;&lt;td data-label="Callees"&gt;11&lt;/td&gt;&lt;td data-label="Wrong versions caught"&gt;4 of 4&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Idle reset&lt;/td&gt;&lt;td data-label="What it does (lifted name)"&gt;Clears the mode, timer and flag words, sets the idle marker and the default zoom&lt;/td&gt;&lt;td data-label="Callees"&gt;1&lt;/td&gt;&lt;td data-label="Wrong versions caught"&gt;2 of 2&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Method.&lt;/strong&gt; Each lifted method runs against its verified rewrite on 2000 generated camera images. The comparison covers the return, every camera word, every global, and every collaborator call in order; floats compare bit for bit, with NaN payloads and boundary values in the generated inputs. Each method also has deliberately wrong versions, and each was caught on at least one trial. The runtime is test-only; the lifted code has no unsafe code. Nothing here is verified by the checker: the claim is agreement with the verified rewrites on the generated inputs.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Finding.&lt;/strong&gt; The comment on the blend update's rewrite gives the counter step as n plus three times n divided by three. The verified arithmetic gives the remainder of the count, read as a signed value, after division by three. A host check agrees with the remainder for every count from zero to 200000 and for the negative words. The lifted code keeps the original's sequence, so the proof is unaffected; the comment needs correcting.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Not done.&lt;/strong&gt; The two undecoded entries; two slots with no rewrite in the family list, whose meaning is not established. The bodies behind the class's collaborator interface (destructor body, reset step, gate provider, watcher, sink, singleton, update steps, tail provider) are unlifted callees: a port must implement each of them.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Source.&lt;/strong&gt; The verified rewrite files for the five methods, read as rewrites and compared against the lifted code. Results are recorded in the lane's results file for the coordinator's re-run.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Eight operating faults in one evening, all made by the coordinator while it was improving the pipeline</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#operating-faults-2026-10-11-evening"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#operating-faults-2026-10-11-evening</id>
@@ -1387,14 +1411,5 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;p&gt;The baseline is every small-function production lane with a checker version 6, 7 or 8 marker: batch size from its list, verified rows from its results file, minutes from the launcher's lines in its log. The re-run takes each contract the lane wrote, unchanged, and runs it with the repository's driver against the library the contract names; the driver runs the declared wrong version with it.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The brief is given whole to a lane of the earlier model. A subagent reads it from a file, and its file reader cuts lines after about 2,000 characters; the brief has longer ones. The lane was given a copy with line breaks added at sentence ends and nothing else changed. The lane also wrote its report under a different file name than the brief asks for, because of a rule of its own environment about that file type; the launch note now says the brief's name is allowed in its scratch folder.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Record a one-word thiscall boundary in differential tests</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#thiscall-one-word-recorder"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#thiscall-one-word-recorder</id>
-    <published>2026-10-08T00:00:00Z</published>
-    <updated>2026-10-08T00:00:00Z</updated>
-    <summary>Verified: the differential runtime now supplies a typed recorder for an object receiver and one stack argument. The existing two-argument cdecl recorder remains available. An i686 regression compares recorded receiver and argument order, return values, and the stack pointer before pushing the argument and after the call returns.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Verified: the differential runtime now supplies a typed recorder for an object receiver and one stack argument. The existing two-argument cdecl recorder remains available. An i686 regression compares recorded receiver and argument order, return values, and the stack pointer before pushing the argument and after the call returns.&lt;/p&gt;&lt;p&gt;Root review found the first assembly probe did not declare all caller-clobbered registers. The corrected test declares the C ABI clobber set and passed its focused test. The prior nine-test library run predates this test-only correction; no redundant full-suite replay was required. Exact copied runtime and package inputs, reduced path-only lockfile scope and all failed runner attempts remain recorded.&lt;/p&gt;&lt;p&gt;This is a differential-test adapter, not a stock-checker change or native object-class binding. It adds no function credit. Reproduce with the lf-lift-diff library tests on i686; the permanent regression is in its runtime module.&lt;/p&gt;</content>
   </entry>
 </feed>
