@@ -721,6 +721,15 @@ name = "lf-math"
 version = "0.1.0"
 
 [[package]]
+name = "lf-melee-diff"
+version = "0.1.0"
+dependencies = [
+ "lf-checker-rt",
+ "lf-core",
+ "lf-peds-tasks",
+]
+
+[[package]]
 name = "lf-mirrordiff"
 version = "0.1.0"
 dependencies = [
