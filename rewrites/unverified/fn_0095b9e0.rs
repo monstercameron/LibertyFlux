@@ -1,4 +1,5 @@
 // original: 0x0095B9E0 clear_stale_task_entries
+
 /// Scan 512 twelve-byte task registry entries beginning at the registry's
 /// pointer column. For a non-null object whose tag byte is 0x1b or 0x1c, call
 /// the resource check with mode 1 and the object's key at byte offset 12. If
