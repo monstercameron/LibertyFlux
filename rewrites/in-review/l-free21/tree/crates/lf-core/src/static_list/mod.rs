@@ -98,9 +98,91 @@ impl StaticLinks {
     }
 }
 
+/// A table of plain 32-bit words that routines set to constants.
+///
+/// Used for the words of static data that some routines reset to fixed
+/// values. The table holds the values only; it knows nothing about what the
+/// words mean.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct StaticWords {
+    words: Vec<u32>,
+}
+
+impl StaticWords {
+    /// A table of `count` words, all zero.
+    #[must_use]
+    pub fn new(count: usize) -> Self {
+        Self {
+            words: vec![0; count],
+        }
+    }
+
+    /// The number of words in the table.
+    #[must_use]
+    pub fn len(&self) -> usize {
+        self.words.len()
+    }
+
+    /// True when the table holds no words.
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.words.is_empty()
+    }
+
+    /// The value of one word.
+    ///
+    /// # Panics
+    ///
+    /// When `id` is outside the table.
+    #[must_use]
+    pub fn word(&self, id: WordId) -> u32 {
+        self.words[id.0]
+    }
+
+    /// Sets one word.
+    ///
+    /// # Panics
+    ///
+    /// When `id` is outside the table.
+    pub fn set_word(&mut self, id: WordId, value: u32) {
+        self.words[id.0] = value;
+    }
+
+    /// Stores `first_value` into `first`, then `second_value` into `second`.
+    ///
+    /// The stores happen in that order, so when the two ids name the same
+    /// word the second value is the one left.
+    ///
+    /// # Panics
+    ///
+    /// When either id is outside the table.
+    pub fn store_pair(&mut self, first: WordId, second: WordId, first_value: u32, second_value: u32) {
+        self.words[first.0] = first_value;
+        self.words[second.0] = second_value;
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{Link, NodeId, StaticLinks, WordId};
+    use super::{Link, NodeId, StaticLinks, StaticWords, WordId};
+
+    #[test]
+    fn store_pair_writes_both_words_in_order() {
+        let mut words = StaticWords::new(3);
+        words.store_pair(WordId(0), WordId(2), 3, 0);
+        assert_eq!(words.word(WordId(0)), 3);
+        assert_eq!(words.word(WordId(1)), 0);
+        assert_eq!(words.word(WordId(2)), 0);
+        assert_eq!(words.len(), 3);
+        assert!(!words.is_empty());
+    }
+
+    #[test]
+    fn store_pair_on_one_word_keeps_the_second_value() {
+        let mut words = StaticWords::new(1);
+        words.store_pair(WordId(0), WordId(0), 7, 9);
+        assert_eq!(words.word(WordId(0)), 9);
+    }
 
     const HEAD: WordId = WordId(0);
     const SAVE: WordId = WordId(1);
