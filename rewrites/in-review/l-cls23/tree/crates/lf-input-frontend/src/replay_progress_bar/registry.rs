@@ -81,9 +81,13 @@ pub const METHODS: &[MethodRecord] = &[
         lifted: true,
         rewrite: "verified rewrite of the per-frame update",
         test: "lf-replaybar-diff: update",
-        narrowing: "the proof's rewrite stack words are not compared; the rewrite zeroes its \
-                    out-words before a call, which the lift does not do: the lift takes the \
-                    words the collaborator returns; the inner object's flag byte is read through \
-                    the collaborator and its value is not checked against memory the lift owns",
+        narrowing: "the rewrite's stack words are not compared, only its calls, returns and the object \
+                    and globals. The rewrite zeroes its out-words before the second produce call; the \
+                    lift takes the words the collaborator returns instead, which is the same when the \
+                    collaborator writes both words, as the proof's scripts do. The verified contract \
+                    scripts only the second word of the first fill call (the first word stays zero \
+                    there), so a nonzero first word is exercised only by this lane's own cases. The \
+                    inner object's flag byte is read through the collaborator, not from memory the \
+                    lift owns. The inner pointer is assumed non-null (the original faults on null).",
     },
 ];

@@ -120,10 +120,6 @@ fn current_id() -> u32 {
     CURRENT_ID.with(Cell::get)
 }
 
-fn top_scope() -> usize {
-    with_state(|state| *state.stack.last().expect("a scope is active"))
-}
-
 /// Raw stub address for callee number `id`, in the innermost scope.
 ///
 /// # Panics

@@ -168,7 +168,7 @@ extern "cdecl" fn stub_helper(lo: u32, hi: u32) -> u64 {
 /// the allocator global resolves to the leaked area.
 fn setup_runtime(stub1: u32, stub2: u32) -> u32 {
     let area = *GLOBAL_AREA.get_or_init(|| {
-        let v: &'static mut [u32] = Box::leak(vec![0u32; 0x1_0000].into_boxed_slice());
+        let v: &'static mut [u32] = Box::leak(vec![0u32; 0x2_8000].into_boxed_slice());
         v.as_mut_ptr() as usize as u32
     });
     CALLEE_TABLE[1].store(stub1, Ordering::SeqCst);
@@ -474,7 +474,7 @@ fn read_cache() -> [u32; 4] {
 }
 
 /// Writes the shared cache words into the test memory.
-fn write_cache(words: [u32; 4]) { eprintln!("DBG xbase={:#x} g={:#x} w={:#x}", lf_checker_rt::xbase(), lf_checker_rt::global::<u32>(CACHE_WEIGHT_A_VA) as usize, lf_checker_rt::global::<u32>(ALLOCATOR_GLOBAL) as usize);
+fn write_cache(words: [u32; 4]) {
     for (va, w) in [CACHE_WEIGHT_A_VA, CACHE_FLAGS_VA, CACHE_WEIGHT_B_VA, CACHE_SCALE_VA]
         .into_iter()
         .zip(words)
@@ -508,7 +508,7 @@ fn run_rewrite(m: Method, inp: &Input) -> Outcome {
     let mut target = Box::new(inp.target);
     let target_addr = target.as_mut_ptr() as usize as u32;
     let ped_addr = ped.as_mut_ptr() as usize as u32;
-    eprintln!("DBG write_cache"); write_cache(inp.cache); eprintln!("DBG wrote");
+    write_cache(inp.cache);
 
     set_manager_word(inp.manager);
     SRC.with(|s| s.set(addr));
@@ -538,10 +538,10 @@ fn run_rewrite(m: Method, inp: &Input) -> Outcome {
         }
         Method::Refresh => Some(fn_00CB8AC0::rw_00cb8ac0(addr, inp.word1, inp.word2, 0x5A5A_5A5A)),
         Method::Clone => Some(fn_00CAF720::rw_00caf720(addr)),
-        Method::Advance => { eprintln!("DBG call rw"); let r = fn_00CAFC10::rw_00CAFC10(addr, ped_addr, target_addr); eprintln!("DBG returned"); Some(r) }
+        Method::Advance => Some(fn_00CAFC10::rw_00CAFC10(addr, ped_addr, target_addr))
     };
     let out = if m == Method::Copy3 { Some(*outbuf) } else { None };
-    eprintln!("DBG read cache"); let cache = if m == Method::Advance { Some(read_cache()) } else { None }; eprintln!("DBG cache read");
+    let cache = if m == Method::Advance { Some(read_cache()) } else { None };
     Outcome {
         ret,
         mem: *obj,
