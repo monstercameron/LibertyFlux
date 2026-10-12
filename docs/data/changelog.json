@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Lift: the audio engine's base sound class, nine methods",
+    "title": "Devlog: the lift lane's entry on the base sound class",
     "commit": null,
+    "summary": "The lane's own account of lifting nine methods of the audio engine's base sound class is added to the devlog.",
+    "changes": [
+      "The entry gives the class's virtual slots as the dossier and the rewrites establish them, the lifted form and its one trait, what the proofs compare and what they narrow, and the two findings about its proofs of record."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Lift: the audio engine's base sound class, nine methods",
+    "commit": "f41fba7d40c7fe9a05a4e5bc8e0e331056a750d4",
     "summary": "The fourth class lift: the interface every kind of sound implements. Nine of its ten verified methods are lifted; the tenth returns a constant and has nothing to lift.",
     "changes": [
       "crates/lf-audio gains a sound_base module beside the existing sound module: two lookups (by hash and by name), a store at a key, a hash-and-forward, a link forward, the deleting destructor, the attachment of a voice, the advance of a sound in time, and the second constructor. 811 lines with unsafe code forbidden in the module; the engine's globals, callees and virtual slots are behind one trait, and nothing calls the operating system, a file or a clock. The nine verified rewrites are 481 lines with nine unsafe blocks.",
