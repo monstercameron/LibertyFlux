@@ -285,6 +285,8 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
                 u32,
                 local_address(&mut base_vector),
                 local_address(&mut key_vector),
+                local_address(&mut base_vector),
+                local_address(&mut key_vector),
                 record,
                 record.wrapping_add(0x10),
                 record.wrapping_add(0x20),

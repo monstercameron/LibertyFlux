@@ -22,8 +22,7 @@ lf_checker_rt::export!(cdecl, rw_0087b4e0(
     const BUFFER_OFFSET: u32 = 0x08;
     const CAPACITY_OFFSET: u32 = 0x0C;
     const STACK_BUFFER_SIZE: usize = 0x100;
-    const STACK_BUFFER_SIZE_ARG: u32 = 0xFF;
-    const TERMINATOR_OFFSET: usize = 0xFF;
+    const MAX_FORMATTED_BYTES: u32 = 0xFF;
     const NORMAL_FORMATTER: u32 = 1;
     const STACK_FORMATTER: u32 = 2;
 
@@ -59,7 +58,7 @@ lf_checker_rt::export!(cdecl, rw_0087b4e0(
                 STACK_FORMATTER,
                 u32,
                 local_buffer.as_mut_ptr() as u32,
-                STACK_BUFFER_SIZE_ARG,
+                MAX_FORMATTED_BYTES,
                 format,
                 arguments.as_ptr() as u32
             );

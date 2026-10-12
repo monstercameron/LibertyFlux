@@ -31,6 +31,7 @@ pub mod indexed_read;
 pub mod layout_assert;
 pub mod object_rows;
 pub mod packed_flag;
+pub mod row_address;
 pub mod ptr32;
 pub mod slot_store;
 pub mod static_list;
