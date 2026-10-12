@@ -94572,6 +94572,33 @@
   "lane": "a-Q153"
  },
  {
+  "address": "0x00B27E30",
+  "name": "write_blend_motion_values",
+  "kind": "function",
+  "file": "functions/fn_00b27e30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U126"
+ },
+ {
+  "address": "0x00B27E70",
+  "name": "stop_movement",
+  "kind": "function",
+  "file": "functions/fn_00b27e70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U126"
+ },
+ {
+  "address": "0x00B28050",
+  "name": "NativeImpl_GET_TOTAL_DURATION_OF_CAR_RECORDING",
+  "kind": "function",
+  "file": "functions/fn_00b28050.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U126"
+ },
+ {
   "address": "0x00B282F0",
   "name": "slot_find_write_value",
   "kind": "function",
@@ -95056,6 +95083,15 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G34"
+ },
+ {
+  "address": "0x00B30320",
+  "name": "clear_ped_task_records",
+  "kind": "function",
+  "file": "functions/fn_00b30320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U126"
  },
  {
   "address": "0x00B30400",
@@ -139581,6 +139617,24 @@
   "lane": "r-b468"
  },
  {
+  "address": "0x00CC0350",
+  "name": "is_route_control_code",
+  "kind": "function",
+  "file": "functions/fn_00cc0350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U126"
+ },
+ {
+  "address": "0x00CC03C0",
+  "name": "has_required_task",
+  "kind": "function",
+  "file": "functions/fn_00cc03c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U126"
+ },
+ {
   "address": "0x00CC04E0",
   "name": "ped_moveblend_weight_normalize",
   "kind": "function",
@@ -139624,6 +139678,24 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G23"
+ },
+ {
+  "address": "0x00CC3130",
+  "name": "CPedMoveBlendOnFoot::reset_blend_parameters",
+  "kind": "function",
+  "file": "functions/fn_00cc3130.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U126"
+ },
+ {
+  "address": "0x00CC4D20",
+  "name": "check_route_identifiers",
+  "kind": "function",
+  "file": "functions/fn_00cc4d20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U126"
  },
  {
   "address": "0x00CC5590",
