@@ -144666,6 +144666,24 @@
   "lane": "r-s652"
  },
  {
+  "address": "0x00D3DF50",
+  "name": "peds_task_accumulate_path_distance",
+  "kind": "function",
+  "file": "functions/fn_00d3df50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b692"
+ },
+ {
+  "address": "0x00D3E160",
+  "name": "peds_task_initialize_record_tables",
+  "kind": "function",
+  "file": "functions/fn_00d3e160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b692"
+ },
+ {
   "address": "0x00D3E270",
   "name": "task_registry_increment_reference",
   "kind": "function",
