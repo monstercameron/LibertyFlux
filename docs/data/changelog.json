@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Devlog: the lift lane's entry on the static list family",
+    "title": "Rust in progress: 53 files from lanes (637 unverified rewrites, 440 in review)",
     "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 637 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 440 Rust files from 8 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "55 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Devlog: the lift lane's entry on the static list family",
+    "commit": "1d81c66a20c121fdca2cedfb53a5c9e57c493245",
     "summary": "The lane's own account of lifting 170 small list and store routines is added to the devlog.",
     "changes": [
       "The entry gives the two families and their lifted forms, why grouping by extracted roles worked where a hash of the text split one routine into eleven groups, why a wrong version that only reorders stores to distinct words is equivalent and cannot be required to fail, and the 28 members left."

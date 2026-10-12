@@ -1,3 +1,5 @@
+use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global, relocated};
+
 export!(
     cdecl,
     rw_00abccd0(
