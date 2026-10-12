@@ -65,6 +65,7 @@
 //! as a [`Mat4`] (or pad it) and place [`Vec3`] fields with care.
 
 pub mod approx;
+pub mod shaft;
 mod mat3;
 mod mat4;
 mod quat;
