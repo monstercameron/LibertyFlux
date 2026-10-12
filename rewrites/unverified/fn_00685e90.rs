@@ -6,8 +6,11 @@
 /// and whose contiguous records start at the pointer stored at `+0`. Each
 /// record is `0xe0` bytes; byte `+0x1b` contributes one unit and byte `+0x1a`
 /// contributes another whenever nonzero. The second cdecl argument adds one
-/// to both counts when its low byte is nonzero; the middle argument is unused.
-/// A null record pointer skips the loop even when the count is nonzero.
+/// to both counts when its low byte is nonzero; the third argument is unused.
+/// With a null record pointer, the original skips one record read but still
+/// advances by `0xe0`; if the count exceeds one it then faults while reading
+/// from the low address `0xe0`. The successful null cases (count zero or one)
+/// are covered separately; the faulting combination is excluded by contract.
 ///
 /// The original uses a cdecl stack frame with three words and returns
 /// `(count_1b + count_1a) << 5` in EAX. The 16-bit count is zero-extended

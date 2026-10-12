@@ -9,6 +9,9 @@
 //! [`NodeId`], so no address appears here and nothing depends on pointer
 //! width.
 //!
+//! [`StaticWords`] is the companion table for words that routines set to
+//! constants (no links): it stores the values and nothing more.
+//!
 //! Specification of the operation in this module:
 //!
 //! - [`StaticLinks::replace_head`] takes a node and pushes it onto a list.

@@ -1688,6 +1688,14 @@
   "reason": null
  },
  {
+  "address": "0x00A33C80",
+  "name": "pending_00a33c80",
+  "file": "fn_00a33c80.rs",
+  "lane": "r-s743",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A3ECB0",
   "name": "vehicle_accept_attachment_state",
   "file": "fn_00a3ecb0.rs",
@@ -2565,6 +2573,70 @@
   "file": "fn_00b44290.rs",
   "lane": "r-b701",
   "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B46320",
+  "name": null,
+  "file": "fn_00b46320.rs",
+  "lane": "a-U129",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B46350",
+  "name": null,
+  "file": "fn_00b46350.rs",
+  "lane": "a-U129",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B46380",
+  "name": null,
+  "file": "fn_00b46380.rs",
+  "lane": "a-U129",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B463B0",
+  "name": null,
+  "file": "fn_00b463b0.rs",
+  "lane": "a-U129",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B463E0",
+  "name": null,
+  "file": "fn_00b463e0.rs",
+  "lane": "a-U129",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B46410",
+  "name": null,
+  "file": "fn_00b46410.rs",
+  "lane": "a-U129",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B46440",
+  "name": null,
+  "file": "fn_00b46440.rs",
+  "lane": "a-U129",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B46470",
+  "name": null,
+  "file": "fn_00b46470.rs",
+  "lane": "a-U129",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -4749,7 +4821,7 @@
   "file": "fn_00e62680.rs",
   "lane": "r-s745",
   "outcome": "deferred",
-  "reason": "other"
+  "reason": "partly_proven"
  },
  {
   "address": "0x00E626A0",
@@ -4828,8 +4900,8 @@
   "name": "register_audio_low_end_footprint_setting",
   "file": "fn_00e62bd0.rs",
   "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00E62BF0",
