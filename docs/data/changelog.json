@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: the four channel steps of the spatial library's shaft class",
+    "title": "Devlog: the lift lane's entry on the shaft class",
     "commit": null,
+    "summary": "The lane's own account of lifting the four channel steps of the shaft class is added to the devlog.",
+    "changes": [
+      "The entry gives the object's layout as the rewrites establish it, the per-channel arithmetic, the proof, the three wrong header comments, and what is not established: the square-root helper's rounding and what the step means."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: the four channel steps of the spatial library's shaft class",
+    "commit": "3292261fb7843fe508eeefeb7ae38cb4aa5f54bb",
     "summary": "The third class lift of the evening: all four verified methods of one class, four near-identical steps over a channel each, about a kilobyte of float arithmetic apiece.",
     "changes": [
       "crates/lf-math gains a shaft module with one type and four methods, one per channel: 460 lines with no unsafe code, where the four verified rewrites are 1,022 lines with 52 uses of unsafe. The class's name comes from the executable's type information; what the step means physically is not established and the module says so.",
