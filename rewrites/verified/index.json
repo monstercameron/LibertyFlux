@@ -45261,6 +45261,132 @@
   "lane": "r-s654"
  },
  {
+  "address": "0x0086CBE0",
+  "name": "Script_ProtSlotAllocGlobal",
+  "kind": "function",
+  "file": "functions/fn_0086cbe0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086CC40",
+  "name": "Script_MemcpyWrapA",
+  "kind": "function",
+  "file": "functions/fn_0086cc40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086CC60",
+  "name": "Script_MemcpyWrapB",
+  "kind": "function",
+  "file": "functions/fn_0086cc60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086CC80",
+  "name": "Script_ProtSlotPeek2",
+  "kind": "function",
+  "file": "functions/fn_0086cc80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086CCD0",
+  "name": "Script_ProgramLookup",
+  "kind": "function",
+  "file": "functions/fn_0086ccd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086CD30",
+  "name": "Script_ProgramInsert",
+  "kind": "function",
+  "file": "functions/fn_0086cd30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086CDC0",
+  "name": "Script_ProgramRemove",
+  "kind": "function",
+  "file": "functions/fn_0086cdc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086CE30",
+  "name": "Script_ProgramTableAlloc",
+  "kind": "function",
+  "file": "functions/fn_0086ce30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086CEA0",
+  "name": "Script_NativeWriteback",
+  "kind": "function",
+  "file": "functions/fn_0086cea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086CF00",
+  "name": "scrThread::scrThread",
+  "kind": "function",
+  "file": "functions/fn_0086cf00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086CFB0",
+  "name": "rage::scrThread::~scrThread",
+  "kind": "function",
+  "file": "functions/fn_0086cfb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086D070",
+  "name": "Script_ThreadFail",
+  "kind": "function",
+  "file": "functions/fn_0086d070.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086E4D0",
+  "name": "Script_NativeBind",
+  "kind": "function",
+  "file": "functions/fn_0086e4d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
+  "address": "0x0086E560",
+  "name": "Script_InsnLength",
+  "kind": "function",
+  "file": "functions/fn_0086e560.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s748"
+ },
+ {
   "address": "0x0086E870",
   "name": "TIMERB",
   "kind": "native",
