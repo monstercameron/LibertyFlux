@@ -1031,12 +1031,13 @@ fn trial_vf73(rng: &mut Rng, variant: Variant) -> Result<(), String> {
     c.keep.push(item);
     let (rw, lf) = run_both(
         &mut c,
-        fn_00a2bcc0::rw_00a2bcc0,
+        |this| fn_00a2bcc0::rw_00a2bcc0(this),
         |ped, this, world| match variant {
             Variant::Lifted => ped.settle_budget(this, world),
             Variant::Wrong => wrong_vf73(ped, this, world),
         },
     );
+    count_vf73(&rw);
     compare("vf73", &rw, &lf)
 }
 
@@ -1259,4 +1260,36 @@ fn vf73_lift_matches_rewrite() {
 #[test]
 fn vf73_wrong_lift_is_caught() {
     expect_wrong_caught("vf73", trial_vf73, 0x73);
+}
+
+/// Branch counters for the task-budget step's rewrite runs: the item was
+/// looked up, the task was classified, the task query ran, the award ran, and
+/// the step returned a zero answer.
+static VF73_COUNTS: [std::sync::atomic::AtomicU32; 5] =
+    [const { std::sync::atomic::AtomicU32::new(0) }; 5];
+
+fn count_vf73(rw: &support::Outcome) {
+    use std::sync::atomic::Ordering;
+    let has = |id: u32| rw.calls.iter().any(|(n, _)| *n == format!("#{id}"));
+    let flags = [has(1), has(2), has(3), has(4), rw.ret == 0];
+    for (counter, hit) in VF73_COUNTS.iter().zip(flags) {
+        if hit {
+            counter.fetch_add(1, Ordering::SeqCst);
+        }
+    }
+}
+
+#[test]
+fn vf73_generated_cases_reach_every_branch() {
+    for c in &VF73_COUNTS {
+        c.store(0, std::sync::atomic::Ordering::SeqCst);
+    }
+    let (failures, first) = run_trials(TRIALS, 0x73, trial_vf73, Variant::Lifted);
+    assert_eq!(failures, 0, "vf73: {first:?}");
+    let counts: Vec<u32> = VF73_COUNTS
+        .iter()
+        .map(|c| c.load(std::sync::atomic::Ordering::SeqCst))
+        .collect();
+    eprintln!("vf73 branch counts (item, classify, task query, award, zero answer): {counts:?}");
+    assert!(counts.iter().all(|&n| n > 0), "a budget branch is never generated: {counts:?}");
 }

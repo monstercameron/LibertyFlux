@@ -47,10 +47,14 @@ lf_checker_rt::export!(cdecl, rw_008d64f0(p: u32) -> f32 {
         ((d & 0xFFFF_FFFF) as u32, ((d >> 32) & 0xFFFF_FFFF) as u32)
     }
     unsafe {
-        const SIGN_MASK: u32 = 0x8000_0000;
+        // Sign mask the original flips the low lane with, read from the
+        // image like the original reads it (only the low lane feeds the
+        // conversion; the other lanes land in the narrowed upper half).
+        const SIGN_MASK_AT: u32 = 0x00FE8FA0;
+        let sign_mask = lf_checker_rt::global::<u32>(SIGN_MASK_AT).read_unaligned();
         let f0 = (p as *const u32).read_unaligned();
         let f1 = (p as *const u32).add(1).read_unaligned();
-        let (a0, a1) = lo_hi(cvtss2sd_bits(f0 ^ SIGN_MASK));
+        let (a0, a1) = lo_hi(cvtss2sd_bits(f0 ^ sign_mask));
         let (b0, b1) = lo_hi(cvtss2sd_bits(f1));
         let ans: u64 = lf_checker_rt::callee_cdecl!(1, u64, a0, a1, b0, b1);
         f64::from_bits(ans) as f32

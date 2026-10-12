@@ -253,10 +253,25 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         method: "vf73",
-        lifted_as: "",
-        state: State::NotLifted,
-        calls: &[],
-        narrows: &["verified, 488 bytes of the original: not lifted in this pass"],
+        lifted_as: "CPlayerPed::settle_budget",
+        state: State::Proven,
+        calls: &[
+            "base_step",
+            "current_item",
+            "classify_task",
+            "task_present",
+            "award",
+            "frame_delta_bits",
+            "cost_scale_bits",
+            "heat_limit",
+            "read_byte",
+        ],
+        narrows: &[
+            "the classifier writes two words through pointer arguments; the proof answers them as scripted values and logs the pointer arguments as a shape marker, not as addresses",
+            "the classifier's tag byte is written but never read by the step, so the proof does not compare it",
+            "the task chain is walked through the world's word read; the proof generates chains of up to three nodes that end; a cyclic chain would not end in the original either",
+            "the frame cost is a float product of two globals; not-a-number and values beyond the 64-bit range take the integer indefinite, as the original does, and the proof generates those values",
+        ],
     },
 ];
 
