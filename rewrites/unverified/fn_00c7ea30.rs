@@ -46,6 +46,7 @@ lf_checker_rt::export!(thiscall, rw_00c7ea30(this: u32, _unused: u32) -> u32 {
             1,
             BLEND_WEIGHT_BITS,
             1,
+            0,
         )
     } else {
         0
