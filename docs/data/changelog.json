@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 5 files from lanes (690 unverified rewrites, 976 in review)",
+    "title": "Devlog: hourly review, 23:05 on 11 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "15,371 bytes an hour verified; 749 routines lifted in the evening from lists chosen by shape, and that supply is now used up; lifting moves to classes.",
+      "Two faults of the coordinator's corrected: brief paths corrupted by unescaped backslashes since 20:00, and a pipeline broken twice by the adoption of the placement check."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 5 files from lanes (690 unverified rewrites, 976 in review)",
+    "commit": "fd0ff2443c167b4ad0e2472f8571bdfa3c5a5cab",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 690 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
