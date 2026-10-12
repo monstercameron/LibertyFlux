@@ -51,7 +51,9 @@ mod x86 {
     /// A rewrite returning the quotient it stored.
     type FloatFn = extern "cdecl" fn() -> f32;
 
-    /// The three return shapes the family comes in.
+    /// The three return shapes the family comes in. A batch may hold only
+    /// some of them, so unused variants are allowed.
+    #[allow(dead_code)]
     #[derive(Clone, Copy)]
     pub enum RefreshFn {
         /// No return channel.
@@ -245,7 +247,9 @@ mod x86 {
     }
 
     fn check_instance(inst: &Instance, seed: u32) -> Outcome {
-        let has_return = !matches!(inst.call, RefreshFn::Unit(_));
+        // Only the quotient-returning shape compares a return; the dead zero
+        // is checked inside run_rewrite.
+        let has_return = matches!(inst.call, RefreshFn::Float(_));
         let mut rng = Rng(seed);
         let mut outcome = Outcome {
             cases: 0,

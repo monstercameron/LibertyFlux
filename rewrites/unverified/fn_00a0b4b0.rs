@@ -24,10 +24,8 @@ lf_checker_rt::export!(stdcall, rw_00a0b4b0(
         const POOL_FORWARD_LOOKUP: u32 = 2;
         const SET_STATE_TIMING: u32 = 3;
         const ADVANCE_STREAMING: u32 = 4;
-        const AUDIO_CONFIGURE_TABLE: u32 = 5;
         const AUDIO_CONFIGURE: u32 = 6;
         const AUDIO_RESOLVE_VOICE: u32 = 7;
-        const ENTITY_VTABLE_ACTION: u32 = 8;
 
         #[inline(always)]
         unsafe fn read_u32(address: u32) -> u32 {

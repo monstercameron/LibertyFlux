@@ -17,7 +17,7 @@ static SLOTS: [AtomicU32; 165] = [AtomicU32::new(0), AtomicU32::new(0), AtomicU3
 
 /// The slot behind a file address. The address table is generated from the
 /// rewrites' own global operands; an unlisted address is a test bug.
-fn slot_for(file_va: u32) -> *const AtomicU32 {
+fn slot_for(file_va: u32) -> *mut u32 {
     match file_va {
         0x01057680 => SLOTS[0].as_ptr(),
         0x01057684 => SLOTS[1].as_ptr(),
