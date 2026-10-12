@@ -16,6 +16,7 @@
 
 pub mod event_handler;
 pub mod follow_point_route;
+pub mod go_to_point_on_route;
 pub mod layout;
 pub mod move_between_points;
 pub mod ped_task;

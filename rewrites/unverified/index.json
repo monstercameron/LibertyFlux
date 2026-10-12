@@ -1056,6 +1056,14 @@
   "reason": "The original stores the returned count byte at params+0x1e3; the earlier rewrite omitted it, causing the heap mismatch at 0x33E0. After adding the byte store, a 60-trial zero-count diagnostic passes 60/60 with all originals complete. The required 1,000-trial correct and wrong-version runs were started but stopped before completion at the 95-minute lane cap."
  },
  {
+  "address": "0x0063A880",
+  "name": "rage::ptxRule::create",
+  "file": "fn_0063a880.rs",
+  "lane": "r-s777",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0063AAB0",
   "name": "rage::rmPtfxKeyframe::rmPtfxKeyframe",
   "file": "fn_0063aab0.rs",
@@ -4883,6 +4891,14 @@
   "address": "0x00DF7B30",
   "name": "UIGalleryFileViewer::vf108",
   "file": "fn_00df7b30.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DF7B70",
+  "name": "UIFileViewer::bind_controller_frame",
+  "file": "fn_00df7b70.rs",
   "lane": "r-s780",
   "outcome": "not_reached",
   "reason": null
