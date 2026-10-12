@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Devlog: the lift lane's entry on the seek-cover tasks",
+    "title": "Rewrites: 29 more functions pass the checker (19687 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "29 rewrites added under rewrites/verified: 0 script native handlers and 29 other functions.",
+      "The tree now holds 19687 rewrites, 19684 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "1 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Devlog: the lift lane's entry on the seek-cover tasks",
+    "commit": "b9df171e70e0e189a56f55392dba938eaf291d64",
     "summary": "The lane's own account of lifting eleven methods of the two seek-cover task classes is added to the devlog.",
     "changes": [
       "The entry gives the classes' interface as far as the rewrites establish it, the lifted form and its traits, the proof design, the method left out and why, the virtual slots whose meaning is inferred from use, and the finding about the router's proof."

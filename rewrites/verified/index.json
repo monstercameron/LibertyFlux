@@ -35001,6 +35001,114 @@
   "lane": "r-s756"
  },
  {
+  "address": "0x005C3390",
+  "name": "ped_list_cleanup_and_tls_service",
+  "kind": "function",
+  "file": "functions/fn_005c3390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C33E0",
+  "name": "ped_factory_process_collection_slots",
+  "kind": "function",
+  "file": "functions/fn_005c33e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C3450",
+  "name": "ped_factory_slot_lookup_by_index",
+  "kind": "function",
+  "file": "functions/fn_005c3450.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C34B0",
+  "name": "ped_factory_run_slot_cleanup",
+  "kind": "function",
+  "file": "functions/fn_005c34b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C3510",
+  "name": "CPedData::vf0",
+  "kind": "function",
+  "file": "functions/fn_005c3510.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C3550",
+  "name": "ped_tls_object_slot_init_a",
+  "kind": "function",
+  "file": "functions/fn_005c3550.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C3590",
+  "name": "ped_tls_object_slot_init_b",
+  "kind": "function",
+  "file": "functions/fn_005c3590.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C35D0",
+  "name": "ped_tls_object_slot_init_c",
+  "kind": "function",
+  "file": "functions/fn_005c35d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C3610",
+  "name": "ped_tls_object_slot_init_d",
+  "kind": "function",
+  "file": "functions/fn_005c3610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C3650",
+  "name": "ped_tls_object_slot_init_e",
+  "kind": "function",
+  "file": "functions/fn_005c3650.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C3690",
+  "name": "CPedFactoryNY::vf0",
+  "kind": "function",
+  "file": "functions/fn_005c3690.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C36C0",
+  "name": "CPedFactoryNY::vf2",
+  "kind": "function",
+  "file": "functions/fn_005c36c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
   "address": "0x005C3770",
   "name": "CPedFactoryNY::vf5",
   "kind": "function",
@@ -35008,6 +35116,69 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "r-b687"
+ },
+ {
+  "address": "0x005C3C30",
+  "name": "ped_factory_attach_resource",
+  "kind": "function",
+  "file": "functions/fn_005c3c30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C3E60",
+  "name": "CPedFactoryNY::vf9",
+  "kind": "function",
+  "file": "functions/fn_005c3e60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C3F70",
+  "name": "ped_tls_pool_descriptor_init_a",
+  "kind": "function",
+  "file": "functions/fn_005c3f70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C4070",
+  "name": "ped_tls_pool_descriptor_init_b",
+  "kind": "function",
+  "file": "functions/fn_005c4070.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C40F0",
+  "name": "ped_factory_allocate_next_slot",
+  "kind": "function",
+  "file": "functions/fn_005c40f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C4160",
+  "name": "ped_tls_pool_descriptor_init_c",
+  "kind": "function",
+  "file": "functions/fn_005c4160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x005C41E0",
+  "name": "ped_tls_pool_descriptor_init_d",
+  "kind": "function",
+  "file": "functions/fn_005c41e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
  },
  {
   "address": "0x005C43E0",
@@ -95625,6 +95796,42 @@
   "lane": "a-Q153"
  },
  {
+  "address": "0x00B271B0",
+  "name": "clone_ped_blend_component",
+  "kind": "function",
+  "file": "functions/fn_00b271b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x00B27250",
+  "name": "conditionally_copy_nearby_blend_component",
+  "kind": "function",
+  "file": "functions/fn_00b27250.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x00B27BB0",
+  "name": "find_first_available_task_id",
+  "kind": "function",
+  "file": "functions/fn_00b27bb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
+  "address": "0x00B27E10",
+  "name": "update_blend_timing_state",
+  "kind": "function",
+  "file": "functions/fn_00b27e10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
   "address": "0x00B27E30",
   "name": "write_blend_motion_values",
   "kind": "function",
@@ -95641,6 +95848,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-U126"
+ },
+ {
+  "address": "0x00B27EF0",
+  "name": "toggle_motion_flag_and_request_update",
+  "kind": "function",
+  "file": "functions/fn_00b27ef0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
  },
  {
   "address": "0x00B28050",
@@ -95913,6 +96129,15 @@
   "lane": "r-s498"
  },
  {
+  "address": "0x00B2C910",
+  "name": "squared_distance_from_blend_limits",
+  "kind": "function",
+  "file": "functions/fn_00b2c910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
   "address": "0x00B2C980",
   "name": "garage_model_gate",
   "kind": "function",
@@ -96102,6 +96327,15 @@
   "lane": "a-G01"
  },
  {
+  "address": "0x00B2F8A0",
+  "name": "reset_three_task_slots",
+  "kind": "function",
+  "file": "functions/fn_00b2f8a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
   "address": "0x00B2F940",
   "name": "ped_task_spawn_or_update",
   "kind": "function",
@@ -96147,6 +96381,15 @@
   "lane": "a-U126"
  },
  {
+  "address": "0x00B30380",
+  "name": "recording_category",
+  "kind": "function",
+  "file": "functions/fn_00b30380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
+ },
+ {
   "address": "0x00B30400",
   "name": "ped_task_match_and_adopt",
   "kind": "function",
@@ -96172,6 +96415,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-b705"
+ },
+ {
+  "address": "0x00B30CA0",
+  "name": "read_blend_position",
+  "kind": "function",
+  "file": "functions/fn_00b30ca0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
  },
  {
   "address": "0x00B30D80",
@@ -141352,6 +141604,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-U126"
+ },
+ {
+  "address": "0x00CC33F0",
+  "name": "has_sufficient_motion",
+  "kind": "function",
+  "file": "functions/fn_00cc33f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U137"
  },
  {
   "address": "0x00CC4D20",
