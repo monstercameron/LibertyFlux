@@ -10,7 +10,7 @@ lf_checker_rt::export!(thiscall, rw_00c7f140(this: u32, ped: u32) -> u32 {
     const TASK_PARAMETER_OFFSET: u32 = 0x18;
     const TASK_FLAGS_OFFSET: u32 = 0x1C;
     const ACTIVE_BYTE_OFFSET: u32 = 0x20;
-    const STATE_OFFSET: u32 = 0x28;
+    const PENDING_STATE_OFFSET: u32 = 0x28;
     const PENDING_TASK_OFFSET: u32 = 0x2C;
     const PED_READY_BYTE_OFFSET: u32 = 0xA60;
     const PED_STATE_OFFSET: u32 = 0x24;
@@ -23,12 +23,13 @@ lf_checker_rt::export!(thiscall, rw_00c7f140(this: u32, ped: u32) -> u32 {
     const ALLOCATE_TASK: u32 = 3;
     const CONSTRUCT_MOVE_TASK: u32 = 4;
     const READY_STATE: u32 = 1;
-    const COMPLETED_STATE: u32 = 2;
     const REQUIRED_PED_STATE_BIT: u32 = 0x0800_0000;
     const REQUIRED_TASK_FLAG: u8 = 2;
 
-    let state = unsafe { (this.wrapping_add(STATE_OFFSET) as *const u32).read_unaligned() };
-    if state == READY_STATE {
+    let pending_state = unsafe {
+        (this.wrapping_add(PENDING_STATE_OFFSET) as *const u32).read_unaligned()
+    };
+    if pending_state == READY_STATE {
         let pending_task = unsafe {
             (this.wrapping_add(PENDING_TASK_OFFSET) as *const u32).read_unaligned()
         };
@@ -44,16 +45,11 @@ lf_checker_rt::export!(thiscall, rw_00c7f140(this: u32, ped: u32) -> u32 {
         (this.wrapping_add(ACTIVE_BYTE_OFFSET) as *const u8).read_unaligned()
     } != 0;
     let task_id = unsafe { (this.wrapping_add(TASK_ID_OFFSET) as *const u32).read_unaligned() };
-    if !is_active && task_id == 0 {
+    let task_flags = unsafe {
+        (this.wrapping_add(TASK_FLAGS_OFFSET) as *const u32).read_unaligned()
+    };
+    if is_active && task_flags == 0 {
         return 0;
-    }
-    if unsafe { (this.wrapping_add(STATE_OFFSET) as *const u32).read_unaligned() }
-        == COMPLETED_STATE
-    {
-        return 0;
-    }
-    unsafe {
-        (this.wrapping_add(STATE_OFFSET) as *mut u32).write_unaligned(0);
     }
 
     let ped_task = lf_checker_rt::callee_cdecl!(GET_PED_TASK, u32, task_id);
@@ -77,11 +73,14 @@ lf_checker_rt::export!(thiscall, rw_00c7f140(this: u32, ped: u32) -> u32 {
     if ped_ready
         && !time_is_below_or_unordered
         && ped_task_has_flag
-        && ped_state & REQUIRED_PED_STATE_BIT != 0
+        && ped_state & REQUIRED_PED_STATE_BIT == 0
     {
         return 0;
     }
 
+    unsafe {
+        (this.wrapping_add(PENDING_STATE_OFFSET) as *mut u32).write_unaligned(0);
+    }
     let task_pool = unsafe { lf_checker_rt::global::<u32>(TASK_POOL_GLOBAL).read_unaligned() };
     let allocated_task = lf_checker_rt::callee_thiscall!(ALLOCATE_TASK, u32, task_pool);
     if allocated_task == 0 {
@@ -90,9 +89,6 @@ lf_checker_rt::export!(thiscall, rw_00c7f140(this: u32, ped: u32) -> u32 {
 
     let task_parameter = unsafe {
         (this.wrapping_add(TASK_PARAMETER_OFFSET) as *const u32).read_unaligned()
-    };
-    let task_flags = unsafe {
-        (this.wrapping_add(TASK_FLAGS_OFFSET) as *const u32).read_unaligned()
     };
     lf_checker_rt::callee_thiscall!(
         CONSTRUCT_MOVE_TASK,
