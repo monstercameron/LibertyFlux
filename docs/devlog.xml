@@ -9,6 +9,53 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Lift of small free functions by shape: 12 families, 79 instances proven</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free24"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free24</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>From lane l-free24.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-free24.&lt;/p&gt;
+&lt;time datetime="2026-10-11"&gt;11 October 2026&lt;/time&gt;
+&lt;p&gt;&lt;strong&gt;What was asked.&lt;/strong&gt; Lift the 211 verified small free functions that call nothing (sizes 12 to 23 bytes)
+to portable Rust, by finding the routines they are instances of, proving each lifted routine against the verified
+32-bit rewrite of every instance, and reporting what is left.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What was found.&lt;/strong&gt; Role extraction, not names, groups the rewrites: each rewrite's pointer accesses,
+constants, lets and return were read by a script, and each family matched by shape. Matching the shapes of the
+listed rewrites gives 79 instance proofs over 78 distinct rewrites, in 12 families. Four families reuse lifted routines
+already in the repository without change (constant writes, field stores, indexed reads, word tests). Two more reuse
+existing routines over a region of globals (the constant fill, and the constant writes). Six families are new: a byte
+flag test, a field-pair store, a packed low-byte flag, a field-to-slot copy, a field comparison, and a row address.&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Family&lt;/th&gt;&lt;th&gt;Instances&lt;/th&gt;&lt;th&gt;Lifted routine&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Constant writes into an object&lt;/td&gt;&lt;td data-label="Instances"&gt;18&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;existing&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Field store of one parameter&lt;/td&gt;&lt;td data-label="Instances"&gt;10&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;existing&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Indexed read of a table in an object&lt;/td&gt;&lt;td data-label="Instances"&gt;6&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;existing&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Word test (equal, not equal, signed greater)&lt;/td&gt;&lt;td data-label="Instances"&gt;9&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;existing&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Fill of consecutive global words&lt;/td&gt;&lt;td data-label="Instances"&gt;6&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;existing constant fill&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Constant writes into globals&lt;/td&gt;&lt;td data-label="Instances"&gt;3&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;existing constant writes&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Byte flag test (one byte, one mask)&lt;/td&gt;&lt;td data-label="Instances"&gt;4&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;new&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Field-pair store&lt;/td&gt;&lt;td data-label="Instances"&gt;5&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;new&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Packed low-byte flag&lt;/td&gt;&lt;td data-label="Instances"&gt;5&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;new&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Field copied to a global slot&lt;/td&gt;&lt;td data-label="Instances"&gt;4&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;new&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Field comparison with a constant&lt;/td&gt;&lt;td data-label="Instances"&gt;5&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;new&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Row address of a table&lt;/td&gt;&lt;td data-label="Instances"&gt;4&lt;/td&gt;&lt;td data-label="Lifted routine"&gt;new&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;What was decided.&lt;/strong&gt; Each family is one routine on a small data type, with the instance table generated
+from the rewrite text. Every instance runs 1,000 generated cases against its rewrite, and three deliberately wrong
+versions per family must each be caught by every instance. The global families run against a test region that the
+rewrites' global addresses are mapped into; the row family resolves its base the way the rewrite does, and the lifted
+routine takes the resolved base. The new modules contain no unsafe code. Several lifts are weak: the fill, slot-copy, field-store and row-address
+families each reduce to one assignment or one arithmetic expression over a table of instances.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What was found that needs review.&lt;/strong&gt; Nine listed rewrites cannot compile from the repository: six
+reference constants that no tracked file defines, one calls a helper its file does not define, and two call a helper
+that only the test crate would provide. They are listed, not worked around. The six with undefined constants are marked
+verified in the index, so their status should be checked by the checker's owner.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Reproduce.&lt;/strong&gt; Run the role extraction over the listed rewrites, generate the test crates, and run
+&lt;code&gt;cargo test -p&lt;/code&gt; for each crate with the 32-bit target. The host check of the scratch workspace has no errors
+and no warnings.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Static-row, constant-write and cookie-seal families: 36 instances proven, two new lifted methods</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free25"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free25</id>
@@ -1198,25 +1245,5 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;h3&gt;What remains unknown&lt;/h3&gt;
 &lt;p&gt;Luna versus Muse performance has not been measured on matched tasks. Reviewed proofs, covered branches, repair effort and time per accepted result are the useful comparison; static preparation and raw checker passes do not establish parity.&lt;/p&gt;
 &lt;h3&gt;23:32 recovery review&lt;/h3&gt;&lt;p&gt;The coordinator had stopped dispatching after an interrupted turn, leaving the monitor alive while work lanes finished. Native task observations and visible dashboard logs confirmed that the pipeline was stalled. Resumed workers now acquire local slots automatically instead of awaiting individual coordinator grants. Seven isolated Windows checks passed: six competing wrappers never exceeded three active jobs, failed executable starts released capacity, completed claims were reusable, and interrupted live jobs remained reserved for inspection. The fix was committed and pushed.&lt;/p&gt;&lt;p&gt;At the review, the inventory held 16,901 verified functions and 2,509,740 verified bytes. Compared with the 13:15 review, this was only two net functions and 1,174 bytes across more than ten hours; that interval describes the stall, not active model throughput. Fifteen native Luna tasks were observed after replacing completed workers. A five-minute continuation now checks replenishment and progress. The legacy health report counts Muse processes only; it does not measure native Codex tasks.&lt;/p&gt;&lt;p&gt;Review of six newly passing candidates accepted four complete small wrappers and kept two stream candidates partial because pinned owner values hid incorrect consumption of helper output. The four accepted rewrites were pushed, raising the verified game-function count to 16,905. Larger stage proofs remain partial and do not raise this total. Further replay failures of old proofs are under independent provenance review before withdrawal.&lt;/p&gt;&lt;p&gt;The project remains in the rewrite phase; harness acceptance has not demonstrated a running portable game. The immediate direction risk is mistaking numerous bounded stage results for complete implementation. Stop promoting or reporting such stages as whole functions. Continue real missing branches, review exact negative controls and prioritize complete small functions where useful.&lt;/p&gt;&lt;p&gt;At 23:32, health checks found 4.5 GB physical memory free, 12.3 GB commit headroom and no large, old busy or abandoned project processes. The kernel nonpaged pool occupied 20.1 GB; owner applications were left untouched. Native per-task operating-system memory remains unavailable.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Showing native Codex lanes in the dashboard</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#native-codex-lanes-dashboard"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#native-codex-lanes-dashboard</id>
-    <published>2026-10-07T00:00:00Z</published>
-    <updated>2026-10-07T00:00:00Z</updated>
-    <summary>Verified The dashboard now displays native Codex work lanes, their model and effort, and their prompts, logs and results. The first continuation exposed a difference between native subagents and the process-based launcher.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The dashboard now displays native Codex work lanes, their model and effort, and their prompts, logs and results. The first continuation exposed a difference between native subagents and the process-based launcher.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Continue work with Luna at maximum effort and keep the local dashboard useful for following each lane.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The original dashboard discovered only Muse processes. Native Codex subagents were active and writing results, but the running filter showed no lanes. Their individual Windows process IDs and memory use are unavailable, so reporting zero memory would be misleading.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A coordinator-owned local registry supplies explicit task state. Registry data older than three minutes is shown as unknown rather than running. The lane list, model and effort, an opened log panel and an expanded initial prompt were inspected in the rendered browser. Registry tests cover stale, malformed and finished state.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Keep the process discovery for existing launchers and add native lane state alongside it. Label unavailable task memory, distinguish the paused Muse supervisor from coordinator-managed lanes, and include native lanes in history and status updates. Regression lanes show proofs checked; reproducing a historic positive result without a current negative control does not claim new verification.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the dashboard and status scripts with fresh explicit native lane registry entries. Open each lane card, inspect its log and prompt, then make the registry stale and confirm that running state disappears. Run the dashboard and registry tests in the coordinator test directory.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The dashboard was initially opened before its rendered lane display was checked. Its empty running filter concealed active native work. The continuation rules now require visual inspection before reporting that the dashboard works.&lt;/p&gt;</content>
   </entry>
 </feed>
