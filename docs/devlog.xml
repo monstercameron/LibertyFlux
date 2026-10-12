@@ -9,6 +9,35 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Small free functions: 83 instances in five families proven against lifted routines</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free22"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free22</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>From lane l-free22.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-free22.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift a group of 155 verified free functions of 13, 15 and 17 bytes that call nothing, by finding the routines they are instances of and proving each instance against one lifted routine.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Found.&lt;/strong&gt; Five families hold 83 of the 155: a store of one parameter into a field at a constant offset (50 instances, byte or word, four kinds of return), a copy of one static word into another (11), a comparison of a word with a constant or the parameter (6), a routine that writes constants into a few fields and returns zero, one or the object (10), and a read of a byte or word at a base plus an index times a stride (6). The other 72 are listed in groups, with the reason each is not lifted. Five of the field-store rewrites call a helper that no tracked file defines.&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Meaning&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Field-store instances&lt;/td&gt;&lt;td data-label="Value"&gt;50&lt;/td&gt;&lt;td data-label="Meaning"&gt;Byte (24) and word (26) stores; return zero, the parameter, the parameter's low byte, or nothing&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Word-copy instances&lt;/td&gt;&lt;td data-label="Value"&gt;11&lt;/td&gt;&lt;td data-label="Meaning"&gt;One word read and one word written, return zero; fifteen static words in all&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Word-test instances&lt;/td&gt;&lt;td data-label="Value"&gt;6&lt;/td&gt;&lt;td data-label="Meaning"&gt;Equal, not equal and signed greater, against a constant or the parameter; two read from static words&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Constant-write instances&lt;/td&gt;&lt;td data-label="Value"&gt;10&lt;/td&gt;&lt;td data-label="Meaning"&gt;One to three constant writes of one to four bytes; return zero, one or the object&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Indexed-read instances&lt;/td&gt;&lt;td data-label="Value"&gt;6&lt;/td&gt;&lt;td data-label="Meaning"&gt;Byte or word read at base plus index times stride, 32-bit wrapping arithmetic&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Missing, does not compile&lt;/td&gt;&lt;td data-label="Value"&gt;5&lt;/td&gt;&lt;td data-label="Meaning"&gt;Rewrites that call a helper named wrf; no tracked file or checker runtime defines it&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Lifted code added&lt;/td&gt;&lt;td data-label="Value"&gt;five modules in lf-core&lt;/td&gt;&lt;td data-label="Meaning"&gt;No unsafe code and no addresses; each family is one method on a small owning type with a table of instances&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Proof&lt;/td&gt;&lt;td data-label="Value"&gt;1,000 cases per instance&lt;/td&gt;&lt;td data-label="Meaning"&gt;Result and every byte or word the rewrite may touch compared after each call; floats compared as bits&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Wrong versions&lt;/td&gt;&lt;td data-label="Value"&gt;four per family, 64 cases each&lt;/td&gt;&lt;td data-label="Meaning"&gt;Caught by every instance in every family&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Verified.&lt;/strong&gt; In the final pass all five 32-bit test crates pass their three tests each (the differential comparison, the wrong versions, and the instance-table check); the host tests of lf-core and of the five test crates pass, and the host check of the lane's workspace passes.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Finding: the float return quiets a signalling NaN.&lt;/strong&gt; One float-returning rewrite in the indexed-read family returned a different bit pattern from the lifted word when the entry was a signalling not-a-number: the rewrite's return passes through the floating-point return register, which sets the quiet bit. The lifted read now models that return (a float result is quieted in the same way), and the test plants signalling and quiet not-a-number patterns in each word entry. The original routine is expected to behave the same way because it returns through the same register; this is inferred from the convention, not read from the original.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Finding: five verified rewrites do not compile from the repository.&lt;/strong&gt; The audio parameter-store rewrites call a helper named wrf. The checker index records them as verified, but no tracked file and no checker runtime defines the helper, so the test crate fails to build on them. They are listed as missing and were not worked around.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; A routine whose whole content is one address behind a null check (nine rewrites) is listed, not lifted. A family of fewer than four members is listed. A read-modify-write of flag bits is listed. Every lifted method takes its object as bytes or a table, so no lifted code depends on pointer width. The tests keep indexes small enough that every read stays inside the test object; the wrap-around of the offset arithmetic is covered by host tests of the lifted method.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Process finding.&lt;/strong&gt; Two runtime tests that share global slots raced when they ran in parallel and failed one run in several; one lock per test program fixes it. A test that compares a predicate on a random word almost never reaches the equal case: the test draws the tested word around the constant instead.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Still open.&lt;/strong&gt; The 72 listed functions are groups, not lifts. The five wrf rewrites need the helper defined by the repository, or the rewrites changed, before they can be proven. The field-store lift is one method over a table, a weak lift: the proof shows the table describes the rewrites, not that the family's meaning is understood.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A host for the finished game: what Bevy offers, what this engine needs, and why the renderer should be written against wgpu first</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#host-platform-research-2026-10-11"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#host-platform-research-2026-10-11</id>
@@ -1178,65 +1207,5 @@ under &lt;code&gt;.artifacts/scratch/l-free12/report.md&lt;/code&gt;.&lt;/p&gt;<
 &lt;p&gt;Read the executable through the mapped image, never the raw file at a mapped address, and confirm the mapping by decoding one known constructor first. Dump each class virtual table from the data section and cross-check every slot against prior lane names; decode every small function fully and skim large ones by callee names and referenced strings.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The subsystem clustering was wrong for part of the batch: functions labelled audio turned out to be jumping and ambient task code, while the true audio group sat elsewhere. The base abort implementation shared between dummy and regular tasks lives in the encrypted region, so that alias rests on behaviour of the overrides, not on reading the shared code.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Two in a hundred old proofs do not reproduce on the current checker, and a night of audits in one table</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#old-proofs-on-the-current-checker-2026-10-06"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#old-proofs-on-the-current-checker-2026-10-06</id>
-    <published>2026-10-06T00:00:00Z</published>
-    <updated>2026-10-06T00:00:00Z</updated>
-    <summary>Between midnight and eight in the morning on 6 October the checker gained two versions and five separate audits ran against the verified tree. This entry puts their results side by side, because the last one changes what the others mean: the weakness that matters most is not any one blind spot but the age of most proofs.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Between midnight and eight in the morning on 6 October the checker gained two versions and five separate audits ran against the verified tree. This entry puts their results side by side, because the last one changes what the others mean: the weakness that matters most is not any one blind spot but the age of most proofs.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Each audit asked the same question of a different part of the tree: is there a way for a rewrite to be wrong and still pass, and if so, how many verified rewrites are wrong that way?&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Audit&lt;/th&gt;&lt;th&gt;In scope&lt;/th&gt;&lt;th&gt;Result&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;Pointer arguments the proof skips (the buffer behind them was not compared)&lt;/td&gt;&lt;td&gt;2,992 verified functions, 4,633 call sites&lt;/td&gt;&lt;td&gt;22 rewrites handed a callee something other than the original does and are repaired and proved again; 3 are withdrawn with a written repair; about 40 candidates turned out not to be wrong&lt;/td&gt;&lt;td&gt;Verified: every case settled by a run, with the old behaviour run as the wrong version&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Input words whose description used a key the driver did not know (it gave them random bits)&lt;/td&gt;&lt;td&gt;73 verified proofs&lt;/td&gt;&lt;td&gt;All 73 hold under the contract their authors meant&lt;/td&gt;&lt;td&gt;Verified: proved again on the stock checker&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Where inside a declared range a global variable is written (not compared before checker version 8)&lt;/td&gt;&lt;td&gt;1,578 verified proofs&lt;/td&gt;&lt;td&gt;No misplaced write in any of them. 714 of the proofs never changed a global in any trial. 598 of those have been sorted: 581 belong to functions that only read their globals, and 17 write one on a path no trial reached; the other 116 are not sorted yet&lt;/td&gt;&lt;td&gt;Verified: 400 re-run with one-word ranges, 1,172 re-run unchanged on version 8&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Proofs an audit lane could not reproduce after adding its own snapshots&lt;/td&gt;&lt;td&gt;28&lt;/td&gt;&lt;td&gt;All 28 reproduce exactly as recorded; the audit's snapshots read through pointers that are invalid in some trials&lt;/td&gt;&lt;td&gt;Verified: run on the proving lanes' own libraries and on fresh builds&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Old proofs re-run unchanged on the current checker (a by-product of the third audit)&lt;/td&gt;&lt;td&gt;1,177&lt;/td&gt;&lt;td&gt;24 do not reproduce: about 2%&lt;/td&gt;&lt;td&gt;Verified for the count; the causes are in the next table&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;The 24 that did not reproduce&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;What happened on the current checker&lt;/th&gt;&lt;th&gt;Count&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;Vacuous: a callee never fired on a completed trial&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;The checker that accepted them had no such rule; the proof compared nothing about those calls&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Calls or heap differ&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;Not yet explained; two are a not-a-number's payload&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Call log cut short (more than a thousand calls attempted, 256 logged)&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;The earlier checker passed a truncated log; the calls past the limit were never compared&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;The current driver cannot load the contract&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;Contract shapes that later versions stopped accepting; cannot be re-run without rewriting the contract&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;The tracked rewrite does not compile&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;The file in the repository is not the file that was proved&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;The tracked rewrite is missing or cut short&lt;/td&gt;&lt;td&gt;5&lt;/td&gt;&lt;td&gt;An index row without a usable file&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;The rewrite faults, or writes an undeclared global&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;Not yet explained&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;One trial in a hundred differs in a not-a-number's payload&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;The compiler had reordered a float addition; repaired with the order pinned and proved again&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;None of these was found by looking for it. They appeared because 1,177 proofs happened to be re-run for another reason.&lt;/p&gt;
-&lt;h3&gt;Why this is the larger finding&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Checker version of the proof of record&lt;/th&gt;&lt;th&gt;Verified functions&lt;/th&gt;&lt;th&gt;Bytes&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;1 and 2&lt;/td&gt;&lt;td&gt;4,470&lt;/td&gt;&lt;td&gt;315,600&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;1,945&lt;/td&gt;&lt;td&gt;255,200&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;4,614&lt;/td&gt;&lt;td&gt;649,900&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;5&lt;/td&gt;&lt;td&gt;3,349&lt;/td&gt;&lt;td&gt;573,700&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;6&lt;/td&gt;&lt;td&gt;2,135&lt;/td&gt;&lt;td&gt;607,000&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;7 and 8&lt;/td&gt;&lt;td&gt;478&lt;/td&gt;&lt;td&gt;69,000&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;Two thirds of the verified functions were accepted by checker versions 1 to 4, before the checker refused vacuous proofs, before a deliberately wrong version was required for every function, and before most of what it can now observe existed. The project's plan says the regression between waves is the re-run of every rewrite under the current checker. That stopped being done when rewrites began to be committed on every five-minute tick. If the rate in this sample holds, about 220 of those 11,029 functions have a proof that would not be accepted today. Inferred: the sample was not random (it was the proofs with a wide global range), so the true rate may differ.&lt;/p&gt;
-&lt;h3&gt;What was decided&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;A standing regression: lanes that take the verified functions oldest checker version first, 350 at a time, and re-run each proof of record unchanged on the current checker. A proof that holds is replaced by the same rewrite and contract proved on the current version. A proof that is vacuous, fails, or cannot be run is recorded with its evidence, and the coordinator withdraws it from the verified count.&lt;/li&gt;
-&lt;li&gt;Two lane starts in twelve go to it from the next supervisor window, taken from one lift start and one start on the largest functions.&lt;/li&gt;
-&lt;li&gt;Withdrawals are made on a run, or on a reading the coordinator has confirmed on both sides, never on a lane's reading alone. In this night's audits a reading lane called 16 rewrites wrong and was right about 10; an audit's snapshot run called 23 wrong and was right about 7; and the coordinator's own second opinions on ten cases were right five times.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce&lt;/h3&gt;
-&lt;p&gt;The scope lists and the re-run lanes' tables are in the audit lanes' folders under the scratch area, which is not published. The counts by checker version come from the verified index (&lt;code&gt;rewrites/verified/index.json&lt;/code&gt;, field &lt;code&gt;checker&lt;/code&gt;) and the function inventory's sizes. The regression lanes' briefs are written by a script in the coordinator's folder that takes the oldest proofs first.&lt;/p&gt;
-&lt;h3&gt;What was confusing&lt;/h3&gt;
-&lt;p&gt;The audit that looked hardest for wrong rewrites produced the most false alarms, and the plainest one, running old proofs again without changing anything, produced the finding. A stricter checker does not make old verdicts stricter; only running them again does.&lt;/p&gt;</content>
   </entry>
 </feed>
