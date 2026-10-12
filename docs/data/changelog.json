@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Checker: the pinned hash of the reviewed driver follows the placement check",
+    "title": "Devlog: hourly review, 22:05 on 11 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "16,651 bytes an hour verified, 177 routines lifted (1,099 in all); all sixteen rewrites withdrawn today are proven again.",
+      "The audit of misplaced globals ends with no withdrawals and its check in the driver; the pipeline failed on the coordinator's unmoved driver pin and is corrected."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Checker: the pinned hash of the reviewed driver follows the placement check",
+    "commit": "be59938e790742ba8c69af6d2bd1ebe8b885b59d",
     "summary": "The pipeline's script tests failed on the two commits after the driver gained its placement check. The coordinator's stock runner pins the hash of the reviewed driver, and the pin had not been moved.",
     "changes": [
       "The stock runner refuses to use a driver whose hash is not the reviewed one: that is what keeps a lane's or a tool's edited copy from standing in for the stock checker. The coordinator reviewed and adopted a change to the driver an hour ago and did not update the pin with it, so 4 of the 296 coordinator script tests failed in the pipeline and the runner would have refused the new driver. The pin now names the driver as committed with the placement check.",
