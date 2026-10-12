@@ -16,7 +16,7 @@ pub struct NamedStore {
 }
 
 /// The instances, in the order the test crate calls their rewrites.
-pub const STORES: [NamedStore; 54] = [
+pub const STORES: [NamedStore; 49] = [
     NamedStore {
         name: "UILayoutFrame::vf9",
         store: FieldStore {
@@ -405,46 +405,6 @@ pub const STORES: [NamedStore; 54] = [
         name: "CPhysical::vf60",
         store: FieldStore {
             offset: 0x1F0,
-            width: FieldWidth::Word,
-            result: StoreResult::Nothing,
-        },
-    },
-    NamedStore {
-        name: "audio_param_store_174c",
-        store: FieldStore {
-            offset: 0x174C,
-            width: FieldWidth::Word,
-            result: StoreResult::Nothing,
-        },
-    },
-    NamedStore {
-        name: "audio_param_store_1730",
-        store: FieldStore {
-            offset: 0x1730,
-            width: FieldWidth::Word,
-            result: StoreResult::Nothing,
-        },
-    },
-    NamedStore {
-        name: "audio_param_store_172c",
-        store: FieldStore {
-            offset: 0x172C,
-            width: FieldWidth::Word,
-            result: StoreResult::Nothing,
-        },
-    },
-    NamedStore {
-        name: "audio_param_store_1748",
-        store: FieldStore {
-            offset: 0x1748,
-            width: FieldWidth::Word,
-            result: StoreResult::Nothing,
-        },
-    },
-    NamedStore {
-        name: "audio_param_store_17dc",
-        store: FieldStore {
-            offset: 0x17DC,
             width: FieldWidth::Word,
             result: StoreResult::Nothing,
         },

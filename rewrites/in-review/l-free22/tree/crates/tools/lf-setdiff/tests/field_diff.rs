@@ -1,4 +1,4 @@
-//! Differential tests: every lifted field store against its verified 32-bit rewrite.
+﻿//! Differential tests: every lifted field store against its verified 32-bit rewrite.
 //!
 //! For each instance of `lf_core::field_store::instances::STORES`, the test runs the lifted
 //! `ObjectBytes::store` and the verified rewrite on the same generated object and the same value. The
@@ -15,7 +15,7 @@
 #![cfg(target_arch = "x86")]
 
 use lf_core::field_store::instances::{NamedStore, STORES};
-use lf_core::field_store::{FieldStore, FieldWidth, ObjectBytes, StoreResult};
+use lf_core::field_store::{FieldStore, FieldWidth, ObjectBytes};
 use lf_setdiff::calls::CALLS;
 
 /// Bytes in the generated object. Every field the instances write lies below this.
@@ -215,3 +215,4 @@ fn every_instance_catches_every_wrong_version() {
 fn the_call_table_and_the_instance_table_have_the_same_length() {
     assert_eq!(CALLS.len(), STORES.len());
 }
+

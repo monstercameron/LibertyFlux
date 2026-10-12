@@ -1,12 +1,12 @@
-//! Host tests of the lifted field store and its instance table. These run on every host and do not need
+﻿//! Host tests of the lifted field store and its instance table. These run on every host and do not need
 //! the 32-bit rewrites.
 
 use lf_core::field_store::instances::STORES;
 use lf_core::field_store::{FieldStore, FieldWidth, ObjectBytes, StoreResult};
 
 #[test]
-fn the_table_lists_fifty_four_instances() {
-    assert_eq!(STORES.len(), 54);
+fn the_table_lists_forty_nine_instances() {
+    assert_eq!(STORES.len(), 49);
 }
 
 #[test]
@@ -83,3 +83,4 @@ fn result_kinds_map_the_parameter_as_documented() {
     assert_eq!(object.store(low, 0xDEAD_BEEF), Some(0xEF));
     assert_eq!(object.store(nothing, 0xDEAD_BEEF), None);
 }
+

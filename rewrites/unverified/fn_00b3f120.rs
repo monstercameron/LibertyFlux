@@ -1,6 +1,10 @@
 // original: 0x00B3F120 ped_task_probe_region_grid
-// Specification: the round-to-floor helper's compare is !(e <= sign) (cmpnless), not !(e < sign):
-// the withdrawn form subtracted one from every integer-valued input. Lane a-S27; unverified (see results).
+// Specification: the round-to-floor helper subtracts one only when cmpnless (imm 6) at 0x00B3F21C
+// (and its three copies) is true, that is when NOT (e <= sign), where e = (v + magic) - magic - v and
+// sign is the sign of v as +0.0 or -0.0. The withdrawn form tested NOT (e < sign) and so subtracted one
+// from every integer-valued input (e = +0 and sign = +0 or -0 are equal under <=). The divisor and size
+// are read from their file addresses 0x010482AC and 0x010482B0 (RVA 0x00C482AC and 0x00C482B0), and the
+// globals the loop re-reads are re-read where the original re-reads them. Lane a-S30.
 
 /// Collect grid slots overlapping a region, shuffle them, and probe each one.
 ///
@@ -86,9 +90,10 @@ lf_checker_rt::export!(cdecl, rw_00B3F120(cell: u32, a1b: u32, a2b: u32, a3b: u3
             }
         }
         /// The original's round-to-floor bit trick, operation by operation:
-        /// round to nearest with the 2^23 magic, then subtract 1 unless the
-        /// rounded value is below the input (an exact integer rounds to
-        /// itself and still subtracts, matching the not-less comparison).
+        /// round to nearest with the 2^23 magic, then subtract 1 when the
+        /// rounding error e is not less than or equal to the sign operand.
+        /// An exact integer has e = +0, which is <= +0 and <= -0, so nothing
+        /// is subtracted for it.
         #[inline(always)]
         fn round_trick(v: f32) -> f32 {
             let sign_bits = v.to_bits() & SIGN_BIT;

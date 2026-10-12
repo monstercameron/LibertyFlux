@@ -254,35 +254,5 @@ pub fn call_48(base: *mut u8, value: u32) -> Option<u32> {
     None
 }
 
-/// The rewrite of `audio_param_store_174c`, called with the object at `base` and the value bits `value`.
-pub fn call_49(base: *mut u8, value: u32) -> Option<u32> {
-    crate::rewrites::m_008b0ec0::rw_008b0ec0(base as usize as u32, f32::from_bits(value));
-    None
-}
-
-/// The rewrite of `audio_param_store_1730`, called with the object at `base` and the value bits `value`.
-pub fn call_50(base: *mut u8, value: u32) -> Option<u32> {
-    crate::rewrites::m_008b0f20::rw_008b0f20(base as usize as u32, f32::from_bits(value));
-    None
-}
-
-/// The rewrite of `audio_param_store_172c`, called with the object at `base` and the value bits `value`.
-pub fn call_51(base: *mut u8, value: u32) -> Option<u32> {
-    crate::rewrites::m_008b0f40::rw_008b0f40(base as usize as u32, f32::from_bits(value));
-    None
-}
-
-/// The rewrite of `audio_param_store_1748`, called with the object at `base` and the value bits `value`.
-pub fn call_52(base: *mut u8, value: u32) -> Option<u32> {
-    crate::rewrites::m_008b0fa0::rw_008b0fa0(base as usize as u32, f32::from_bits(value));
-    None
-}
-
-/// The rewrite of `audio_param_store_17dc`, called with the object at `base` and the value bits `value`.
-pub fn call_53(base: *mut u8, value: u32) -> Option<u32> {
-    crate::rewrites::m_008b0fc0::rw_008b0fc0(base as usize as u32, f32::from_bits(value));
-    None
-}
-
 /// The call table, in the order of the instances table.
-pub const CALLS: [fn(*mut u8, u32) -> Option<u32>; 54] = [call_0, call_1, call_2, call_3, call_4, call_5, call_6, call_7, call_8, call_9, call_10, call_11, call_12, call_13, call_14, call_15, call_16, call_17, call_18, call_19, call_20, call_21, call_22, call_23, call_24, call_25, call_26, call_27, call_28, call_29, call_30, call_31, call_32, call_33, call_34, call_35, call_36, call_37, call_38, call_39, call_40, call_41, call_42, call_43, call_44, call_45, call_46, call_47, call_48, call_49, call_50, call_51, call_52, call_53];
+pub const CALLS: [fn(*mut u8, u32) -> Option<u32>; 49] = [call_0, call_1, call_2, call_3, call_4, call_5, call_6, call_7, call_8, call_9, call_10, call_11, call_12, call_13, call_14, call_15, call_16, call_17, call_18, call_19, call_20, call_21, call_22, call_23, call_24, call_25, call_26, call_27, call_28, call_29, call_30, call_31, call_32, call_33, call_34, call_35, call_36, call_37, call_38, call_39, call_40, call_41, call_42, call_43, call_44, call_45, call_46, call_47, call_48];

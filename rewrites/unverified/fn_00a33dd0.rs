@@ -21,7 +21,10 @@ lf_checker_rt::export!(cdecl, rw_00a33dd0() -> () {
     }
 
     unsafe {
-        let ready = lf_checker_rt::callee_cdecl!(UPDATE_READY, u8);
+        let update: extern "cdecl" fn() -> u8 = core::mem::transmute(
+            lf_checker_rt::callee_addr(UPDATE_READY) as usize,
+        );
+        let ready = update();
         let cleanup_active = read_u32(lf_checker_rt::relocated(CLEANUP_ACTIVE_VA));
         let status = if ready != 0 && cleanup_active != 0 { 2 } else { 3 };
         write_u32(lf_checker_rt::relocated(UPDATE_STATUS_VA), status);
