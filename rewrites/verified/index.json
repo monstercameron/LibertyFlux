@@ -133434,6 +133434,15 @@
   "lane": "a-G23"
  },
  {
+  "address": "0x00C602F0",
+  "name": "CTaskSimpleBeHit::vf17",
+  "kind": "function",
+  "file": "functions/fn_00c602f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s749"
+ },
+ {
   "address": "0x00C60B20",
   "name": "player_be_arrested_tick",
   "kind": "function",
@@ -133441,6 +133450,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "a-S04"
+ },
+ {
+  "address": "0x00C60E60",
+  "name": "CTaskSimpleSetCharIgnoreWeaponRangeFlag::vf17",
+  "kind": "function",
+  "file": "functions/fn_00c60e60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s749"
  },
  {
   "address": "0x00C60E90",
@@ -133452,6 +133470,33 @@
   "lane": "r-b536"
  },
  {
+  "address": "0x00C61580",
+  "name": "CTaskSimpleNewGangDriveBy::vf19",
+  "kind": "function",
+  "file": "functions/fn_00c61580.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s749"
+ },
+ {
+  "address": "0x00C61630",
+  "name": "free_driveby_flag_store_1",
+  "kind": "function",
+  "file": "functions/fn_00c61630.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s749"
+ },
+ {
+  "address": "0x00C61650",
+  "name": "free_driveby_flag_store_2",
+  "kind": "function",
+  "file": "functions/fn_00c61650.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s749"
+ },
+ {
   "address": "0x00C61740",
   "name": "arrest_player_attach",
   "kind": "function",
@@ -133459,6 +133504,24 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b536"
+ },
+ {
+  "address": "0x00C61D60",
+  "name": "CCamCutscene::vf4",
+  "kind": "function",
+  "file": "functions/fn_00c61d60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s749"
+ },
+ {
+  "address": "0x00C61EA0",
+  "name": "scale_by_frame_time_or_zero",
+  "kind": "function",
+  "file": "functions/fn_00c61ea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s749"
  },
  {
   "address": "0x00C62260",
@@ -133639,6 +133702,24 @@
   "trials": 300,
   "checker": "version 8",
   "lane": "a-G38"
+ },
+ {
+  "address": "0x00C62D00",
+  "name": "anim_player_set_blend_target",
+  "kind": "function",
+  "file": "functions/fn_00c62d00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s749"
+ },
+ {
+  "address": "0x00C62D40",
+  "name": "anim_player_clear_flag_bit",
+  "kind": "function",
+  "file": "functions/fn_00c62d40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s749"
  },
  {
   "address": "0x00C64380",
