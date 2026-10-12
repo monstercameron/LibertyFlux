@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: 78 small routines in twelve families, five of them already lifted",
+    "title": "Devlog: the lift lane's entry on twelve families of small routines",
     "commit": null,
+    "summary": "The lane's own account of proving 78 small routines in twelve families is added to the devlog.",
+    "changes": [
+      "The entry gives the twelve families, which reuse a routine already lifted and which needed a new one, the extraction script and its shape assertions, the weak lifts named as such, the narrowings of each test, the nine listed rewrites that do not compile from the repository, and the clusters among the 133 functions left."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: 78 small routines in twelve families, five of them already lifted",
+    "commit": "890c7a9cb0004a58590da793e07563d44f3582e2",
     "summary": "The sixth list chosen by shape, the verified functions of 12 to 23 bytes not yet covered, gives twelve families. For five of them the lifted routine already existed from the evening's earlier lanes and is used unchanged.",
     "changes": [
       "Proved against routines already in crates/lf-core, with no change to them: constant writes (18 on objects and 3 on globals), a field store (10), an indexed read (6), a word test (9) and a constant fill over a global region (6). This is what the earlier lifts were for: a new instance of a known routine costs a row in a table and a generated test.",
