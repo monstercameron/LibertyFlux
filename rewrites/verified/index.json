@@ -106749,6 +106749,51 @@
   "lane": "r-s771"
  },
  {
+  "address": "0x00B7ECB0",
+  "name": "check_drive_target_proximity",
+  "kind": "function",
+  "file": "functions/fn_00b7ecb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00B7F140",
+  "name": "CTaskComplexWalkRoundCarWhileWandering::vf5",
+  "kind": "function",
+  "file": "functions/fn_00b7f140.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00B7F180",
+  "name": "CTaskComplexPlayerDrive::vf5",
+  "kind": "function",
+  "file": "functions/fn_00b7f180.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00B7F1F0",
+  "name": "CTaskComplexScreamInCarThenLeave::vf5",
+  "kind": "function",
+  "file": "functions/fn_00b7f1f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00B7F3E0",
+  "name": "trigger_boat_horizon_tracking",
+  "kind": "function",
+  "file": "functions/fn_00b7f3e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
   "address": "0x00B80430",
   "name": "ped_task_manager_drive_task_update",
   "kind": "function",
@@ -120987,6 +121032,24 @@
   "lane": "r-s744"
  },
  {
+  "address": "0x00BB85B0",
+  "name": "CTaskSimpleCombatRoll::CTaskSimpleCombatRoll",
+  "kind": "function",
+  "file": "functions/fn_00bb85b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00BB85D0",
+  "name": "CTaskComplexMoveSeekEntity<CEntitySeekPosCalculatorRadiusAngleOffset>::~CTaskComplexMoveSeekEntity",
+  "kind": "function",
+  "file": "functions/fn_00bb85d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
   "address": "0x00BB8640",
   "name": "CEntitySeekPosCalculatorRadiusAngleOffset::vf0",
   "kind": "function",
@@ -130851,6 +130914,51 @@
   "lane": "r-s603"
  },
  {
+  "address": "0x00BDF190",
+  "name": "CTaskList::CTaskList",
+  "kind": "function",
+  "file": "functions/fn_00bdf190.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00BDF1F0",
+  "name": "CTaskSimpleDuckToggle::CTaskSimpleDuckToggle",
+  "kind": "function",
+  "file": "functions/fn_00bdf1f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00BDF210",
+  "name": "CTaskSimpleMoveStandStill::CTaskSimpleMoveStandStill",
+  "kind": "function",
+  "file": "functions/fn_00bdf210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00BDF270",
+  "name": "CTaskSimpleOpenDoor::CTaskSimpleOpenDoor",
+  "kind": "function",
+  "file": "functions/fn_00bdf270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00BDF2D0",
+  "name": "CTaskSimpleSayAudio::CTaskSimpleSayAudio",
+  "kind": "function",
+  "file": "functions/fn_00bdf2d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
   "address": "0x00BDF340",
   "name": "audio_ctor_optional_ref",
   "kind": "function",
@@ -131029,6 +131137,51 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s100"
+ },
+ {
+  "address": "0x00BDF940",
+  "name": "CTaskSimpleSayAudio::~CTaskSimpleSayAudio",
+  "kind": "function",
+  "file": "functions/fn_00bdf940.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00BDF970",
+  "name": "CTaskSimpleShovePed::~CTaskSimpleShovePed",
+  "kind": "function",
+  "file": "functions/fn_00bdf970.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00BDF9B0",
+  "name": "CTaskSimpleSitDown::~CTaskSimpleSitDown",
+  "kind": "function",
+  "file": "functions/fn_00bdf9b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00BDFA00",
+  "name": "CTaskSimpleStandUp::~CTaskSimpleStandUp",
+  "kind": "function",
+  "file": "functions/fn_00bdfa00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00BDFA40",
+  "name": "CTaskSimpleTriggerLookAt::~CTaskSimpleTriggerLookAt",
+  "kind": "function",
+  "file": "functions/fn_00bdfa40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
  },
  {
   "address": "0x00BDFF90",
@@ -135592,6 +135745,51 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s475"
+ },
+ {
+  "address": "0x00C0D1D0",
+  "name": "UIMusicContainer::get_class_name_hash",
+  "kind": "function",
+  "file": "functions/fn_00c0d1d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00C0D1F0",
+  "name": "UILayoutFrame::vf38",
+  "kind": "function",
+  "file": "functions/fn_00c0d1f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00C0D710",
+  "name": "UILayoutFrame::vf35",
+  "kind": "function",
+  "file": "functions/fn_00c0d710.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00C0D780",
+  "name": "UILayoutFrame::are_two_flags_set",
+  "kind": "function",
+  "file": "functions/fn_00c0d780.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
+ },
+ {
+  "address": "0x00C0D7B0",
+  "name": "UILayoutFrame::vf42",
+  "kind": "function",
+  "file": "functions/fn_00c0d7b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s815"
  },
  {
   "address": "0x00C0D800",
