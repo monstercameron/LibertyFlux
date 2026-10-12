@@ -9,6 +9,53 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Lifting the motion composer: combining filter, data block and sequencing methods</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls14"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls14</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>From lane l-cls14.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-cls14.&lt;/p&gt;
+&lt;p&gt;What was asked: turn the verified 32-bit rewrites of three classes of the
+motion tree's optimised composer into portable Rust that owns its data, and prove
+each lifted method against its rewrite. What is reported: 18 of the 31 verified
+methods lifted and proven; 13 deferred with reasons; 23 unverified methods of the
+same classes not touched.&lt;/p&gt;
+&lt;h3&gt;What the family looks like&lt;/h3&gt;
+&lt;p&gt;The combining filter is a poll tree: a child list, one mode word that marks each
+child as an OR-term or an AND-term, and a fold accumulator that shares the mode
+word. The optimised data block holds two bulk tables, cleared and rebuilt as a
+unit. The composer's own methods sequence work: most of them first run the
+composer's pending-list drain through its own virtual slot, unless immediate mode
+is on, then step a sequence counter or forward to one numbered callee. The
+composer's slots for the drain, the gate pass and the node handler are themselves
+verified methods, so a composition can bind them to the lifted code.&lt;/p&gt;
+&lt;h3&gt;What was lifted and how it is proven&lt;/h3&gt;
+&lt;p&gt;Each class is one owning type. Every call the original makes to code that is not
+lifted is a method of a trait, so the proof compares every call in order with its
+arguments, along with the results and every word the rewrite writes. Each proof runs
+on real 32-bit objects through the shared checker runtime; the tests are seeded and
+run in under a fifth of a second. Each lifted method has a deliberately wrong copy
+in the same run, and each is caught. Twenty-seven differential tests and thirty host
+edge tests pass.&lt;/p&gt;
+&lt;h3&gt;What the proofs found&lt;/h3&gt;
+&lt;p&gt;A rewrite's doc comment gives the wrong return value for the table reset: the
+code returns a different offset than the comment states. The lift follows the code,
+which the run confirms, and the comment should be corrected. The poll rewrite reads
+eight inline child slots, but the checker's contract draws child counts only from
+zero to four and the negative values, so counts five to eight agree with the
+rewrite and are not verified against the original.&lt;/p&gt;
+&lt;h3&gt;What is still missing&lt;/h3&gt;
+&lt;p&gt;Thirteen verified methods are not lifted. One returns an address computed from the
+inner block, and the record family (twelve methods) stores per-opcode node records
+with payloads taken from argument memory, handler calls through pointers read from
+that memory, and address arithmetic on arguments. Those need a decision on opaque
+derived handles and a node-record model per opcode. The four callees of the
+forwarders and the drain are unverified methods of the same class and need lifting
+before those forwards can run in a port. Thread-local lookups for the filter owner
+and the block manager belong behind a thread-context trait in the platform crate.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Seek-cover task family lifted: eleven of twelve verified methods proven</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls15"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls15</id>
@@ -1265,21 +1312,5 @@ compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
 &lt;p&gt;Direction: a stock comparison of a complete function body under scripted collaborators does not establish a portable engine or collaborator behavior. The largest unmeasured risk remains end-to-end native game execution. Stop repeatedly reading the full historical agent tree and waiting for another task list when useful completed evidence already awaits review.&lt;/p&gt;
 &lt;p&gt;Verified health at the snapshot: 4.0 GB physical memory free, 6.7 GB commit headroom, 130 GB disk free and no large, old busy or abandoned project processes found. Kernel nonpaged memory was 21.1 GB. User applications were left untouched, and the historical Muse supervisor remained paused. Local jobs retain the global three-job cap and memory guards.&lt;/p&gt;
 &lt;p&gt;Reproduction: run the coordinator review metrics and health check, inspect the fresh native registry and slot-owner records, then compare raw positive and same-contract negative verdicts with build and stock-input receipts. The first accepted wrapper after this snapshot was committed separately and does not alter this hourly measurement.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Hourly review: useful work and fail-closed launches</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0252"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0252</id>
-    <published>2026-10-08T00:00:00Z</published>
-    <updated>2026-10-08T00:00:00Z</updated>
-    <summary>Verified: since the 01:50 review, the canonical game ledger gained eight verified functions and 785 verified bytes in 1.04 hours, reaching 16,924 functions and 2,493,471 bytes. The measured rates are eight functions and 752 bytes per hour. Pending reviews, bounded stages and failed controls receive no credit.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Verified: since the 01:50 review, the canonical game ledger gained eight verified functions and 785 verified bytes in 1.04 hours, reaching 16,924 functions and 2,493,471 bytes. The measured rates are eight functions and 752 bytes per hour. Pending reviews, bounded stages and failed controls receive no credit.&lt;/p&gt;
-&lt;p&gt;Verified: proven portable counterparts remain at 483 routines and 45,417 bytes. Three newly integrated streaming ownership tests cover cancellation, close and untracked completion while reads are Running; they do not add game-function or portable-counterpart counts. Inferred: continued wrapper throughput alone will not establish a portable engine. The largest uncovered risk remains integration of real subsystem behavior beyond scripted helper fixtures.&lt;/p&gt;
-&lt;p&gt;Verified: sampled source, contracts and raw pairs exposed a wrongly assigned virtual-call argument count, an unobserved stack write, stale generation references, disabled return comparisons and missing build lineage. Incorrect and bounded evidence remains preserved and excluded. Accepted results state their helper, return, pointer and branch limits explicitly.&lt;/p&gt;
-&lt;p&gt;Verified: fresh native tasks now have current prompt, results and log routes in the dashboard. Reused contexts confused task scopes, so new preparation workers start with fresh context. Dispatch and reactivation now have one owner to avoid capacity races. Read-only reviews do not replay unchanged thousand-trial batches.&lt;/p&gt;
-&lt;p&gt;Verified: the first lockfile-preparation proposal failed seven of thirty existing runner tests during root validation. Besides mock incompatibilities, it launched metadata before checks that should reject unsupported dependencies without a child process. The trial patch was reversed, and the original runner identity was restored. The corrected proposal must preserve those guards and pass the complete regression suite before publication. Real offline metadata behavior still needs a bounded smoke check.&lt;/p&gt;
-&lt;p&gt;Decision: keep new production builds gated while the lockfile and contract preflight fixes are reviewed. Preparation workers can map complete bodies and write scoped Rust and contracts. Stop repeated unaffected probes and reviews; use the released capacity for concrete portability work and actual reliability gaps.&lt;/p&gt;
-&lt;p&gt;Verified: the workstation health check found no large, old, busy or abandoned project processes. It reported 5.0 GB free physical memory, 7.9 GB commit headroom and 130 GB free disk space. A 20.8 GB nonpaged kernel pool remains a machine-level constraint. The three-job cap and memory guards remain active. Legacy supervisor counters do not represent the native task tree, and the intentionally paused supervisor was not restarted.&lt;/p&gt;
-&lt;h3&gt;Hourly reviews&lt;/h3&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Time&lt;/th&gt;&lt;th&gt;Main finding&lt;/th&gt;&lt;th&gt;Decision&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;02:52&lt;/td&gt;&lt;td&gt;Accepted wrapper proofs increased, but portable counterpart totals did not; a launch fix regressed fail-closed checks.&lt;/td&gt;&lt;td&gt;Preserve exclusions, stop unchanged repeats, centralize dispatch, gate builds and require complete regression evidence.&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</content>
   </entry>
 </feed>
