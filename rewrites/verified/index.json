@@ -178821,6 +178821,87 @@
   "lane": "r-s769"
  },
  {
+  "address": "0x00E711E0",
+  "name": "send_audio_buffer_cleanup_message",
+  "kind": "function",
+  "file": "functions/fn_00e711e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E71370",
+  "name": "clear_viewport_children_and_notify",
+  "kind": "function",
+  "file": "functions/fn_00e71370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E713E0",
+  "name": "release_audio_object_array_resources",
+  "kind": "function",
+  "file": "functions/fn_00e713e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E71470",
+  "name": "notify_code_pointer_3",
+  "kind": "function",
+  "file": "functions/fn_00e71470.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E71490",
+  "name": "drain_notification_table",
+  "kind": "function",
+  "file": "functions/fn_00e71490.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E714B0",
+  "name": "initialize_array_256_entries",
+  "kind": "function",
+  "file": "functions/fn_00e714b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E714E0",
+  "name": "drain_and_notify_streaming_entries",
+  "kind": "function",
+  "file": "functions/fn_00e714e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E71570",
+  "name": "notify_streaming_block_b",
+  "kind": "function",
+  "file": "functions/fn_00e71570.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E715B0",
+  "name": "destroy_audio_entity_static_instance",
+  "kind": "function",
+  "file": "functions/fn_00e715b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
   "address": "0x00E71620",
   "name": "audio_array_teardown_200",
   "kind": "function",
@@ -178974,6 +179055,24 @@
   "lane": "a-17"
  },
  {
+  "address": "0x00E72370",
+  "name": "cleanup_global_stream_resource",
+  "kind": "function",
+  "file": "functions/fn_00e72370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E72410",
+  "name": "clear_stream_node_chain",
+  "kind": "function",
+  "file": "functions/fn_00e72410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
   "address": "0x00E72530",
   "name": "guarded_release_15f8bb8",
   "kind": "function",
@@ -178981,6 +179080,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x00E72560",
+  "name": "send_message_to_all_slots",
+  "kind": "function",
+  "file": "functions/fn_00e72560.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
  },
  {
   "address": "0x00E725A0",
@@ -179190,6 +179298,15 @@
   "lane": "a-17"
  },
  {
+  "address": "0x00E72920",
+  "name": "clear_navigation_work_tables",
+  "kind": "function",
+  "file": "functions/fn_00e72920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
   "address": "0x00E72930",
   "name": "release_and_null_16b9db8",
   "kind": "function",
@@ -179262,6 +179379,15 @@
   "lane": "a-17"
  },
  {
+  "address": "0x00E72B60",
+  "name": "initialize_animation_vector_pair_array",
+  "kind": "function",
+  "file": "functions/fn_00e72b60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
   "address": "0x00E72BA0",
   "name": "guarded_release_16dd668",
   "kind": "function",
@@ -179296,5 +179422,50 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x00E72D60",
+  "name": "cleanup_flagged_pointer_a",
+  "kind": "function",
+  "file": "functions/fn_00e72d60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E72D80",
+  "name": "cleanup_flagged_pointer_b",
+  "kind": "function",
+  "file": "functions/fn_00e72d80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E72DA0",
+  "name": "cleanup_flagged_pointer_c",
+  "kind": "function",
+  "file": "functions/fn_00e72da0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E72DC0",
+  "name": "cleanup_flagged_pointer_d",
+  "kind": "function",
+  "file": "functions/fn_00e72dc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
+ },
+ {
+  "address": "0x00E72E40",
+  "name": "release_global_entity_resource",
+  "kind": "function",
+  "file": "functions/fn_00e72e40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s778"
  }
 ]
