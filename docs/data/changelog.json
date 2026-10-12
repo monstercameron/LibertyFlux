@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Rust in progress: 33 files from lanes (607 unverified rewrites, 1567 in review)",
+    "title": "Devlog: eight operating faults in one evening, all the coordinator's",
     "commit": null,
+    "summary": "An entry lists together the mistakes the coordinator made on the evening of 11 October while changing the brief, the checker's driver, the importer and 488 published files, with what each cost, how it was found and the rules adopted.",
+    "changes": [
+      "The eight: brief paragraphs whose backslashes became control characters for three hours; a driver change without its pinned hash; the same change importing libraries the pipeline does not install; a workspace-wide format that reached verified rewrites; a repair of published files that broke a lift test crate; a failing pipeline run reported to the owner as passing; a hold written by hand that let an unchecked function into the index for under two minutes; two scripts patched in place and broken for seconds.",
+      "The cause given is the coordinator's rate of change: each was a change put into use with its check missing or run afterwards. The verified set was protected by the parts that did not change.",
+      "The rules adopted: patch on a copy that must parse; no unescaped backslash in inserted text; a pipeline run is passing only from its conclusion; build every crate that includes verified files before changing them; format named packages only; holds written by script only; fewer pipeline changes per hour."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Rust in progress: 33 files from lanes (607 unverified rewrites, 1567 in review)",
+    "commit": "45f8aac0f9c3e43a4485def2fdee4678ef31feac",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 607 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
