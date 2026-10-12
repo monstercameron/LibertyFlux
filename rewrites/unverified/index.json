@@ -640,14 +640,6 @@
   "reason": "indirect_call"
  },
  {
-  "address": "0x005D6CB0",
-  "name": "html_link_hit_test",
-  "file": "fn_005d6cb0.rs",
-  "lane": "r-s822",
-  "outcome": "deferred",
-  "reason": null
- },
- {
   "address": "0x005DA100",
   "name": "fn_005da100",
   "file": "fn_005da100.rs",
@@ -1880,14 +1872,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x00672CB0",
-  "name": "close_file_slot",
-  "file": "fn_00672cb0.rs",
-  "lane": "r-s817",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0068A450",
   "name": "track_key_partition_0068A450 (proposed)",
   "file": "fn_0068a450.rs",
@@ -2552,6 +2536,14 @@
   "reason": ""
  },
  {
+  "address": "0x008DA500",
+  "name": "loading_tick_dispatch",
+  "file": "fn_008da500.rs",
+  "lane": "r-s819",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x008DB2F0",
   "name": "task_ctor_initialize_motion_task",
   "file": "fn_008db2f0.rs",
@@ -2668,14 +2660,6 @@
   "name": "audio_collision_voice_is_enabled",
   "file": "fn_00977430.rs",
   "lane": "r-s763",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0098B970",
-  "name": "audio_handle_release",
-  "file": "fn_0098b970.rs",
-  "lane": "r-s827",
   "outcome": "not_reached",
   "reason": null
  },
@@ -3344,9 +3328,9 @@
   "reason": null
  },
  {
-  "address": "0x00A84C70",
-  "name": "CComplexPickUpAndCarryObjectTaskInfo::deserialize",
-  "file": "fn_00a84c70.rs",
+  "address": "0x00A84CA0",
+  "name": "CComplexSlideIntoCoverInfo::deserialize",
+  "file": "fn_00a84ca0.rs",
   "lane": "r-s823",
   "outcome": "not_reached",
   "reason": null
@@ -3539,6 +3523,14 @@
   "address": "0x00A869E0",
   "name": "CCamTrans::vf0",
   "file": "fn_00a869e0.rs",
+  "lane": "r-s821",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A86A10",
+  "name": "pending_00a86a10",
+  "file": "fn_00a86a10.rs",
   "lane": "r-s821",
   "outcome": "not_reached",
   "reason": null
@@ -4952,14 +4944,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00B7F3E0",
-  "name": "trigger_boat_horizon_tracking",
-  "file": "fn_00b7f3e0.rs",
-  "lane": "r-s815",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B82B80",
   "name": "script_vm_helper_00b82b80",
   "file": "fn_00b82b80.rs",
@@ -5792,10 +5776,18 @@
   "reason": null
  },
  {
-  "address": "0x00C0F1D0",
-  "name": "UIMusicContainer::vf86",
-  "file": "fn_00c0f1d0.rs",
-  "lane": "r-s825",
+  "address": "0x00C0D1D0",
+  "name": "UIMusicContainer::get_class_name_hash",
+  "file": "fn_00c0d1d0.rs",
+  "lane": "r-s815",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C0D7B0",
+  "name": "UILayoutFrame::vf42",
+  "file": "fn_00c0d7b0.rs",
+  "lane": "r-s815",
   "outcome": "not_reached",
   "reason": null
  },
@@ -6048,14 +6040,6 @@
   "reason": null
  },
  {
-  "address": "0x00C4E110",
-  "name": "unnamed_00c4e110",
-  "file": "fn_00c4e110.rs",
-  "lane": "r-s825",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C59990",
   "name": null,
   "file": "fn_00c59990.rs",
@@ -6096,115 +6080,11 @@
   "reason": null
  },
  {
-  "address": "0x00C5DF10",
-  "name": null,
-  "file": "fn_00c5df10.rs",
+  "address": "0x00C5E940",
+  "name": "proposed_00c5e940",
+  "file": "fn_00c5e940.rs",
   "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5DF60",
-  "name": null,
-  "file": "fn_00c5df60.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5DF90",
-  "name": null,
-  "file": "fn_00c5df90.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5DFC0",
-  "name": null,
-  "file": "fn_00c5dfc0.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5E000",
-  "name": null,
-  "file": "fn_00c5e000.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5E030",
-  "name": null,
-  "file": "fn_00c5e030.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5E060",
-  "name": null,
-  "file": "fn_00c5e060.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5E150",
-  "name": null,
-  "file": "fn_00c5e150.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5E230",
-  "name": null,
-  "file": "fn_00c5e230.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5E2F0",
-  "name": null,
-  "file": "fn_00c5e2f0.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5E390",
-  "name": null,
-  "file": "fn_00c5e390.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5E6A0",
-  "name": null,
-  "file": "fn_00c5e6a0.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5E790",
-  "name": null,
-  "file": "fn_00c5e790.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C5E850",
-  "name": null,
-  "file": "fn_00c5e850.rs",
-  "lane": "r-s814",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -7792,6 +7672,14 @@
   "reason": null
  },
  {
+  "address": "0x00D92560",
+  "name": "fn_00D92560",
+  "file": "fn_00d92560.rs",
+  "lane": "r-s826",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DA2E60",
   "name": "fn_00DA2E60",
   "file": "fn_00da2e60.rs",
@@ -7832,9 +7720,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00DB2740",
-  "name": "UITexture::bind_texture_resource",
-  "file": "fn_00db2740.rs",
+  "address": "0x00DB27C0",
+  "name": "UITexture::apply_hud_colour",
+  "file": "fn_00db27c0.rs",
   "lane": "r-s824",
   "outcome": "not_reached",
   "reason": null
@@ -8043,6 +7931,14 @@
   "address": "0x00DF3380",
   "name": "UITransitionViewer::vf2",
   "file": "fn_00df3380.rs",
+  "lane": "r-s818",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DF33A0",
+  "name": "function_00DF33A0",
+  "file": "fn_00df33a0.rs",
   "lane": "r-s818",
   "outcome": "not_reached",
   "reason": null
