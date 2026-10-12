@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: 1 more withdrawn, a float comparison shown wrong at equality by a lane sent to make the checker see it",
+    "commit": null,
+    "summary": "The verified count goes down by one. An audit had read the original's instruction behind three float comparisons and found the predicate did not match; nothing was withdrawn on that reading. A strengthening lane has now shown one of the three on the stock checker.",
+    "changes": [
+      "A brightness update for the interface builds a mask with a float comparison. The original's instruction is \"not less than or equal\" and the rewrite wrote \"not less than\", which differ when the operands are equal. On a contract in which they are equal on a share of completed trials, the tracked rewrite fails the comparison of its calls and the corrected copy passes all 1,000 trials. It is withdrawn while the lane finishes proving the corrected copy. This is the third verified rewrite withdrawn for this predicate.",
+      "For a second of the three, the lane's runs so far show no observable difference: with the operands equal on a third of the trials, the tracked form, the corrected form and a form with the mask deliberately swapped all pass, because what the mask selects is then added to a zero. It stays verified unless the lane's final report says otherwise. That is the reason nothing was withdrawn on the reading alone.",
+      "Sixteen withdrawals of fifteen rewrites today for differences outside the range their proofs drew; seven are proven again and counted."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 43 files from lanes (621 unverified rewrites, 134 in review)",
     "commit": "467e8675593177f019c2846d77b491cb897eb552",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
