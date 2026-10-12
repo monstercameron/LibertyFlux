@@ -1,8 +1,20 @@
 [
   {
+    "date": "2026-10-12",
+    "title": "Rewrites: 2 more functions pass the checker (19832 in total)",
+    "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "2 rewrites added under rewrites/verified: 0 script native handlers and 2 other functions.",
+      "The tree now holds 19832 rewrites, 19829 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "5 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
     "date": "2026-10-11",
     "title": "Lift tests: a constant the repaired rewrite now defines for itself",
-    "commit": null,
+    "commit": "57ff5eb9549208fb241731d175c9a7dfdb62e545",
     "summary": "The pipeline's 32-bit lift tests have failed since the 488 repaired published files went in. One older lift test crate supplied a constant that one of those files lacked; the repaired file now defines it, and the two definitions collide.",
     "changes": [
       "The test crate for the task classes included a verified rewrite that used a constant no file defined, and supplied the constant itself in front of the include. The repair carried the constant into the rewrite, where it belongs. The supplied definition is removed from the test crate. The coordinator built all 80 lift test crates for the 32-bit target to find every such collision: this was the only one. The crate's 17 tests pass again.",

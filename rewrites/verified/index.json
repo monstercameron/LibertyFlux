@@ -37656,6 +37656,15 @@
   "lane": "r-s698"
  },
  {
+  "address": "0x00602E60",
+  "name": "rage::rmPtfxManager::cull_and_draw_instances",
+  "kind": "function",
+  "file": "functions/fn_00602e60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U140"
+ },
+ {
   "address": "0x006036B0",
   "name": "rm_ptfx_manager_set_words_4b0_4b4",
   "kind": "function",
@@ -133027,6 +133036,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s708"
+ },
+ {
+  "address": "0x00C1F9A0",
+  "name": "corona_candidate_test",
+  "kind": "function",
+  "file": "functions/fn_00c1f9a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U140"
  },
  {
   "address": "0x00C1FA70",
