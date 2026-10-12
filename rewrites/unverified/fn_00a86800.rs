@@ -2,7 +2,8 @@
 /// Serializes the base task, writes two 32-bit fields (incrementing the
 /// second with wrapping arithmetic), passes the stored angle and one-turn
 /// constant to the writer, writes two byte flags, and supplies a 19-byte
-/// task payload. Float values are transported without arithmetic.
+/// task payload. The stored angle's 32-bit float representation is transported
+/// as a stack word without arithmetic.
 #[unsafe(no_mangle)]
 pub extern "thiscall" fn rw_00a86800(task_info: u32, writer: u32) -> u32 {
     const FIRST_FIELD: usize = 0x18;
@@ -20,9 +21,7 @@ pub extern "thiscall" fn rw_00a86800(task_info: u32, writer: u32) -> u32 {
     lf_checker_rt::callee_thiscall!(2, u32, writer, second_value.wrapping_add(1), 3);
 
     let angle_bits = unsafe { ((task_info as *const u8).add(ANGLE_BITS) as *const u32).read_unaligned() };
-    let angle = f32::from_bits(angle_bits);
-    let one_turn = f32::from_bits(ONE_TURN_BITS);
-    lf_checker_rt::callee_thiscall!(3, u32, writer, angle, one_turn);
+    lf_checker_rt::callee_thiscall!(3, u32, writer, angle_bits, ONE_TURN_BITS, 8);
 
     let first_flag = unsafe { ((task_info as *const u8).add(FIRST_FLAG)).read() as u32 };
     lf_checker_rt::callee_thiscall!(4, u32, writer, first_flag);

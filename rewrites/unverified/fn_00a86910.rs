@@ -19,5 +19,5 @@ pub extern "thiscall" fn rw_00a86910(task_info: u32, writer: u32) -> u32 {
 
     let second_result = invoke(task_info);
     let field = unsafe { ((task_info as *const u8).add(FIELD_18) as *const u32).read_unaligned() };
-    lf_checker_rt::callee_thiscall!(2, u32, writer, field, second_result)
+    lf_checker_rt::callee_thiscall!(3, u32, writer, field, second_result)
 }

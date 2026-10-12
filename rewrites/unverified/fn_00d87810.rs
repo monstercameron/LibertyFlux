@@ -3,7 +3,8 @@
 /// Computes the camera-to-target X and Y deltas in the original operand
 /// order, asks the scalar helper for their distance, stores those exact
 /// returned float bits at camera offset 0x1edc, then forwards the camera and
-/// both deltas to the vector helper. The function returns that helper's EAX.
+/// both deltas to the vector helper, with the original's Y-then-X stack order.
+/// The function returns the vector helper's EAX.
 lf_checker_rt::export!(cdecl, rw_00d87810(camera: u32) -> u32 {
     const TARGET_SLOT: u32 = 0x20;
     const CAMERA_X: u32 = 0xe50;
@@ -33,13 +34,13 @@ lf_checker_rt::export!(cdecl, rw_00d87810(camera: u32) -> u32 {
     let delta_x = ordered_subtract(camera_x, target_x);
     let delta_y = ordered_subtract(camera_y, target_y);
     let distance = lf_checker_rt::callee_cdecl!(
-        DISTANCE_HELPER, f32, delta_x.to_bits(), delta_y.to_bits()
+        DISTANCE_HELPER, f32, delta_y.to_bits(), delta_x.to_bits()
     );
     unsafe {
         (camera.wrapping_add(DISTANCE_OUTPUT) as *mut u32)
             .write_volatile(distance.to_bits());
     }
     lf_checker_rt::callee_cdecl!(
-        VECTOR_HELPER, u32, camera, delta_x.to_bits(), delta_y.to_bits()
+        VECTOR_HELPER, u32, camera, delta_y.to_bits(), delta_x.to_bits()
     )
 });
