@@ -21,7 +21,7 @@ pub extern "thiscall" fn rw_00a86a10(slots: u32) -> u32 {
         index -= 1;
         let flag = unsafe { ((flags as *const u8).add(index as usize)).read() };
         if flag & DESTROYED_BIT == 0 {
-            let object = unsafe { ((array as *const u8).add((stride.wrapping_mul(index)) as usize) as *const u32).read_unaligned() };
+            let object = array.wrapping_add(stride.wrapping_mul(index));
             if object != 0 {
                 let table = unsafe { (object as *const u32).read_unaligned() };
                 let method = unsafe { (table as *const u32).read_unaligned() };
