@@ -1,13 +1,19 @@
-//! The composer's sequence, forwarding and stack-read methods.
+//! The composer's sequence, forwarding, table, gate and drain methods.
 //!
 //! The composer keeps the words these methods read: an immediate-mode flag,
-//! a linked flag, a 16-bit sequence counter that advances by two, a word that
-//! one method returns, a free-node cache, and the inner object it forwards
-//! to. Before the sequence step, before most forwards and before the stack
-//! read, the composer runs its own slot at offset 0x78 (a sync or pool
-//! refill, which the verified rewrites name differently), so the lifted
-//! methods call it through [`ComposerCallees::sync`]. The sync is skipped
-//! while immediate mode is on, except where the original always runs it.
+//! a linked flag, a 16-bit sequence counter, a word that one method returns,
+//! a free-node cache, the pending list and its counters, and the inner object
+//! it forwards to. Before the sequence step and before most forwards, the
+//! composer runs its own slot at offset 0x78, which is its verified method
+//! vf30 (the pending-list drain, lifted as `drain_pending`). The lifted
+//! methods reach it through [`ComposerCallees::sync`], so these methods do
+//! not depend on the drain's code. The sync is skipped while immediate mode
+//! is on, except where the original always runs it.
+//!
+//! The composer's slots at offsets 0x7C and 0x84 are its verified methods vf31
+//! (the gate pass, lifted as `gate_pending`) and vf33 (the node handler, lifted
+//! as `handle_pending_node`). A composition may route those callees to the
+//! lifted code; the proofs script them.
 //!
 //! The composer's identity and its inner object are opaque handles: the
 //! lifted code passes them to the callees and reads through them only where
@@ -123,10 +129,10 @@ pub const POP_BYTE_ZERO: u8 = 0;
 
 /// The composer's callees and its own slots, as the lifted methods call them.
 pub trait ComposerCallees {
-    /// The composer's slot at offset 0x78. The sequence methods and the
+    /// The composer's own slot at offset 0x78, which is its verified method
+    /// vf30 (lifted as `drain_pending`). The sequence methods and the
     /// forwards call it while immediate mode is off; the drain-and-forward
-    /// method calls it always. The verified rewrites name it a sync in some
-    /// places and a pool refill in others; neither name is accepted.
+    /// method calls it always.
     fn sync(&mut self, composer: Option<ComposerId>);
 
     /// Numbered callee 2 of the drain-and-forward method: called on the
@@ -153,23 +159,26 @@ pub trait ComposerCallees {
         last: Option<ComposerId>,
     );
 
-    /// The composer's slot at offset 0x74, called first by the pending-list
-    /// drain, always (immediate mode does not stop it).
+    /// The composer's slot at offset 0x74: the method at index 29 of the
+    /// class, not in the verified list, so its meaning is not established.
+    /// The gate pass calls it first, always.
     fn sync_pending(&mut self, composer: Option<ComposerId>);
 
-    /// The composer's gate slot at offset 0x84, called once per node by the
-    /// gate pass with the composer, the node and a word the caller passes
-    /// through. Returns the gate's answer; only its low byte is a verdict.
+    /// The composer's slot at offset 0x84, which is its verified method vf33
+    /// (lifted as `handle_pending_node`). The gate pass calls it once per node
+    /// with the composer, the node and a word the caller passes through.
+    /// Returns the answer; only its low byte is a verdict.
     fn gate_node(&mut self, composer: Option<ComposerId>, node: Option<NodeId>, arg: u32) -> u32;
 
-    /// The composer's gate slot at offset 0x7C, called with the composer and
-    /// the out-word's identity (the original passes the out-word's address
-    /// as an argument). Returns the gate's answer; only its low byte is a
-    /// verdict.
+    /// The composer's slot at offset 0x7C, which is its verified method vf31
+    /// (lifted as `gate_pending`). The gate-and-drain method calls it with the
+    /// composer and the out-word's identity (the original passes the out-word's
+    /// address as the argument). Only the low byte of the answer is a verdict.
     fn check(&mut self, composer: Option<ComposerId>, token: Option<OutId>) -> u32;
 
-    /// The composer's node-handler slot at offset 0x80, called with the
-    /// composer and one pending node.
+    /// The composer's slot at offset 0x80: the method at index 32, not in the
+    /// verified list, so its meaning is not established. The drain calls it
+    /// once per node.
     fn handle_node(&mut self, composer: Option<ComposerId>, node: Option<NodeId>);
 
     /// Numbered callee 2 of the table dispatch: called on the table entry

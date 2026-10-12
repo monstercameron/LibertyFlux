@@ -377,7 +377,7 @@ fn every_method_has_a_wrong_copy_that_is_caught() {
 }
 
 #[test]
-fn sync_skipped_when_immediate_is_caught() {
+fn dropped_sync_is_caught() {
     let _guard = harness::lock();
     for m in 0..METHODS.len() {
         let mut rng = Rng(0x1A17_0020 + m as u64);

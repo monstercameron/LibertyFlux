@@ -61,6 +61,9 @@ lf_checker_rt::export!(thiscall, rw_00a8d670(this: u32) -> u32 {
             index += 1;
         }
         let _: u32 = lf_checker_rt::callee_cdecl!(FREE_LIST, u32, list);
+        ((this + RECORD_LIST) as *mut u32).write_unaligned(0);
+        ((this + RECORD_COUNT) as *mut u32).write_unaligned(0);
+        ((this + ENABLED) as *mut u8).write_unaligned(0);
         0
     }
 });

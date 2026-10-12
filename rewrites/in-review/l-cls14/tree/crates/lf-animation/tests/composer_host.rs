@@ -530,7 +530,18 @@ fn pending_drain_with_an_empty_list_still_syncs() {
 #[should_panic(expected = "the node's link word was not recorded")]
 fn pending_drain_panics_on_an_unrecorded_node() {
     let mut links = NodeLinks::new();
+    links.insert(Handle32::new(0x40).unwrap(), None);
     let mut c = ComposerOptimized::new(true, false, 0, 0, None, None)
         .with_pending(Handle32::new(0x30), None);
+    c.drain_pending(None, &mut links, &mut OrderLog::default());
+}
+
+#[test]
+#[should_panic(expected = "the pending list is longer than the recorded nodes")]
+fn pending_drain_stops_on_a_cycle_instead_of_running_on() {
+    let a = Handle32::new(0x50).unwrap();
+    let mut links = NodeLinks::new();
+    links.insert(a, Some(a));
+    let mut c = ComposerOptimized::new(true, false, 0, 0, None, None).with_pending(Some(a), None);
     c.drain_pending(None, &mut links, &mut OrderLog::default());
 }

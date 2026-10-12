@@ -1,5 +1,8 @@
 //! Lifted classes of the motion composer: the combining filter of the
-//! composer's poll tree and the optimised data block it is built with.
+//! composer's poll tree, the optimised data block it is built with, and the
+//! composer's own sequence, forwarding, table, gate and drain methods (the
+//! composer's pending list and pool are modelled only where these methods
+//! touch them).
 //!
 //! Each type owns its data as ordinary Rust: no addresses, no numbered
 //! callee slots, no virtual tables, no global state, no pointer width and

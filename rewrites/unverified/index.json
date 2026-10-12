@@ -472,9 +472,9 @@
   "reason": "indirect_call"
  },
  {
-  "address": "0x005C0A10",
-  "name": "fn_005c0a10",
-  "file": "fn_005c0a10.rs",
+  "address": "0x005C1950",
+  "name": "fn_005c1950",
+  "file": "fn_005c1950.rs",
   "lane": "r-s774",
   "outcome": "not_reached",
   "reason": null
@@ -872,6 +872,14 @@
   "reason": null
  },
  {
+  "address": "0x00602E60",
+  "name": "rage::rmPtfxManager::cull_and_draw_instances",
+  "file": "fn_00602e60.rs",
+  "lane": "a-U140",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x0061B150",
   "name": "net_session_desc_init",
   "file": "fn_0061b150.rs",
@@ -904,9 +912,9 @@
   "reason": "other"
  },
  {
-  "address": "0x00633E10",
-  "name": "rage::fragDrawable::~fragDrawable__deleting",
-  "file": "fn_00633e10.rs",
+  "address": "0x006341E0",
+  "name": "frag_parse_bonetag_all",
+  "file": "fn_006341e0.rs",
   "lane": "r-s777",
   "outcome": "not_reached",
   "reason": null
@@ -980,8 +988,8 @@
   "name": "rage::ptxEffectRuleStd::init_effect_instance",
   "file": "fn_00638690.rs",
   "lane": "a-U140",
-  "outcome": "not yet run",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "Stock 60-trial probes show an original-only heap write at offset 0x33E0 even with the record count pinned to zero; after adding the two omitted row-cache stores, the mismatch persists while return and ESP match, and the decoded zero-count path has no matching store."
  },
  {
   "address": "0x006607F0",
@@ -1309,14 +1317,6 @@
   "file": "fn_0087ec40.rs",
   "lane": "r-s755",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x0087F730",
-  "name": "rage::miniheapAllocator::get_bytes_allocated",
-  "file": "fn_0087f730.rs",
-  "lane": "r-s775",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -1867,6 +1867,14 @@
   "address": "0x00A66C40",
   "name": "fn_00A66C40",
   "file": "fn_00a66c40.rs",
+  "lane": "r-s770",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A66D10",
+  "name": "phInstBehaviorExplosionGta::vf0",
+  "file": "fn_00a66d10.rs",
   "lane": "r-s770",
   "outcome": "not_reached",
   "reason": null
@@ -2806,14 +2814,6 @@
   "lane": "r-s665",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00B2CDA0",
-  "name": "garage_elevation_scaled",
-  "file": "fn_00b2cda0.rs",
-  "lane": "a-U144",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00B37240",
@@ -4040,14 +4040,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00CA2930",
-  "name": "face_tex_load",
-  "file": "fn_00ca2930.rs",
-  "lane": "a-U143",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00CA3150",
   "name": "task_update_response_weight",
   "file": "fn_00ca3150.rs",
@@ -4360,6 +4352,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00CDBB10",
+  "name": "match_balance_and_enable",
+  "file": "fn_00cdbb10.rs",
+  "lane": "r-s776",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00CF1D70",
   "name": "stat_passes_mode_check",
   "file": "fn_00cf1d70.rs",
@@ -4494,6 +4494,14 @@
   "lane": "a-U132",
   "outcome": "deferred",
   "reason": "The original forwards its incoming EBP value to a later callee, while the rewrite passes zero and the shared runtime has no EBP accessor; the corrected non-null-target fixture faulted in the original before that call was reached."
+ },
+ {
+  "address": "0x00D21040",
+  "name": "angle_solver_atan2",
+  "file": "fn_00d21040.rs",
+  "lane": "a-U144",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00D254D0",
@@ -4768,30 +4776,6 @@
   "reason": null
  },
  {
-  "address": "0x00DB77C0",
-  "name": "UIMusicViewer::UIMusicViewer",
-  "file": "fn_00db77c0.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DB77E0",
-  "name": "UIMusicClip::UIMusicClip_2",
-  "file": "fn_00db77e0.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DB7800",
-  "name": "UIMusicViewer::UIMusicViewer_2",
-  "file": "fn_00db7800.rs",
-  "lane": "r-s766",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DB7820",
   "name": "UIMusicClip::vf2",
   "file": "fn_00db7820.rs",
@@ -4984,9 +4968,9 @@
   "reason": null
  },
  {
-  "address": "0x00E39EA0",
-  "name": "UIMontageMoviePlayer::~UIMontageMoviePlayer__deleting",
-  "file": "fn_00e39ea0.rs",
+  "address": "0x00E39EC0",
+  "name": "UIMontageMoviePlayer::configure_texture_source_and_hud_colour",
+  "file": "fn_00e39ec0.rs",
   "lane": "r-s773",
   "outcome": "not_reached",
   "reason": null
@@ -5102,14 +5086,6 @@
   "lane": "r-s745",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00E645C0",
-  "name": "PED_ON_PED_BUMP",
-  "file": "fn_00e645c0.rs",
-  "lane": "r-s768",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E693C0",
@@ -5272,17 +5248,9 @@
   "reason": null
  },
  {
-  "address": "0x00E70F30",
-  "name": "conditional_cleanup_00e70f30",
-  "file": "fn_00e70f30.rs",
-  "lane": "r-s769",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00E71010",
-  "name": "conditional_cleanup_00e71010",
-  "file": "fn_00e71010.rs",
+  "address": "0x00E71120",
+  "name": "timing_buffer_release",
+  "file": "fn_00e71120.rs",
   "lane": "r-s769",
   "outcome": "not_reached",
   "reason": ""

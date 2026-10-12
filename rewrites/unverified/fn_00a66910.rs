@@ -4,7 +4,7 @@
 /// then request a sift-down of the replacement pair over the remaining range.
 /// `begin` and `end` delimit eight-byte pairs; this routine reads the root and
 /// final pair before writing, then calls the helper with the array, root index
-/// zero, the signed bound `(pair_count - 2)`, the saved pair words, and context.
+/// zero, the signed bound `(pair_count - 1)`, the saved pair words, and context.
 /// The helper call is cdecl and its return value is ignored. The function has
 /// three cdecl stack arguments and no meaningful return value.
 lf_checker_rt::export!(cdecl, rw_00a66910(begin: u32, end: u32, context: u32) -> u32 {
@@ -30,7 +30,7 @@ lf_checker_rt::export!(cdecl, rw_00a66910(begin: u32, end: u32, context: u32) ->
         write_u32(tail_pair.wrapping_add(SECOND_WORD), root_pair[1]);
 
         let signed_pair_count = (end.wrapping_sub(begin) as i32) >> 3;
-        let sift_bound = signed_pair_count.wrapping_sub(2) as u32;
+        let sift_bound = signed_pair_count.wrapping_sub(1) as u32;
         let _ignored_result = lf_checker_rt::callee_cdecl!(
             SIFT_DOWN_CALLEE,
             u32,

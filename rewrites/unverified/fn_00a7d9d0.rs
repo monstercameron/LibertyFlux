@@ -15,7 +15,10 @@ lf_checker_rt::export!(thiscall, rw_00a7d9d0(this: u32, source: u32) -> u32 {
         (this.wrapping_add(0x20) as *mut u32).write_unaligned(0);
         (this.wrapping_add(0x24) as *mut u8).write(0);
     }
-    let has_animation = lf_checker_rt::callee_cdecl!(QUERY_ANIMATION, u8) != 0;
+    let query_animation: extern "cdecl" fn() -> u8 = unsafe {
+        core::mem::transmute(lf_checker_rt::callee_addr(QUERY_ANIMATION) as usize)
+    };
+    let has_animation = query_animation() != 0;
     if has_animation && source != 0 {
         let limit = f32::from_bits(unsafe { lf_checker_rt::global::<u32>(BLEND_LIMIT).read_unaligned() });
         let source_weight = f32::from_bits(unsafe { (source.wrapping_add(0x58) as *const u32).read_unaligned() });

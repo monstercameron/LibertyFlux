@@ -1,4 +1,4 @@
-// original: 0x00DB7820 UIMusicClip::~UIMusicClip__deleting
+// original: 0x00DB7820 UIMusicClip::vf2
 
 /// Invoke the music-clip base destructor wrapper, conditionally release the
 /// receiver when bit zero of the flags byte is set, and return the receiver.

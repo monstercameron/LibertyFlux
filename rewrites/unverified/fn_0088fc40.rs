@@ -132,9 +132,16 @@ export!(thiscall, rw_0088fc40(this_ptr: *mut u8) -> () {
     let this_address = this_ptr as u32;
     unsafe {
         let primary_selector = read_u8(this_address.wrapping_add(5));
-        let (initial_gain, initial_secondary, duration_limit, secondary_limit, mut peak) =
+        let (
+            initial_gain,
+            initial_secondary,
+            duration_limit,
+            angle_seed,
+            timing_offset,
+            mut peak,
+        ) =
             if primary_selector == 0xFF {
-                (0.0_f32, 0.0_f32, DEFAULT_DURATION, 0_i32, 0_u16)
+                (0.0_f32, 0.0_f32, DEFAULT_DURATION, -1_i32, 0_i32, 0_u16)
             } else {
                 let descriptor = descriptor_for(
                     this_address,
@@ -142,13 +149,11 @@ export!(thiscall, rw_0088fc40(this_ptr: *mut u8) -> () {
                     PRIMARY_TABLE_FIELD,
                     PRIMARY_STRIDE_VA,
                 );
-                // The original reads this signed field before replacing the
-                // register with the unsigned duration field below.
-                let _ = core::hint::black_box(read_i16(descriptor.wrapping_add(0x34)));
                 (
                     read_f32(descriptor.wrapping_add(0x28)),
                     read_f32(descriptor.wrapping_add(0x2C)),
                     u32::from(read_u16(descriptor.wrapping_add(0x30))),
+                    i32::from(read_i16(descriptor.wrapping_add(0x34))),
                     i32::from(read_i16(descriptor.wrapping_add(0x36))),
                     read_u16(descriptor.wrapping_add(0x32)),
                 )
@@ -173,8 +178,8 @@ export!(thiscall, rw_0088fc40(this_ptr: *mut u8) -> () {
             let group = group_index(current_descriptor);
             let preset = table_offset(group).wrapping_add(2).wrapping_shl(5);
             gain = ordered_add(
-                gain,
                 read_f32(current_descriptor.wrapping_add(preset)),
+                gain,
             );
         }
 
@@ -182,7 +187,7 @@ export!(thiscall, rw_0088fc40(this_ptr: *mut u8) -> () {
         if optional_gain != 0 {
             gain = ordered_add(gain, read_f32(optional_gain));
         }
-        gain = ordered_add(gain, read_f32(this_address.wrapping_add(0x1C)));
+        gain = ordered_add(read_f32(this_address.wrapping_add(0x1C)), gain);
         write_f32(this_address.wrapping_add(0x28), gain);
 
         let mut secondary = initial_secondary;
@@ -209,7 +214,7 @@ export!(thiscall, rw_0088fc40(this_ptr: *mut u8) -> () {
         };
 
         let mut combined = if flags & 4 == 0 {
-            secondary_limit
+            angle_seed
         } else {
             -1_i32
         };
@@ -236,7 +241,7 @@ export!(thiscall, rw_0088fc40(this_ptr: *mut u8) -> () {
 
         let mut timing = i32::from(read_i16(this_address.wrapping_add(0x22)));
         if flags & 2 == 0 {
-            timing = timing.wrapping_add(secondary_limit);
+            timing = timing.wrapping_add(timing_offset);
         }
         if selector != 0xFF {
             let group = group_index(current_descriptor);
