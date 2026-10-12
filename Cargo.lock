@@ -588,6 +588,14 @@ name = "lf-gamedata"
 version = "0.1.0"
 
 [[package]]
+name = "lf-gotopoint-diff"
+version = "0.1.0"
+dependencies = [
+ "lf-checker-rt",
+ "lf-peds-tasks",
+]
+
+[[package]]
 name = "lf-hook"
 version = "0.1.0"
 

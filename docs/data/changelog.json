@@ -1,8 +1,22 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Rust in progress: 4 files from lanes (745 unverified rewrites, 1766 in review)",
+    "title": "Lift: the go-to-point-on-route task, eight methods",
     "commit": null,
+    "summary": "Eight of the nine verified methods of the simple task that moves a pedestrian to a point on a route are lifted into portable Rust in the pedestrian tasks crate and proven against their 32-bit rewrites.",
+    "changes": [
+      "Lifted: the clone, the progress advance, the refresh, the positive check, the speed clamp, the position copy, the position set and one value set. The allocator, the constructor, the pedestrian's reads and the route updater are host calls. The lifted module forbids unsafe code.",
+      "Proof: seventeen tests on the 32-bit target, 20,000 generated cases a method comparing the return value, every byte of the object, the output and cache words and the ordered call log, floats as bits; a wrong lift for each method, each caught, the weakest on 274 cases of 20,000. Seventeen host tests pass on the 64-bit host.",
+      "What the proofs do not cover: the constructor is a scripted callee; the position copy's returned address and the advance's return register are not compared; the pedestrian's reads are host calls and are not in the logs.",
+      "Not lifted: the route follow step, verified at two kilobytes with eleven callees and not reached in the lane's time, and six methods with no verified rewrite.",
+      "Found while lifting, for the proof audit list: three verified rewrites write float constants as literals where the original loads them from the image's data, so their proofs cannot see those words; one contract declares a data word its function never reads; one rewrite's comment names the wrong flag bits; one contract scripts no callee write, so a read after the call is not exercised by it.",
+      "Five of the eight had not been lifted before: the count of lifted routines is 1,357."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Rust in progress: 4 files from lanes (745 unverified rewrites, 1766 in review)",
+    "commit": "51f9bab506c672ce20c635cea57bf964d654ee3b",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 745 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
