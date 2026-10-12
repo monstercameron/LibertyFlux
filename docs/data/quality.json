@@ -3,11 +3,11 @@
  "sources": {
   "verified": {
    "path": "rewrites/verified/index.json",
-   "as_of": "2026-10-12 08:11 UTC"
+   "as_of": "2026-10-12 08:12 UTC"
   },
   "unverified": {
    "path": "rewrites/unverified/index.json",
-   "as_of": "2026-10-12 08:11 UTC"
+   "as_of": "2026-10-12 08:13 UTC"
   },
   "issues": {
    "path": "rewrites/review/issues.json",
@@ -25,10 +25,10 @@
    "version 2": 3681,
    "version 3": 354,
    "version 4": 840,
-   "version 5": 2123,
+   "version 5": 1953,
    "version 6": 2007,
    "version 7": 463,
-   "version 8": 10764
+   "version 8": 10934
   },
   "modern_checker": 20232,
   "lanes": 1283,
@@ -43,17 +43,17 @@
    "narrowed": 0,
    "mutant_caught": 0
   },
-  "unverified": 1038,
+  "unverified": 1017,
   "unverified_by_outcome": {
-   "not_reached": 520,
-   "not yet run": 330,
-   "deferred": 187,
+   "not_reached": 516,
+   "not yet run": 314,
+   "deferred": 186,
    "failed_v3": 1
   },
   "unverified_by_reason": {
-   "none recorded": 852,
+   "none recorded": 832,
    "other (unlisted)": 74,
-   "other": 63,
+   "other": 62,
    "checker_gap": 29,
    "needs_encrypted_code": 11,
    "frame_pointer_args": 5,
