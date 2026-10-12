@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Devlog: the lift lane's entry on five families of small accessors",
+    "title": "Rewrites: 47 proofs re-run on the current checker and recorded on it",
     "commit": null,
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "47 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Devlog: the lift lane's entry on five families of small accessors",
+    "commit": "9fcbc986ee0316fb4db4c21f4c7effc1427f219c",
     "summary": "The lane's own account of lifting 83 small accessors in five families is added to the devlog.",
     "changes": [
       "The entry gives the five families and their lifted forms, why an owning type did not fit routines that own nothing and a table of instances with one routine per family did, the float return that quiets a signalling not-a-number, the race between two tests that shared global slots and the lock that fixed it, and the 72 functions left with their reasons."
