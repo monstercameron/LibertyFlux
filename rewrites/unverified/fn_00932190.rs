@@ -16,7 +16,7 @@ lf_checker_rt::export!(cdecl, rw_00932190() -> u32 {
         let record = cache.wrapping_add(record_index * RECORD_STRIDE);
         let key = unsafe { (record as *const u32).read_unaligned() };
         let value = unsafe { (record.wrapping_add(4) as *const u32).read_unaligned() };
-        if key == EMPTY_WORD || value == EMPTY_WORD {
+        if key != EMPTY_WORD && value == EMPTY_WORD {
             return record;
         }
     }

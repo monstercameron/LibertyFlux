@@ -1,4 +1,5 @@
 // original: 0x00B27250 conditionally_copy_nearby_blend_component
+
 /// Require a nonzero presence word, flag bit 0x20, and a clear exclusion bit
 /// 0x08000000. Measure the squared three dimensional distance from the linked
 /// position at +0x30 or the inline position at +0x10 to the target vector. The

@@ -245,7 +245,7 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
             let mut workspace = [0u32; 7];
             let mut scratch_vector = [0u32; 4];
             let mut returned_distance = 0u32;
-            let mut returned_direction = [direction_x, direction_y, direction_z];
+            let mut returned_direction = [0.0f32; 3];
             let mut returned_time = 0.0f32;
             let item_kind = unsafe { read_u32(record.wrapping_add(RECORD_KIND)) };
             let clip_result = lf_checker_rt::callee_fastcall!(
@@ -445,15 +445,15 @@ lf_checker_rt::export!(thiscall, u133_sprite_update(
         unsafe {
             write_f32(
                 node.wrapping_add(NODE_TANGENT),
-                add_f32(tangent_x, mul_f32(key_x, update_time)),
+                add_f32(mul_f32(key_x, update_time), tangent_x),
             );
             write_f32(
                 node.wrapping_add(NODE_TANGENT + 4),
-                add_f32(tangent_y, mul_f32(key_y, update_time)),
+                add_f32(mul_f32(key_y, update_time), tangent_y),
             );
             write_f32(
                 node.wrapping_add(NODE_TANGENT + 8),
-                add_f32(tangent_z, mul_f32(key_z, update_time)),
+                add_f32(mul_f32(key_z, update_time), tangent_z),
             );
         }
     }

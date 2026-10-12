@@ -14,20 +14,31 @@ lf_checker_rt::export!(thiscall, rw_0059c8a0(this: u32) -> u32 {
     const ENTITY_POINTER: u32 = 0xC0;
     const READY_FLAG: u32 = 0xB4;
     const FLOAT_BITS: u32 = 0xCC;
+    const FIRST_VTABLE_SLOT: u32 = 0x38;
+    const SECOND_VTABLE_SLOT: u32 = 0x3C;
+    const ENTITY_VTABLE_SLOT: u32 = 0x0C;
     const FIRST_MODE: u32 = 1;
     const CLEARED: u8 = 0;
 
     unsafe {
-        let object_vtable = (this.wrapping_add(VTABLE_POINTER) as *const u32).read_unaligned();
+        let first_vtable = (this.wrapping_add(VTABLE_POINTER) as *const u32).read_unaligned();
+        let first_slot = (first_vtable.wrapping_add(FIRST_VTABLE_SLOT) as *const u32).read_unaligned();
+        let _ = core::hint::black_box(first_slot);
         let first_buffer = this.wrapping_add(FIRST_BUFFER);
         let _ = lf_checker_rt::callee_thiscall!(1, u32, this, first_buffer, FIRST_MODE);
+
+        let second_vtable = (this.wrapping_add(VTABLE_POINTER) as *const u32).read_unaligned();
+        let second_slot = (second_vtable.wrapping_add(SECOND_VTABLE_SLOT) as *const u32).read_unaligned();
+        let _ = core::hint::black_box(second_slot);
         let second_buffer = this.wrapping_add(SECOND_BUFFER);
         let _ = lf_checker_rt::callee_thiscall!(2, u32, this, second_buffer);
 
         let entity = (this.wrapping_add(ENTITY_POINTER) as *const u32).read_unaligned();
+        let entity_vtable = (entity as *const u32).read_unaligned();
+        let entity_slot = (entity_vtable.wrapping_add(ENTITY_VTABLE_SLOT) as *const u32).read_unaligned();
+        let _ = core::hint::black_box(entity_slot);
         let float_bits = (this.wrapping_add(FLOAT_BITS) as *const u32).read_unaligned();
         (this.wrapping_add(READY_FLAG) as *mut u8).write_unaligned(CLEARED);
-        let _ = object_vtable;
         lf_checker_rt::callee_thiscall!(3, u32, entity, float_bits)
     }
 });

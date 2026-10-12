@@ -1,4 +1,5 @@
 // original: 0x00B27EF0 toggle_motion_flag_and_request_update
+
 /// Toggle the receiver's update-request bit when the supplied byte's low bit
 /// is set, then call its update dispatch object with event code 0x10 and the
 /// original argument. Return the dispatch result. The dispatch object is

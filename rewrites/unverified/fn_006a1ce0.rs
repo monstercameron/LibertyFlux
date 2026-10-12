@@ -15,9 +15,8 @@ lf_checker_rt::export!(thiscall, rw_006a1ce0(
     lod_index: u32,
     object_index: u32,
     data_object: u32,
-    unused: u32,
+    mask_pointer: u32,
 ) -> u32 {
-    let _ = unused;
     
     let read32 = |address: u32| unsafe { (address as *const u32).read_unaligned() };
     let read16 = |address: u32| unsafe { (address as *const u16).read_unaligned() };
@@ -59,10 +58,10 @@ lf_checker_rt::export!(thiscall, rw_006a1ce0(
         ) != 0;
 
         if item_present {
-            let mask_allows_item = if lod_index == 0 {
+            let mask_allows_item = if mask_pointer == 0 {
                 true
             } else {
-                let bit_words = read32(lod_index);
+                let bit_words = read32(mask_pointer);
                 let bit = object_index & 0x1F;
                 let word_index = (object_index as i32) >> 5;
                 let word_offset = word_index.wrapping_mul(4) as u32;

@@ -1,4 +1,5 @@
 // original: 0x00B2C910 squared_distance_from_blend_limits
+
 /// Return the sum of squared signed deviations from two inclusive intervals.
 /// The x bounds are words at +0x28 and +0x2c; the y bounds are at +0x30 and
 /// +0x34. Each component contributes zero inside its interval and the ordered

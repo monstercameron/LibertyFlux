@@ -1,4 +1,5 @@
 // original: 0x00B27BB0 find_first_available_task_id
+
 /// Query task IDs from 0x37 through 0x3c in order, returning the first
 /// nonzero result and stopping immediately. If every lookup returns zero,
 /// return zero. The function has a callee-cleaned one-word stack argument;

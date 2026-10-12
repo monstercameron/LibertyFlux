@@ -1,4 +1,5 @@
 // original: 0x00B27E10 update_blend_timing_state
+
 /// Update the blend timing key at +0x3c. The prior key at +0x40 and the unit
 /// transition weight at +0x44 are updated only when the new key differs and
 /// the previous key is not the `u32::MAX` uninitialized sentinel. Returns no

@@ -1,4 +1,4 @@
-// original: 0x00D5E560 material_fx_pick_weighted_entry
+// original: 0x00D5E560 streaming_pick_random_effect_entry
 
 /// Select an entry using the entity's 64-bit weighted-choice state.
 ///
@@ -12,7 +12,7 @@
 /// remainder, and returns an entry pointer in the array at offset `0x52b8`.
 /// The method is thiscall, cleans its two stack arguments, and returns a pointer
 /// into the same object.
-lf_checker_rt::export!(thiscall, rw_material_fx_pick_weighted_entry(
+lf_checker_rt::export!(thiscall, rw_streaming_pick_random_effect_entry(
     this_ptr: u32,
     row: u32,
     column: u32
