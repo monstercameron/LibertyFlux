@@ -14,10 +14,10 @@
     "identified": 37413,
     "named": 37259,
     "rewritten": 20504,
-    "verified": 20201
+    "verified": 20239
   },
   "structures": 340,
-  "symbols": 20306,
+  "symbols": 20344,
   "measured": [
     {
       "label": "Code section",
@@ -117,9 +117,9 @@
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 39.4,
+      "value": 39.5,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2886960 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2889673 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
@@ -141,7 +141,7 @@
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 20201,
+      "value": 20239,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
@@ -2428,7 +2428,7 @@
       "count": 82,
       "named": 82,
       "rewritten": 74,
-      "verified": 73
+      "verified": 74
     },
     {
       "stage": "verified",
@@ -2440,13 +2440,13 @@
       "verified": 36
     },
     {
-      "stage": "rewritten",
+      "stage": "verified",
       "from": "0x00987F53",
       "to": "0x0098D874",
       "count": 65,
       "named": 65,
       "rewritten": 36,
-      "verified": 26
+      "verified": 36
     },
     {
       "stage": "named",
@@ -2491,7 +2491,7 @@
       "count": 103,
       "named": 103,
       "rewritten": 70,
-      "verified": 63
+      "verified": 70
     },
     {
       "stage": "verified",
@@ -2500,7 +2500,7 @@
       "count": 61,
       "named": 61,
       "rewritten": 44,
-      "verified": 40
+      "verified": 44
     },
     {
       "stage": "named",
@@ -2509,7 +2509,7 @@
       "count": 44,
       "named": 44,
       "rewritten": 19,
-      "verified": 18
+      "verified": 19
     },
     {
       "stage": "verified",
@@ -4159,13 +4159,13 @@
       "verified": 47
     },
     {
-      "stage": "rewritten",
+      "stage": "verified",
       "from": "0x00DAFF63",
       "to": "0x00DB5883",
       "count": 130,
       "named": 130,
       "rewritten": 78,
-      "verified": 63
+      "verified": 78
     },
     {
       "stage": "named",
@@ -4477,7 +4477,7 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2886960,
+    "verified": 2889673,
     "large_functions": 2801402,
     "large_functions_verified": 830072
   },

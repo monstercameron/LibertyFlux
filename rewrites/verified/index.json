@@ -56880,6 +56880,96 @@
   "lane": "a-S31"
  },
  {
+  "address": "0x008C4420",
+  "name": "system_cache_avail_phys_mem",
+  "kind": "function",
+  "file": "functions/fn_008c4420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008C4460",
+  "name": "system_cache_total_phys_mem",
+  "kind": "function",
+  "file": "functions/fn_008c4460.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008C4C70",
+  "name": "file_read_fully",
+  "kind": "function",
+  "file": "functions/fn_008c4c70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008C4CC0",
+  "name": "path_is_relative",
+  "kind": "function",
+  "file": "functions/fn_008c4cc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008C4E00",
+  "name": "gallery_file_open",
+  "kind": "function",
+  "file": "functions/fn_008c4e00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008C4E30",
+  "name": "NativeImpl_SAVE_SETTINGS_2",
+  "kind": "function",
+  "file": "functions/fn_008c4e30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008C4E50",
+  "name": "file_handle_read",
+  "kind": "function",
+  "file": "functions/fn_008c4e50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008C4E70",
+  "name": "config_read_clean_line",
+  "kind": "function",
+  "file": "functions/fn_008c4e70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008C4EF0",
+  "name": "file_handle_read_line",
+  "kind": "function",
+  "file": "functions/fn_008c4ef0.rs",
+  "trials": 1001,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008C50F0",
+  "name": "file_handle_validate",
+  "kind": "function",
+  "file": "functions/fn_008c50f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
   "address": "0x008C5710",
   "name": "NativeImpl_SAVE_SETTINGS_4",
   "kind": "function",
@@ -58896,6 +58986,132 @@
   "lane": "a-U37"
  },
  {
+  "address": "0x008DA500",
+  "name": "loading_tick_dispatch",
+  "kind": "function",
+  "file": "functions/fn_008da500.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DA690",
+  "name": "streaming_context_reset",
+  "kind": "function",
+  "file": "functions/fn_008da690.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DA9B0",
+  "name": "T_CB_Generic_1Arg<void(*)(int),int>::T_CB_Generic_1Arg",
+  "kind": "function",
+  "file": "functions/fn_008da9b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DA9F0",
+  "name": "CAddModelInfoReferenceDC::CAddModelInfoReferenceDC",
+  "kind": "function",
+  "file": "functions/fn_008da9f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DAA30",
+  "name": "CAddTxdReferenceDC::CAddTxdReferenceDC",
+  "kind": "function",
+  "file": "functions/fn_008daa30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DAA70",
+  "name": "CClearRenderTargetDC::CClearRenderTargetDC",
+  "kind": "function",
+  "file": "functions/fn_008daa70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DAAD0",
+  "name": "CCreateRenderListGroupDC::CCreateRenderListGroupDC",
+  "kind": "function",
+  "file": "functions/fn_008daad0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DAB50",
+  "name": "CCustomShaderEffectDC::CCustomShaderEffectDC",
+  "kind": "function",
+  "file": "functions/fn_008dab50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DABB0",
+  "name": "CDataBlockDC::CDataBlockDC",
+  "kind": "function",
+  "file": "functions/fn_008dabb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DABE0",
+  "name": "CDrawCurvedWindowDC::CDrawCurvedWindowDC",
+  "kind": "function",
+  "file": "functions/fn_008dabe0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DAC40",
+  "name": "CDrawDefLight::CDrawDefLight",
+  "kind": "function",
+  "file": "functions/fn_008dac40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DACA0",
+  "name": "CDrawEntityDC::CDrawEntityDC",
+  "kind": "function",
+  "file": "functions/fn_008daca0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DAE60",
+  "name": "CDrawFragTypeDC::CDrawFragTypeDC",
+  "kind": "function",
+  "file": "functions/fn_008dae60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DAF10",
+  "name": "CDrawMobilePhoneCameraDC::CDrawMobilePhoneCameraDC",
+  "kind": "function",
+  "file": "functions/fn_008daf10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
   "address": "0x008DB1F0",
   "name": "task_ctor_load_registry_record",
   "kind": "function",
@@ -59146,6 +59362,123 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s649"
+ },
+ {
+  "address": "0x008DC020",
+  "name": "CSetClipPlaneDC::CSetClipPlaneDC",
+  "kind": "function",
+  "file": "functions/fn_008dc020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC070",
+  "name": "CSetClipPlaneEnableDC::CSetClipPlaneEnableDC",
+  "kind": "function",
+  "file": "functions/fn_008dc070.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC0A0",
+  "name": "CSetColorWrite::CSetColorWrite",
+  "kind": "function",
+  "file": "functions/fn_008dc0a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC0D0",
+  "name": "CSetCurrentViewportDC::CSetCurrentViewportDC",
+  "kind": "function",
+  "file": "functions/fn_008dc0d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC130",
+  "name": "CSetGeometryVertexOffsets::CSetGeometryVertexOffsets",
+  "kind": "function",
+  "file": "functions/fn_008dc130.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC170",
+  "name": "CSetShaderGPRAlloc::CSetShaderGPRAlloc",
+  "kind": "function",
+  "file": "functions/fn_008dc170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC1B0",
+  "name": "CSetupDefLight::CSetupDefLight",
+  "kind": "function",
+  "file": "functions/fn_008dc1b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC290",
+  "name": "CShaderFx_PushForcedTechnique::CShaderFx_PushForcedTechnique",
+  "kind": "function",
+  "file": "functions/fn_008dc290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC2C0",
+  "name": "CUnLockRenderTargetDC::CUnLockRenderTargetDC",
+  "kind": "function",
+  "file": "functions/fn_008dc2c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC350",
+  "name": "CViewport_Callback_DC::CViewport_Callback_DC",
+  "kind": "function",
+  "file": "functions/fn_008dc350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC3A0",
+  "name": "draw_command_alloc",
+  "kind": "function",
+  "file": "functions/fn_008dc3a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC690",
+  "name": "CDrawCommandAllocator::~CDrawCommandAllocator",
+  "kind": "function",
+  "file": "functions/fn_008dc690.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
+ },
+ {
+  "address": "0x008DC6C0",
+  "name": "CDrawMobilePhoneCameraDC::~CDrawMobilePhoneCameraDC",
+  "kind": "function",
+  "file": "functions/fn_008dc6c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s819"
  },
  {
   "address": "0x008DC7E0",
