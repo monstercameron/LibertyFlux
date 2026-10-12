@@ -1,8 +1,8 @@
 //! The base sound: the fields and the verified behaviour of `rage::audSound`.
 //!
 //! A sound holds a voice column and a link, a kind word, a few flag bytes,
-//! a sub-id, a voice id, eight slot ids, a sequence word and two stored
-//! slot pointers. The original keeps them at fixed byte offsets of one
+//! a sub-id, a voice id and option, an identity word, an attached voice,
+//! eight slot ids, a sequence word and two stored slot pointers. The original keeps them at fixed byte offsets of one
 //! object; here each is a named field. Offsets appear in the field docs
 //! only, for a reader who compares with the original's layout.
 //!
@@ -53,13 +53,14 @@ pub const SEQ_UNSET: u32 = 0xffff_ffff;
 
 /// The fields of a base sound that the verified methods read or write.
 ///
-/// Fields the lifted methods do not touch (the identity word, option byte,
-/// and the attached voice) are left out until their methods are lifted.
+/// Fields none of the lifted methods reads or writes are left out.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct AudSound {
     /// Voice column (byte at offset 0x04); `NO_VOICE` when unassigned.
     pub voice_column: u8,
-    /// Link byte (byte at offset 0x05); `NO_VOICE` forwards to the fallback.
+    /// Link byte (byte at offset 0x05): the link target's row for the
+    /// forwarding method, and the second selector for attach. `NO_VOICE`
+    /// forwards to the fallback (forwarding) or takes the first branch (attach).
     pub link: u8,
     /// Kind word (16 bits at offset 0x06).
     pub kind: u16,
@@ -71,6 +72,12 @@ pub struct AudSound {
     pub sub_id: u8,
     /// Voice id (byte at offset 0x40): the voice-table row.
     pub voice_id: u8,
+    /// Option byte (offset 0x41): the low six bits are the attach state.
+    pub option: u8,
+    /// Identity word (offset 0x3c), copied from the attach descriptor.
+    pub identity: u32,
+    /// Attached voice record (offset 0x98), set by attach.
+    pub voice: u32,
     /// Slot ids (bytes at offsets 0x48..0x50); `NO_VOICE` marks an empty slot.
     pub slot_ids: [u8; SLOT_COUNT],
     /// Sequence word (offset 0xa4), set to `SEQ_UNSET` by construction.
@@ -251,4 +258,103 @@ impl AudSound {
             self.slot_b = 0;
         }
     }
+
+    /// Attaches a voice description: links the sound to the voice record,
+    /// copies the identity word, the voice id and the option byte from the
+    /// descriptor, runs three set-up callees over a scratch frame, then
+    /// reconciles the sound's flags with the voice record. Returns 1, or 0
+    /// when the descriptor or the voice is null, or when the first selector
+    /// (`voice_column`) is unassigned in the first branch.
+    ///
+    /// Without a second selector (`link` is `NO_VOICE`), the first branch
+    /// runs a reset callee, marks the voice record's flag byte, and, when
+    /// the option's low six bits are all set, resolves a category through a
+    /// memoised hash and a lookup callee and folds the lookup's verdict into
+    /// the option. With a second selector, the second branch takes the
+    /// option bits of the selected record that differ from the sound's.
+    /// Last, the descriptor's flag byte is merged into the sound's first
+    /// flag byte (bits 0 to 6 only; bit 7 is kept).
+    ///
+    /// The scratch frame is a pointer the set-up callees fill; this method
+    /// never reads it, so the lift passes the world's frame handle and does
+    /// not model what the callees write into it.
+    #[must_use]
+    pub fn attach_voice(
+        &mut self,
+        this: Handle32<ObjectTag>,
+        voice: u32,
+        desc: u32,
+        extra: u32,
+        world: &mut impl SoundWorld,
+    ) -> u32 {
+        if desc == 0 {
+            return 0;
+        }
+        if voice == 0 {
+            return 0;
+        }
+        self.voice = voice;
+        self.identity = world.descriptor_word(desc);
+        let pair = world.descriptor_pair(desc);
+        self.voice_id = pair as u8;
+        self.option = (pair >> 8) as u8;
+        let frame = world.scratch_frame();
+        world.init_block(frame);
+        world.attach_callee(this, voice, 0, frame);
+        world.bind_extra(this, extra, frame);
+        self.sub_id = world.voice_sub_id(voice);
+        if self.link == NO_VOICE {
+            world.reset_object(this);
+            if self.voice_column == NO_VOICE {
+                return 0;
+            }
+            let row = self.voice_id;
+            let stride = world.scalar_b();
+            let word = world.voice_table_word(row, ROW_BIAS_INIT);
+            let record = word.wrapping_add(u32::from(self.voice_column).wrapping_mul(stride));
+            world.or_record_byte(record, RECORD_FLAGS, RECORD_FLAGS_MASK);
+            if (self.option & OPTION_FULL) == OPTION_FULL {
+                let mut cat = world.extra_word(extra);
+                if cat == 0 {
+                    let flag = world.memo_flag();
+                    if flag & 1 == 0 {
+                        world.set_memo_flag(flag | 1);
+                        let h = world.category_key_hash();
+                        world.set_memo_value(h);
+                        cat = h;
+                    } else {
+                        cat = world.memo_value();
+                    }
+                }
+                let found = world.category_lookup(cat);
+                if found != 0 {
+                    let ok = world.category_ok(found);
+                    if (ok as u8) != 0 {
+                        self.option = (self.option & 0xc1) | 1;
+                    } else {
+                        self.option &= 0xc0;
+                    }
+                }
+            }
+        } else {
+            let row = self.voice_id;
+            let stride = world.scalar_a();
+            let word = world.voice_table_word(row, ROW_BIAS_LOOKUP);
+            let record = word.wrapping_add(u32::from(self.link).wrapping_mul(stride));
+            let diff = (world.record_byte(record, OPTION_FIELD) ^ self.option) & OPTION_FULL;
+            self.option ^= diff;
+        }
+        let df = world.descriptor_flag(desc);
+        self.fast_flags = ((df ^ self.fast_flags) & 0x7f) ^ df;
+        1
+    }
 }
+
+/// Offset of the flag byte of a voice record that attach marks.
+pub const RECORD_FLAGS: u32 = 0xe7;
+/// Bits attach ORs into that flag byte of the voice record.
+pub const RECORD_FLAGS_MASK: u8 = 0x38;
+/// Offset of the option byte in a voice record.
+pub const OPTION_FIELD: u32 = 0x41;
+/// Low six bits of the option byte: all set means full set-up.
+pub const OPTION_FULL: u8 = 0x3f;

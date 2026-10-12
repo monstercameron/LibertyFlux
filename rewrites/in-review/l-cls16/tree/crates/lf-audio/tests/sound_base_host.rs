@@ -1,4 +1,4 @@
-//! Host tests for the lifted base sound class: edge cases a reader would ask about.
+﻿//! Host tests for the lifted base sound class: edge cases a reader would ask about.
 //!
 //! These run on the 64-bit host against a scripted world fake that records
 //! every call. The differential proof against the verified rewrites lives in
@@ -8,7 +8,7 @@ use std::collections::VecDeque;
 
 use lf_audio::sound_base::registry::{self, State};
 use lf_audio::sound_base::{
-    AudSound, FallbackTag, ObjectTag, RegistryTag, SlotTag, SoundWorld, FAST_BIT, INIT_DONE,
+    AudSound, FallbackTag, FrameTag, ObjectTag, RegistryTag, SlotTag, SoundWorld, FAST_BIT, INIT_DONE,
     KIND_FAST, NEEDS_INIT, NO_VOICE, SEQ_UNSET,
 };
 use lf_core::Handle32;
@@ -23,6 +23,12 @@ struct Fake {
     scalar_a: u32,
     scalar_b: u32,
     row_word: u32,
+    descriptor: (u32, u16, u8),
+    sub_id: u8,
+    extra: u32,
+    record_byte: u8,
+    memo_flag: u32,
+    memo_value: u32,
 }
 
 impl Fake {
@@ -31,6 +37,12 @@ impl Fake {
             scalar_a: 0x40,
             scalar_b: 0x10,
             row_word: 0x1000,
+            descriptor: (0xABCD, 0x0403, 0),
+            sub_id: 7,
+            extra: 0,
+            record_byte: 0,
+            memo_flag: 0,
+            memo_value: 0,
             ..Self::default()
         }
     }
@@ -116,6 +128,78 @@ impl SoundWorld for Fake {
         ));
         0
     }
+    fn descriptor_word(&self, _desc: u32) -> u32 {
+        self.descriptor.0
+    }
+    fn descriptor_pair(&self, _desc: u32) -> u16 {
+        self.descriptor.1
+    }
+    fn descriptor_flag(&self, _desc: u32) -> u8 {
+        self.descriptor.2
+    }
+    fn voice_sub_id(&self, _voice: u32) -> u8 {
+        self.sub_id
+    }
+    fn extra_word(&self, _extra: u32) -> u32 {
+        self.extra
+    }
+    fn scratch_frame(&mut self) -> Handle32<FrameTag> {
+        Handle32::new(0x9200).expect("nonzero")
+    }
+    fn init_block(&mut self, _frame: Handle32<FrameTag>) -> u32 {
+        self.log.push("init_block".to_string());
+        0
+    }
+    fn attach_callee(
+        &mut self,
+        this: Handle32<ObjectTag>,
+        voice: u32,
+        zero: u32,
+        _frame: Handle32<FrameTag>,
+    ) -> u32 {
+        self.log
+            .push(format!("attach {:#x} {voice:#x} {zero}", this.get()));
+        0
+    }
+    fn bind_extra(&mut self, this: Handle32<ObjectTag>, extra: u32, _frame: Handle32<FrameTag>) -> u32 {
+        self.log.push(format!("bind {:#x} {extra:#x}", this.get()));
+        0
+    }
+    fn reset_object(&mut self, this: Handle32<ObjectTag>) -> u32 {
+        self.log.push(format!("reset {:#x}", this.get()));
+        0
+    }
+    fn record_byte(&self, _record: u32, _offset: u32) -> u8 {
+        self.record_byte
+    }
+    fn or_record_byte(&mut self, record: u32, offset: u32, mask: u8) {
+        self.log
+            .push(format!("or_record {record:#x} +{offset:#x} {mask:#x}"));
+    }
+    fn memo_flag(&self) -> u32 {
+        self.memo_flag
+    }
+    fn set_memo_flag(&mut self, flag: u32) {
+        self.memo_flag = flag;
+    }
+    fn memo_value(&self) -> u32 {
+        self.memo_value
+    }
+    fn set_memo_value(&mut self, value: u32) {
+        self.memo_value = value;
+    }
+    fn category_key_hash(&mut self) -> u32 {
+        self.log.push("key_hash".to_string());
+        0x77
+    }
+    fn category_lookup(&mut self, category: u32) -> u32 {
+        self.log.push(format!("lookup {category:#x}"));
+        self.lookups.pop_front().unwrap_or(0)
+    }
+    fn category_ok(&mut self, found: u32) -> u32 {
+        self.log.push(format!("ok {found:#x}"));
+        1
+    }
 }
 
 fn obj(raw: u32) -> Handle32<ObjectTag> {
@@ -131,6 +215,9 @@ fn sound() -> AudSound {
         init_flags: 0,
         sub_id: 1,
         voice_id: 4,
+        option: 0,
+        identity: 0,
+        voice: 0,
         slot_ids: [NO_VOICE; 8],
         sequence: 0,
         slot_a: 0,
@@ -317,10 +404,74 @@ fn construct_second_no_voice_column_skips_registration() {
 #[test]
 fn registry_says_what_is_proven_and_what_is_missing() {
     let (proven, missing) = registry::counts();
-    assert_eq!(proven, 7);
-    assert_eq!(missing, registry::ROWS.len() - 7);
+    assert_eq!(proven, 8);
+    assert_eq!(missing, registry::ROWS.len() - 8);
     assert!(registry::ROWS
         .iter()
         .filter(|r| r.state == State::Missing)
         .all(|r| !r.narrows.is_empty()));
+}
+
+#[test]
+fn attach_null_descriptor_or_voice_answers_zero_before_any_call() {
+    let mut w = Fake::new();
+    let mut s = sound();
+    assert_eq!(s.attach_voice(obj(0x5000), 0x6000, 0, 0x7000, &mut w), 0);
+    assert_eq!(s.attach_voice(obj(0x5000), 0, 0x6100, 0x7000, &mut w), 0);
+    assert!(w.log.is_empty(), "no call before the null checks: {:?}", w.log);
+}
+
+#[test]
+fn attach_takes_the_voice_id_and_option_from_the_descriptor() {
+    let mut w = Fake::new();
+    let mut s = sound(); // link 2: the second-selector branch
+    w.record_byte = 0x40;
+    assert_eq!(s.attach_voice(obj(0x5000), 0x6000, 0x6100, 0x7000, &mut w), 1);
+    assert_eq!(s.identity, 0xABCD);
+    assert_eq!(s.voice, 0x6000);
+    assert_eq!(s.voice_id, 0x03);
+    assert_eq!(s.sub_id, 7);
+    // option from the descriptor's high byte (4), low six bits folded with the record's (0x40 ^ 4) & 0x3f.
+    assert_eq!(s.option, 4 ^ ((0x40 ^ 4) & 0x3f));
+    assert_eq!(s.fast_flags, 0, "descriptor flag byte is zero here");
+    assert!(!w.log.iter().any(|l| l.starts_with("or_record")));
+}
+
+#[test]
+fn attach_first_branch_without_voice_column_resets_then_stops() {
+    let mut w = Fake::new();
+    let mut s = sound();
+    s.link = NO_VOICE;
+    s.voice_column = NO_VOICE;
+    assert_eq!(s.attach_voice(obj(0x5000), 0x6000, 0x6100, 0x7000, &mut w), 0);
+    assert!(w.log.iter().any(|l| l == "reset 0x5000"));
+    assert!(!w.log.iter().any(|l| l.starts_with("or_record")));
+}
+
+#[test]
+fn attach_full_option_resolves_a_category_once_and_memoises_it() {
+    let mut w = Fake::new();
+    w.descriptor = (0x1, 0x3f03, 0);
+    w.lookups.push_back(0x8800);
+    let mut s = sound();
+    s.link = NO_VOICE;
+    assert_eq!(s.attach_voice(obj(0x5000), 0x6000, 0x6100, 0x7000, &mut w), 1);
+    assert!(w.log.iter().any(|l| l == "key_hash"), "first resolve hashes the key: {:?}", w.log);
+    assert_eq!(w.memo_flag, 1);
+    assert_eq!(w.memo_value, 0x77);
+    assert!(w.log.iter().any(|l| l == "lookup 0x77"));
+    assert!(w.log.iter().any(|l| l == "ok 0x8800"));
+    assert_eq!(s.option, (0x3f & 0xc1) | 1);
+    assert!(w.log.iter().any(|l| l == "or_record 0x1030 +0xe7 0x38"), "record flags: {:?}", w.log);
+
+    // A second attach reuses the memoised category: no second key hash.
+    let mut w2 = Fake::new();
+    w2.descriptor = (0x1, 0x3f03, 0);
+    w2.memo_flag = 1;
+    w2.memo_value = 0x99;
+    let mut s2 = sound();
+    s2.link = NO_VOICE;
+    let _ = s2.attach_voice(obj(0x5000), 0x6000, 0x6100, 0x7000, &mut w2);
+    assert!(!w2.log.iter().any(|l| l == "key_hash"));
+    assert!(w2.log.iter().any(|l| l == "lookup 0x99"));
 }

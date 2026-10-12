@@ -21,7 +21,17 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Mutex, MutexGuard};
 
 /// Length of the test arena in bytes: globals, objects, tables and stubs.
-pub const ARENA_LEN: usize = 0x3_4000;
+pub const ARENA_LEN: usize = 0x3_D000;
+/// Arena offset of the voice records (the attach method marks their flag bytes).
+pub const REC_OFF: u32 = 0x3_4000;
+/// Arena offset of the attach descriptor, voice and extra word (aligned).
+pub const DESC_OFF: u32 = 0x3_C400;
+/// Arena offset of the constant cell whose address the category-key callee receives.
+pub const CONST_OFF: u32 = 0x3_C800;
+/// Arena offset of the scratch frame handle the attach callees receive.
+pub const FRAME_OFF: u32 = 0x3_C900;
+/// The file address of the category-key constant (mapped to `CONST_OFF`).
+pub const CATEGORY_KEY_VA: u32 = 0x00E7_84F8;
 /// The file address at which the mapped global window begins.
 pub const GLOBALS_VA: u32 = 0x115_D000;
 /// Length of the global window; it sits at the start of the arena.
@@ -100,6 +110,9 @@ pub fn relocated(file_va: u32) -> u32 {
     }
     if file_va == CLASS_VTABLE_VA {
         return arena_base() + CLASS_VTABLE_OFF;
+    }
+    if file_va == CATEGORY_KEY_VA {
+        return arena_base() + CONST_OFF;
     }
     panic!("unexpected relocated address {file_va:#x}");
 }

@@ -6,14 +6,15 @@
 /// are thiscall; the outer deleting destructor consumes one stack flag and
 /// returns the event pointer in EAX.
 lf_checker_rt::export!(thiscall, rw_00a66d70(event: u32, flags: u32) -> u32 {
-    const EVENT_VTABLE: u32 = 0x00E9DD14;
+    const EVENT_VTABLE_FILE_VA: u32 = 0x00E9DD14;
     const EVENT_POOL_GLOBAL: u32 = 0x016669C8;
     const DELETE_FLAG: u8 = 1;
     const BASE_DESTRUCTOR_CALLEE: u32 = 1;
     const DELETE_CALLEE: u32 = 2;
 
     unsafe {
-        (event as *mut u32).write_unaligned(EVENT_VTABLE);
+        let event_vtable = lf_checker_rt::relocated(EVENT_VTABLE_FILE_VA);
+        (event as *mut u32).write_unaligned(event_vtable);
         let _ignored_base_result = lf_checker_rt::callee_thiscall!(
             BASE_DESTRUCTOR_CALLEE,
             u32,

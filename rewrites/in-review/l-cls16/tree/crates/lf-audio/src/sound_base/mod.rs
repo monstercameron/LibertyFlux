@@ -25,4 +25,4 @@ pub use audsound::{
     AudSound, DISABLE_BIT, FAST_BIT, INIT_DONE, KIND_FAST, NEEDS_INIT, NO_VOICE, ROW_BIAS_INIT,
     ROW_BIAS_LOOKUP, ROW_STRIDE, SEQ_UNSET, SLOT_COUNT,
 };
-pub use world::{FallbackTag, ObjectTag, RegistryTag, SlotTag, SoundWorld};
+pub use world::{FallbackTag, FrameTag, ObjectTag, RegistryTag, SlotTag, SoundWorld};

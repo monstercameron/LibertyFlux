@@ -11,7 +11,7 @@ lf_checker_rt::export!(thiscall, rw_00a66d10(instance: u32, flags: u32) -> u32 {
     const SEND_MESSAGE_FLAG: u8 = 1;
     const COUNT_OFFSET: u32 = 4;
     const ELEMENT_STRIDE: u32 = 0x1c;
-    const VTABLE_VALUE: u32 = 0x00E9DD6C;
+    const VTABLE_FILE_VA: u32 = 0x00E9DD6C;
     const SEND_MESSAGE_CALLEE: u32 = 1;
 
     #[inline(always)]
@@ -25,6 +25,7 @@ lf_checker_rt::export!(thiscall, rw_00a66d10(instance: u32, flags: u32) -> u32 {
     }
 
     unsafe {
+        let vtable_value = lf_checker_rt::relocated(VTABLE_FILE_VA);
         let flags = flags as u8;
         let result_pointer = if flags & ARRAY_FLAG != 0 {
             let count_header = instance.wrapping_sub(COUNT_OFFSET);
@@ -32,12 +33,12 @@ lf_checker_rt::export!(thiscall, rw_00a66d10(instance: u32, flags: u32) -> u32 {
             let mut element_index = signed_count.wrapping_sub(1);
             while element_index >= 0 {
                 let element = instance.wrapping_add((element_index as u32).wrapping_mul(ELEMENT_STRIDE));
-                write_u32(element, VTABLE_VALUE);
+                write_u32(element, vtable_value);
                 element_index -= 1;
             }
             count_header
         } else {
-            write_u32(instance, VTABLE_VALUE);
+            write_u32(instance, vtable_value);
             instance
         };
 

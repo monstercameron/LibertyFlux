@@ -6,7 +6,7 @@
 /// helpers use thiscall with no stack arguments.
 lf_checker_rt::export!(cdecl, rw_00a67740() -> u32 {
     const EVENT_POOL_GLOBAL: u32 = 0x016669C8;
-    const EVENT_VTABLE: u32 = 0x00E9DD14;
+    const EVENT_VTABLE_FILE_VA: u32 = 0x00E9DD14;
     const ALLOCATE_CALLEE: u32 = 1;
     const BASE_CONSTRUCTOR_CALLEE: u32 = 2;
 
@@ -22,7 +22,8 @@ lf_checker_rt::export!(cdecl, rw_00a67740() -> u32 {
             u32,
             event,
         );
-        (event as *mut u32).write_unaligned(EVENT_VTABLE);
+        let event_vtable = lf_checker_rt::relocated(EVENT_VTABLE_FILE_VA);
+        (event as *mut u32).write_unaligned(event_vtable);
         event
     }
 });

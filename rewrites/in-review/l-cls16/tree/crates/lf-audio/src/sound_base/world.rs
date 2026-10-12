@@ -21,6 +21,8 @@ pub struct FallbackTag;
 /// Tag for a word or byte in engine memory that the class writes through
 /// a pointer it was given (a lookup answer or a stored slot pointer).
 pub struct SlotTag;
+/// Tag for the scratch frame the attach callees write through.
+pub struct FrameTag;
 
 /// The engine side of the sound base class.
 ///
@@ -80,4 +82,63 @@ pub trait SoundWorld {
     /// Numbered callee 2 of the deleting destructor: unregisters `this`
     /// with its voice id from the registry (thiscall, three arguments).
     fn unregister(&mut self, registry: Handle32<RegistryTag>, this: Handle32<ObjectTag>, voice_id: u32) -> u32;
+
+    /// The word at the start of an attach descriptor.
+    fn descriptor_word(&self, desc: u32) -> u32;
+    /// The half-word at byte 4 of an attach descriptor: its low byte is the
+    /// voice id and its high byte the option.
+    fn descriptor_pair(&self, desc: u32) -> u16;
+    /// The flag byte of an attach descriptor (byte 5).
+    fn descriptor_flag(&self, desc: u32) -> u8;
+    /// The first byte of a voice record (its sub-id).
+    fn voice_sub_id(&self, voice: u32) -> u8;
+    /// The word an extra argument points at.
+    fn extra_word(&self, extra: u32) -> u32;
+    /// The scratch frame that the set-up callees write through.
+    fn scratch_frame(&mut self) -> Handle32<FrameTag>;
+    /// Numbered callee 1 of attach: initialises the scratch frame
+    /// (thiscall, one argument).
+    fn init_block(&mut self, frame: Handle32<FrameTag>) -> u32;
+    /// Numbered callee 2 of attach: binds the voice to the sound
+    /// (thiscall, four arguments: the sound, the voice, a zero and the
+    /// frame).
+    fn attach_callee(
+        &mut self,
+        this: Handle32<ObjectTag>,
+        voice: u32,
+        zero: u32,
+        frame: Handle32<FrameTag>,
+    ) -> u32;
+    /// Numbered callee 3 of attach: binds the extra argument to the sound
+    /// (thiscall, three arguments: the sound, the extra word and the frame).
+    fn bind_extra(
+        &mut self,
+        this: Handle32<ObjectTag>,
+        extra: u32,
+        frame: Handle32<FrameTag>,
+    ) -> u32;
+    /// Numbered callee 4 of attach: resets the sound (thiscall, one argument).
+    fn reset_object(&mut self, this: Handle32<ObjectTag>) -> u32;
+    /// The byte at `offset` of a voice record. The record is a raw word:
+    /// the table yields it, and the original reads it through the pointer.
+    fn record_byte(&self, record: u32, offset: u32) -> u8;
+    /// Ors `mask` into the byte at `offset` of a voice record.
+    fn or_record_byte(&mut self, record: u32, offset: u32, mask: u8);
+    /// The memoised-hash flag word.
+    fn memo_flag(&self) -> u32;
+    /// Stores the memoised-hash flag word.
+    fn set_memo_flag(&mut self, flag: u32);
+    /// The memoised category hash.
+    fn memo_value(&self) -> u32;
+    /// Stores the memoised category hash.
+    fn set_memo_value(&mut self, value: u32);
+    /// Numbered callee 5 of attach: hashes the category key constant with a
+    /// zero seed (cdecl, two arguments).
+    fn category_key_hash(&mut self) -> u32;
+    /// Numbered callee 6 of attach: looks a category up in the category
+    /// registry (thiscall, the registry cell and the category).
+    fn category_lookup(&mut self, category: u32) -> u32;
+    /// Numbered callee 7 of attach: asks whether a looked-up category
+    /// accepts the sound (thiscall, one argument).
+    fn category_ok(&mut self, found: u32) -> u32;
 }

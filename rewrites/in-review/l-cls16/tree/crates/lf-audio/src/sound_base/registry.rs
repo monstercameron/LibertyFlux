@@ -96,9 +96,14 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         class: "AudSound",
-        method: "vf7 / attach (slot 7)",
-        state: State::Missing,
-        narrows: &["verified, not lifted yet: it passes a scratch frame to three callees that write through it, and its callees need a frame model"],
+        method: "vf7 / attach_voice (slot 7)",
+        state: State::Proven,
+        narrows: &[
+            "the scratch frame is a pointer the set-up callees (1 to 3) fill; the method never reads it, so the proof records the frame argument as a marker and scripts no writes into it",
+            "the four engine callees (reset, lookup, verdict, key hash) and the attach callees are stubs: the proof checks their arguments, order and answers, not what they do",
+            "the category key hash is taken from a constant cell of the test memory, not the game's constant",
+            "a null voice column in the first branch, a null descriptor and a null voice are covered; the descriptor's word is read as stored, with its voice row limited to the rows the test maps",
+        ],
     },
     Row {
         class: "AudSound",
