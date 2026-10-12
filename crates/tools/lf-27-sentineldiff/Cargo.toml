@@ -1,0 +1,14 @@
+[package]
+name = "lf-27-sentineldiff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: the lifted sentinel-table reset (lf-core sentinel_table) against four verified 32-bit table resets"
+publish = false
+
+[dependencies]
+lf-core = { path = "../../lf-core" }
+
+[lints]
+workspace = true

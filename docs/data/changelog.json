@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Lift: 35 routines of 38 to 43 bytes in seven families, five with branches or loops",
+    "commit": null,
+    "summary": "The eighth list chosen by shape gives 35 of 154 functions. Fewer than the smaller sizes gave, but these are less trivial: a search, a table reset, and reads and stores through a record.",
+    "changes": [
+      "crates/lf-core gains five modules: a search of a counted run of words for a value (8 instances: the membership and find-index routines of several subsystems), a reset of a table to a sentinel (4), a store of a pair with a flag (4), a read of a word of a record (5) and a guarded store and flag read through a record table (4). The last two take the record through a small trait; none has unsafe code or an address.",
+      "Ten more functions are proved against routines already lifted, unchanged: six constant initialisers and four four-word block copies.",
+      "Seven new test crates run the routines against 35 tracked verified rewrites on the 32-bit target, 1,000 generated cases per instance with every returned value and every byte the rewrite may touch compared; 123 runs of deliberately wrong versions, all caught. The coordinator read the five modules and ran the core crate's host tests (133) and the seven crates' 34 tests on the 32-bit target before committing; none failed.",
+      "Left: 114 functions in families of fewer than four or of mixed shape, listed with their shapes, and five that cannot be checked as published (helpers no tracked file defines, or no export).",
+      "Verified routines with a lifted counterpart proven in the pipeline: 1,228, up from 1,193."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 35 files from lanes (720 unverified rewrites, 1013 in review)",
     "commit": "d0adcdfa5452b481e7ee435be7a79be007567b21",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

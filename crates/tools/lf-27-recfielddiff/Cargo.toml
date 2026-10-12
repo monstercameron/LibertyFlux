@@ -1,0 +1,14 @@
+[package]
+name = "lf-27-recfielddiff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: the lifted record field access (lf-core record_field_access) against four verified 32-bit record stores and flag reads"
+publish = false
+
+[dependencies]
+lf-core = { path = "../../lf-core" }
+
+[lints]
+workspace = true

@@ -1,0 +1,14 @@
+[package]
+name = "lf-27-flagpairdiff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: the lifted flagged pair store (lf-core flagged_pair_store) against four verified 32-bit pair stores with a flag"
+publish = false
+
+[dependencies]
+lf-core = { path = "../../lf-core" }
+
+[lints]
+workspace = true
