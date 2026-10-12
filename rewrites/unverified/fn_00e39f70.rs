@@ -1,9 +1,9 @@
 // original: 0x00E39F70 copy_text_then_replace_final_byte_with_image_suffix
 
 /// Copy a nul-terminated byte string to the destination, then overwrite the
-/// final non-nul destination byte and following bytes with the read-only
-/// suffix stored in the original image. Empty strings begin the suffix one
-/// byte before the destination. The stdcall routine takes source then
+/// terminator and following bytes with the read-only suffix stored in the
+/// original image. Empty strings begin the suffix at the destination. The
+/// stdcall routine takes source then
 /// destination and returns the suffix word with its final byte.
 lf_checker_rt::export!(stdcall, rw_00e39f70(source: u32, destination: u32) -> u32 {
     const SUFFIX_ADDRESS: u32 = 0x00F143F0;
@@ -21,8 +21,13 @@ lf_checker_rt::export!(stdcall, rw_00e39f70(source: u32, destination: u32) -> u3
         }
 
         let mut suffix_start = destination.wrapping_sub(1);
-        while ((suffix_start.wrapping_add(1)) as *const u8).read() != 0 {
-            suffix_start = suffix_start.wrapping_add(1);
+        loop {
+            let next = suffix_start.wrapping_add(1);
+            let byte = (next as *const u8).read();
+            suffix_start = next;
+            if byte == 0 {
+                break;
+            }
         }
 
         let suffix_address = lf_checker_rt::relocated(SUFFIX_ADDRESS);

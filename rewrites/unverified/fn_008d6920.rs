@@ -32,13 +32,14 @@ unsafe fn angle_from_vector(vector: *const f32) -> f32 {
 }
 
 lf_checker_rt::export!(cdecl, rw_fn_008d6920(
-    vector: *const f32,
+    first_vector: *const f32,
+    second_vector: *const f32,
     first_out: *mut f32,
     second_out: *mut f32,
 ) -> () {
     unsafe {
-        first_out.write(angle_from_vector(vector));
-        second_out.write(angle_from_vector(vector));
+        first_out.write(angle_from_vector(first_vector));
+        second_out.write(angle_from_vector(second_vector));
 
         let first = lf_checker_rt::callee_cdecl!(
             WRAP_CALLEE,
