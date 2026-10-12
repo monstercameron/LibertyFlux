@@ -92421,6 +92421,15 @@
   "lane": "a-G30"
  },
  {
+  "address": "0x00AFA670",
+  "name": "vehicle_population_get_spawn_multiplier",
+  "kind": "function",
+  "file": "functions/fn_00afa670.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s747"
+ },
+ {
   "address": "0x00AFC870",
   "name": "timed_ui_dispatch",
   "kind": "function",
@@ -93661,6 +93670,51 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b309"
+ },
+ {
+  "address": "0x00B0FF20",
+  "name": "pool_entry_value_lookup",
+  "kind": "function",
+  "file": "functions/fn_00b0ff20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s747"
+ },
+ {
+  "address": "0x00B100C0",
+  "name": "CDynamicEntity::~CDynamicEntity__deleting",
+  "kind": "function",
+  "file": "functions/fn_00b100c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s747"
+ },
+ {
+  "address": "0x00B12A00",
+  "name": "audPlaceableTracker::audPlaceableTracker_3",
+  "kind": "function",
+  "file": "functions/fn_00b12a00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s747"
+ },
+ {
+  "address": "0x00B12BA0",
+  "name": "CSmashMan_ResetDrawBuckets::CSmashMan_ResetDrawBuckets",
+  "kind": "function",
+  "file": "functions/fn_00b12ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s747"
+ },
+ {
+  "address": "0x00B12BD0",
+  "name": "CSmashMan_SetDrawBuckets::CSmashMan_SetDrawBuckets",
+  "kind": "function",
+  "file": "functions/fn_00b12bd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s747"
  },
  {
   "address": "0x00B12D60",
