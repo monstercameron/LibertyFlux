@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Devlog: the lift lane's entry on the quotient-store family",
+    "title": "Rewrites: 1 more withdrawn because its proof does not reach the code in doubt",
     "commit": null,
+    "summary": "The verified count goes down by one. The lane sent to make the checker observe three suspect float comparisons has reported: one shown wrong and proven again, one with no observable difference, and one whose proof turns out not to exercise the code at all.",
+    "changes": [
+      "A pedestrian task's probe of a grid of regions rounds a float down with a comparison whose predicate differs from the original's instruction, the same fault shown on the checker in three other rewrites today. For this one the lane could not show it: two globals the contract sets, a divisor and a size, read back as minus one on the rewrite's side whatever value is written, in the contract of record as well, so the grid index never leaves zero and the rounding's result is never used. The rewrite is withdrawn on that ground: not because a difference was shown, but because the proof of record does not reach the code in doubt. Why the two globals do not take the contract's values is with a checker investigation lane; if the cause is in the checker, other proofs that set those globals are narrower than they say.",
+      "The brightness update withdrawn an hour ago is proven again by the same lane with the comparison corrected: equal operands on 417 of 1,000 trials, the withdrawn form failing those 417. It is in the coordinator's re-run.",
+      "The third of the three stays verified: with the operands equal on a third of the trials, the tracked form, the corrected form and a form with the mask swapped all pass, because what the mask selects is added to a zero before it reaches any output. A fourth, which differs only for not-a-number, also stays: not-a-number reached the comparison on 218 trials and nothing observable changed.",
+      "Seventeen withdrawals of sixteen rewrites today for differences outside what their proofs covered; seven are proven again and counted, and four more are proven by their lanes and in the re-run."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Devlog: the lift lane's entry on the quotient-store family",
+    "commit": "5b78903b3d2803c02af312f57e08721c59ad5169",
     "summary": "The lane's own account of proving 229 more instances against one lifted routine is added to the devlog.",
     "changes": [
       "The entry gives the triage (grouping by structure after grouping by text split one routine into 48 groups), the family's interface and edge cases, how the generated differential tests compare every effect, the 36 members left and why, and two traps: a copied source file keeps its old modification time and a stale binary is then reused, and helpers a family shares must be verified before the family can be lifted."
