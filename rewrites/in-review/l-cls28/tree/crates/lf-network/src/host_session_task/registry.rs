@@ -1,15 +1,15 @@
 //! What is lifted, what is proven, and what each proof leaves out.
 //!
-//! One row per verified 32-bit method of the hosting task. `Proven` means
-//! the method is restated on [`HostSessionTask`] and the differential test
-//! crate ran it against its verified rewrite on the same generated inputs,
-//! comparing results, every effect, and every collaborator call in order,
-//! with a deliberately wrong lift caught alongside. Counts below come from
-//! this table.
+//! One row per inventoried method of the hosting task. `Proven` means the
+//! verified method is restated on [`HostSessionTask`] and the differential
+//! test crate ran it against its verified rewrite on the same generated
+//! inputs, comparing results, observed effects, and collaborator calls with
+//! a deliberately wrong behavior variant caught alongside. Counts below
+//! come from this table.
 //!
 //! [`HostSessionTask`]: super::task::HostSessionTask
 
-/// Lift state of one verified method.
+/// Lift state of one inventoried method.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum State {
     /// Restated on the task type and proven against its rewrite.
@@ -20,7 +20,7 @@ pub enum State {
     Missing,
 }
 
-/// One verified method's row.
+/// One inventoried method's row.
 #[derive(Debug, Clone, Copy)]
 pub struct Row {
     /// Task class, always `"HostSession"` here.
@@ -34,46 +34,58 @@ pub struct Row {
     pub narrows: &'static [&'static str],
 }
 
-/// Every verified method of the hosting task.
+/// Inventoried methods of the hosting task and their current lift status.
 pub const ROWS: &[Row] = &[
     Row {
         channel: "HostSession",
-        method: "setup",
-        state: State::Lifted,
+        method: "setup_gamer_data",
+        state: State::Proven,
         narrows: &[
             "the unused first stack word is dropped",
             "the gamer source arrives as a 259-word array",
             "the trailer record length is set by the world; the proof compares the words it writes",
+            "the stock contract has fulldata disabled",
         ],
     },
     Row {
         channel: "HostSession",
         method: "vf2",
-        state: State::Lifted,
-        narrows: &["the session link must be present; the original faults on a null link"],
+        state: State::Proven,
+        narrows: &[
+            "the stock contract has fulldata disabled",
+            "the session link is non-null in the proof inputs; the original reads through it unconditionally",
+            "the own-completion virtual slot is represented by a world call",
+        ],
     },
     Row {
         channel: "HostSession",
         method: "vf3",
-        state: State::Lifted,
+        state: State::Proven,
         narrows: &[
-            "ignored callee answers are unmodelled",
-            "task-side effects of the promote, notify and progress callees are unobserved by the proof and not modelled",
-            "the loop repeats while the progress check answers nonzero, as in the original",
+            "callee 6's first stack pointer is not compared by value; four words at the pointed-to buffer are snapshotted",
+            "callee behavior beyond the declared arguments, answers, snapshots, and task writes is not lifted",
+            "the session link is non-null in the proof inputs; null-link behavior is not exercised",
         ],
     },
     Row {
         channel: "HostSession",
         method: "vf7",
-        state: State::Lifted,
+        state: State::Proven,
         narrows: &[
             "relocated tags are the image base plus the file tag word",
-            "descriptor self-pointers and padding stay inside the world",
-            "zero-word pointers narrow to no argument",
-            "ignored callee answers are unmodelled",
-            "task-side effects of the notify callee are unobserved by the proof and not modelled",
-            "the session link must be present; the original faults on a null link",
+            "callee ids 3, 8, and 9 omit the first stack pointer value and snapshot one pointed-to word each",
+            "callee ids 4, 5, and 6 omit ECX pointer identity and snapshot one pointed-to word each",
+            "callee id 10's ECX value is not observed by the stock contract",
+            "descriptor self-pointers and padding are not compared as independent lift state",
+            "callee behavior beyond the declared arguments, answers, snapshots, and task writes is not lifted",
+            "the session link is non-null in the proof inputs; the original reads through it unconditionally",
         ],
+    },
+    Row {
+        channel: "HostSession",
+        method: "get_descriptor",
+        state: State::Missing,
+        narrows: &["listed by the inventory but unverified; no rewrite or lift is included"],
     },
 ];
 

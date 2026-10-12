@@ -14,8 +14,8 @@ use super::{EntryTag, SessionTag};
 /// Words in the gamer array the setup copies.
 pub const GAMER_WORDS: usize = 259;
 
-/// Largest signed total of the two gamer counts after clamping.
-pub const MAX_GAMERS_TOTAL: i32 = 32;
+/// Signed threshold used by the verified count adjustment.
+pub const GAMER_COUNT_THRESHOLD: i32 = 32;
 
 /// File tag word of the first completion descriptor, relocated against the
 /// image base before it is submitted.
@@ -254,12 +254,14 @@ impl HostSessionTask {
         }
         let mut first = self.first_count as i32;
         let mut second = self.second_count as i32;
-        if first.wrapping_add(second) > MAX_GAMERS_TOTAL {
-            let over = MAX_GAMERS_TOTAL.wrapping_sub(first).wrapping_sub(second);
+        if first.wrapping_add(second) > GAMER_COUNT_THRESHOLD {
+            let over = GAMER_COUNT_THRESHOLD
+                .wrapping_sub(first)
+                .wrapping_sub(second);
             first = first.wrapping_sub(over);
             let clamped = if first > 0 { first } else { 0 };
             self.first_count = clamped as u32;
-            if clamped.wrapping_add(second) > MAX_GAMERS_TOTAL {
+            if clamped.wrapping_add(second) > GAMER_COUNT_THRESHOLD {
                 second = second.wrapping_sub(over);
                 let clamped2 = if second > 0 { second } else { 0 };
                 self.second_count = clamped2 as u32;

@@ -1,4 +1,6 @@
-use super::task::{GAMER_WORDS, GamerListParams, HostSessionGlobals, HostSessionTask, HostSessionWorld};
+use super::task::{
+    GAMER_WORDS, GamerListParams, HostSessionGlobals, HostSessionTask, HostSessionWorld,
+};
 use super::{EntryTag, SessionTag};
 use lf_core::Handle32;
 use std::collections::VecDeque;
@@ -139,13 +141,7 @@ impl HostSessionWorld for World {
     fn derive_block_d(&mut self, _: Option<Handle32<SessionTag>>) {
         self.calls.push("derive_block_d");
     }
-    fn finish_key_block(
-        &mut self,
-        _: Option<Handle32<SessionTag>>,
-        _: u32,
-        _: &[u32],
-        _: u32,
-    ) {
+    fn finish_key_block(&mut self, _: Option<Handle32<SessionTag>>, _: u32, _: &[u32], _: u32) {
         self.calls.push("finish_key_block");
     }
     fn alloc_session_entry(
@@ -198,7 +194,10 @@ fn start_preserves_noncanonical_latch_word() {
     let mut host = task();
     host.started = 0xA5;
     host.state = 0x1234;
-    let mut world = World { mode: 2, ..World::default() };
+    let mut world = World {
+        mode: 2,
+        ..World::default()
+    };
 
     host.start(&mut world);
 

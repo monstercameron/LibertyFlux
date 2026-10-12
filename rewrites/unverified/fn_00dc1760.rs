@@ -9,10 +9,11 @@
 /// frame and positions to shared engine state, resolves both positions to
 /// navigation cells, and asks the navigation helpers to validate and build
 /// a path. A missing cell records status `-4`; a gated missing second node
-/// records `-14` when the global recovery flag is set. After a successful
-/// update it marks an over-distance path point and advances every path
-/// point's first component by the shared step value. The semantic result is
-/// returned in AL; upper EAX bits are not part of this function's result.
+/// records `-14` when the global recovery flag is set. The marker check runs
+/// only after both navigation nodes resolve; every path then advances the
+/// first component of each point by the shared step value. The semantic
+/// result is returned in AL; upper EAX bits are not part of this function's
+/// result.
 ///
 /// All helper calls below are intercepted by the checker contract. Pointers
 /// in the task and entity retain the original 32-bit game layout.
@@ -411,10 +412,9 @@ lf_checker_rt::export!(thiscall, rw_00dc1760(ped: u32, task: u32) -> u32 {
             set_global_u32(GLOBAL_PATH_MODE, saved_path_mode);
         }
 
-        // Mark the current point if its squared distance exceeds the data
-        // threshold, then advance the first coordinate of each path point.
+        // Mark the current point only after both navigation nodes resolved.
         let point_count = read_u32(task.wrapping_add(TASK_PATH_COUNT));
-        if point_count < PATH_POINT_COUNT_LIMIT {
+        if first_node != 0 && second_node != 0 && point_count < PATH_POINT_COUNT_LIMIT {
             let point = task
                 .wrapping_add(TASK_POINTS)
                 .wrapping_add(point_count.wrapping_mul(16));

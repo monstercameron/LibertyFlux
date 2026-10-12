@@ -21,7 +21,7 @@ use lf_input_frontend::montage_container::{
 };
 
 /// The addresses a case works with, so the record can name them.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct Ctx {
     /// The relocated helper context.
     pub helper_context: u32,
@@ -123,6 +123,7 @@ pub fn sym(ctx: &Ctx, value: u32) -> String {
 }
 
 /// One callee or virtual slot of the rewrite and its lifted operation name.
+#[cfg(target_arch = "x86")]
 #[derive(Debug, Clone, Copy)]
 pub struct CallSpec {
     /// The callee number or virtual id the rewrite uses.
@@ -132,6 +133,7 @@ pub struct CallSpec {
 }
 
 /// The numbered callees of the state dispatcher.
+#[cfg(target_arch = "x86")]
 pub const DISPATCH_CALLS: &[CallSpec] = &[
     CallSpec { id: 1, name: "open_session" },
     CallSpec { id: 2, name: "tag_id" },
@@ -158,6 +160,7 @@ pub const DISPATCH_CALLS: &[CallSpec] = &[
 ];
 
 /// The virtual slots of the state dispatcher, by virtual id.
+#[cfg(target_arch = "x86")]
 pub const DISPATCH_VIRTUALS: &[CallSpec] = &[
     CallSpec { id: 0x1001, name: "own_open" },
     CallSpec { id: 0x1002, name: "own_rearm" },
@@ -496,6 +499,7 @@ impl MontageWorld for FakeWorld {
 /// argument words), with `numbered` and `virtuals` naming them. Every raw
 /// argument is retained; fixed globals and collaborators are rendered by role.
 #[must_use]
+#[cfg(target_arch = "x86")]
 pub fn normalise(
     ctx: &Ctx,
     numbered: &[CallSpec],

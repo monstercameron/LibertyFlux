@@ -7,8 +7,8 @@
 //! verified method with behaviour in it is restated as a method on
 //! [`HostSessionTask`]:
 //!
-//! - [`HostSessionTask::setup_gamer_data`]: store the list words, clamp the
-//!   counts, copy the gamer array, append the trailer record.
+//! - [`HostSessionTask::setup_gamer_data`]: store the list words, apply the
+//!   signed count adjustment, copy the gamer array, append the trailer record.
 //! - [`HostSessionTask::start`]: latch the started flag and report
 //!   completion while the session is live.
 //! - [`HostSessionTask::advance`]: run the countdown and the six-case state
@@ -54,8 +54,8 @@ pub mod task;
 mod tests;
 
 pub use task::{
-    DESCRIPTOR_TAG_FIRST, DESCRIPTOR_TAG_SECOND, GAMER_WORDS, GamerListParams, HostSessionGlobals,
-    HostSessionTask, HostSessionWorld, KEY_TABLE_BASE, MAX_GAMERS_TOTAL,
+    DESCRIPTOR_TAG_FIRST, DESCRIPTOR_TAG_SECOND, GAMER_COUNT_THRESHOLD, GAMER_WORDS,
+    GamerListParams, HostSessionGlobals, HostSessionTask, HostSessionWorld, KEY_TABLE_BASE,
 };
 
 /// Tag for the opaque cookie of the hosted session object.

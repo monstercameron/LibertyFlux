@@ -1,12 +1,19 @@
-// original: 0x008DB2F0 task_ctor_initialize_motion_task
-/// Initialises a motion-task object, calls its base initializer, and forwards
-/// the resource identifier, two object fields and float bits to the task
-/// helper. The helper writes one word to each of the object's +0x398 and
-/// +0x39c fields. The function then reads the subject's word at +0x58,
-/// invokes the per-task helper and registers the task with the shared manager.
-/// The float is carried as raw 32-bit bits; no arithmetic is performed.
-/// Unused stack parameters remain in the signature to preserve the 32-bit
-/// thiscall layout and the ten-word callee cleanup.
+// original: 0x008db2f0 task_ctor_initialize_motion_task
+/// Initialise a motion-task object (thiscall, ten stack words, callee cleanup
+/// 0x28) and return the object pointer. Entry in ECX is the object; stack
+/// words s0..s9 are: task code, subject pointer, resource id, a field value,
+/// three low-byte-only values, a secondary subject pointer, float bits carried
+/// without arithmetic, and a status word.
+/// The object word first takes a marker, word +0x04 is mixed with the low 14
+/// bits of (old word xor shared counter) and the counter increments, then
+/// word +0x00 takes the object vtable. The base initializer (thiscall/0) runs
+/// on the object +0x20. Then: s4/s5/s6 low bytes to +0x0a/+0x0b/+0x0c, s3 to
+/// +0x390, s7 to +0x3a0, -1 to +0x39c, s0 low word to +0x08. The task helper
+/// (cdecl/8) takes s2, the +0x398/+0x39c field addresses, 0, 1, 0, s0 and the
+/// float bits, and stores one word to each field address. s1 is stored to
+/// +0x10, s1 word +0x58 feeds the per-task helper (thiscall/1 on object
+/// +0x20), s9 is stored to +0x14, and the manager at its relocated slot is
+/// told (thiscall/1) with s0.
 lf_checker_rt::export!(thiscall, rw_008db2f0(
     this: u32,
     task_code: u32,
@@ -18,7 +25,7 @@ lf_checker_rt::export!(thiscall, rw_008db2f0(
     byte_c: u32,
     secondary_subject: u32,
     float_bits: u32,
-    _unused_9: u32,
+    status_word: u32,
 ) -> u32 {
     unsafe {
         const COOKIE_MASK: u32 = 0x3fff;
@@ -78,7 +85,7 @@ lf_checker_rt::export!(thiscall, rw_008db2f0(
         write_word(this.wrapping_add(0x10), subject);
         let subject_value = read_word(subject.wrapping_add(0x58));
         let _ = lf_checker_rt::callee_thiscall!(3, u32, base_context, subject_value);
-        write_word(this.wrapping_add(0x14), secondary_subject);
+        write_word(this.wrapping_add(0x14), status_word);
 
         let manager_context = lf_checker_rt::relocated(MANAGER_CONTEXT_FILE_VA);
         let _ = lf_checker_rt::callee_thiscall!(4, u32, manager_context, task_code);

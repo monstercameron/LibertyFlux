@@ -23,6 +23,17 @@ const PHASE_RECONCILE: u8 = 3;
 /// The phase byte once the reconcile region has re-armed the container.
 const PHASE_IDLE: u8 = 0;
 
+fn freshness_expires(value: u32) -> bool {
+    (value as i32) >= FRESHNESS_LIMIT
+}
+
+fn should_drop_pending(pending: u32, cursor: u32, want: u32, count_a: u32, count_b: u32) -> bool {
+    let cursor_seen = cursor == count_a.wrapping_sub(1);
+    let want_seen = want == count_b;
+    let adjacent = cursor == want || cursor.wrapping_add(1) == want;
+    pending != 0 && (!cursor_seen || !want_seen) && !adjacent
+}
+
 /// The shared globals the dispatcher reads.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MontageGlobals {
@@ -146,7 +157,7 @@ impl MontageContainer {
         session: Option<Handle32<super::world::SessionTag>>,
     ) -> u32 {
         let freshness = world.freshness(self.src);
-        if (freshness as i32) >= FRESHNESS_LIMIT {
+        if freshness_expires(freshness) {
             world.note_teardown_mark(0x2A);
             return world.state_teardown(globals.state);
         }
@@ -205,12 +216,9 @@ impl MontageContainer {
     fn run_reconcile(&mut self, world: &mut impl MontageWorld) -> u32 {
         self.phase = PHASE_RECONCILE;
         let count_a = world.list_count(self.list);
-        let cursor_seen = self.cursor == count_a.wrapping_sub(1);
         let count_b = world.list_count(self.list);
         let cursor = self.cursor;
-        let want_seen = self.want == count_b;
-        let adjacent = cursor == self.want || cursor.wrapping_add(1) == self.want;
-        if self.pending != 0 && (!cursor_seen || !want_seen) && !adjacent {
+        if should_drop_pending(self.pending, cursor, self.want, count_a, count_b) {
             world.drop_pending(self.own, self.pending);
             let dropped = self.pending;
             self.dropped = dropped;
@@ -227,5 +235,27 @@ impl MontageContainer {
         self.cursor = 0;
         self.pending = 0;
         answer
+    }
+}
+
+#[cfg(test)]
+mod host_tests {
+    use super::{freshness_expires, should_drop_pending};
+
+    #[test]
+    fn freshness_gate_keeps_signed_word_semantics() {
+        assert!(!freshness_expires(99));
+        assert!(freshness_expires(100));
+        assert!(freshness_expires(i32::MAX as u32));
+        assert!(!freshness_expires(0x8000_0000));
+        assert!(!freshness_expires(u32::MAX));
+    }
+
+    #[test]
+    fn pending_reconcile_keeps_zero_count_and_wrapping_adjacency() {
+        assert!(!should_drop_pending(5, u32::MAX, 0, 1, 9));
+        assert!(!should_drop_pending(5, u32::MAX, 0, 0, 0));
+        assert!(should_drop_pending(5, 12, 40, 2, 4));
+        assert!(!should_drop_pending(0, 12, 40, 2, 4));
     }
 }

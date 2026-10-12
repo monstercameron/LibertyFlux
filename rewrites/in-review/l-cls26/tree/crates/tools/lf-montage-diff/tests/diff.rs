@@ -16,14 +16,15 @@
 // buffers the cases own.
 #![allow(unsafe_code)]
 
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 
 use lf_core::Handle32;
 use lf_input_frontend::montage_container::{
-    AuxTag, CfgTag, ListTag, MontageContainer, MontageGlobals, OutTag, OwnTag, SrcTag, ViewTag,
+    AuxTag, CfgTag, HelperContextTag, ListTag, LookupContextTag, MontageContainer,
+    MontageGlobals, OutTag, OwnTag, SrcTag, StateTag, ViewTag,
 };
 use lf_montage_diff::fake::{
-    CallSpec, Ctx, DISPATCH_CALLS, DISPATCH_VIRTUALS, FakeWorld, Script, normalise,
+    CallSpec, Ctx, DISPATCH_CALLS, DISPATCH_VIRTUALS, EffectMemory, FakeWorld, Script, normalise,
 };
 use lf_montage_diff::mutants::{self, DispatchMutant};
 use lf_montage_diff::rt::{self, Kind, VStubs};
@@ -550,6 +551,9 @@ impl Scene {
 
     fn ctx(&self) -> Ctx {
         Ctx {
+            helper_context: rt::relocated(0x0198_1A4C),
+            lookup_context: rt::relocated(0x0117_6888),
+            state: self.state.addr(),
             own: self.obj.addr(),
             list: self.list.addr(),
             aux: self.aux.addr(),
@@ -573,6 +577,18 @@ impl Scene {
             target: self.target.addr(),
         }
     }
+
+    fn effect_memory(&self) -> EffectMemory {
+        fn bytes(words: &[u32]) -> Vec<u8> {
+            words.iter().flat_map(|word| word.to_le_bytes()).collect()
+        }
+
+        HashMap::from([
+            (self.cfg.addr(), bytes(&self.cfg.words)),
+            (self.actives[0].addr(), bytes(&self.actives[0].words)),
+            (self.actives[1].addr(), bytes(&self.actives[1].words)),
+        ])
+    }
 }
 
 /// Decodes the object's modelled words into the lifted container.
@@ -593,6 +609,17 @@ fn decode(words: &[u32], own_addr: u32) -> MontageContainer {
         cursor: words[CURSOR_WORD],
         mode,
         phase,
+    }
+}
+
+fn globals(ctx: &Ctx, state_flag: u32) -> MontageGlobals {
+    MontageGlobals {
+        state_flag,
+        state: Handle32::<StateTag>::new(ctx.state).expect("the state object is planted"),
+        helper_context: Handle32::<HelperContextTag>::new(ctx.helper_context)
+            .expect("the helper context is non-null"),
+        lookup_context: Handle32::<LookupContextTag>::new(ctx.lookup_context)
+            .expect("the lookup context is non-null"),
     }
 }
 
@@ -651,33 +678,35 @@ fn run_rewrite(scene: &Scene, trial: &Trial, ctx: &Ctx) -> (Vec<String>, u32) {
 fn run_lift(
     scene: &Scene,
     initial: &[u32],
+    initial_effects: &EffectMemory,
     trial: &Trial,
     ctx: &Ctx,
-) -> (Vec<String>, u32, Vec<u32>) {
+) -> (Vec<String>, u32, Vec<u32>, EffectMemory) {
     let mut lifted = initial.to_vec();
     let mut container = decode(&lifted, scene.obj.addr());
-    let mut world = FakeWorld::new(*ctx, trial.script.clone());
-    let globals = MontageGlobals { state_flag: trial.state_flag };
-    let returned = container.dispatch_state(&mut world, &globals);
+    let mut world = FakeWorld::new(*ctx, trial.script.clone(), initial_effects.clone());
+    let inputs = globals(ctx, trial.state_flag);
+    let returned = container.dispatch_state(&mut world, &inputs);
     encode(&container, &mut lifted);
-    (world.events, returned, lifted)
+    (world.events, returned, lifted, world.effects)
 }
 
 /// Runs one wrong dispatcher the same way.
 fn run_mutant(
     scene: &Scene,
     initial: &[u32],
+    initial_effects: &EffectMemory,
     trial: &Trial,
     ctx: &Ctx,
     m: DispatchMutant,
-) -> (Vec<String>, u32, Vec<u32>) {
+) -> (Vec<String>, u32, Vec<u32>, EffectMemory) {
     let mut lifted = initial.to_vec();
     let mut container = decode(&lifted, scene.obj.addr());
-    let mut world = FakeWorld::new(*ctx, trial.script.clone());
-    let globals = MontageGlobals { state_flag: trial.state_flag };
-    let returned = mutants::dispatch(&mut container, &mut world, &globals, m);
+    let mut world = FakeWorld::new(*ctx, trial.script.clone(), initial_effects.clone());
+    let inputs = globals(ctx, trial.state_flag);
+    let returned = mutants::dispatch(&mut container, &mut world, &inputs, m);
     encode(&container, &mut lifted);
-    (world.events, returned, lifted)
+    (world.events, returned, lifted, world.effects)
 }
 
 #[test]
@@ -694,13 +723,17 @@ fn dispatch_matches_its_rewrite() {
         let scene = Scene::build(&mut rng, &mut trial);
         let ctx = scene.ctx();
         let initial = scene.obj.words.clone();
+        let initial_effects = scene.effect_memory();
         let (rewrite_events, eax) = run_rewrite(&scene, &trial, &ctx);
         let after_rewrite = scene.obj.words.clone();
-        let (lift_events, returned, lifted) = run_lift(&scene, &initial, &trial, &ctx);
+        let after_effects = scene.effect_memory();
+        let (lift_events, returned, lifted, lifted_effects) =
+            run_lift(&scene, &initial, &initial_effects, &trial, &ctx);
 
         assert_eq!(lift_events, rewrite_events, "trial {index} ({path:?}): calls differ");
         assert_eq!(returned, eax, "trial {index} ({path:?}): result differs");
         assert_eq!(lifted, after_rewrite, "trial {index} ({path:?}): object bytes differ");
+        assert_eq!(lifted_effects, after_effects, "trial {index} ({path:?}): collaborator bytes differ");
         // The trial took its forced path.
         match path {
             Path::FlagZero => {
@@ -710,7 +743,7 @@ fn dispatch_matches_its_rewrite() {
                 assert_eq!(after_rewrite[PENDING_WORD], 0, "trial {index}: pending cleared");
             }
             Path::List => assert!(
-                rewrite_events.iter().any(|e| e.starts_with("activate(tag_b)")),
+                rewrite_events.iter().any(|e| e.starts_with("activate(helper_context,tag_b)")),
                 "trial {index}: list region not reached"
             ),
             Path::RefreshToggle => assert!(
@@ -750,9 +783,13 @@ fn dispatch_matches_its_rewrite() {
                 if caught[k] {
                     continue;
                 }
-                let (mut_events, mut_ret, mut_words) =
-                    run_mutant(&scene, &initial, &trial, &ctx, *m);
-                if mut_events != rewrite_events || mut_ret != eax || mut_words != after_rewrite {
+                let (mut_events, mut_ret, mut_words, mut_effects) =
+                    run_mutant(&scene, &initial, &initial_effects, &trial, &ctx, *m);
+                if mut_events != rewrite_events
+                    || mut_ret != eax
+                    || mut_words != after_rewrite
+                    || mut_effects != after_effects
+                {
                     caught[k] = true;
                 }
             }

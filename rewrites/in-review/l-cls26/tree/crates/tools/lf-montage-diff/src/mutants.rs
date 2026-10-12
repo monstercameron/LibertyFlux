@@ -54,29 +54,29 @@ pub fn dispatch(
         container.pending = 0;
         return 0;
     }
-    let session = world.open_session(globals.state_flag);
+    let session = world.open_session(globals.helper_context, globals.state_flag);
     world.own_open(container.own);
     if m == DispatchMutant::GatesSwapped {
         let gate2 = world.session_tag(session);
         let want2 = world.tag_id(Tag::D);
         if gate2 == want2 {
-            return refresh(container, world, session, m);
+            return refresh(container, world, globals, session, m);
         }
         let gate1 = world.session_tag(session);
         let want1 = world.tag_id(Tag::A);
         if gate1 == want1 {
-            return list(container, world, m);
+            return list(container, world, globals, m);
         }
     } else {
         let gate1 = world.session_tag(session);
         let want1 = world.tag_id(Tag::A);
         if gate1 == want1 {
-            return list(container, world, m);
+            return list(container, world, globals, m);
         }
         let gate2 = world.session_tag(session);
         let want2 = world.tag_id(Tag::D);
         if gate2 == want2 {
-            return refresh(container, world, session, m);
+            return refresh(container, world, globals, session, m);
         }
     }
     let gate3 = world.session_tag(session);
@@ -90,10 +90,12 @@ pub fn dispatch(
 fn list(
     container: &mut MontageContainer,
     world: &mut impl MontageWorld,
+    globals: &MontageGlobals,
     m: DispatchMutant,
 ) -> u32 {
-    world.activate(Tag::B);
-    world.lookup(Tag::C);
+    let active = world.activate(globals.helper_context, Tag::B);
+    world.mark_active(active, true);
+    world.lookup(globals.lookup_context, Tag::C);
     let mut count = world.list_count(container.list);
     if count != 0 {
         let mut index = 0u32;
@@ -119,6 +121,7 @@ fn list(
 fn refresh(
     container: &mut MontageContainer,
     world: &mut impl MontageWorld,
+    globals: &MontageGlobals,
     session: Option<Handle32<lf_input_frontend::montage_container::SessionTag>>,
     m: DispatchMutant,
 ) -> u32 {
@@ -129,11 +132,12 @@ fn refresh(
         (freshness as i32) >= 100
     };
     if trips {
-        world.note_teardown_mark();
-        return world.state_teardown();
+        world.note_teardown_mark(0x2A);
+        return world.state_teardown(globals.state);
     }
-    world.activate(Tag::E);
-    world.state_refresh();
+    let active = world.activate(globals.helper_context, Tag::E);
+    world.mark_active(active, true);
+    world.state_refresh(globals.state);
     if container.mode != 0 {
         if m != DispatchMutant::ModeStaysSet {
             container.mode = 0;
@@ -141,6 +145,7 @@ fn refresh(
         world.aux_set(container.aux, 0);
         let tail = world.list_tail(container.list);
         world.tail_set(tail, 1);
+        world.clear_cfg_status(container.cfg);
         world.signal_out(container.out, 0);
     } else {
         let inner = world.list_inner(container.list);
@@ -150,10 +155,10 @@ fn refresh(
         let probe_again = world.probe_open(inner_again);
         world.probe_set(probe_again, 0);
     }
-    world.lookup(Tag::F);
-    world.prepare(Tag::G);
+    world.lookup(globals.lookup_context, Tag::F);
+    world.prepare(Tag::G, 0);
     let handle = world.tag_id(Tag::H);
-    let worker = world.open_worker(container.own, session, handle);
+    let worker = world.open_worker(container.own, session, handle, 0);
     let first = world.session_first(worker);
     let key = world.list_rank(container.list, first);
     world.note_rank(container.own, key);
@@ -170,7 +175,7 @@ fn refresh(
     let inner_b = world.list_inner(container.list);
     let prop_again = world.prop_read(inner_b);
     let blend = world.blend_level(container.src, prop_again);
-    let target = world.resolve_output(Tag::I, blend);
+    let target = world.resolve_output(globals.helper_context, Tag::I, blend);
     world.release_output(target)
 }
 

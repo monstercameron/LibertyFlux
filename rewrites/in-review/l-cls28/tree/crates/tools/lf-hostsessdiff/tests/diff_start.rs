@@ -13,11 +13,11 @@ mod x86 {
     use lf_hostsessdiff::rewrites::*;
     use lf_hostsessdiff::rt::{self};
 
-    #[path = "support/mod.rs"]
+    #[path = "../support/mod.rs"]
     mod support;
     use support::{
-        Fake, Image, Rng, Stubs, VTable, SLOT_COMPLETE, S_MODE, TASK_SIZE, T_SESSION, T_STARTED,
-        T_STATE, assert_only_changed, assert_task_matches, check_virtual, lift_task,
+        Fake, Image, Rng, S_MODE, SLOT_COMPLETE, Stubs, T_SESSION, T_STARTED, T_STATE, TASK_SIZE,
+        VTable, assert_only_changed, assert_task_matches, check_virtual, lift_task,
     };
 
     mod wrong {

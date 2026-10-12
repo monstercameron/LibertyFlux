@@ -106,20 +106,9 @@ pub const METHODS: &[MethodRecord] = &[
     MethodRecord {
         name: "UIMontageContainer::vf114",
         lifted: true,
-        rewrite: "verified rewrite of the state dispatcher",
-        test: "lf-montage-diff: dispatch",
-        narrowing: "the flag byte the regions set on each helper answer and
-                    the configuration byte the toggled refresh path clears
-                    are writes through collaborator objects the lift does not
-                    own, so the lift does not model them and the proof does
-                    not compare the collaborators' bytes; the fixed context
-                    objects passed as call contexts are supplied by the
-                    production world instead. Reads through collaborator
-                    objects (element words, sub-object links) come from the
-                    world, which the proof scripts with the same words the
-                    rewrite reads from memory. All six collaborator handles
-                    are assumed non-null on paths that use them (the original
-                    faults on null).",
+        rewrite: "fn_00dd46c0.rs; a-S07 v6 accepted the signed rewrite",
+        test: "lf-montage-diff: dispatch; x86, 2,400 trials over eight paths",
+        narrowing: "collaborator bodies are scripted and are not executed; the proof compares every call and argument in order, consumed scripted answers, the container bytes, and the full helper/configuration blocks with direct writes. The shared state flag is passed as a value at the lift boundary. Handles must be non-null on paths where the original faults on null.",
     },
     MethodRecord {
         name: "UIMontageContainer::handle_montage_editor_navigation",

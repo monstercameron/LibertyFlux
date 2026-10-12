@@ -68,10 +68,17 @@ impl Rng {
 
 /// Edge words: zero, one, small counts, sign boundaries, all ones.
 pub const U32_EDGE: [u32; 12] = [
-    0, 1, 2, 3, // tiny
-    0x20, 0x21, 0x1F, // the clamp boundary and its neighbours
-    0x7FFF_FFFF, 0x8000_0000, // sign boundary
-    0xFFFF_FFFE, 0xFFFF_FFFF, // all ones and below
+    0,
+    1,
+    2,
+    3, // tiny
+    0x20,
+    0x21,
+    0x1F, // the clamp boundary and its neighbours
+    0x7FFF_FFFF,
+    0x8000_0000, // sign boundary
+    0xFFFF_FFFE,
+    0xFFFF_FFFF, // all ones and below
     0xDEAD_BEEF, // arbitrary bits
 ];
 
@@ -357,10 +364,8 @@ impl HostSessionWorld for Fake {
             .unwrap_or(0)
     }
     fn poll_host(&mut self, session: Option<Handle32<SessionTag>>, probe: &mut u32) -> u32 {
-        self.log.push((
-            "poll_host".to_string(),
-            vec![words(session), *probe],
-        ));
+        self.log
+            .push(("poll_host".to_string(), vec![words(session), *probe]));
         if let Some(v) = self.out_one("poll_host.probe") {
             *probe = v;
         }

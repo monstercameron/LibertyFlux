@@ -577,13 +577,14 @@ fn make_input(g: &mut Gen, m: Method) -> Input {
             }
         }
         Method::FollowUp => {
-            // Half the cases disabled, half enabled.
+            // The cleanup call overwrites the flag byte before the method
+            // tests it, so correlate the sub-task fixture with that write.
             if g.below(2) == 0 {
-                inp.init[O_FLAGS_F0] |= 0x20;
-                // A null sub-task only where the original never dereferences it.
+                inp.flag_byte_write |= 0x20;
+                // A null sub-task is safe only when cleanup disables the query.
                 inp.null_sub = g.below(2) == 0;
             } else {
-                inp.init[O_FLAGS_F0] &= !0x20;
+                inp.flag_byte_write &= !0x20;
             }
         }
     }

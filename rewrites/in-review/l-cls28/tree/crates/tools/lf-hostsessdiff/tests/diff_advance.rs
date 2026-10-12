@@ -11,13 +11,12 @@ mod x86 {
     use lf_hostsessdiff::rewrites::*;
     use lf_hostsessdiff::rt::{self, Spec, StubKind};
 
-    #[path = "support/mod.rs"]
+    #[path = "../support/mod.rs"]
     mod support;
     use support::{
-        Fake, Image, Rng, Stubs, VTable, S_MODE, S_PORT, S_PRIMARY, SLOT_COMPLETE,
-        T_CONFIG, T_COUNTDOWN, T_EMPTY, T_FIRST, T_GAMERS, T_PROBE, T_SECOND, T_SESSION,
-        T_SPLIT, T_STATE, TASK_SIZE, SESSION_SIZE, assert_only_changed, assert_task_matches,
-        lift_task,
+        Fake, Image, Rng, S_MODE, S_PORT, S_PRIMARY, SESSION_SIZE, SLOT_COMPLETE, Stubs, T_CONFIG,
+        T_COUNTDOWN, T_EMPTY, T_FIRST, T_GAMERS, T_PROBE, T_SECOND, T_SESSION, T_SPLIT, T_STATE,
+        TASK_SIZE, VTable, assert_only_changed, assert_task_matches, lift_task,
     };
 
     mod wrong {
@@ -30,7 +29,6 @@ mod x86 {
         pub fn open_role(_: u32) -> &'static str {
             "open_plain"
         }
-
     }
 
     fn spec(
@@ -40,7 +38,13 @@ mod x86 {
         snaps: Vec<(usize, usize)>,
         outs: Vec<Vec<(usize, Vec<u32>)>>,
     ) -> Spec {
-        Spec { id, kind, answers, snaps, outs }
+        Spec {
+            id,
+            kind,
+            answers,
+            snaps,
+            outs,
+        }
     }
 
     fn fixture(rng: &mut Rng, mode: u32) -> (Image, Image, VTable, Stubs) {
@@ -98,7 +102,7 @@ mod x86 {
             .answer("resolve_key", vec![1])
             .answer("progress", vec![1, 1, 1, 0]);
 
-        let got = unsafe { fn_00662440::rw_00662440(obj.addr(), 1) };
+        let got = fn_00662440::rw_00662440(obj.addr(), 1);
         lifted.advance(
             &mut fake,
             &lf_network::host_session_task::HostSessionGlobals {
@@ -114,14 +118,31 @@ mod x86 {
         assert_task_matches(&obj, &lifted);
         assert_eq!(lifted.countdown, u32::MAX);
         assert_eq!(wrong::countdown(1, 1), 0);
-        assert_ne!(wrong::countdown(1, 1), lifted.countdown, "wrong countdown must fail");
+        assert_ne!(
+            wrong::countdown(1, 1),
+            lifted.countdown,
+            "wrong countdown must fail"
+        );
         assert_eq!(wrong::open_role(lifted.list_split), "open_plain");
-        assert_eq!(fake.log.iter().find(|(n, _)| n == "open_hosted").unwrap().0, "open_hosted");
-        assert_ne!(wrong::open_role(lifted.list_split), "open_hosted", "wrong selector must fail");
+        assert_eq!(
+            fake.log.iter().find(|(n, _)| n == "open_hosted").unwrap().0,
+            "open_hosted"
+        );
+        assert_ne!(
+            wrong::open_role(lifted.list_split),
+            "open_hosted",
+            "wrong selector must fail"
+        );
 
         let calls = rt::take_numbered();
-        assert_eq!(calls.iter().map(|(id, _)| *id).collect::<Vec<_>>(), [1, 2, 4, 5, 6, 8, 8, 8, 8]);
-        assert_eq!(calls[0], (1, vec![session.addr().wrapping_add(S_PRIMARY as u32)]));
+        assert_eq!(
+            calls.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+            [1, 2, 4, 8, 5, 8, 6, 8, 8]
+        );
+        assert_eq!(
+            calls[0],
+            (1, vec![session.addr().wrapping_add(S_PRIMARY as u32)])
+        );
         assert_eq!(calls[1], (2, vec![session.addr()]));
         assert_eq!(
             calls[2],
@@ -139,27 +160,38 @@ mod x86 {
                 ],
             )
         );
-        assert_eq!(calls[3], (5, vec![obj.addr()]));
-        assert_eq!(calls[4].0, 6);
-        assert_eq!(calls[4].1[0], session.addr().wrapping_add(S_PORT as u32));
-        assert_eq!(&calls[4].1[2..], &[obj.at(T_EMPTY), 1, obj.at(T_PROBE)]);
-        assert_eq!(calls[4].1[1] != 0, true, "frame pointer is present");
-        for call in &calls[5..] {
+        assert_eq!(calls[3], (8, vec![obj.addr()]));
+        assert_eq!(calls[4], (5, vec![obj.addr()]));
+        assert_eq!(calls[5], (8, vec![obj.addr()]));
+        assert_eq!(calls[6].0, 6);
+        assert_eq!(calls[6].1[0], session.addr().wrapping_add(S_PORT as u32));
+        assert_eq!(&calls[6].1[2..], &[obj.at(T_EMPTY), 1, obj.at(T_PROBE)]);
+        assert_ne!(calls[6].1[1], 0, "frame pointer is present");
+        for call in &calls[7..] {
             assert_eq!(*call, (8, vec![obj.addr()]));
         }
         assert_eq!(rt::take_snaps(), vec![(6, 1, keys.to_vec())]);
         let virtuals = rt::take_virtual();
-        assert_eq!(virtuals, vec![("complete".to_string(), vec![obj.addr(), 1, 0])]);
+        assert_eq!(
+            virtuals,
+            vec![("complete".to_string(), vec![obj.addr(), 1, 0])]
+        );
         assert_eq!(
             fake.log,
             vec![
                 ("prepare_primary".to_string(), vec![session.addr()]),
                 ("prepare_session".to_string(), vec![session.addr()]),
-                ("open_hosted".to_string(), vec![session.addr(), 0, 1, 4, 5, obj.r32(0x4bc), 0]),
+                (
+                    "open_hosted".to_string(),
+                    vec![session.addr(), 0, 1, 4, 5, obj.r32(0x4bc), 0]
+                ),
+                ("progress".to_string(), vec![]),
                 ("promote_hosted".to_string(), vec![]),
-                ("resolve_key".to_string(), vec![session.addr(), 0x10, 0x20, 0x30, 0x40, 2, 3]),
                 ("progress".to_string(), vec![]),
-                ("progress".to_string(), vec![]),
+                (
+                    "resolve_key".to_string(),
+                    vec![session.addr(), 0x10, 0x20, 0x30, 0x40, 2, 3]
+                ),
                 ("progress".to_string(), vec![]),
                 ("own_complete".to_string(), vec![1, 0]),
                 ("progress".to_string(), vec![]),
@@ -168,7 +200,11 @@ mod x86 {
         assert_only_changed(
             &before,
             &obj.buf,
-            &[(T_COUNTDOWN, T_COUNTDOWN + 4), (T_STATE, T_STATE + 4), (T_PROBE, T_PROBE + 4)],
+            &[
+                (T_COUNTDOWN, T_COUNTDOWN + 4),
+                (T_STATE, T_STATE + 4),
+                (T_PROBE, T_PROBE + 4),
+            ],
         );
     }
 
@@ -195,8 +231,9 @@ mod x86 {
             spec(8, StubKind::Thiscall0, vec![0], vec![], vec![]),
         ]);
         let mut fake = Fake::new();
-        fake.answer("open_plain", vec![0]).answer("progress", vec![0]);
-        let got = unsafe { fn_00662440::rw_00662440(obj.addr(), 0) };
+        fake.answer("open_plain", vec![0])
+            .answer("progress", vec![0]);
+        let got = fn_00662440::rw_00662440(obj.addr(), 0);
         lifted.advance(
             &mut fake,
             &lf_network::host_session_task::HostSessionGlobals {
@@ -209,14 +246,26 @@ mod x86 {
         );
         assert_eq!(got, 0);
         assert_task_matches(&obj, &lifted);
-        assert_eq!(rt::take_numbered().iter().map(|(id, _)| *id).collect::<Vec<_>>(), [1, 2, 3, 8]);
-        assert_eq!(rt::take_virtual(), vec![("complete".to_string(), vec![obj.addr(), 0, 0])]);
+        assert_eq!(
+            rt::take_numbered()
+                .iter()
+                .map(|(id, _)| *id)
+                .collect::<Vec<_>>(),
+            [1, 2, 3, 8]
+        );
+        assert_eq!(
+            rt::take_virtual(),
+            vec![("complete".to_string(), vec![obj.addr(), 0, 0])]
+        );
         assert_eq!(
             fake.log,
             vec![
                 ("prepare_primary".to_string(), vec![session.addr()]),
                 ("prepare_session".to_string(), vec![session.addr()]),
-                ("open_plain".to_string(), vec![session.addr(), 5, lifted.first_count, 0]),
+                (
+                    "open_plain".to_string(),
+                    vec![session.addr(), 5, lifted.first_count, 0]
+                ),
                 ("own_complete".to_string(), vec![0, 0]),
                 ("progress".to_string(), vec![]),
             ]
@@ -238,7 +287,7 @@ mod x86 {
             spec(8, StubKind::Thiscall0, vec![0], vec![], vec![]),
         ]);
         let mut fake = Fake::new();
-        let _ = unsafe { fn_00662440::rw_00662440(obj.addr(), 0) };
+        let _ = fn_00662440::rw_00662440(obj.addr(), 0);
         lifted.advance(
             &mut fake,
             &lf_network::host_session_task::HostSessionGlobals {
@@ -267,7 +316,7 @@ mod x86 {
             (2, 3, 0, 2, 1, vec![0], 3, vec![6, 8]),
             (3, 3, 0, 0, 0, vec![0], 3, vec![8]),
             (3, 1, 0, 0, 0, vec![], 3, vec![]),
-            (3, 7, 0, 0, 0, vec![1, 0], 4, vec![7, 8, 8]),
+            (3, 7, 0, 0, 0, vec![1, 0], 4, vec![8, 7, 8]),
             (4, 0, 0, 0, 0, vec![0], 4, vec![7, 8]),
             (4, 0, 0, 0, 1, vec![1, 0], 5, vec![7, 8, 8]),
             (5, 1, 0, 0, 0, vec![], 5, vec![]),
@@ -280,6 +329,7 @@ mod x86 {
             obj.w32(T_PROBE, probe);
             obj.w32(T_CONFIG, config);
             obj.w32(T_SPLIT, 1);
+            let before = obj.buf.clone();
             let mut lifted = lift_task(&obj);
             rt::set_cells(0, flag, [1, 2, 3, 4]);
             rt::set_script(&[
@@ -302,7 +352,7 @@ mod x86 {
             if state == 4 {
                 fake.answer("poll_host", vec![answer]);
             }
-            let _ = unsafe { fn_00662440::rw_00662440(obj.addr(), 0) };
+            let _ = fn_00662440::rw_00662440(obj.addr(), 0);
             lifted.advance(
                 &mut fake,
                 &lf_network::host_session_task::HostSessionGlobals {
@@ -315,8 +365,20 @@ mod x86 {
             );
             assert_eq!(lifted.state, final_state, "state {state}, probe {probe}");
             assert_task_matches(&obj, &lifted);
-            let ids = rt::take_numbered().iter().map(|(id, _)| *id).collect::<Vec<_>>();
+            let numbers = rt::take_numbered();
+            let ids = numbers.iter().map(|(id, _)| *id).collect::<Vec<_>>();
             assert_eq!(ids, expected_ids, "state {state}, probe {probe}");
+            if let Some((_, args)) = numbers.iter().find(|(id, _)| *id == 6) {
+                assert_eq!(args[0], session.addr().wrapping_add(S_PORT as u32));
+                assert_ne!(args[1], 0, "key frame pointer is present");
+                assert_eq!(&args[2..], &[obj.at(T_EMPTY), 1, obj.at(T_PROBE)]);
+            }
+            if let Some((_, args)) = numbers.iter().find(|(id, _)| *id == 7) {
+                assert_eq!(
+                    args,
+                    &vec![session.addr().wrapping_add(S_PORT as u32), obj.at(T_PROBE)]
+                );
+            }
             let snaps = rt::take_snaps();
             if state == 2 && config == 0 && flag & 2 != 0 {
                 assert_eq!(snaps, vec![(6, 1, vec![1, 2, 3, 4])]);
@@ -326,7 +388,7 @@ mod x86 {
             let virtuals = rt::take_virtual();
             let expected_virtual = if state == 3 && probe == 3 {
                 vec![("complete".to_string(), vec![obj.addr(), 1, 0])]
-            } else if (state == 4 && answer == 0)
+            } else if (state == 4 && (answer == 0 || (probe != 1 && answer != 0)))
                 || (state == 5 && probe != 1)
                 || (state == 3 && probe != 1 && probe != 3)
             {
@@ -335,6 +397,15 @@ mod x86 {
                 vec![]
             };
             assert_eq!(virtuals, expected_virtual, "state {state}, probe {probe}");
+            assert_only_changed(
+                &before,
+                &obj.buf,
+                &[
+                    (T_COUNTDOWN, T_COUNTDOWN + 4),
+                    (T_STATE, T_STATE + 4),
+                    (T_PROBE, T_PROBE + 4),
+                ],
+            );
             let _ = session;
         }
     }

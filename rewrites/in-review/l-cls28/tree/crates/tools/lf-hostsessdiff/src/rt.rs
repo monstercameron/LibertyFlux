@@ -326,9 +326,9 @@ pub fn global<T>(file_va: u32) -> *mut T {
         0x0105_7FB4 => core::ptr::addr_of_mut!(COOKIE_CELL) as *mut T,
         0x019F_32AC => core::ptr::addr_of_mut!(FLAG_CELL) as *mut T,
         0x019F_3278 => core::ptr::addr_of_mut!(KEY_CELLS) as *mut T,
-        0x019F_327C => unsafe { core::ptr::addr_of_mut!(KEY_CELLS).add(1) as *mut T },
-        0x019F_3280 => unsafe { core::ptr::addr_of_mut!(KEY_CELLS).add(2) as *mut T },
-        0x019F_3284 => unsafe { core::ptr::addr_of_mut!(KEY_CELLS).add(3) as *mut T },
+        0x019F_327C => unsafe { core::ptr::addr_of_mut!(KEY_CELLS).cast::<u32>().add(1) as *mut T },
+        0x019F_3280 => unsafe { core::ptr::addr_of_mut!(KEY_CELLS).cast::<u32>().add(2) as *mut T },
+        0x019F_3284 => unsafe { core::ptr::addr_of_mut!(KEY_CELLS).cast::<u32>().add(3) as *mut T },
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
 }
