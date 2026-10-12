@@ -62613,6 +62613,15 @@
   "lane": "a-Q04"
  },
  {
+  "address": "0x00947820",
+  "name": "scale_pair_apply_gated",
+  "kind": "function",
+  "file": "functions/fn_00947820.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-S26"
+ },
+ {
   "address": "0x00947B80",
   "name": "fan_out_to_live_slots",
   "kind": "function",
@@ -95227,6 +95236,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G34"
+ },
+ {
+  "address": "0x00B3F640",
+  "name": "task_target_select",
+  "kind": "function",
+  "file": "functions/fn_00b3f640.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-S26"
  },
  {
   "address": "0x00B3FC50",
@@ -129589,6 +129607,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s427"
+ },
+ {
+  "address": "0x00C24860",
+  "name": "cam_curve_eval",
+  "kind": "function",
+  "file": "functions/fn_00c24860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-S26"
  },
  {
   "address": "0x00C24930",
