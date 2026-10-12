@@ -9,6 +9,27 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Complex melee task family: five methods lifted and proven</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls27"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls27</id>
+    <published>2026-10-12T00:00:00Z</published>
+    <updated>2026-10-12T00:00:00Z</updated>
+    <summary>Lane l-cls27 compared the named methods of the pedestrian melee task family with their accepted rewrite contracts, then lifted five methods into an owned Rust type with an explicit host interface.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Lane l-cls27 compared the named methods of the pedestrian melee task family with their accepted rewrite contracts, then lifted five methods into an owned Rust type with an explicit host interface.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Finding&lt;/th&gt;&lt;th&gt;Evidence&lt;/th&gt;&lt;th&gt;Meaning&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Constructor, destructor, start, initialise and follow-up behavior&lt;/td&gt;&lt;td data-label="Evidence"&gt;Verified&lt;/td&gt;&lt;td data-label="Meaning"&gt;Five methods were restated as ordinary Rust methods and each matched its verified rewrite over 20,000 generated inputs. A deliberately wrong version of each was detected.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Per-tick advance behavior&lt;/td&gt;&lt;td data-label="Evidence"&gt;Verified rewrite; not lifted&lt;/td&gt;&lt;td data-label="Meaning"&gt;The method reaches 36 scripted calls and four indirect virtual call sites, with state branches, an event buffer and a float countdown. Its contract also narrows several call arguments and fills stack-derived outputs.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Host calls&lt;/td&gt;&lt;td data-label="Evidence"&gt;Verified for lifted methods&lt;/td&gt;&lt;td data-label="Meaning"&gt;Task-system calls are represented by a trait and compared in order with their arguments. No direct operating-system call was found in the five lifted methods.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Null sub-task input&lt;/td&gt;&lt;td data-label="Evidence"&gt;Verified rewrite behavior&lt;/td&gt;&lt;td data-label="Meaning"&gt;A query on a null sub-task does not complete in the original. The differential fixture now tests null only on the path disabled by cleanup.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Other named methods&lt;/td&gt;&lt;td data-label="Evidence"&gt;Unknown&lt;/td&gt;&lt;td data-label="Meaning"&gt;Eleven methods have no verified rewrite in the worklist and remain out of the lift.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Decision: keep the five proven methods and the proof limits together in the family registry; leave the per-tick method and unverified methods out until each has an end-to-end proof. The test fixture defect was fixed, and no verified rewrite or contract defect was found.&lt;/p&gt;
+&lt;p&gt;Reproduction: run the 64-bit host tests and host check, then the x86 differential test from the lane's tree as recorded in the report. Method: &lt;a href="../documentation/lift-method.md"&gt;portable lift method&lt;/a&gt;.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Lifting the session-hosting task</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls28"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls28</id>
@@ -1395,22 +1416,5 @@ answer, not pin it, so that a stage like this cannot pass by construction.&lt;/p
 &lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Derive a stage contract from the S4 contract with the header
 callee's script set to a heap segment other than the cursor's, run the checker with 300 trials, and
 compare the verdicts before and after the one-line change.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Lane trap: copied sources keep old timestamps, and checker pins with different periods hide routes</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#checker-lane-stale-build-and-pin-coupling"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#checker-lane-stale-build-and-pin-coupling</id>
-    <published>2026-10-11T00:00:00Z</published>
-    <updated>2026-10-11T00:00:00Z</updated>
-    <summary>Asked. Continue a deferred function from its last stage. Each stage edits the rewrite source and the contract, then the stock checker runs the stage and its wrong version.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Continue a deferred function from its last stage. Each stage edits the rewrite source and the contract, then the stock checker runs the stage and its wrong version.&lt;/p&gt;
-&lt;table&gt;
-&lt;tr&gt;&lt;th&gt;Finding&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Copying a file in PowerShell keeps the source's last-write time. A restored source can look older than the library built from the edited copy, so cargo skips the rebuild.&lt;/td&gt;&lt;td data-label="Status"&gt;Verified (the lane rebuilt after touching the file; the diagnostic library had been running)&lt;/td&gt;&lt;td data-label="What it means"&gt;Several probes ran a diagnostic library and looked like rewrite faults for about twenty minutes. Set the time to now after any copy, or delete the crate's output before a build.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Contract scripts cycle with the trial number modulo their own length. Two scripts with periods two and four cannot reach every combination when the trial groups are coupled, and a route that needs a particular pair stays unreached and the verdict goes vacuous.&lt;/td&gt;&lt;td data-label="Status"&gt;Verified (decoupling by period four removed one vacuity and exposed a mismatch that the earlier pins had hidden)&lt;/td&gt;&lt;td data-label="What it means"&gt;Choose one cycle length for every script that must line up, and check the call coverage for each callee after a change.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;A pinned float route (nibble two) with a positive entry value and a flag-set trial mismatched on the constructor block only when both were present.&lt;/td&gt;&lt;td data-label="Status"&gt;Verified by decoupling (the mismatch disappears when the nibble pin is one); cause not yet located&lt;/td&gt;&lt;td data-label="What it means"&gt;Left open for the next lane; the route is recorded in the lane's notes.&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Touch copied sources before every build; keep every script's cycle length equal within a stage.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;How to reproduce.&lt;/strong&gt; Restore a source with copy, build with cargo, and compare the library's time with the source's time. For the coupling, print the call-coverage map of the verdict and look for callees that never fire.&lt;/p&gt;</content>
   </entry>
 </feed>
