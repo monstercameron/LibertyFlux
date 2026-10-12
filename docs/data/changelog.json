@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Lift: the game camera class, five methods",
+    "title": "Devlog: the lift lane's entry on the game camera class",
     "commit": null,
+    "summary": "The lane's own account of lifting five methods of the game camera class is added to the devlog.",
+    "changes": [
+      "The entry gives the class's virtual slots as the rewrites establish them, the lifted form and its world trait, what the proofs compare and what they do not, and the two findings about the rewrites' comments and contracts."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Lift: the game camera class, five methods",
+    "commit": "e68195a8b094f28890e2e847f27feb78af161e17",
     "summary": "Five verified methods of the game camera class are lifted into portable Rust in the world crate and proven against their 32-bit rewrites.",
     "changes": [
       "Lifted: the deleting destructor, the restart, the camera event step, the blend update and the idle reset. The class's fields are ordinary Rust data, and everything the methods reach outside the object is one method each on a world trait, in the order the rewrites call it. The lifted module forbids unsafe code.",
