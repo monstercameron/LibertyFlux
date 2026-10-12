@@ -9,6 +9,30 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Head-swap and constant-store families: 170 instances proven against two lifted methods</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free21"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free21</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>From lane l-free21.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;From lane l-free21.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Asked.&lt;/strong&gt; Lift a group of 198 verified 21-byte functions that call nothing, by finding the data they share and lifting each shape once.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Found.&lt;/strong&gt; Most of the group is one routine: read a global list head, store the old value into a second word, point the head at a static node, and return the old value. One hundred and sixty-two rewrites have this shape. Eight more write two constants into two global words and return zero or nothing. The other 28 members are different shapes (branching readers, bit tests on a record, clears and copies through a record pointer) and are listed, not lifted.&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Meaning&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Head-swap members&lt;/td&gt;&lt;td data-label="Value"&gt;162&lt;/td&gt;&lt;td data-label="Meaning"&gt;Verified rewrites with one head read, one save write, one head write to a node, and a return of the read value&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Textual groups&lt;/td&gt;&lt;td data-label="Value"&gt;11 for the same routine&lt;/td&gt;&lt;td data-label="Meaning"&gt;A hash of the normalised text splits one routine into eleven groups; extracting the roles of each rewrite groups them correctly&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Constant-store members&lt;/td&gt;&lt;td data-label="Value"&gt;8&lt;/td&gt;&lt;td data-label="Meaning"&gt;Two constants written to two global words, returns zero (seven) or nothing (one)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Lifted code added&lt;/td&gt;&lt;td data-label="Value"&gt;two methods in one new module&lt;/td&gt;&lt;td data-label="Meaning"&gt;One list-head method and one two-word store, with no unsafe code and no addresses&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Proof&lt;/td&gt;&lt;td data-label="Value"&gt;170 instances, 1,000 cases each&lt;/td&gt;&lt;td data-label="Meaning"&gt;Every returned value and every word compared, rebuilt through the same addresses&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Wrong versions&lt;/td&gt;&lt;td data-label="Value"&gt;head left unchanged; save takes the node; a store left out&lt;/td&gt;&lt;td data-label="Meaning"&gt;Caught for every instance&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Verified.&lt;/strong&gt; The four test crates pass on the 32-bit target (59, 59, 47 and 9 tests, none failing). The 64-bit workspace check and the host edge tests pass.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Decided.&lt;/strong&gt; Prove the list family as one method on a table of link words, with words named by index, rather than as a class. The store-order version of the list routine is equivalent on every input the instances can reach, because the save word and the head are always different words. It is asserted to agree, and it is not counted as a caught wrong version.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Process finding.&lt;/strong&gt; A differential test shows a wrong version is caught only if it can differ on a reachable input. Any order-only mutant over distinct words is equivalent, so the next brief should name that case instead of requiring a catch.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Still open.&lt;/strong&gt; The 28 odd members need separate lifts with their own proofs. The return value of the constant-store family is checked by the test, not carried by the lifted method.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Quotient-store family: 229 more instances proven against one lifted routine</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free20"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free20</id>
@@ -1176,14 +1200,5 @@ under &lt;code&gt;.artifacts/scratch/l-free12/report.md&lt;/code&gt;.&lt;/p&gt;<
 &lt;p&gt;Each function has a contract and a verdict file in the lane scratch folder; the generators, table-extraction scripts and the probes (including the global-fill controls) sit beside them. The two deferred functions reproduce as a passing correct run with a passing wrong version, and a vacuous verdict with unfired callees, respectively.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The global-fill gap cost the most time: every link in the chain (driver request bytes, worker source order, setup parsing, relocations) reads correctly, the controls pass, yet the two functions behave as pristine. The root cause is still unknown. Separately, one mutant passed sixty trials because the callee script cycled the identical sequence as the stack input; offsetting one of them caught it at once.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming 150 shader, targeting and task functions</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-126"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-126</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>Named 147 of 150 consecutive game functions covering a vehicle paint shader effect, the ped targeting object, navmesh route-following tasks, vehicle enter and exit tasks, and a set of placeholder task constructors.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Named 147 of 150 consecutive game functions covering a vehicle paint shader effect, the ped targeting object, navmesh route-following tasks, vehicle enter and exit tasks, and a set of placeholder task constructors.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Propose a descriptive name with confidence for each function in the batch, working out what each group does first, using strings, imports, known callers, class tables and verified rewrites as evidence.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Joining over a thousand earlier naming proposals with the symbol table recovers the task vtable protocol: clone, task id, make abortable, create first and next sub task, and control sub task sit in fixed slots across the whole task family.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six targeting methods were named directly from verified rewrite documents, and nine placeholder task constructors were identified by reading the class tables each one installs.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The vehicle enter and exit tasks run a status machine: each class has a jump table mapping status numbers to readable names, a counter that advances the status, a setter for it, and a builder that creates the sub task for the current status.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Vtable slots with the same number can mean different things in different class families: the slot that selects a sub task id in combat tasks holds the whole sub task builder in vehicle tasks. Behaviour, not slot number, decided those names.&lt;/p&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;Follow the recovered slot protocol for future task batches, but verify giant overrides against the constructors they call before trusting the slot. Reading a class table from the image settles constructor identity and exposes stubbed slots a sibling class never overrode.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Disassemble each function through the mapped image, resolve callees against the merged symbols, prior lane names and verified rewrite index, collect referenced strings and constants, read the class tables for constructor and slot attribution, then name from the strongest signal per function.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;Two shell commands failed on quoting before all dumping moved into scripts. One assumed slot transfer was wrong: the sibling shader class leaves the slot a stub, so the name came from the function's own behaviour instead.&lt;/p&gt;</content>
   </entry>
 </feed>
