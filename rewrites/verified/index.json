@@ -46017,6 +46017,15 @@
   "lane": "r-s760"
  },
  {
+  "address": "0x006A5AE0",
+  "name": "input_window_proc",
+  "kind": "function",
+  "file": "functions/fn_006a5ae0.rs",
+  "trials": 3000,
+  "checker": "version 8",
+  "lane": "a-H45"
+ },
+ {
   "address": "0x006A7490",
   "name": "input_event_parse_a",
   "kind": "function",
@@ -153817,6 +153826,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s516"
+ },
+ {
+  "address": "0x00D7AB00",
+  "name": "compute_input_response",
+  "kind": "function",
+  "file": "functions/fn_00d7ab00.rs",
+  "trials": 3000,
+  "checker": "version 8",
+  "lane": "a-H45"
  },
  {
   "address": "0x00D7B100",

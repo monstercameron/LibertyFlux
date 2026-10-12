@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Devlog: the lift lane's entry on the replay progress bar",
+    "title": "Rewrites: 2 more functions pass the checker (20100 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "2 rewrites added under rewrites/verified: 0 script native handlers and 2 other functions.",
+      "The tree now holds 20100 rewrites, 20097 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Devlog: the lift lane's entry on the replay progress bar",
+    "commit": "49163dfaee47548820e08860b5cd74d1632e46b0",
     "summary": "The lane's own account of lifting three methods of the replay editor's progress bar is added to the devlog.",
     "changes": [
       "The entry gives the class's slots, the lifted form and its world trait, what the proofs compare and what they do not, and the findings about two sizes in the inventory, a misnamed teardown and a contract that leaves a callee-filled word at zero."
