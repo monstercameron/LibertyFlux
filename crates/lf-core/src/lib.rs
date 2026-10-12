@@ -19,9 +19,14 @@
 
 pub mod arena;
 pub mod boundary;
+pub mod constant_writes;
+pub mod field_store;
+pub mod indexed_read;
 pub mod layout_assert;
 pub mod ptr32;
 pub mod static_list;
+pub mod word_copy;
+pub mod word_test;
 
 pub use arena::{Arena, Handle};
 pub use boundary::Handle32;

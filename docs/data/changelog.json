@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 272 files from lanes (633 unverified rewrites, 585 in review)",
+    "title": "Lift: 83 small accessors in five families",
     "commit": null,
+    "summary": "The third list chosen by shape, the verified functions of 13, 15 and 17 bytes that call nothing, yields five families of small accessors. Each is lifted once and proved against every instance.",
+    "changes": [
+      "crates/lf-core gains five modules: a store of a byte or a word into a field of an object (50 instances, four kinds of return), a copy of words between fields (11), a write of constants (10), a test of a word (6) and a read of a table entry at a base plus an index times a stride (6). Each is one routine and a table of instances, with no unsafe code and no addresses.",
+      "Five new test crates run each lifted routine against its tracked verified rewrites on the 32-bit target, 1,000 cases per instance, with four deliberately wrong versions per family caught by every instance. The coordinator read the five modules and ran the core crate's host tests (46) and the 37 tests of the five crates on the 32-bit target (each test covers its family's instances) before committing; none failed.",
+      "Three of the five (the store, the copy and the constant writes) are weak lifts, and the lane says so: the lifted routine is an assignment or a fill, and the worth is that sixty-odd functions become rows of a table. One finding in the indexed read is not weak: a float read returned through the original's floating-point return register comes back with a signalling not-a-number quieted, and the lifted routine models that.",
+      "Seventy-two functions on the list are not lifted and are listed with reasons: installs of a virtual table at one address, read-modify-write of flag bits, pointer chases, families of fewer than four, and five rewrites that call a helper no tracked file defines (part of the 706 files already known not to build alone).",
+      "Verified routines with a lifted counterpart proven in the pipeline: 1,005, up from 922."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 272 files from lanes (633 unverified rewrites, 585 in review)",
+    "commit": "f388cc6f03164f109273f5a99eebd3e63fb50b5e",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 633 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",

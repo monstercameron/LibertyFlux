@@ -211,6 +211,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-constdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-copydiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
 name = "lf-core"
 version = "0.1.0"
 
@@ -279,6 +293,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-flagdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
 name = "lf-fontstr-diff"
 version = "0.1.0"
 dependencies = [
@@ -300,6 +321,13 @@ version = "0.1.0"
 [[package]]
 name = "lf-hook"
 version = "0.1.0"
+
+[[package]]
+name = "lf-indexdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
 
 [[package]]
 name = "lf-input-frontend"
@@ -573,6 +601,13 @@ dependencies = [
 [[package]]
 name = "lf-script-natives"
 version = "0.1.0"
+
+[[package]]
+name = "lf-setdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
 
 [[package]]
 name = "lf-shaderpack"
