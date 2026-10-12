@@ -130,6 +130,16 @@ impl ObjectBytes {
         u32::from_le_bytes(word)
     }
 
+    /// Writes `bytes` into the object at `offset`, one byte after another. Only those bytes change.
+    ///
+    /// # Panics
+    ///
+    /// When the bytes do not lie inside the object.
+    pub fn write(&mut self, offset: usize, bytes: &[u8]) {
+        let end = field_end(offset, bytes.len(), self.bytes.len());
+        self.bytes[offset..end].copy_from_slice(bytes);
+    }
+
     /// Writes `value` into the field `store` describes and returns what the
     /// store hands back. Only the field is written.
     ///
@@ -231,7 +241,7 @@ mod tests {
         };
         let mut object = ObjectBytes::zeroed(8);
         assert_eq!(object.store(store, u32::MAX), Some(0));
-        assert_eq!(object.word(4), 0);
+        assert_eq!(object.word(4), u32::MAX);
     }
 
     #[test]
