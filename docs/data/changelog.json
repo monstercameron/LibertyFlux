@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: 16 routines from the sizes of 26 to 36 bytes, where the families run out",
+    "title": "Devlog: the lift lane's entry on the sizes where families run out",
     "commit": null,
+    "summary": "The lane's own account of proving 16 of 168 functions of 26 to 36 bytes is added to the devlog.",
+    "changes": [
+      "The entry gives the three small families and the four instances of routines already lifted, the narrowings of each lift, the naming question about the three-byte store, and its advice for the next list: expect a handful of families, write a matcher for every existing module, and report families of three as candidates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: 16 routines from the sizes of 26 to 36 bytes, where the families run out",
+    "commit": "19883d50d855dd68e46f51d321190821cc1ffcb1",
     "summary": "The seventh list chosen by shape gives 16 of 168 functions. At these sizes the verified functions that call nothing are no longer a few routines repeated: most are one of a kind.",
     "changes": [
       "crates/lf-core gains three small modules, each a weak lift of four instances: an assignment to an indexed slot of a table, a store of three bytes that returns the rest of the value, and a float written to a field only when it differs from what is there (compared as the processor compares, written as bits, with signed zeros and not-a-number among the cases). Four more functions are proved against routines already lifted, unchanged: three constant writes and a six-word block copy.",
