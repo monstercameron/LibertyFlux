@@ -80973,6 +80973,24 @@
   "lane": "a-18"
  },
  {
+  "address": "0x00A32610",
+  "name": "CEntity::vf18",
+  "kind": "function",
+  "file": "functions/fn_00a32610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s743"
+ },
+ {
+  "address": "0x00A328F0",
+  "name": "entity_dispatch_audio_parts_2",
+  "kind": "function",
+  "file": "functions/fn_00a328f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s743"
+ },
+ {
   "address": "0x00A32970",
   "name": "resolve_row_scan_report",
   "kind": "function",
@@ -81016,6 +81034,69 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b615"
+ },
+ {
+  "address": "0x00A33B90",
+  "name": "entity_link_unlink",
+  "kind": "function",
+  "file": "functions/fn_00a33b90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s743"
+ },
+ {
+  "address": "0x00A33C80",
+  "name": "matrix_release_to_placement_locked",
+  "kind": "function",
+  "file": "functions/fn_00a33c80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s743"
+ },
+ {
+  "address": "0x00A33CB0",
+  "name": "matrix_release_to_placement",
+  "kind": "function",
+  "file": "functions/fn_00a33cb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s743"
+ },
+ {
+  "address": "0x00A33D60",
+  "name": "CEntity::vf44",
+  "kind": "function",
+  "file": "functions/fn_00a33d60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s743"
+ },
+ {
+  "address": "0x00A33D90",
+  "name": "CEntity::set_ui_listener",
+  "kind": "function",
+  "file": "functions/fn_00a33d90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s743"
+ },
+ {
+  "address": "0x00A33DD0",
+  "name": "CMissionCleanup::update",
+  "kind": "function",
+  "file": "functions/fn_00a33dd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s743"
+ },
+ {
+  "address": "0x00A33E00",
+  "name": "entity_attach_physics_instance",
+  "kind": "function",
+  "file": "functions/fn_00a33e00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s743"
  },
  {
   "address": "0x00A33F50",
