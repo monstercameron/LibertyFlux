@@ -102141,6 +102141,15 @@
   "lane": "r-b30"
  },
  {
+  "address": "0x00B5E4A0",
+  "name": "emit_bullet_impact_audio",
+  "kind": "function",
+  "file": "functions/fn_00b5e4a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s785"
+ },
+ {
   "address": "0x00B5F4E0",
   "name": "STAY_DOWN",
   "kind": "function",
@@ -102168,6 +102177,15 @@
   "lane": "a-S05"
  },
  {
+  "address": "0x00B5FD50",
+  "name": "ped_damage_direction_angle",
+  "kind": "function",
+  "file": "functions/fn_00b5fd50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s785"
+ },
+ {
   "address": "0x00B5FE20",
   "name": "Bullet_Trajectory",
   "kind": "function",
@@ -102193,6 +102211,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b77"
+ },
+ {
+  "address": "0x00B60BD0",
+  "name": "update_player_weapon_fire_audio",
+  "kind": "function",
+  "file": "functions/fn_00b60bd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s785"
  },
  {
   "address": "0x00B61A20",
@@ -103147,6 +103174,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s77"
+ },
+ {
+  "address": "0x00B6DBF0",
+  "name": "CTaskSimpleStartCar::~CTaskSimpleStartCar",
+  "kind": "function",
+  "file": "functions/fn_00b6dbf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s785"
+ },
+ {
+  "address": "0x00B6DC20",
+  "name": "CTaskSimpleWaitUntilPedIsOutCar::~CTaskSimpleWaitUntilPedIsOutCar",
+  "kind": "function",
+  "file": "functions/fn_00b6dc20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s785"
  },
  {
   "address": "0x00B6DC60",
