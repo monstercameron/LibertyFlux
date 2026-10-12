@@ -22,5 +22,5 @@ pub extern "thiscall" fn rw_00a864d0(task_info: u32, writer: u32) -> u32 {
     let flag = unsafe { ((task_info as *const u8).add(FLAG_BYTE)).read() as u32 };
     lf_checker_rt::callee_thiscall!(3, u32, writer, flag, 3);
     let value_20 = unsafe { ((task_info as *const u8).add(FIELD_20) as *const u32).read_unaligned() };
-    lf_checker_rt::callee_thiscall!(3, u32, writer, value_20, 0x20)
+    lf_checker_rt::callee_thiscall!(3, u32, writer, value_20, 0x1F)
 }
