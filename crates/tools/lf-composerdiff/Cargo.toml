@@ -1,0 +1,16 @@
+[package]
+name = "lf-composerdiff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: lifted composer classes against their verified 32-bit rewrites"
+publish = false
+
+[dependencies]
+lf-animation = { path = "../../lf-animation" }
+lf-core = { path = "../../lf-core" }
+lf-checker-rt = { path = "../lf-checker-rt" }
+
+[lints]
+workspace = true

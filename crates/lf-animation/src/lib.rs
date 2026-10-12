@@ -15,4 +15,5 @@
 //! - Never original game code here: structures, symbols and new Rust only.
 
 pub mod channel;
+pub mod composer;
 pub mod layout;

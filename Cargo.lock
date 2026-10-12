@@ -449,6 +449,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-composerdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-animation",
+ "lf-checker-rt",
+ "lf-core",
+]
+
+[[package]]
 name = "lf-constdiff"
 version = "0.1.0"
 dependencies = [

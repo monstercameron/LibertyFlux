@@ -1,8 +1,22 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 127 proofs re-run on the current checker and recorded on it",
+    "title": "Lift: the motion tree's optimised composer, eighteen methods of three classes",
     "commit": null,
+    "summary": "The second class lift of the evening: the classes that walk an animation blend tree and compose its nodes' outputs. Eighteen of their 31 verified methods are lifted; the thirteen left need a model the lift rules do not yet allow.",
+    "changes": [
+      "crates/lf-animation gains a composer module: the combining filter (all 3 of its verified methods), the composer's data block (both of its 2) and the composer itself (13 of 26). 1,443 lines with unsafe code forbidden in the module and no addresses.",
+      "One new test crate runs each lifted method against its tracked verified rewrite on the 32-bit target, with a deliberately wrong copy of each that is caught: 27 differential tests. The coordinator ran the animation crate's host tests (81) and the 27 tests on the 32-bit target before committing; none failed.",
+      "Four of the thirteen composer methods are forwarders: a branch and the shaping of arguments around one call. They are counted, and the lane says plainly that they count only for that.",
+      "Not lifted: one method that stores an address computed from an inner block, and the family of twelve that record nodes, which need a layout per node kind, calls through pointers read from argument memory and arithmetic on addresses passed in. Lifting those needs a decision on how a lifted type holds a handle derived from another object, and a model of the node records; that is recorded as an open design question, not attempted.",
+      "Two findings for the proof audits: a verified rewrite's comment gives its return as one field offset where its code returns another (the lift follows the code; the comment is wrong); and a contract of record draws child counts of 0 to 4 where the rewrite reads eight inline slots, so counts 5 to 8 are not covered by the proof.",
+      "Verified routines with a lifted counterpart proven in the pipeline: 1,301."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 127 proofs re-run on the current checker and recorded on it",
+    "commit": "3630234828b6014a765fb3adf100909fa0a26854",
     "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
     "changes": [
       "127 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
