@@ -1216,14 +1216,6 @@
   "reason": "other"
  },
  {
-  "address": "0x006A5AE0",
-  "name": "input_window_proc",
-  "file": "fn_006a5ae0.rs",
-  "lane": "a-H45",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x006F7F10",
   "name": "mainloop_timer_mode_guard",
   "file": "fn_006f7f10.rs",
@@ -1404,6 +1396,14 @@
   "name": "allocate_utf16_buffer",
   "file": "fn_00880310.rs",
   "lane": "a-U151",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00880B70",
+  "name": "audio_mixer_buffer_create",
+  "file": "fn_00880b70.rs",
+  "lane": "a-U154",
   "outcome": "not yet run",
   "reason": null
  },
@@ -4622,6 +4622,14 @@
   "lane": "r-s787",
   "outcome": "not_reached",
   "reason": ""
+ },
+ {
+  "address": "0x00D7AB00",
+  "name": "compute_input_response",
+  "file": "fn_00d7ab00.rs",
+  "lane": "a-H45",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00D82CD0",

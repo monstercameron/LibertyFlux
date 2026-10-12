@@ -10,6 +10,86 @@ use super::host::{CopyArgs, GoToPointOnRouteHost, TaskField};
 /// The largest speed the task accepts; a larger request is stored as this.
 pub const MAX_SPEED: f32 = 3.0;
 
+/// The progress value an advance starts from is kept when it is at or below
+/// this bound; a larger entry value is advanced.
+const ADVANCE_IDLE_BOUND: f32 = 1.0;
+/// The entry value that selects the larger of the two thresholds.
+const ADVANCE_SPLIT: f32 = 2.0;
+/// The threshold used when the entry value is at or below [`ADVANCE_SPLIT`].
+const ADVANCE_LOW_THRESHOLD: f32 = 3.0;
+/// The threshold used when the entry value is above [`ADVANCE_SPLIT`].
+const ADVANCE_HIGH_THRESHOLD: f32 = 4.0;
+/// The blend weight of the high branch's cached value.
+const ADVANCE_WEIGHT_A: f32 = 1.5;
+/// The cached value of the second weight, and the entry value's split.
+const ADVANCE_WEIGHT_B: f32 = 2.0;
+/// The ceiling the advance result is raised to.
+const ADVANCE_FLOOR: f32 = 1.1;
+/// The double the scale helper is called with: one eighth of pi, as the
+/// bits of a double.
+const ADVANCE_HELPER_ARG: u64 = 0x3FD9_21FB_6000_0000;
+
+/// The shared cache the advance method fills on first use: a flag word and
+/// three cached words. The bits of the flag word say which cached word is
+/// filled: bit 0 for the first weight, bit 1 for the second, bit 2 for the
+/// scale. The caller owns the cache, so the lifted method holds no global
+/// state; a fresh cache is all zero.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct ProgressCache {
+    /// The fill flags.
+    pub flags: u32,
+    /// The first weight, as the bits of a float.
+    pub weight_a: u32,
+    /// The second weight, as the bits of a float.
+    pub weight_b: u32,
+    /// The scale, as the bits of a float, filled from the scale helper.
+    pub scale: u32,
+}
+
+/// The fill bit of the first weight.
+const CACHE_WEIGHT_A_FILLED: u32 = 1;
+/// The fill bit of the second weight.
+const CACHE_WEIGHT_B_FILLED: u32 = 2;
+/// The fill bit of the scale.
+const CACHE_SCALE_FILLED: u32 = 4;
+
+/// Sub-float arithmetic with both operands pinned, so that the operand order
+/// of a float operation is the one written here. A result that is a NaN
+/// carries the first operand's payload.
+#[inline(always)]
+fn pinned_sub(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) - core::hint::black_box(b)
+}
+
+/// See [`pinned_sub`].
+#[inline(always)]
+fn pinned_add(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}
+
+/// See [`pinned_sub`].
+#[inline(always)]
+fn pinned_mul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+/// See [`pinned_sub`].
+#[inline(always)]
+fn pinned_div(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) / core::hint::black_box(b)
+}
+
+/// The reciprocal square root of a squared length: zero for a zero length,
+/// otherwise one over the square root.
+#[inline(always)]
+fn reciprocal_length(squared: f32) -> f32 {
+    if squared == 0.0 {
+        0.0
+    } else {
+        pinned_div(1.0, core::hint::black_box(squared).sqrt())
+    }
+}
+
 /// The mode values that take the first return path. Any other mode takes
 /// the second path, which sets [`UNRECOGNISED_MODE_FLAG`] in the flag word.
 pub const MODE_ONE: u32 = 1;

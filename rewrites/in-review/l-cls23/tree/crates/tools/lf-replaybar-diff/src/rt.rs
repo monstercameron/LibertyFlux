@@ -88,19 +88,16 @@ pub fn install(scope: usize, table: &[(CallSpec, Kind)], script: &Script) {
             fresh.answers.insert(spec.id, queue);
         }
         state.scopes[scope] = fresh;
-        state.stack.clear();
-        state.stack.push(scope);
-        state.log.clear();
     });
 }
 
-/// Installs a scope that only dispatches nested calls, with no answers.
-pub fn install_nested_only(scope: usize, id: u32, kind: Kind) {
+/// Starts a run in `scope`: clears the log and makes that scope the
+/// innermost one.
+pub fn begin(scope: usize) {
     with_state(|state| {
-        let mut fresh = Scope::default();
-        fresh.kinds.insert(id, kind);
-        fresh.outs.insert(id, &[]);
-        state.scopes[scope] = fresh;
+        state.stack.clear();
+        state.stack.push(scope);
+        state.log.clear();
     });
 }
 
