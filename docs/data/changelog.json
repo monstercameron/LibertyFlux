@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: the motion tree's optimised composer, eighteen methods of three classes",
+    "title": "Devlog: the lift lane's entry on the motion tree's composer",
     "commit": null,
+    "summary": "The lane's own account of lifting eighteen methods of the composer classes is added to the devlog.",
+    "changes": [
+      "The entry gives the three classes and their lifted form, the proof per method, why the record family and one other method were left, the two findings about a wrong comment and an uncovered count, and what a port of this family still lacks: 23 unverified methods, five unverified callees and a thread-context trait."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: the motion tree's optimised composer, eighteen methods of three classes",
+    "commit": "086aba130243722a345364361e82be508d1d27e1",
     "summary": "The second class lift of the evening: the classes that walk an animation blend tree and compose its nodes' outputs. Eighteen of their 31 verified methods are lifted; the thirteen left need a model the lift rules do not yet allow.",
     "changes": [
       "crates/lf-animation gains a composer module: the combining filter (all 3 of its verified methods), the composer's data block (both of its 2) and the composer itself (13 of 26). 1,443 lines with unsafe code forbidden in the module and no addresses.",
