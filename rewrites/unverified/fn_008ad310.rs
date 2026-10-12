@@ -33,8 +33,7 @@ lf_checker_rt::export!(thiscall, rw_008ad310(this_: u32, arg_bits: u32) -> f32 {
         };
         if value < literal_zero {
             value = literal_zero;
-        }
-        if value > one {
+        } else if value > one {
             value = one;
         }
 

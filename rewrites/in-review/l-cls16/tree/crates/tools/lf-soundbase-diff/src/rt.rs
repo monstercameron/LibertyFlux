@@ -61,6 +61,12 @@ pub const GLOBAL_INIT_TABLE: u32 = 0x115_D774;
 pub const GLOBAL_REGISTRY: u32 = 0x115_D8A0;
 /// The fallback object cell.
 pub const GLOBAL_FALLBACK: u32 = 0x115_DB1C;
+/// The memoised category-hash flag word.
+pub const GLOBAL_MEMO_FLAG: u32 = 0x115_D994;
+/// The memoised category hash.
+pub const GLOBAL_MEMO_VALUE: u32 = 0x115_D990;
+/// The category registry cell.
+pub const GLOBAL_CATEGORY_CELL: u32 = 0x115_D9A0;
 
 #[repr(C, align(16))]
 struct Arena([u8; ARENA_LEN]);
@@ -326,3 +332,46 @@ pub static INIT_STUBS: [extern "cdecl" fn(u32) -> u32; 256] = [
     init_stub::<248>, init_stub::<249>, init_stub::<250>, init_stub::<251>, init_stub::<252>, init_stub::<253>, init_stub::<254>, init_stub::<255>,
 ];
 
+
+/// The marker a stub records in place of the scratch frame argument: the
+/// frame is a stack address in the rewrite and an arena address in the lift,
+/// so only its position is compared.
+pub const FRAME_MARK: u32 = 0xF7A0_0000;
+
+/// Attach callee 1: initialises the scratch frame (thiscall, the frame).
+pub extern "thiscall" fn attach_init(frame: u32) -> u32 {
+    let _ = frame;
+    record("c1", &[FRAME_MARK])
+}
+
+/// Attach callee 2: binds the voice (thiscall: sound, voice, zero, frame).
+pub extern "thiscall" fn attach_bind(this: u32, voice: u32, zero: u32, frame: u32) -> u32 {
+    let _ = frame;
+    record("c2", &[this, voice, zero, FRAME_MARK])
+}
+
+/// Attach callee 3: binds the extra word (thiscall: sound, extra, frame).
+pub extern "thiscall" fn attach_extra(this: u32, extra: u32, frame: u32) -> u32 {
+    let _ = frame;
+    record("c3", &[this, extra, FRAME_MARK])
+}
+
+/// Attach callee 4: resets the sound (thiscall: sound).
+pub extern "thiscall" fn attach_reset(this: u32) -> u32 {
+    record("c4", &[this])
+}
+
+/// Attach callee 5: the category-key hash (cdecl: key constant, seed).
+pub extern "cdecl" fn attach_key_hash(key: u32, seed: u32) -> u32 {
+    record("c5", &[key, seed])
+}
+
+/// Attach callee 6: the category lookup (thiscall: registry cell, category).
+pub extern "thiscall" fn attach_lookup(cell: u32, category: u32) -> u32 {
+    record("c6", &[cell, category])
+}
+
+/// Attach callee 7: the category verdict (thiscall: found entry).
+pub extern "thiscall" fn attach_verdict(found: u32) -> u32 {
+    record("c7", &[found])
+}

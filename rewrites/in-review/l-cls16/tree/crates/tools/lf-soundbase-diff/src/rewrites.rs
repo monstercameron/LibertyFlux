@@ -96,3 +96,13 @@ pub mod fn_00891E90 {
         "/../../../../../../../rewrites/verified/functions/fn_00891e90.rs"
     ));
 }
+
+pub mod fn_008909C0 {
+    #![allow(unused_imports)]
+    use crate::{callee_cdecl, callee_thiscall, export};
+    use super::{callee_addr, global, relocated};
+    include!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../../../../rewrites/verified/functions/fn_008909c0.rs"
+    ));
+}

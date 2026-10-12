@@ -69,9 +69,10 @@ enum Method {
     ForwardLink,
     Dtor,
     Construct2,
+    Attach,
 }
 
-const ALL: [Method; 7] = [
+const ALL: [Method; 8] = [
     Method::Find,
     Method::FindByName,
     Method::StoreAtKey,
@@ -79,6 +80,7 @@ const ALL: [Method; 7] = [
     Method::ForwardLink,
     Method::Dtor,
     Method::Construct2,
+    Method::Attach,
 ];
 
 /// One generated case: the object, the globals, the inputs and the scripts.
@@ -97,6 +99,15 @@ struct Case {
     arg: u32,
     free: u32,
     name: u32,
+    /// The attach descriptor: identity word, voice row and option byte in
+    /// the first eight bytes (the row must be one the test maps).
+    desc: [u8; 8],
+    /// First byte of the attached voice record.
+    voice_byte: u8,
+    /// The word the extra argument points at.
+    extra_word: u32,
+    memo_flag: u32,
+    memo_value: u32,
     answers: Vec<(&'static str, Vec<u32>)>,
     callees: Vec<(u32, u32)>,
 }
@@ -135,7 +146,7 @@ fn gen_case(rng: &mut Rng, kind: Method) -> Case {
     let mut init_rows = [0u32; 32];
     for v in 0..VOICE_ROWS {
         lookup_rows[v] = base + rt::OBJECTS_OFF + 0x40 * rng.below(8);
-        init_rows[v] = rng.next();
+        init_rows[v] = base + rt::REC_OFF + 0x40 * rng.below(8);
     }
     let mut slot_ids = [NO_VOICE; 8];
     for id in &mut slot_ids {
@@ -182,6 +193,14 @@ fn gen_case(rng: &mut Rng, kind: Method) -> Case {
         ("set_cursor", (0..4).map(|_| rng.next()).collect()),
         ("register", (0..4).map(|_| rng.next()).collect()),
         ("init", (0..4).map(|_| rng.next()).collect()),
+        ("c5", (0..4).map(|_| rng.next()).collect()),
+        (
+            "c6",
+            (0..4)
+                .map(|_| if rng.chance(2) { 0 } else { aligned_arena_address(rng) })
+                .collect(),
+        ),
+        ("c7", (0..4).map(|_| rng.next()).collect()),
     ];
     let callees: Vec<(u32, u32)> = match kind {
         Method::Find | Method::StoreAtKey => Vec::new(),
@@ -195,7 +214,31 @@ fn gen_case(rng: &mut Rng, kind: Method) -> Case {
             (2, rt::set_cursor as *const () as usize as u32),
             (3, rt::register as *const () as usize as u32),
         ],
+        Method::Attach => vec![
+            (1, rt::attach_init as *const () as usize as u32),
+            (2, rt::attach_bind as *const () as usize as u32),
+            (3, rt::attach_extra as *const () as usize as u32),
+            (4, rt::attach_reset as *const () as usize as u32),
+            (5, rt::attach_key_hash as *const () as usize as u32),
+            (6, rt::attach_lookup as *const () as usize as u32),
+            (7, rt::attach_verdict as *const () as usize as u32),
+        ],
     };
+    // Attach: the second selector takes the second branch about half the time,
+    // the option's low bits are all set about half the time, and the descriptor's
+    // voice row is one the test maps.
+    let mut sound = sound;
+    if kind == Method::Attach {
+        sound.link = if rng.chance(2) { NO_VOICE } else { rng.next() as u8 };
+    }
+    let mut desc = [0u8; 8];
+    for b in desc.iter_mut() {
+        *b = rng.next() as u8;
+    }
+    desc[4] = rng.below(VOICE_ROWS as u32) as u8;
+    if rng.chance(2) {
+        desc[5] |= 0x3f;
+    }
     Case {
         kind,
         sound,
@@ -210,6 +253,11 @@ fn gen_case(rng: &mut Rng, kind: Method) -> Case {
         arg: if rng.chance(8) { 0 } else { rng.next() },
         free: rng.next(),
         name: rng.next(),
+        desc,
+        voice_byte: rng.next() as u8,
+        extra_word: rng.next(),
+        memo_flag: rng.below(3),
+        memo_value: rng.next(),
         answers,
         callees,
     }
@@ -260,6 +308,22 @@ fn build_image(c: &Case) {
             rt::write_u32(r.wrapping_add(c.scalar_a.wrapping_mul(id)), voice_vt);
         }
     }
+
+    // Voice records: a patterned fill, so the option bits the attach method
+    // compares differ from case to case.
+    let records = base + rt::REC_OFF;
+    for i in 0..0x8200u32 {
+        rt::write_u8(records + i, (i.wrapping_mul(37) ^ c.memo_value) as u8);
+    }
+    // The attach descriptor, the attached voice's first byte and the extra word.
+    let desc_block = base + rt::DESC_OFF;
+    for (i, b) in c.desc.iter().enumerate() {
+        rt::write_u8(desc_block + i as u32, *b);
+    }
+    rt::write_u8(desc_block + 0x40, c.voice_byte);
+    rt::write_u32(desc_block + 0x80, c.extra_word);
+    rt::write_u32(rt::relocated(rt::GLOBAL_MEMO_FLAG), c.memo_flag);
+    rt::write_u32(rt::relocated(rt::GLOBAL_MEMO_VALUE), c.memo_value);
 }
 
 /// Reads the lifted fields of the object from the arena.
@@ -276,6 +340,9 @@ fn decode(obj: u32) -> AudSound {
         init_flags: rt::read_u8(obj + 0x3A),
         sub_id: rt::read_u8(obj + 0x3B),
         voice_id: rt::read_u8(obj + 0x40),
+        option: rt::read_u8(obj + 0x41),
+        identity: rt::read_u32(obj + 0x3C),
+        voice: rt::read_u32(obj + 0x98),
         slot_ids,
         sequence: rt::read_u32(obj + 0xA4),
         slot_a: rt::read_u32(obj + 0xA8),
@@ -294,6 +361,9 @@ fn encode(s: &AudSound, obj: u32) {
     rt::write_u8(obj + 0x3A, s.init_flags);
     rt::write_u8(obj + 0x3B, s.sub_id);
     rt::write_u8(obj + 0x40, s.voice_id);
+    rt::write_u8(obj + 0x41, s.option);
+    rt::write_u32(obj + 0x3C, s.identity);
+    rt::write_u32(obj + 0x98, s.voice);
     for (i, id) in s.slot_ids.iter().enumerate() {
         rt::write_u8(obj + 0x48 + i as u32, *id);
     }
@@ -399,6 +469,89 @@ impl SoundWorld for ArenaWorld {
             unsafe { core::mem::transmute(rt::callee_addr(2) as usize) };
         f(registry.get(), this.get(), voice_id)
     }
+    fn descriptor_word(&self, desc: u32) -> u32 {
+        rt::read_u32(desc)
+    }
+    fn descriptor_pair(&self, desc: u32) -> u16 {
+        u16::from(rt::read_u8(desc + 4)) | (u16::from(rt::read_u8(desc + 5)) << 8)
+    }
+    fn descriptor_flag(&self, desc: u32) -> u8 {
+        rt::read_u8(desc + 5)
+    }
+    fn voice_sub_id(&self, voice: u32) -> u8 {
+        rt::read_u8(voice)
+    }
+    fn extra_word(&self, extra: u32) -> u32 {
+        rt::read_u32(extra)
+    }
+    fn scratch_frame(&mut self) -> Handle32<FrameTag> {
+        Handle32::new(rt::arena_base() + rt::FRAME_OFF).expect("frame handle")
+    }
+    fn init_block(&mut self, frame: Handle32<FrameTag>) -> u32 {
+        let f: extern "thiscall" fn(u32) -> u32 =
+            unsafe { core::mem::transmute(rt::callee_addr(1) as usize) };
+        f(frame.get())
+    }
+    fn attach_callee(
+        &mut self,
+        this: Handle32<ObjectTag>,
+        voice: u32,
+        zero: u32,
+        frame: Handle32<FrameTag>,
+    ) -> u32 {
+        let f: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
+            unsafe { core::mem::transmute(rt::callee_addr(2) as usize) };
+        f(this.get(), voice, zero, frame.get())
+    }
+    fn bind_extra(
+        &mut self,
+        this: Handle32<ObjectTag>,
+        extra: u32,
+        frame: Handle32<FrameTag>,
+    ) -> u32 {
+        let f: extern "thiscall" fn(u32, u32, u32) -> u32 =
+            unsafe { core::mem::transmute(rt::callee_addr(3) as usize) };
+        f(this.get(), extra, frame.get())
+    }
+    fn reset_object(&mut self, this: Handle32<ObjectTag>) -> u32 {
+        let f: extern "thiscall" fn(u32) -> u32 =
+            unsafe { core::mem::transmute(rt::callee_addr(4) as usize) };
+        f(this.get())
+    }
+    fn record_byte(&self, record: u32, offset: u32) -> u8 {
+        rt::read_u8(record.wrapping_add(offset))
+    }
+    fn or_record_byte(&mut self, record: u32, offset: u32, mask: u8) {
+        let at = record.wrapping_add(offset);
+        rt::write_u8(at, rt::read_u8(at) | mask);
+    }
+    fn memo_flag(&self) -> u32 {
+        rt::read_u32(rt::relocated(rt::GLOBAL_MEMO_FLAG))
+    }
+    fn set_memo_flag(&mut self, flag: u32) {
+        rt::write_u32(rt::relocated(rt::GLOBAL_MEMO_FLAG), flag);
+    }
+    fn memo_value(&self) -> u32 {
+        rt::read_u32(rt::relocated(rt::GLOBAL_MEMO_VALUE))
+    }
+    fn set_memo_value(&mut self, value: u32) {
+        rt::write_u32(rt::relocated(rt::GLOBAL_MEMO_VALUE), value);
+    }
+    fn category_key_hash(&mut self) -> u32 {
+        let f: extern "cdecl" fn(u32, u32) -> u32 =
+            unsafe { core::mem::transmute(rt::callee_addr(5) as usize) };
+        f(rt::relocated(rt::CATEGORY_KEY_VA), 0)
+    }
+    fn category_lookup(&mut self, category: u32) -> u32 {
+        let f: extern "thiscall" fn(u32, u32) -> u32 =
+            unsafe { core::mem::transmute(rt::callee_addr(6) as usize) };
+        f(rt::relocated(rt::GLOBAL_CATEGORY_CELL), category)
+    }
+    fn category_ok(&mut self, found: u32) -> u32 {
+        let f: extern "thiscall" fn(u32) -> u32 =
+            unsafe { core::mem::transmute(rt::callee_addr(7) as usize) };
+        f(found)
+    }
 }
 
 /// Runs the verified rewrite of the case's method.
@@ -415,7 +568,22 @@ fn run_rewrite(c: &Case) -> u32 {
             fn_0088F700::rw_0088F700(obj);
             0
         }
+        Method::Attach => {
+            let base = rt::arena_base();
+            fn_008909C0::rw_008909c0(
+                obj,
+                base + rt::DESC_OFF + 0x40,
+                base + rt::DESC_OFF,
+                base + rt::DESC_OFF + 0x80,
+            )
+        }
     }
+}
+
+/// The attach descriptor, voice and extra addresses the lift receives.
+fn attach_args() -> (u32, u32, u32) {
+    let base = rt::arena_base();
+    (base + rt::DESC_OFF + 0x40, base + rt::DESC_OFF, base + rt::DESC_OFF + 0x80)
 }
 
 /// Runs the lifted method of the case on the decoded object.
@@ -449,6 +617,13 @@ fn run_lifted(c: &Case) -> u32 {
             s.construct_second(handle(obj), &mut w);
             encode(&s, obj);
             0
+        }
+        Method::Attach => {
+            let mut s = decode(obj);
+            let (voice, desc, extra) = attach_args();
+            let r = s.attach_voice(handle(obj), voice, desc, extra, &mut w);
+            encode(&s, obj);
+            r
         }
     };
     ret
@@ -561,6 +736,74 @@ fn run_wrong(c: &Case) -> u32 {
             }
             encode(&s, obj);
             0
+        }
+        Method::Attach => {
+            // WRONG: the record flag mask is 0x30 where the original ORs 0x38.
+            let mut s = decode(obj);
+            let (voice, desc, extra) = attach_args();
+            if desc == 0 || voice == 0 {
+                return 0;
+            }
+            s.voice = voice;
+            s.identity = w.descriptor_word(desc);
+            let pair = w.descriptor_pair(desc);
+            s.voice_id = pair as u8;
+            s.option = (pair >> 8) as u8;
+            let frame = w.scratch_frame();
+            w.init_block(frame);
+            w.attach_callee(handle(obj), voice, 0, frame);
+            w.bind_extra(handle(obj), extra, frame);
+            s.sub_id = w.voice_sub_id(voice);
+            if s.link == NO_VOICE {
+                w.reset_object(handle(obj));
+                if s.voice_column == NO_VOICE {
+                    encode(&s, obj);
+                    return 0;
+                }
+            }
+            let ret = if s.link == NO_VOICE {
+                {
+                    let stride = w.scalar_b();
+                    let word = w.voice_table_word(s.voice_id, ROW_BIAS_INIT);
+                    let record = word.wrapping_add(u32::from(s.voice_column).wrapping_mul(stride));
+                    w.or_record_byte(record, 0xe7, 0x30);
+                    if (s.option & 0x3f) == 0x3f {
+                        let mut cat = w.extra_word(extra);
+                        if cat == 0 {
+                            let flag = w.memo_flag();
+                            if flag & 1 == 0 {
+                                w.set_memo_flag(flag | 1);
+                                let h = w.category_key_hash();
+                                w.set_memo_value(h);
+                                cat = h;
+                            } else {
+                                cat = w.memo_value();
+                            }
+                        }
+                        let found = w.category_lookup(cat);
+                        if found != 0 {
+                            let ok = w.category_ok(found);
+                            if (ok as u8) != 0 {
+                                s.option = (s.option & 0xc1) | 1;
+                            } else {
+                                s.option &= 0xc0;
+                            }
+                        }
+                    }
+                    1
+                }
+            } else {
+                let stride = w.scalar_a();
+                let word = w.voice_table_word(s.voice_id, ROW_BIAS_LOOKUP);
+                let record = word.wrapping_add(u32::from(s.link).wrapping_mul(stride));
+                let diff = (w.record_byte(record, 0x41) ^ s.option) & 0x3f;
+                s.option ^= diff;
+                1
+            };
+            let df = w.descriptor_flag(desc);
+            s.fast_flags = ((df ^ s.fast_flags) & 0x7f) ^ df;
+            encode(&s, obj);
+            ret
         }
     }
 }

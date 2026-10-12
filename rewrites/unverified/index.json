@@ -488,14 +488,6 @@
   "reason": "runtime_table"
  },
  {
-  "address": "0x005D4470",
-  "name": "fn_005d4470",
-  "file": "fn_005d4470.rs",
-  "lane": "r-s774",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005DA100",
   "name": "fn_005da100",
   "file": "fn_005da100.rs",
@@ -872,14 +864,6 @@
   "reason": null
  },
  {
-  "address": "0x00602E60",
-  "name": "rage::rmPtfxManager::cull_and_draw_instances",
-  "file": "fn_00602e60.rs",
-  "lane": "a-U140",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00607910",
   "name": null,
   "file": "fn_00607910.rs",
@@ -1004,14 +988,6 @@
   "name": "rage::ptxRule::set_name",
   "file": "fn_006397a0.rs",
   "lane": "r-s777",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0063B890",
-  "name": "rage::ptxModel::vf5",
-  "file": "fn_0063b890.rs",
-  "lane": "r-s779",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1950,102 +1926,6 @@
   "lane": "r-b446",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00A7D240",
-  "name": "CComplexCombatRetreatInfo::CComplexCombatRetreatInfo_2",
-  "file": "fn_00a7d240.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D260",
-  "name": "CComplexFallAndGetUpTaskInfo::CComplexFallAndGetUpTaskInfo",
-  "file": "fn_00a7d260.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D320",
-  "name": "CComplexGangDrivebyTaskInfo::CComplexGangDrivebyTaskInfo_2",
-  "file": "fn_00a7d320.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D3F0",
-  "name": "CComplexJumpTaskInfo::CComplexJumpTaskInfo",
-  "file": "fn_00a7d3f0.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D490",
-  "name": "CComplexNewExitVehicleTaskInfo::CComplexNewExitVehicleTaskInfo_2",
-  "file": "fn_00a7d490.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D4C0",
-  "name": "CComplexNewGetInVehicleTaskInfo::CComplexNewGetInVehicleTaskInfo",
-  "file": "fn_00a7d4c0.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D4F0",
-  "name": "CComplexNewGetInVehicleTaskInfo::CComplexNewGetInVehicleTaskInfo_2",
-  "file": "fn_00a7d4f0.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D510",
-  "name": "CComplexNewUseCoverInfo::CComplexNewUseCoverInfo",
-  "file": "fn_00a7d510.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D560",
-  "name": "CComplexOnFireInfo::CComplexOnFireInfo",
-  "file": "fn_00a7d560.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D580",
-  "name": "CComplexPickUpAndCarryObjectTaskInfo::CComplexPickUpAndCarryObjectTaskInfo",
-  "file": "fn_00a7d580.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D5B0",
-  "name": "CComplexPickUpAndCarryObjectTaskInfo::CComplexPickUpAndCarryObjectTaskInfo_2",
-  "file": "fn_00a7d5b0.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A7D5D0",
-  "name": "CComplexSlideIntoCoverInfo::CComplexSlideIntoCoverInfo",
-  "file": "fn_00a7d5d0.rs",
-  "lane": "r-s772",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00A7D5F0",
@@ -3163,6 +3043,14 @@
   "address": "0x00B7E620",
   "name": "CTaskComplexCarDriveWander::get_follow_on_task",
   "file": "fn_00b7e620.rs",
+  "lane": "r-s771",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B7EA00",
+  "name": "get_car_drive_status_label",
+  "file": "fn_00b7ea00.rs",
   "lane": "r-s771",
   "outcome": "not_reached",
   "reason": null
@@ -5032,6 +4920,14 @@
   "reason": null
  },
  {
+  "address": "0x00DF3B60",
+  "name": "UIFileViewer::UIFileViewer",
+  "file": "fn_00df3b60.rs",
+  "lane": "r-s780",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00E39F70",
   "name": "ui_input_name_copy_with_tag_suffix",
   "file": "fn_00e39f70.rs",
@@ -5051,14 +4947,6 @@
   "address": "0x00E3CA40",
   "name": "UIMontageMoviePlayer::type_name_hash",
   "file": "fn_00e3ca40.rs",
-  "lane": "r-s773",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E46590",
-  "name": "UIScreen::UIScreen_2",
-  "file": "fn_00e46590.rs",
   "lane": "r-s773",
   "outcome": "not_reached",
   "reason": null
