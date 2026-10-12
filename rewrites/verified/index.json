@@ -83628,6 +83628,15 @@
   "lane": "r-s709"
  },
  {
+  "address": "0x00A3E3A0",
+  "name": "CVehicle::add_force",
+  "kind": "function",
+  "file": "functions/fn_00a3e3a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
+ },
+ {
   "address": "0x00A3E3F0",
   "name": "vehicle_accumulate_cross_product",
   "kind": "function",
@@ -86238,6 +86247,15 @@
   "lane": "r-s715"
  },
  {
+  "address": "0x00A76700",
+  "name": "NativeImpl_GET_CHAR_LAST_DAMAGE_BONE",
+  "kind": "function",
+  "file": "functions/fn_00a76700.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
+ },
+ {
   "address": "0x00A7C2F0",
   "name": "bu_task_poll_and_reset",
   "kind": "function",
@@ -88639,6 +88657,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s737"
+ },
+ {
+  "address": "0x00A8D670",
+  "name": "interior_release_room_records",
+  "kind": "function",
+  "file": "functions/fn_00a8d670.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
  },
  {
   "address": "0x00A8D720",
@@ -96093,6 +96120,15 @@
   "lane": "r-s741"
  },
  {
+  "address": "0x00B15360",
+  "name": "load_packed_audio_record",
+  "kind": "function",
+  "file": "functions/fn_00b15360.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
+ },
+ {
   "address": "0x00B18280",
   "name": "object_set_state_3",
   "kind": "function",
@@ -99774,6 +99810,15 @@
   "lane": "r-s730"
  },
  {
+  "address": "0x00B4BEA0",
+  "name": "peds_in_same_group",
+  "kind": "function",
+  "file": "functions/fn_00b4bea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
+ },
+ {
   "address": "0x00B4BF20",
   "name": "group_count_members",
   "kind": "function",
@@ -99790,6 +99835,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4C120",
+  "name": "group_remove_all_members",
+  "kind": "function",
+  "file": "functions/fn_00b4c120.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
+ },
+ {
+  "address": "0x00B4C160",
+  "name": "group_index_from_entry",
+  "kind": "function",
+  "file": "functions/fn_00b4c160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
  },
  {
   "address": "0x00B4C1A0",
@@ -133200,6 +133263,15 @@
   "lane": "r-s708"
  },
  {
+  "address": "0x00C1FAE0",
+  "name": "nav_entry_table_init",
+  "kind": "function",
+  "file": "functions/fn_00c1fae0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
+ },
+ {
   "address": "0x00C1FB30",
   "name": "streaming_clear_entry_flags",
   "kind": "function",
@@ -133216,6 +133288,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s708"
+ },
+ {
+  "address": "0x00C1FBE0",
+  "name": "nav_recent_points_append",
+  "kind": "function",
+  "file": "functions/fn_00c1fbe0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
  },
  {
   "address": "0x00C22930",
@@ -137275,6 +137356,33 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s720"
+ },
+ {
+  "address": "0x00C6F830",
+  "name": "nm_message_array_push",
+  "kind": "function",
+  "file": "functions/fn_00c6f830.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
+ },
+ {
+  "address": "0x00C6F8A0",
+  "name": "anim_group_array_push",
+  "kind": "function",
+  "file": "functions/fn_00c6f8a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
+ },
+ {
+  "address": "0x00C71310",
+  "name": "anim_list_array_free",
+  "kind": "function",
+  "file": "functions/fn_00c71310.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
  },
  {
   "address": "0x00C72110",
@@ -148140,6 +148248,15 @@
   "lane": "r-s727"
  },
  {
+  "address": "0x00D31100",
+  "name": "CTaskComplexNewExitVehicle::CTaskComplexNewExitVehicle",
+  "kind": "function",
+  "file": "functions/fn_00d31100.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
+ },
+ {
   "address": "0x00D31230",
   "name": "CTaskComplexOpenVehicleDoor::CTaskComplexOpenVehicleDoor",
   "kind": "function",
@@ -148824,6 +148941,15 @@
   "lane": "r-s751"
  },
  {
+  "address": "0x00D3DDC0",
+  "name": "CAnimRequestHelper::reset",
+  "kind": "function",
+  "file": "functions/fn_00d3ddc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
+ },
+ {
   "address": "0x00D3DDE0",
   "name": "reset_request_holder",
   "kind": "function",
@@ -149254,6 +149380,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s751"
+ },
+ {
+  "address": "0x00D421E0",
+  "name": "CTaskComplexJump::set_state",
+  "kind": "function",
+  "file": "functions/fn_00d421e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U142"
  },
  {
   "address": "0x00D42330",
