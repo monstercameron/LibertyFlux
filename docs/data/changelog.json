@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-12",
+    "title": "Rewrites: 57 proofs re-run on the current checker and recorded on it",
+    "commit": "600bd9ab57b1a672ae5714536c68765334749dfb",
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "57 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-12",
     "title": "Devlog: the lift lane's entry on the layout frame class",
-    "commit": null,
+    "commit": "bdf05c653114e9745821f6b000f062e324302e54",
     "summary": "The lane's own account of lifting 37 methods of the layout frame class is added to the devlog.",
     "changes": [
       "The entry gives the class's methods by kind, the lifted form and its host traits, what the proofs compare and narrow, and the observation about two sibling methods' pending bytes."
