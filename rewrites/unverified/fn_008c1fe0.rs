@@ -30,7 +30,7 @@ lf_checker_rt::export!(cdecl, rw_008C1FE0() -> u32 {
                 let guarded_out = (phase == GUARDED_A || phase == GUARDED_B)
                     && (lf_checker_rt::relocated(GUARD) as *const u8).read_unaligned() != 0;
                 if !guarded_out {
-                    if lf_checker_rt::callee_cdecl!(1, u32) as u8 == 0 {
+                    if lf_checker_rt::callee_cdecl!(1, u32,) as u8 == 0 {
                         return 0;
                     }
                     if (lf_checker_rt::relocated(HOLD) as *const u8).read_unaligned() != 0 {

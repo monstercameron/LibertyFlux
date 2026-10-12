@@ -66,6 +66,7 @@ lf_checker_rt::export!(thiscall, rw_00b49980(this: u32, ped: u32) -> u32 {
         let dy = sub_ss(f32::from_bits(read_u32(base.wrapping_add(4))), f32::from_bits(read_u32(anchor.wrapping_add(0x34))));
         let dz = sub_ss(f32::from_bits(read_u32(base.wrapping_add(8))), f32::from_bits(read_u32(anchor.wrapping_add(0x38))));
         let dist2 = add_ss(add_ss(mul_ss(dy, dy), mul_ss(dx, dx)), mul_ss(dz, dz));
-        if dist2 > 25.0 { 0 } else { 1 }
+        let limit = f32::from_bits(lf_checker_rt::global::<u32>(0x00FE8B40).read_unaligned());
+        if dist2 > limit { 0 } else { 1 }
     }
 });

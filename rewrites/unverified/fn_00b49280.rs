@@ -38,6 +38,7 @@ lf_checker_rt::export!(thiscall, rw_00b49280(this: u32, ped: u32) -> u32 {
         let y = f32::from_bits(read_u32(this.wrapping_add(0x24)));
         let z = f32::from_bits(read_u32(this.wrapping_add(0x28)));
         let dist2 = add_ss(add_ss(mul_ss(x, x), mul_ss(y, y)), mul_ss(z, z));
-        (dist2 > 0.05) as u32
+        let limit = f32::from_bits(lf_checker_rt::global::<u32>(0x00FE876C).read_unaligned());
+        (dist2 > limit) as u32
     }
 });

@@ -80,8 +80,10 @@ lf_checker_rt::export!(thiscall, rw_00646e50(this: u32, out: u32, t_bits: u32, a
         write_word(out.wrapping_add(8), lane2.to_bits());
         write_word(out.wrapping_add(12), lane3.to_bits());
         if cb != 0 {
+            // Five stack words: the pushed callback slot is overwritten by
+            // the time bits before the call, so `cb` travels in ecx only.
             lf_checker_rt::callee_thiscall!(
-                SAMPLE_CALLEE, u32, cb, 0, out, LANE_TAG, t_bits, cb, a3
+                SAMPLE_CALLEE, u32, cb, 0, out, LANE_TAG, t_bits, a3
             )
         } else {
             out
