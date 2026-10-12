@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Lift: the complex melee task, five methods",
+    "title": "Devlog: the lift lane's entry on the complex melee task",
     "commit": null,
+    "summary": "The lane's own account of lifting five methods of the complex melee task is added to the devlog.",
+    "changes": [
+      "The entry gives the task's methods, the lifted form and its host trait, what the proofs compare and narrow, and why the sixth verified method was left."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Lift: the complex melee task, five methods",
+    "commit": "4503ec45b4d554fdc9584a532f4504e8841ae062",
     "summary": "Five of the six verified methods of the pedestrians' complex melee task are lifted into portable Rust in the pedestrian tasks crate and proven against their 32-bit rewrites.",
     "changes": [
       "Lifted: the constructor and four virtual methods. The task's seventeen operations outside itself are recorded through a host trait, with the manager and the starter as typed handles. The lifted module forbids unsafe code and makes no operating-system call.",

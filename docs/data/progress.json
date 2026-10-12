@@ -13,7 +13,7 @@
   "stages": {
     "identified": 37413,
     "named": 37259,
-    "rewritten": 20297,
+    "rewritten": 20320,
     "verified": 20063
   },
   "structures": 340,
@@ -129,13 +129,13 @@
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
-      "value": 613,
+      "value": 618,
       "unit": "methods",
-      "source": "rows marked proven in the registries of 27 lifted modules (crates/*/src/*/registry.rs); each is tested against its verified rewrite on every push"
+      "source": "rows marked proven in the registries of 28 lifted modules (crates/*/src/*/registry.rs); each is tested against its verified rewrite on every push"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 20297,
+      "value": 20320,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
@@ -906,7 +906,7 @@
       "to": "0x005D4F04",
       "count": 82,
       "named": 82,
-      "rewritten": 26,
+      "rewritten": 27,
       "verified": 16
     },
     {
@@ -2004,7 +2004,7 @@
       "to": "0x0087C906",
       "count": 160,
       "named": 160,
-      "rewritten": 81,
+      "rewritten": 82,
       "verified": 74
     },
     {
@@ -2490,7 +2490,7 @@
       "to": "0x009A961C",
       "count": 103,
       "named": 103,
-      "rewritten": 66,
+      "rewritten": 68,
       "verified": 63
     },
     {
@@ -2499,7 +2499,7 @@
       "to": "0x009AEF3D",
       "count": 61,
       "named": 61,
-      "rewritten": 40,
+      "rewritten": 43,
       "verified": 40
     },
     {
@@ -2611,12 +2611,12 @@
       "verified": 15
     },
     {
-      "stage": "named",
+      "stage": "rewritten",
       "from": "0x009F1CD1",
       "to": "0x009F75F2",
       "count": 102,
       "named": 102,
-      "rewritten": 50,
+      "rewritten": 52,
       "verified": 50
     },
     {
@@ -2652,7 +2652,7 @@
       "to": "0x00A0DA78",
       "count": 77,
       "named": 76,
-      "rewritten": 26,
+      "rewritten": 32,
       "verified": 26
     },
     {
@@ -2670,7 +2670,7 @@
       "to": "0x00A18CBC",
       "count": 33,
       "named": 32,
-      "rewritten": 10,
+      "rewritten": 12,
       "verified": 10
     },
     {
@@ -2679,7 +2679,7 @@
       "to": "0x00A1E5DD",
       "count": 55,
       "named": 55,
-      "rewritten": 35,
+      "rewritten": 38,
       "verified": 35
     },
     {
@@ -2706,7 +2706,7 @@
       "to": "0x00A2F142",
       "count": 85,
       "named": 85,
-      "rewritten": 52,
+      "rewritten": 54,
       "verified": 52
     },
     {
@@ -3615,7 +3615,7 @@
       "to": "0x00C61B82",
       "count": 107,
       "named": 107,
-      "rewritten": 50,
+      "rewritten": 51,
       "verified": 40
     },
     {
@@ -4482,7 +4482,7 @@
     "large_functions_verified": 826791
   },
   "lifted": {
-    "methods": 613,
-    "modules": 27
+    "methods": 618,
+    "modules": 28
   }
 }
