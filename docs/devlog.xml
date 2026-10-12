@@ -9,6 +9,43 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A contract that set its globals in the wrong place, and how many others may have</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#misplaced-globals-2026-10-11"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#misplaced-globals-2026-10-11</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>A lane that was sent to make the checker observe one float comparison could not, and reported that the checker was not applying two values its contract set. The checker was applying them exactly where the contract said. The contract said the wrong place.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A lane that was sent to make the checker observe one float comparison could not, and reported that the checker was not applying two values its contract set. The checker was applying them exactly where the contract said. The contract said the wrong place.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Why do two globals that a proof's contract sets, a divisor and a size, read back as minus one on both sides whatever value the contract gives them? And if a contract can be wrong in this way without anything noticing, how many are?&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Fact&lt;/th&gt;&lt;th role="columnheader"&gt;Value&lt;/th&gt;&lt;th role="columnheader"&gt;What it means&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Where the contract of record puts the two values&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;At addresses a fixed amount below the globals the function reads, inside the code section. Verified.&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;An arithmetic slip when the lane turned an address in the image into an offset from the image base. The worker writes the values there; the function never reads them; both sides read the file's own value of the real globals, which is minus one.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;What the proof of record then covered&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;A grid whose index never leaves zero. It passes 1,000 of 1,000 trials. Verified by reproducing it with an instrumented copy.&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;The proof is real and says much less than it appears to: the part of the function that divides, rounds and indexes was never exercised with a usable divisor.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;The same contract with the two addresses corrected&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;The verified rewrite fails 30 of 1,000 trials; with a positive divisor and size, 85 of 1,000. A copy with one float comparison corrected passes. Verified on the stock worker with an unchanged copy of the driver; the lane wrote its predictions down before running.&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;The rewrite was wrong: a rounding helper compares with "not less than" where the original's instruction is "not less than or equal", which differ for whole-number inputs. An audit had read that from the instruction earlier in the day and could not show it. The rewrite had already been withdrawn on the ground that its proof did not reach the code in doubt; that is now a shown difference.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A deliberately wrong version on the corrected contract&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;Fails 494 of 1,000. Verified.&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;The corrected contract sees the code. Under the contract of record a wrong version of that code would have passed.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Contracts of record scanned for the condition&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;16,381 read; 238 functions have no contract file where the index says and were not scanned.&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;The scan follows each verified function to its proving lane's contract; it does not search.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Contracts that place a value or a range in code&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;54 functions.&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;Certain faults in the contract: nothing is ever meant to be set there. Each of those proofs is narrower than it says. Whether the rewrite is right on the wider input is not yet known for any of them.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Contracts that set words the function's body never refers to&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;738 functions, 5,674 words.&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;Some are slips of the same kind, some are values meant for a callee, some are an image address written where an offset is wanted. Not yet separated.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Functions that write to data the contract neither declares nor compares in full&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;148.&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;A rewrite could write something different there and no check would see it.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Functions with the same signature as the one that started this&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;288. In a sample of ten read by hand, nine of the values gate a branch, index a table, feed arithmetic or reach an unchecked output; one is harmless. Inferred from reading listings.&lt;/td&gt;&lt;td role="cell" data-label="What it means"&gt;The condition usually matters where it occurs.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Correction to an earlier statement&lt;/h3&gt;
+&lt;p&gt;The lane that first met this wrote that the checker does not apply a contract's values at those two addresses. That was wrong, and the changelog entry of the withdrawal repeated the doubt. The checker writes a value where the contract names it and checks nothing about whether that is a place the function reads. That is the gap: not a fault in what the checker does, but something it never looked at.&lt;/p&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The rewrite stays withdrawn and a strengthening lane is proving the corrected copy, with every other address in its contract checked the same way.&lt;/li&gt;
+&lt;li&gt;The investigation lane continues from counting to measuring: for the 54 certain cases first, then the 148, it corrects the contract and runs the verified rewrite through it on the stock checker. A rewrite that then fails on trials the original completes is withdrawn; one that still passes gets the corrected contract as its contract of record.&lt;/li&gt;
+&lt;li&gt;The lane wrote a check for the driver that refuses a contract which places a value outside writable data, with tests. It will be adopted in a narrower form: a refusal for code, gaps and addresses outside the image, which can never be meant; a warning for read-only data, because varying a constant the original loads from there is a legitimate test and one the day's other findings call for; and a verdict file that records the refusal.&lt;/li&gt;
+&lt;li&gt;The production brief will tell lanes how to turn an image address into the offset a contract wants, to check that every address they set is one the function's body refers to, and to confirm with a deliberately wrong version that each value they set is seen.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;For a contract, take every address it sets or declares and find the section of the image it falls in; then decode the function and list the absolute data addresses its instructions refer to. An address the contract sets that is in code, or that no instruction of the function refers to, is a candidate. The lane's script does this for one contract or for the whole verified set and writes the list.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Head-swap and constant-store families: 170 instances proven against two lifted methods</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free21"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free21</id>
@@ -1174,31 +1211,5 @@ under &lt;code&gt;.artifacts/scratch/l-free12/report.md&lt;/code&gt;.&lt;/p&gt;<
 &lt;p&gt;Run the lane's stage contracts for the two affected functions (all completing paths pass), then run the retry folder's full contracts, which steer trials into the faulting paths and show the original faulting where the rewrite completes. The lane log and report name every file.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Two self-inflicted faults cost the most time. First, a wrong nibble in a contract's function field sent a run at the wrong bytes; the contract linter catches this in a second and should run before every first attempt. Second, pin phases that looked independent combined to make a callee path unsatisfiable, producing a vacuous verdict; aligning one pin to odd trials fixed it. A transient build lock from a stale handle was fixed by removing the built file after confirming no process held it.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Production lane: 28 text-field functions verified, two held by a global-fill gap</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s525"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s525</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A production batch of 30 small input-ui functions finished with 28 verified on the stock checker and two deferred: scripted values for game globals demonstrably failed to reach those two functions' reads, while the checker's own control contracts pass, so the rewrites are kept for a later re-run.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of 30 small input-ui functions finished with 28 verified on the stock checker and two deferred: scripted values for game globals demonstrably failed to reach those two functions' reads, while the checker's own control contracts pass, so the rewrites are kept for a later re-run.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite a batch of 30 neighbouring text-field functions in Rust and prove each rewrite identical to the original with the project checker, one contract per function, each with a deliberately wrong version that must fail.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; 28 of 30 functions pass 1,200 trials each with a caught wrong version, covering child selection, key classifiers, cursor and mode handling, virtual-call forwarding, float scaling and validation, and a five-record text builder.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Eleven functions return through byte-only writes that preserve the upper 24 bits of the last value in the register. Small test inputs hide this; only values above one byte catch it.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One builder function leaks its call windows on purpose and its finalizer pops thirteen words. A probe with the wrong pop size faults exactly as predicted; with the right size it completes balanced.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A computed tail jump through a virtual table verifies with a normal stub. A no-cleanup stub models the wrong callee shape and fails the stack-pointer check.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two functions could not be steered: the values scripted for the game globals they read never took effect (pinned and random fills alike), while the checker's own global-read controls pass on the same worker. Their rewrites and contracts are kept for a re-run.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A suspected calling-convention bug in one function turned out to be the lane's own arithmetic slip. A probe showing clean completion forced a recount before anything was reported.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Ship the 28 verified rewrites. Re-run the two deferred functions once scripted global values reach reads; their contracts need no changes. Any lane whose wrong version passes on a function that reads game globals should check whether its fills actually land before trusting the proof.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Each function has a contract and a verdict file in the lane scratch folder; the generators, table-extraction scripts and the probes (including the global-fill controls) sit beside them. The two deferred functions reproduce as a passing correct run with a passing wrong version, and a vacuous verdict with unfired callees, respectively.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The global-fill gap cost the most time: every link in the chain (driver request bytes, worker source order, setup parsing, relocations) reads correctly, the controls pass, yet the two functions behave as pristine. The root cause is still unknown. Separately, one mutant passed sixty trials because the callee script cycled the identical sequence as the stack input; offsetting one of them caught it at once.&lt;/p&gt;</content>
   </entry>
 </feed>
