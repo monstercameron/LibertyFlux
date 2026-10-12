@@ -7,7 +7,7 @@
   },
   "unverified": {
    "path": "rewrites/unverified/index.json",
-   "as_of": "2026-10-12 02:00 UTC"
+   "as_of": "2026-10-12 02:04 UTC"
   },
   "issues": {
    "path": "rewrites/review/issues.json",
@@ -43,22 +43,23 @@
    "narrowed": 0,
    "mutant_caught": 0
   },
-  "unverified": 659,
+  "unverified": 672,
   "unverified_by_outcome": {
-   "not yet run": 346,
-   "deferred": 223,
-   "not_reached": 89,
+   "not yet run": 373,
+   "deferred": 225,
+   "not_reached": 73,
    "failed_v3": 1
   },
   "unverified_by_reason": {
-   "none recorded": 436,
+   "none recorded": 447,
    "other (unlisted)": 121,
-   "other": 58,
+   "other": 59,
    "checker_gap": 25,
    "needs_encrypted_code": 11,
    "frame_pointer_args": 5,
    "runtime_table": 2,
-   "float_register_args": 1
+   "float_register_args": 1,
+   "indirect_call": 1
   },
   "demoted": 0
  },
