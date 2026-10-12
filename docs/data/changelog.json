@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-12",
+    "title": "Devlog: two thousand proofs run again with the stack not zeroed",
+    "commit": null,
+    "summary": "The audit of every verified function whose contract of record zeroes the stack has finished. An entry gives its result: of 2,085 proofs, 1,310 pass only with the zero.",
+    "changes": [
+      "684 proofs pass with the checker's changing pattern as well, and can drop the zero. 1,110 fail with the pattern only in what the function hands to a callee. 200 fail in what the function returns or stores: 139 involve the heap, 61 a global, 5 the return value, and 104 fail on every trial.",
+      "For two functions the original itself faults once the stack is not zero. Two proofs fail when run again unchanged: one was withdrawn earlier today, and the other fails only on the call log's limit. 87 could not be run.",
+      "Nothing is withdrawn on the audit alone: a proof that needs a zeroed stack is narrower than it looked, not a shown difference. The 200 go to lanes as a list; the 1,110 get their narrowing recorded; a refusal by the checker's driver of an unlisted zero stack fill is proposed as a checker change.",
+      "The entry also records that the audit had found the withdrawn proof four and a half hours before the coordinator opened its record."
+    ]
+  },
+  {
+    "date": "2026-10-12",
     "title": "Rust in progress: 145 files from lanes (1013 unverified rewrites, 1504 in review)",
     "commit": "433e35fa1224b38afd8eca313bf63bc948d268dc",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
