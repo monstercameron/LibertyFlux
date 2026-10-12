@@ -131,9 +131,10 @@ lf_checker_rt::export!(cdecl, rw_00B3F120(cell: u32, a1b: u32, a2b: u32, a3b: u3
 
         let divisor = lf_checker_rt::global::<i32>(G_DIVISOR).read();
         let size = lf_checker_rt::global::<i32>(G_SIZE).read();
+        // Size as the original holds it at the write: re-read after every stored cell (see below).
+        let mut size_now = size;
         let scale = fdiv(1.0, divisor as f32);
         let x = rdf(cell);
-        let y = rdf(cell.wrapping_add(4));
         let radius = f32::from_bits(radius_bits);
         let lo1 = {
             let v = fadd(fmul(fsub(x, radius), GRID_MUL), GRID_ADD);
@@ -145,6 +146,8 @@ lf_checker_rt::export!(cdecl, rw_00B3F120(cell: u32, a1b: u32, a2b: u32, a3b: u3
             let j = cvtt(fmul(cvtt(round_trick(v)) as f32, scale));
             if j < 0 { 0 } else { let m = size.wrapping_sub(1); if j > m { m } else { j } }
         };
+        // The y word is read where the original reads it (after the x pair, before the y pair).
+        let y = rdf(cell.wrapping_add(4));
         let lo2 = {
             let v = fadd(fmul(fsub(y, radius), GRID_MUL), GRID_ADD);
             let j = cvtt(fmul(cvtt(round_trick(v)) as f32, scale));
@@ -166,10 +169,13 @@ lf_checker_rt::export!(cdecl, rw_00B3F120(cell: u32, a1b: u32, a2b: u32, a3b: u3
                         let dx = (cl & 0xFFFF) as u16;
                         let lim = (cl >> 16) as u16;
                         if dx < lim {
-                            let v = (size as u32).wrapping_mul(row as u32).wrapping_add(col as u32);
+                            let v = (size_now as u32).wrapping_mul(row as u32).wrapping_add(col as u32);
+                            // The table word is read before the counter is stored, as the original reads it.
+                            let tbl = lf_checker_rt::global::<u32>(G_TABLE).read();
                             lf_checker_rt::global::<u32>(G_COUNTLIM)
                                 .write((cl & 0xFFFF_0000) | (dx.wrapping_add(1) as u32));
-                            (table.wrapping_add((dx as u32).wrapping_mul(4)) as *mut u32).write(v);
+                            (tbl.wrapping_add((dx as u32).wrapping_mul(4)) as *mut u32).write(v);
+                            size_now = lf_checker_rt::global::<i32>(G_SIZE).read();
                         }
                         if col == hi1 {
                             break;

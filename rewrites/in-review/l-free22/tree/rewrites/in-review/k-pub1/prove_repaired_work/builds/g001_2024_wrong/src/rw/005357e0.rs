@@ -1,0 +1,41 @@
+
+
+/// Deliberately wrong version of `lane_base_005357e0` (returned entry plus one); must fail.
+lf_checker_rt::export!(thiscall, rw_005357e0(_this: u32, index: u32) -> u32 {
+    unsafe {
+        const BOARD: u32 = 0x8a;
+        const NONE: u32 = 0xFFFF_FFFF;
+        const ST_TABLE: usize = 4;
+        let mut st = [0u32; 6];
+        let ok: u32 = lf_checker_rt::callee_fastcall!(1, u32, BOARD, st.as_mut_ptr() as u32);
+        if ok & 0xFF == 0 {
+            return NONE;
+        }
+        let table = st[ST_TABLE];
+        rd(table, index).wrapping_add(1)
+    }});
+
+/// Table entry at `index`, or -1 when the fetch fails.
+///
+/// Fetches a witness struct through callee 1 (fastcall id `BOARD`, six
+/// words: table pointer at word 4). The indexed read is unchecked and
+/// faults exactly like the original's for a wild index. Original:
+/// thiscall, one stack word; callee-cleaned.
+lf_checker_rt::export!(thiscall, lane_base_005357e0(_this: u32, index: u32) -> u32 {
+    unsafe {
+        const BOARD: u32 = 0x8a;
+        const NONE: u32 = 0xFFFF_FFFF;
+        const ST_TABLE: usize = 4;
+        let mut st = [0u32; 6];
+        let ok: u32 = lf_checker_rt::callee_fastcall!(1, u32, BOARD, st.as_mut_ptr() as u32);
+        if ok & 0xFF == 0 {
+            return NONE;
+        }
+        let table = st[ST_TABLE];
+        rd(table, index)
+    }});
+
+#[inline(always)]
+unsafe fn rd(base: u32, idx: u32) -> u32 {
+    unsafe { (base.wrapping_add(idx.wrapping_mul(4)) as *const u32).read_unaligned() }
+}

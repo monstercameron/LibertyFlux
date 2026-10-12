@@ -2,7 +2,7 @@
 
 /// Ask the update helper for its one-byte ready result. Write status 2 to the
 /// global state word only when the helper is nonzero and the cleanup-active
-/// global word is nonzero; otherwise write status 3. The helper has no
+/// global word is zero; otherwise write status 3. The helper has no
 /// arguments, and its result is read from AL. The two absolute data references
 /// are relocated through the checker runtime.
 lf_checker_rt::export!(cdecl, rw_00a33dd0() -> () {
@@ -26,7 +26,7 @@ lf_checker_rt::export!(cdecl, rw_00a33dd0() -> () {
         );
         let ready = update();
         let cleanup_active = read_u32(lf_checker_rt::relocated(CLEANUP_ACTIVE_VA));
-        let status = if ready != 0 && cleanup_active != 0 { 2 } else { 3 };
+        let status = if ready != 0 && cleanup_active == 0 { 2 } else { 3 };
         write_u32(lf_checker_rt::relocated(UPDATE_STATUS_VA), status);
     }
 });

@@ -1192,6 +1192,22 @@
   "reason": null
  },
  {
+  "address": "0x00686340",
+  "name": "dof_array_read_entry_raw",
+  "file": "fn_00686340.rs",
+  "lane": "r-s750",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00686380",
+  "name": "dof_array_write_entry_raw",
+  "file": "fn_00686380.rs",
+  "lane": "r-s750",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0068A450",
   "name": "track_key_partition_0068A450 (proposed)",
   "file": "fn_0068a450.rs",
@@ -1206,14 +1222,6 @@
   "lane": "r-s585",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00876A30",
-  "name": null,
-  "file": "fn_00876a30.rs",
-  "lane": "a-U123",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x008834A0",
@@ -1382,6 +1390,22 @@
   "lane": "a-U126",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x0097E820",
+  "name": "",
+  "file": "fn_0097e820.rs",
+  "lane": "a-U131",
+  "outcome": "not yet run",
+  "reason": ""
+ },
+ {
+  "address": "0x0097EF40",
+  "name": "",
+  "file": "fn_0097ef40.rs",
+  "lane": "a-U131",
+  "outcome": "not yet run",
+  "reason": ""
  },
  {
   "address": "0x0098CD60",
@@ -3608,22 +3632,6 @@
   "reason": "frame_pointer_args"
  },
  {
-  "address": "0x00C84C40",
-  "name": "scrollbars_dat_load",
-  "file": "fn_00c84c40.rs",
-  "lane": "r-s746",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C84CB0",
-  "name": "scrollbar_tables_reset",
-  "file": "fn_00c84cb0.rs",
-  "lane": "r-s746",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C91890",
   "name": null,
   "file": "fn_00c91890.rs",
@@ -4150,14 +4158,6 @@
   "lane": "r-s625",
   "outcome": "deferred",
   "reason": "out_of_time"
- },
- {
-  "address": "0x00CF48B0",
-  "name": "climb_task_world_position",
-  "file": "fn_00cf48b0.rs",
-  "lane": "r-b703",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00CF72B0",
@@ -4742,14 +4742,6 @@
   "lane": "r-s745",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00E625F0",
-  "name": "register_network_object_cleanup",
-  "file": "fn_00e625f0.rs",
-  "lane": "r-s745",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E62600",
