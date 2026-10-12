@@ -8,3 +8,9 @@ export!(cdecl, rw_00bd0dc0(ctx: *mut u8) -> u32 {
         callee_cdecl!(1, u32, *args)
     }
 });
+
+/// Read the argument array pointer out of a native call context (r-n15).
+#[inline(always)]
+unsafe fn args_of(ctx: *mut u8) -> *const u32 {
+    *(ctx.add(8) as *const *const u32)
+}

@@ -6,5 +6,5 @@
 /// value tracks the loaded image base) followed by the call context
 /// pointer itself. No return slot is written.
 export!(cdecl, rw_00b9a9b0(ctx: *const u8) -> u32 {
-    callee_cdecl!(1, u32, lf_rn90_rt::relocated(0x00B9C540), ctx as u32)
+    callee_cdecl!(1, u32, lf_checker_rt::relocated(0x00B9C540), ctx as u32)
 });

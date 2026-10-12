@@ -9,3 +9,10 @@ export!(cdecl, rw_00b86ef0(ctx: *mut u8) -> u32 {
         result
     }
 });
+
+/// Read the return-slot pointer out of a native call context (r-n15).
+#[allow(dead_code)]
+#[inline(always)]
+unsafe fn retslot_of(ctx: *mut u8) -> *mut u32 {
+    *(ctx as *const *mut u32)
+}

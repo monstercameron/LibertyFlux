@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 488 published files made whole, each proven as the file that is published",
+    "title": "Rewrites: the 174 script natives among the repaired published files",
     "commit": null,
+    "summary": "The entry before this one describes 488 repaired files; its commit carried 314 of them. The other 174 are script natives, which the tree keeps in a folder of their own, and are committed here.",
+    "changes": [
+      "174 script native handlers whose published file used a naming lane's own runtime now use the shared runtime, each built alone and run against its lane's contract of record by the prover, as the entry before this one describes. Almost all are in the class with no wrong version that can still be run; they stay in the backlog of old proofs to be run again.",
+      "Why two commits: the coordinator listed the repaired files' paths as if all were in the functions folder. The files themselves were written to the right places; the commit took only the paths it was given. Nothing was left half applied on the published branch for more than a few minutes, and the tree's consistency check sees the same index either way."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 488 published files made whole, each proven as the file that is published",
+    "commit": "b8eacecc7e4453ad901f385457df6bf9bb8e0ae6",
     "summary": "488 verified rewrites whose published file did not build alone are replaced by repaired files, each of which was built alone and run against its proving lane's contract of record before it went in. The verified count does not change; what changes is that for these functions the file in the repository is now the code that was proven.",
     "changes": [
       "The pipeline's manifest showed this evening that 706 of the verified rewrites were left out of the assembled library because the published file did not build alone: helpers, constants and types that had stayed in the proving lane's crate, a lane's own runtime in place of the shared one, a file malformed as published, or a wrapper with the body left behind. A tool lane repaired what a script could repair from the proving lanes' own source, changing nothing in behaviour, and wrote a prover that needs no model: it builds each repaired file alone, runs the proving lane's contract of record against that build on the stock checker at 300 trials, and runs the lane's wrong version where one exists.",

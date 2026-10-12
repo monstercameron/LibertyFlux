@@ -6,3 +6,9 @@ export!(cdecl, rw_00bc6040(ctx: u32) -> u32 {
         callee_cdecl!(1, u32, *a, *a.add(1))
     }
 });
+
+/// Argument array of a native call context. (Carried from r-n09 via a-01.)
+#[inline(always)]
+pub unsafe fn args_of(ctx: u32) -> *const u32 {
+    *((ctx as *const u32).add(2)) as *const u32
+}

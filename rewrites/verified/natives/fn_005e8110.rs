@@ -2,7 +2,7 @@
 /// Script native handler `DELETE_HTML_SCRIPT_OBJECT`.
 ///
 /// Releases an HTML script object slot: resolves the slot through the object pool, marks it free in the slot bitmap, and updates the pool low-water mark and live count.
-lf_rn94_rt::export!(cdecl, rw_fn_005e8110(ctx: u32) -> u32 {
+lf_checker_rt::export!(cdecl, rw_fn_005e8110(ctx: u32) -> u32 {
     unsafe {
         let args = *((ctx + 8) as *const u32);
         let index = *(args as *const u32);
