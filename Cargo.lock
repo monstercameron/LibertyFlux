@@ -425,6 +425,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-camgame-diff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+ "lf-world",
+]
+
+[[package]]
 name = "lf-checker-proofs"
 version = "2.0.0"
 dependencies = [

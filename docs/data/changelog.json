@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Rust in progress: 72 files from lanes (635 unverified rewrites, 1558 in review)",
+    "title": "Lift: the game camera class, five methods",
     "commit": null,
+    "summary": "Five verified methods of the game camera class are lifted into portable Rust in the world crate and proven against their 32-bit rewrites.",
+    "changes": [
+      "Lifted: the deleting destructor, the restart, the camera event step, the blend update and the idle reset. The class's fields are ordinary Rust data, and everything the methods reach outside the object is one method each on a world trait, in the order the rewrites call it. The lifted module forbids unsafe code.",
+      "Proof: ten differential tests on the 32-bit target, 2,000 trials a method, comparing the whole camera image, the globals and the call logs with floats bit for bit; 14 of 14 wrong lifts are caught. Fifteen host tests pass on the 64-bit host.",
+      "What the proofs do not cover: the wrong lifts change world answers and call order, not float predicates inside the lift, which only the bit-for-bit comparison on generated inputs covers; the blend update was proven on the lane's own inputs, not its contract's; the worker and the singleton are never null in the proof.",
+      "Found while lifting: the comment in the blend update's verified rewrite gives the wrong formula for its counter (the arithmetic itself is a remainder by three and is right), and the restart's contract declares a callee the function never calls. Both go to the proof audit list.",
+      "Lifts are now 1,334."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Rust in progress: 72 files from lanes (635 unverified rewrites, 1558 in review)",
+    "commit": "e6c6e8008c2042ee136dfb4eeeaf111567e06b51",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 635 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
