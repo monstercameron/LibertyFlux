@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-12",
-    "title": "Lift: a move-between-points task and the mirror render phase, nine methods of two classes",
+    "title": "Devlog: the lift lanes' entries on the move-between-points task and the mirror render phase",
     "commit": null,
+    "summary": "The two lanes' own accounts of lifting five methods of a move-between-points task and four methods of the mirror render phase are added to the devlog.",
+    "changes": [
+      "Each entry gives the class as the dossier and the rewrites establish it, the lifted form, what the proofs compare, and what the lane found about the proofs of record while reading them."
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Lift: a move-between-points task and the mirror render phase, nine methods of two classes",
+    "commit": "fb8c9be88d8b3b210706df9d631d81d527ea9925",
     "summary": "Two class lifts that finished together and share the workspace's manifest, so they are one commit: a pedestrian task that walks a character between scenario points, and the render phase that draws the scene reflected in a mirror.",
     "changes": [
       "crates/lf-peds-tasks gains a move_between_points module: all five verified methods of the task (the deleting destructor, the clone factory, a blend weight, the run tick and the main tick), 747 lines with no unsafe code, the heap, route, world and seating services behind traits. A new test crate runs them against the five tracked verified rewrites on the 32-bit target; 24 deliberately wrong versions are each caught. The coordinator ran the crate's 365 host tests and the 10 tests on the 32-bit target; none failed.",
