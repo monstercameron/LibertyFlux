@@ -49932,6 +49932,24 @@
   "lane": "r-s775"
  },
  {
+  "address": "0x00880260",
+  "name": "append_utf16_range",
+  "kind": "function",
+  "file": "functions/fn_00880260.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U168"
+ },
+ {
+  "address": "0x00880310",
+  "name": "allocate_utf16_buffer",
+  "kind": "function",
+  "file": "functions/fn_00880310.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U168"
+ },
+ {
   "address": "0x00880410",
   "name": "destroy_utf16_object_array",
   "kind": "function",
@@ -56781,6 +56799,15 @@
   "lane": "r-s678"
  },
  {
+  "address": "0x008C5BE0",
+  "name": "text_label_to_string",
+  "kind": "function",
+  "file": "functions/fn_008c5be0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U168"
+ },
+ {
   "address": "0x008C5C70",
   "name": "text_hash_index",
   "kind": "function",
@@ -58723,6 +58750,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB2F0",
+  "name": "task_ctor_initialize_motion_task",
+  "kind": "function",
+  "file": "functions/fn_008db2f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U168"
  },
  {
   "address": "0x008DB3B0",
@@ -62773,6 +62809,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s676"
+ },
+ {
+  "address": "0x00923140",
+  "name": "release_resource_slots",
+  "kind": "function",
+  "file": "functions/fn_00923140.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U168"
  },
  {
   "address": "0x00924750",
@@ -98118,6 +98163,15 @@
   "lane": "r-s739"
  },
  {
+  "address": "0x00B22D80",
+  "name": "interior_id_tables_reset",
+  "kind": "function",
+  "file": "functions/fn_00b22d80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U168"
+ },
+ {
   "address": "0x00B23090",
   "name": "CPhysical::vf0",
   "kind": "function",
@@ -125476,6 +125530,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s661"
+ },
+ {
+  "address": "0x00BCD5B0",
+  "name": "NativeImpl_SET_ALL_CARS_CAN_BE_DAMAGED_4",
+  "kind": "function",
+  "file": "functions/fn_00bcd5b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U168"
  },
  {
   "address": "0x00BD0D30",
@@ -159307,6 +159370,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s722"
+ },
+ {
+  "address": "0x00DCB980",
+  "name": "vehicle_collision_response_is_allowed",
+  "kind": "function",
+  "file": "functions/fn_00dcb980.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U168"
+ },
+ {
+  "address": "0x00DCB9B0",
+  "name": "vehicle_collision_entities_are_close",
+  "kind": "function",
+  "file": "functions/fn_00dcb9b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U168"
  },
  {
   "address": "0x00DCBB70",
