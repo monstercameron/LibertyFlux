@@ -1072,6 +1072,14 @@
   "reason": ""
  },
  {
+  "address": "0x00601410",
+  "name": "rage::rmPtfxManager::vf0",
+  "file": "fn_00601410.rs",
+  "lane": "r-s794",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00601CA0",
   "name": "fn_00601CA0",
   "file": "fn_00601ca0.rs",
@@ -1083,6 +1091,22 @@
   "address": "0x00602BD0",
   "name": "fn_00602BD0",
   "file": "fn_00602bd0.rs",
+  "lane": "r-s794",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00605630",
+  "name": "rage::fragManager::vf0",
+  "file": "fn_00605630.rs",
+  "lane": "r-s794",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x006096E0",
+  "name": "rage::fragTuneStruct::vf0",
+  "file": "fn_006096e0.rs",
   "lane": "r-s794",
   "outcome": "not_reached",
   "reason": ""
@@ -1726,6 +1750,14 @@
   "lane": "a-U105",
   "outcome": "deferred",
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
+ },
+ {
+  "address": "0x008B4090",
+  "name": "",
+  "file": "fn_008b4090.rs",
+  "lane": "a-U156",
+  "outcome": "not yet run",
+  "reason": ""
  },
  {
   "address": "0x008B9050",
@@ -3077,6 +3109,86 @@
   "file": "fn_00b3bbd0.rs",
   "lane": "r-s383",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B48550",
+  "name": "CEventMustLeaveBoat::vf8",
+  "file": "fn_00b48550.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B48AE0",
+  "name": "CEventPedEnteredMyVehicle::vf8",
+  "file": "fn_00b48ae0.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B48CA0",
+  "name": "CEventPotentialBeWalkedInto::vf8",
+  "file": "fn_00b48ca0.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B48CF0",
+  "name": "CEventPotentialGetRunOver::vf8",
+  "file": "fn_00b48cf0.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49140",
+  "name": "CEventRevived::vf8",
+  "file": "fn_00b49140.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49190",
+  "name": "CEventScriptCommand::vf8",
+  "file": "fn_00b49190.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49280",
+  "name": "CEventShocking::vf8",
+  "file": "fn_00b49280.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49400",
+  "name": "CEventStaticCountReachedMax::vf8",
+  "file": "fn_00b49400.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49420",
+  "name": "CEventStuckInAir::vf8",
+  "file": "fn_00b49420.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B49450",
+  "name": "CEventSwitch2NM::vf8",
+  "file": "fn_00b49450.rs",
+  "lane": "r-s806",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -5456,12 +5568,100 @@
   "reason": null
  },
  {
+  "address": "0x00D01190",
+  "name": "CTaskComplexNewUseCover::vf1",
+  "file": "fn_00d01190.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D011E0",
+  "name": "CTaskComplexSeperate::vf1",
+  "file": "fn_00d011e0.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D01230",
+  "name": "CTaskComplexSetAndGuardArea::vf1",
+  "file": "fn_00d01230.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D01340",
+  "name": "CTaskSimpleLoadAnimPlayAnim::vf1",
+  "file": "fn_00d01340.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D01370",
+  "name": "CTaskSimplePlayAnimAndSlideIntoCover::vf1",
+  "file": "fn_00d01370.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D013B0",
+  "name": "CTaskSimplePlayAnimAndSlideOutOfCover::vf1",
+  "file": "fn_00d013b0.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D013F0",
+  "name": "CTaskSimplePlaySwatSignalAnim::vf1",
+  "file": "fn_00d013f0.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00D020C0",
   "name": "CTaskComplexCombat::vf20",
   "file": "fn_00d020c0.rs",
   "lane": "a-U132",
   "outcome": "deferred",
   "reason": "The original forwards its incoming EBP value to a later callee, while the rewrite passes zero and the shared runtime has no EBP accessor; the corrected non-null-target fixture faulted in the original before that call was reached."
+ },
+ {
+  "address": "0x00D09E90",
+  "name": "CTaskComplexCombatFlankSubtask::vf19",
+  "file": "fn_00d09e90.rs",
+  "lane": "r-s803",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D19910",
+  "name": "task_slots_query_or",
+  "file": "fn_00d19910.rs",
+  "lane": "r-b712",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D1A0B0",
+  "name": "task_slots_query_sum",
+  "file": "fn_00d1a0b0.rs",
+  "lane": "r-b712",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D1A220",
+  "name": "task_slots_query_or_single",
+  "file": "fn_00d1a220.rs",
+  "lane": "r-b712",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00D254D0",
