@@ -148,11 +148,12 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         method: "vf32",
-        lifted_as: "",
-        state: State::NotLifted,
-        calls: &[],
+        lifted_as: "CPlayerPed::run_entry_chain",
+        state: State::Proven,
+        calls: &["chain_reset", "chain_flag", "chain_main"],
         narrows: &[
-            "verified: three calls on a sub-object that the pedestrian reaches through a pointer field; not lifted in this pass",
+            "the sub-object is an address the chain computes and passes on; the sub-object's own entries are the world's and are not run",
+            "the chain base is read once; a change the first entry makes to it is not seen by the original either, since the original reads it once",
         ],
     },
     Row {

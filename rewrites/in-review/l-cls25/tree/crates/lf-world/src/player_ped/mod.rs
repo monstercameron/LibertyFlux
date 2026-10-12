@@ -5,9 +5,9 @@
 //! fields used here are plain words, floats and pointers; several of its
 //! virtual slots call into collaborators (the sub-objects it notifies, the
 //! job and model services, the context lookup) and read or write the
-//! pedestrian itself while doing so. Nine of its virtual slots and one
-//! named method have verified 32-bit rewrites with behaviour in them, and
-//! [`CPlayerPed`] restates those nine:
+//! pedestrian itself while doing so. Ten of its virtual slots have verified
+//! 32-bit rewrites with behaviour in them, and [`CPlayerPed`] restates
+//! those ten:
 //!
 //! - the ready-gated job pair ([`CPlayerPed::run_jobs_if_ready`]);
 //! - the linked notification ([`CPlayerPed::notify_while_linked`]);
@@ -16,6 +16,7 @@
 //! - the sub-object notification pair ([`CPlayerPed::notify_sub_objects`]);
 //! - the setup-and-store step ([`CPlayerPed::setup_and_store`]);
 //! - the model change ([`CPlayerPed::change_model`]);
+//! - the sub-object entry chain ([`CPlayerPed::run_entry_chain`]);
 //! - two copies of four-word blocks ([`CPlayerPed::set_transform`] and
 //!   [`CPlayerPed::set_descriptor`]).
 //!
