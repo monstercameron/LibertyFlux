@@ -2952,6 +2952,14 @@
   "reason": null
  },
  {
+  "address": "0x00BAF7C0",
+  "name": null,
+  "file": "fn_00baf7c0.rs",
+  "lane": "r-s744",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00BB1E30",
   "name": null,
   "file": "fn_00bb1e30.rs",
@@ -3236,8 +3244,8 @@
   "name": "pending",
   "file": "fn_00c24c00.rs",
   "lane": "a-U122",
-  "outcome": "not yet run",
-  "reason": null
+  "outcome": "failed_v8",
+  "reason": "Trial 238 timed out in the stock worker with no original or rewrite status; 999 of 1,000 trials completed, so this run is not accepted."
  },
  {
   "address": "0x00C2E810",

@@ -1,0 +1,15 @@
+// original: 0x00BA28F0 STOP_PED_WEAPON_FIRING_WHEN_DROPPED
+//
+// Forwards the character handle to the engine routine. No return value.
+export!(cdecl, rw_00ba28f0(ctx: *mut u8) -> u32 {
+    unsafe {
+        let args = args_of(ctx);
+        __lf_callee_cdecl!(1, u32, *args)
+    }
+});
+
+/// Read the argument array pointer out of a native call context (r-n15).
+#[inline(always)]
+unsafe fn args_of(ctx: *mut u8) -> *const u32 {
+    *(ctx.add(8) as *const *const u32)
+}
