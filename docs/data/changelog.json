@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-12",
+    "title": "Devlog: changing the lanes' model in mid-run, and thirty lanes cut short",
+    "commit": null,
+    "summary": "An entry records how the working model was changed to Muse on the owner's instruction, and the coordinator's fault in doing it: stopping the window that started Luna lanes stopped the thirty lanes it had started.",
+    "changes": [
+      "What was done in order: the operating scripts changed to take lanes of either model, each on a copy checked by the shell's parser; one pilot lane before any other; the Luna launcher stopped; thirty Muse lanes started.",
+      "Why the lanes stopped: a launcher's window that ends by itself leaves its lanes running, and one stopped from outside takes them with it. The coordinator had told the owner the lanes would finish and had not checked.",
+      "What was kept: of 239 claims the cut lanes had recorded, 226 reproduced on the coordinator's re-run and were imported, and 13 are held. About 1,800 functions not reached went back to the queue.",
+      "Decided: a launcher is stopped by its stop file or left to run out; a statement about what a step leaves running is checked before it is made; Muse's yield is measured afresh from its own results."
+    ]
+  },
+  {
+    "date": "2026-10-12",
     "title": "Rust in progress: 189 files from lanes (935 unverified rewrites, 1982 in review)",
     "commit": "9114841afccbfd98cac82fd553b34dcbfc3220db",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
